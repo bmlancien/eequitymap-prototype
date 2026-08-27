@@ -585,7 +585,7 @@ Vorgaben.) Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel wechs
 - **Erst-Hinweis** an der Liste „Verteilung innerhalb der Region": „Startet mit
   denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region
   anders zu verteilen." (macht die Opt-in-Natur sichtbar).
-- **Breadcrumb** „Auf Regionen verteilt nach: …" bekommt echtes Gewicht (nicht
+- **Breadcrumb** „Bundesweit verteilt nach: …" bekommt echtes Gewicht (nicht
   blasse Microcopy) — es ist die einzige sichtbare Verbindung der zwei Ebenen.
 
 **Kriterien auf zwei Ebenen (Kern der Anforderung):**

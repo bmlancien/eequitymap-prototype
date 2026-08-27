@@ -63,7 +63,7 @@
     <!-- ============ LEFT COLUMN ============ -->
     <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 40px">
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14.5px;font-weight:600;color:#1b2126;background:#eef3f6;border:1px solid #cdddea;border-left:4px solid #2f6690;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.5">Auf Regionen verteilt nach: <span style="font-weight:500;color:#33413c">{{ natBreadcrumbValue }}</span> <span style="color:#5b6672;font-weight:500">{{ natBreadcrumbCaret }}</span></div>
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14.5px;font-weight:600;color:#1b2126;background:#eef3f6;border:1px solid #cdddea;border-left:4px solid #2f6690;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.5">Bundesweit verteilt nach: <span style="font-weight:500;color:#33413c">{{ natBreadcrumbValue }}</span> <span style="color:#5b6672;font-weight:500">{{ natBreadcrumbCaret }}</span></div>
         <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 14px">
             <sc-for list="{{ natChips }}" as="nc" hint-placeholder-count="2">
@@ -73,7 +73,7 @@
         </sc-if>
       </sc-if>
 
-      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126">{{ princHeading }}</div>
+      <div style="font-size:14.5px;font-weight:600;color:#1b2126">{{ princHeading }}</div>
       <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
@@ -285,11 +285,15 @@
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <polygon points="{{ o.pts }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></polygon>
               </sc-for>
-              <!-- Popover an der ausgewählten Zelle: einziger, prominenter Einstieg in die Regionsansicht (§M) -->
+              <!-- Popover an der ausgewählten Zelle: kompakter Chip mit Zeiger, seitlich statt darüber (§M) -->
               <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
                 <foreignObject x="{{ cellPopoverX }}" y="{{ cellPopoverY }}" width="{{ cellPopoverW }}" height="{{ cellPopoverH }}" style="overflow:visible;pointer-events:none">
-                  <div style="pointer-events:auto">
-                    <button onClick="{{ evaluateRegionPopover }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:11px 14px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.24);text-align:left;line-height:1.35;white-space:nowrap">{{ cellPopoverLabel }}</button>
+                  <div style="position:relative;pointer-events:auto">
+                    <span style="{{ cellPopoverTailStyle }}"></span>
+                    <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;background:#eaf3ef;border:1px solid #b9d9cd;color:#0b6b5a;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#dcece5;border-color:#a7cebe">
+                      <span style="display:block;font-weight:700">{{ cellPopoverLine1 }}</span>
+                      <span style="display:block">{{ cellPopoverLine2 }}</span>
+                    </button>
                   </div>
                 </foreignObject>
               </sc-if>
@@ -1355,7 +1359,8 @@ class Component extends DCLogic {
 
     // Zwei benannte Prinzipiensätze (§M): links steht immer genau EINE editierbare Liste;
     // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
-    R.princHeading = isRegion ? 'VERTEILUNG INNERHALB DER REGION' : 'VERTEILUNG AUF REGIONEN';
+    // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
+    R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach:' : 'Bundesweit verteilt nach:';
     R.showNatBreadcrumb = isRegion;
     const natNames = S.selected.filter(avail).map(id => this.byId[id].name);
     // Einzige sichtbare Verbindung der zwei Ebenen — bewusst als echter Anker gestaltet, nicht als blasse Microcopy.
@@ -1614,17 +1619,52 @@ class Component extends DCLogic {
       R.cellKindLabel = isRegion ? 'Rasterzelle' : 'Landkreis';
       R.cellConsensusScopeLabel = isRegion ? 'Zubaukonsens dieser Zelle in der Region' : 'Budget dieser Region';
 
-      // Popover an der Zelle: primärer, prominenter Einstieg in die Regionsansicht dieses
-      // Landkreises (§M) — bleibt verankert, solange die Zelle ausgewählt ist.
+      // Popover an der Zelle: kompakter Chip mit Zeiger, der aus der Zelle „herauswächst" — seitlich
+      // platziert (bevorzugt eine freie Nachbarrichtung des Sechsecks), nie über der Zelle selbst (§M).
       if (!isRegion) {
-        const popW = 236, popH = 50, b = this.krsBounds, gap = 10;
-        let px = c.cx - popW / 2;
+        const b = this.krsBounds, w = this.hexW, hs = this.hexSize;
+        const DIRVEC = { E: [w, 0], W: [-w, 0], NE: [w/2, -1.5*hs], NW: [-w/2, -1.5*hs], SE: [w/2, 1.5*hs], SW: [-w/2, 1.5*hs] };
+        const neighborsOf = (r, cc) => {
+          const even = r % 2 === 0;
+          return {
+            E: [r, cc + 1], W: [r, cc - 1],
+            NE: even ? [r - 1, cc] : [r - 1, cc + 1],
+            NW: even ? [r - 1, cc - 1] : [r - 1, cc],
+            SE: even ? [r + 1, cc] : [r + 1, cc + 1],
+            SW: even ? [r + 1, cc - 1] : [r + 1, cc]
+          };
+        };
+        const idSet = this._krsIdSet || (this._krsIdSet = new Set(this.krs.map(k => k.id)));
+        const neigh = neighborsOf(c.row, c.col);
+        // „daneben, nicht darüber": seitliche Richtungen zuerst, oben/unten nur falls nötig
+        const prefOrder = ['E', 'W', 'NE', 'NW', 'SE', 'SW'];
+        let dir = prefOrder.find(d => !idSet.has(neigh[d][0] + '-' + neigh[d][1]));
+        if (!dir) {
+          // Ringsum belegte Zelle (Kartenmitte): Richtung mit dem meisten Abstand zum Kartenrand wählen
+          const midx = (b.minx + b.maxx) / 2, midy = (b.miny + b.maxy) / 2;
+          const ox = c.cx - midx, oy = c.cy - midy;
+          dir = prefOrder.reduce((best, d) => {
+            const [dx, dy] = DIRVEC[d], score = dx * ox + dy * oy;
+            return (!best || score > best.score) ? { d, score } : best;
+          }, null).d;
+        }
+        const [vx, vy] = DIRVEC[dir];
+        const ux = vx / w, uy = vy / w;
+        const popW = 160, popH = 54, tailGap = 7;
+        const ax = c.cx + ux * (hs + tailGap), ay = c.cy + uy * (hs + tailGap);
+        const growRight = ux >= 0;
+        let px = growRight ? ax : ax - popW;
+        let py = ay - popH / 2;
         px = Math.max(b.minx + 4, Math.min(b.maxx - popW - 4, px));
-        let py = c.cy - this.hexSize - popH - gap;
-        if (py < b.miny + 4) py = c.cy + this.hexSize + gap;
+        py = Math.max(b.miny + 4, Math.min(b.maxy - popH - 4, py));
+        const tailY = Math.max(14, Math.min(popH - 14, ay - py));
         R.showCellPopover = true;
         R.cellPopoverX = px; R.cellPopoverY = py; R.cellPopoverW = popW; R.cellPopoverH = popH;
-        R.cellPopoverLabel = 'Landkreis ' + c.label + ' im Detail auswerten →';
+        R.cellPopoverLine1 = 'Landkreis ' + c.label;
+        R.cellPopoverLine2 = 'im Detail auswerten →';
+        R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
+          ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
+          : 'right:-5px;border-right:1px solid #b9d9cd;border-top:1px solid #b9d9cd');
         R.evaluateRegionPopover = () => this.enterRegion(c.id, 'Landkreis ' + c.label);
       } else R.showCellPopover = false;
       R.cellLabel = c.label; R.cellTyp = c.typ;
