@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:#eceef0;color:#1b2126;-webkit-font-smoothing:antialiased}
+  a{color:#0b6b5a;text-decoration:none}
+  a:hover{color:#08564a}
+  ::selection{background:#c9e7df}
+  .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+  input,button{font-family:inherit}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#c7ccd1;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#1f2731;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  @keyframes fadeOutHint{from{opacity:1}to{opacity:0}}
+  @keyframes pulseSwatch{0%,100%{box-shadow:0 0 0 0 rgba(47,102,144,0)}50%{box-shadow:0 0 0 5px rgba(47,102,144,.28)}}
+  .scroll::-webkit-scrollbar{width:9px}
+  .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
+  .hx{transition:opacity .15s}
+</style>
+</helmet>
+<template id="__bundler_thumbnail" data-bg-color="#1a2027">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#1a2027"></rect>
+    <g transform="translate(600 380)">
+      <polygon points="0,-150 130,-75 130,75 0,150 -130,75 -130,-75" fill="#2f6690"></polygon>
+      <polygon points="0,-92 80,-46 80,46 0,92 -80,46 -80,-46" fill="#57c4ab"></polygon>
+    </g>
+    <text x="600" y="640" font-family="'IBM Plex Sans',sans-serif" font-size="76" font-weight="700" fill="#ffffff" text-anchor="middle">EEquity<tspan fill="#57c4ab">Map</tspan></text>
+  </svg>
+</template>
+<div style="display:flex;flex-direction:column;height:100vh;min-height:0;background:#eceef0">
+
+  <!-- HEADER -->
+  <header style="display:flex;align-items:center;gap:16px;height:54px;padding:0 20px;background:#1a2027;color:#fff;flex:none;z-index:20">
+    <div style="display:flex;align-items:baseline;gap:9px">
+      <span style="font-weight:700;font-size:17px;letter-spacing:-.2px">EEquity<span style="color:#57c4ab">Map</span></span>
+      <span style="font-size:14px;color:#8b98a5;font-weight:500">Wo wäre der Ausbau fair?</span>
+    </div>
+    <button onClick="{{ reopenIntro }}" style="background:none;border:1px solid #39434e;color:#c7d0d9;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer">Was ist das?</button>
+    <div style="flex:1"></div>
+    <div style="display:flex;background:#11161c;border-radius:7px;padding:3px;gap:2px">
+      <button onClick="{{ setBasic }}" style="{{ modeBasicStyle }}">Basic</button>
+      <button onClick="{{ setErweitert }}" style="{{ modeExtStyle }}">Erweitert</button>
+    </div>
+  </header>
+
+  <div style="display:flex;flex:1;min-height:0">
+
+    <!-- ============ LEFT COLUMN ============ -->
+    <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 40px">
+      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126">GERECHTIGKEITSPRINZIPIEN</div>
+      <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
+
+      <sc-if value="{{ trioHint }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ trioHintStyle }}">Dieser Konsens beruht auf drei Prinzipien. Ändern Sie die Auswahl, um zu sehen, wie er sich verschiebt.</div>
+      </sc-if>
+
+      <sc-for list="{{ princList }}" as="p" hint-placeholder-count="4">
+        <div style="margin-bottom:2px">
+          <div onClick="{{ p.onToggle }}" style="{{ p.rowStyle }}">
+            <span style="{{ p.swatchStyle }}"></span>
+            <div style="flex:1;min-width:0">
+              <div style="line-height:1.3">{{ p.name }}</div>
+              <div style="{{ p.tagStyle }}">{{ p.tag }}</div>
+            </div>
+            <span onClick="{{ p.onInfo }}" style="{{ p.infoBtnStyle }}">i</span>
+          </div>
+          <div style="{{ p.infoStyle }}">{{ p.info }}</div>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleMore }}" style="margin-top:6px;background:none;border:none;color:#0b6b5a;font-size:14px;font-weight:600;cursor:pointer;padding:4px 9px">{{ moreLabel }}</button>
+      </sc-if>
+
+      <sc-if value="{{ showCTA }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #cfe4de;border-radius:8px">
+          <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
+          <button onClick="{{ addSecond }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:8px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Zweites Prinzip hinzufügen</button>
+        </div>
+      </sc-if>
+
+      <!-- SZENARIO -->
+      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126;margin:26px 0 12px">SZENARIO</div>
+
+      <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Technologie</div>
+      <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin-bottom:6px">
+        <button onClick="{{ setWind }}" style="{{ techWindStyle }}">Wind</button>
+        <button onClick="{{ setPV }}" style="{{ techPVStyle }}">Freiflächen-PV</button>
+      </div>
+      <sc-if value="{{ isPV }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px;color:#8a6d2a;background:#fbf6ec;border:1px solid #ecdcbd;padding:7px 9px;border-radius:6px;margin-bottom:14px;line-height:1.45">Bei PV unterscheiden sich die Gerechtigkeitsprinzipien nur geringfügig.</div>
+      </sc-if>
+
+      <div style="font-size:14px;color:#5b6672;margin:8px 0 6px">Ausbauziel</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <sc-for list="{{ targetBtns }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="margin:12px 0 4px">
+        <div style="position:relative;height:15px;margin-bottom:3px">
+          <sc-for list="{{ targetMarks }}" as="mk" hint-placeholder-count="3">
+            <div title="{{ mk.title }}" style="{{ mk.style }}">▲{{ mk.label }}</div>
+          </sc-for>
+        </div>
+        <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:#9aa4ad;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
+        <div style="font-size:14px;color:#33413c;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
+        <button onClick="{{ toggleAccount }}" style="{{ accountSwitchStyle }}"><span style="{{ accountKnobStyle }}"></span></button>
+        <span style="font-size:14px;color:#333c44;flex:1">Bestandsanlagen anrechnen</span>
+        <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic">i</span>
+      </div>
+      <div style="{{ accountInfoStyle }}">Bereits bestehende Anlagen zählen als getragene Last — Regionen mit viel Bestand erhalten weniger Neuzubau.</div>
+
+      <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px;color:#5b6672;margin:18px 0 6px">Granularität</div>
+        <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+          <sc-for list="{{ granBtns }}" as="g" hint-placeholder-count="3">
+            <button onClick="{{ g.onClick }}" style="{{ g.style }}">{{ g.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </aside>
+
+    <!-- ============ MIDDLE COLUMN ============ -->
+    <main class="scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 18px 12px;overflow-y:auto">
+      <!-- Ansichtsleiste -->
+      <div style="display:flex;align-items:center;gap:12px;background:#1f2731;border-radius:9px;padding:8px 12px;flex:none">
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ backToDE }}" style="display:flex;align-items:center;gap:5px;background:#57c4ab;color:#0c2a24;border:none;font-size:14px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">← Deutschland</button>
+        </sc-if>
+        <span style="font-size:14px;color:#e7ecf0;font-weight:500;white-space:nowrap">{{ ansichtLabel }}</span>
+        <div style="flex:1"></div>
+        <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="PLZ, Ort, Gemeinde oder Landkreis…" style="width:250px;background:#11161c;border:1px solid #333d47;color:#e7ecf0;font-size:14px;padding:6px 10px;border-radius:6px">
+      </div>
+
+      <!-- Kernaussage -->
+      <sc-if value="{{ kernaussage }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:12px 2px 10px;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
+      </sc-if>
+
+      <!-- Tab row (Stufe 2+) -->
+      <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
+          <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
+            <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- Single-View: Zurück zur Galerie + Kennzeichnung -->
+      <sc-if value="{{ isSingleView }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:12px;margin:0 2px 8px;flex-wrap:wrap;flex:none">
+          <button onClick="{{ backToGallery }}" style="background:#eef2f1;border:1px solid #cfd9d6;border-radius:7px;padding:5px 11px;font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">← Alle Prinzipien vergleichen</button>
+          <span style="font-size:14px;color:#8a929a;font-style:italic">Einzelverteilung eines Prinzips — nicht der Konsens.</span>
+        </div>
+      </sc-if>
+
+      <!-- Dauerhafte Erklärzeile je Tab -->
+      <sc-if value="{{ explainLine }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:14px;color:#5b6672;margin:0 2px 10px;line-height:1.4;display:flex;align-items:center;gap:8px;flex:none">
+          <span style="width:6px;height:6px;border-radius:50%;background:#57c4ab;flex:none"></span>{{ explainLine }}
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hintTwo }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-bottom:10px;animation:fadeUp .35s;flex:none">
+          <span style="font-size:14px;line-height:1.5;flex:1">Zwei Prinzipien gewählt — die Karte zeigt jetzt, wo beide übereinstimmen.</span>
+          <span onClick="{{ dismissHintTwo }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
+        </div>
+      </sc-if>
+
+      <!-- MAP AREA -->
+      <div style="flex:1;min-height:360px;display:flex;flex-direction:column">
+        <!-- Verteilungen / Galerie (Difference-first) -->
+        <sc-if value="{{ isVerteilungen }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ galleryColStyle }}">
+            <sc-if value="{{ galleryAll }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-bottom:12px">
+                
+                <div style="font-size: 16px; color: #1b2126; line-height: 1.4; font-weight: 600; text-wrap: pretty; padding-top: 16px">So unterschiedlich verteilen die Prinzipien den Ausbau — und wo sie sich einig sind.</div><div style="font-size:14px;color:#5b6672;margin-top:5px">Je eine Karte pro Prinzip · dunkel = viel empfohlener Zubau</div>
+              </div>
+            </sc-if>
+            <div style="{{ galleryGridStyle }}">
+              <sc-for list="{{ smallMaps }}" as="mp" hint-placeholder-count="4">
+                <div onClick="{{ mp.onClick }}" style="background:#f7f8f9;border:1px solid #e0e4e7;border-radius:10px;padding:12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" style-hover="border-color:#2f6690;box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)">
+                  <div style="display:flex;align-items:center;gap:7px">
+                    <span style="{{ mp.swatch }}"></span>
+                    <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1">{{ mp.name }}</span>
+                    <span style="{{ mp.tagStyle }}">{{ mp.tag }}</span>
+                  </div>
+                  <div style="font-size:14px;color:#44505a;margin-top:5px;line-height:1.45;max-width:38ch">{{ mp.explain }}</div>
+                  <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:132px;margin-top:10px">
+                    <sc-for list="{{ mp.cells }}" as="c" hint-placeholder-count="20">
+                      <polygon points="{{ c.pts }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></polygon>
+                    </sc-for>
+                  </svg>
+                  <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
+                    <span style="font-size:14px;color:#7a848c;flex:1" class="num">0,00 – {{ mp.max }} GW</span>
+                    <span style="font-size:14px;color:#8d99a3">Einzeln ansehen →</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ galleryAll }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ ctaWrapStyle }}">
+                <button onClick="{{ jumpToConsensus }}" style="background:#0b6b5a;color:#fff;border:none;padding:11px 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">Wo sind sich die Prinzipien einig? →</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- Single / consensus / minimum / schnittmengen / differenz / positiv map -->
+        <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px">
+            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
+              <defs>
+                <sc-for list="{{ patterns }}" as="pt" hint-placeholder-count="0">
+                  <pattern id="{{ pt.id }}" width="{{ pt.w }}" height="{{ pt.w }}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <sc-for list="{{ pt.bands }}" as="bd" hint-placeholder-count="2">
+                      <rect x="{{ bd.x }}" y="0" width="{{ bd.w }}" height="{{ pt.w }}" fill="{{ bd.color }}"></rect>
+                    </sc-for>
+                  </pattern>
+                </sc-for>
+              </defs>
+              <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
+                <polygon class="hx" points="{{ c.pts }}" fill="{{ c.fill }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" style="cursor:pointer" onClick="{{ c.onClick }}"></polygon>
+              </sc-for>
+              <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
+                <polygon points="{{ o.pts }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></polygon>
+              </sc-for>
+            </svg>
+
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- UpSet-Aufschlüsselung unter der Übereinstimmungen-Karte (nur Erweitert) -->
+      <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:none;margin-top:10px;border-top:1px solid #e2e5e8;padding-top:9px">
+          <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ upsetCaret }}</button>
+          <div style="{{ upsetBodyStyle }}">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:9px 0 8px">
+              <sc-for list="{{ upsetPrincipleNames }}" as="pn" hint-placeholder-count="2">
+                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#5b6672"><span style="width:11px;height:11px;border-radius:50%;background:{{ pn.color }}"></span>{{ pn.name }}</span>
+              </sc-for>
+              <span style="font-size:14px;color:#9aa4ad">Zellen je Kombination — absteigend. Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</span>
+            </div>
+            <div style="{{ upsetGridStyle }}">
+              <sc-for list="{{ upsetItems }}" as="u" hint-placeholder-count="6">
+                <div title="{{ u.title }}" style="{{ u.wrapStyle }}">
+                  <span class="num" style="{{ u.countStyle }}">{{ u.count }}</span>
+                  <div style="{{ u.barStyle }}"></div>
+                  <span style="{{ u.dotStyle }}"></span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- UNDER CARD -->
+      <div style="flex:none;margin-top:10px">
+        <!-- Legend + plan toggle -->
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;min-height:34px">
+          <!-- sequential legend -->
+          <sc-if value="{{ legendSeq }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:14px;color:#7a848c" class="num">0,00</span>
+              <div style="width:150px;height:11px;border-radius:3px;background:{{ legendGrad }}"></div>
+              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMax }} GW</span>
+              <span style="font-size:14px;color:#5b6672;margin-left:2px">{{ legendTitle }}</span>
+            </div>
+          </sc-if>
+          <!-- categorical legend -->
+          <sc-if value="{{ legendCat }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <span style="font-size:14px;color:#5b6672">Begrenzendes Prinzip:</span>
+              <sc-for list="{{ catItems }}" as="ci" hint-placeholder-count="2">
+                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:12px;height:12px;border-radius:3px;background:{{ ci.color }}"></span>{{ ci.name }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <!-- positiv: eine Deckungsachse -->
+          <sc-if value="{{ legendDeck }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="font-size:14px;color:#5b6672">Konsens über Planung</span>
+              <div style="width:150px;height:11px;border-radius:3px;background:{{ legendDeckGrad }}"></div>
+              <span style="font-size:14px;color:#5b6672">Planung über Konsens</span>
+              <span style="font-size:14px;color:#9aa4ad">· Mitte = deckt sich</span>
+            </div>
+          </sc-if>
+          <!-- schnittmengen legend -->
+          <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+              <span style="font-size:14px;color:#5b6672">empfohlen von:</span>
+              <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
+                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
+              </sc-for>
+              <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
+            </div>
+          </sc-if>
+          <!-- diverging legend -->
+          <sc-if value="{{ legendDiv }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px;color:#7a848c" class="num">−{{ divMax }} GW</span>
+                <div style="width:170px;height:11px;border-radius:3px;background:{{ divGrad }}"></div>
+                <span style="font-size:14px;color:#7a848c" class="num">+{{ divMax }} GW</span>
+              </div>
+              <span style="font-size:14px;color:#8a929a">{{ divCaption }}</span>
+            </div>
+          </sc-if>
+
+          <div style="flex:1"></div>
+
+          <sc-if value="{{ showPlan }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+              <sc-for list="{{ planBtns }}" as="pb" hint-placeholder-count="3">
+                <button onClick="{{ pb.onClick }}" style="{{ pb.style }}">{{ pb.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- compare + toggles row -->
+        <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #e2e5e8">
+            <sc-if value="{{ showCompare }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ compareActive }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px;background:#eef2f1;border:1px solid #cfd9d6;border-radius:7px;padding:5px 6px 5px 10px">
+                  <span style="font-size:14px;color:#33413c">Vergleich: {{ compareName }}</span>
+                  <button onClick="{{ clearCompare }}" style="background:none;border:none;color:#2f6690;font-size:14px;cursor:pointer;font-weight:600">aufheben</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ compareInactive }}" hint-placeholder-val="{{ true }}">
+                <div style="position:relative">
+                  <span style="font-size:14px;color:#5b6672;margin-right:8px">Wo unterscheiden sie sich?</span>
+                  <button onClick="{{ toggleCompareMenu }}" style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 11px;font-size:14px;color:#26303a;cursor:pointer;font-weight:500">Mit einer anderen Verteilung vergleichen ▾</button>
+                  <div style="{{ compareMenuStyle }}">
+                    <sc-for list="{{ compareOptions }}" as="co" hint-placeholder-count="4">
+                      <div onClick="{{ co.onClick }}" style="{{ co.rowStyle }}" style-hover="background:#eff3f2">{{ co.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            <div style="flex:1"></div>
+
+            <sc-if value="{{ showHideToggle }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button onClick="{{ toggleHide }}" style="{{ hideSwitchStyle }}"><span style="{{ hideKnobStyle }}"></span></button>
+                <span style="font-size:14px;color:#333c44">Konfliktflächen ausblenden</span>
+                <span style="font-size:14px;color:#9aa4ad">Nur Anzeige — ändert die Berechnung nicht.</span>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;margin-top:9px">
+            <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Daten herunterladen</button>
+            <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Methodik ansehen</button>
+          </div>
+        </sc-if>
+
+        <div style="font-size: 14px; color: #9aa4ad; line-height: 1.45; margin-top: 9px; width: 100%">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+      </div>
+    </main>
+
+    <!-- ============ RIGHT COLUMN ============ -->
+    <aside class="scroll" style="width:340px;flex:none;background:#fff;border-left:1px solid #dde1e5;overflow-y:auto;padding:18px 18px 40px">
+      <!-- OVERVIEW (no cell selected) -->
+      <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ ovScopeLabel }}</div>
+          <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
+
+          <div style="{{ ovLeadBoxStyle }}">
+            <div style="font-size:14px;color:#5b6672">{{ ovLeadLabel }}</div>
+            <div class="num" style="font-size: 34px; font-weight: 700; color: #2f6690; line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
+            <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ ovLeadSub }}</div>
+            <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:11px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
+                <div style="height:100%;width:{{ ovBarFill }};background:#2f6690;border-radius:5px"></div>
+              </div>
+              <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">{{ ovBarCaption }}</div>
+            </sc-if>
+          </div>
+
+          <!-- konsens & minimum: Was begrenzt den Konsens? -->
+          <sc-if value="{{ anBlockers }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px">
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Was begrenzt den Konsens?</div>
+              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Längerer Balken = begrenzt den Konsens stärker (mehr entgangener Zubau).</div>
+              <sc-for list="{{ blockers }}" as="b" hint-placeholder-count="2">
+                <div style="margin-bottom:11px">
+                  <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
+                    <span style="width:11px;height:11px;border-radius:3px;background:{{ b.color }};align-self:center"></span>
+                    <span style="color:#26303a;flex:1">{{ b.name }}</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">−{{ b.cost }} GW</span>
+                  </div>
+                  <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
+                  <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">begrenzend in {{ b.count }} Zellen</div>
+                </div>
+              </sc-for>
+              <div style="font-size:14px;color:#26303a;line-height:1.5;margin-top:12px;padding:11px 12px;background:#eef3f6;border:1px solid #dbe6ee;border-radius:8px;font-weight:500">{{ counterfactual }}</div>
+            </div>
+          </sc-if>
+
+          <!-- verteilungen: Summe je Prinzip -->
+          <sc-if value="{{ anSums }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px">
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Summe je Prinzip</div>
+              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips über alle Zellen.</div>
+              <sc-for list="{{ sumRows }}" as="s" hint-placeholder-count="2">
+                <div style="margin-bottom:11px">
+                  <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:4px">
+                    <span style="width:11px;height:11px;border-radius:3px;background:{{ s.color }}"></span>
+                    <span style="color:#26303a;flex:1">{{ s.name }}</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">{{ s.gw }} GW</span>
+                  </div>
+                  <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ s.w }};background:{{ s.color }};border-radius:4px"></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- positiv: Deckung -->
+          <sc-if value="{{ anCoverage }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
+              <div style="padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Von der Ausweisung trifft <b class="num" style="font-size:22px;color:#a85a17">{{ coverA }} %</b> den Konsens.</div>
+              <div style="padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ coverB }} %</b> ausgewiesen.</div>
+            </div>
+          </sc-if>
+
+          <!-- schnittmengen: Zellen je Kombination -->
+          <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px">
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:7px">Zellen je Prinzip-Kombination</div>
+              <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:11px;padding:10px 11px;background:#eef3f6;border-radius:8px">{{ comboSummary }}</div>
+              <sc-for list="{{ comboRows }}" as="cm" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:9px;font-size:14px;padding:6px 0;border-bottom:1px solid #eef1f2">
+                  <span style="width:18px;height:13px;border-radius:3px;flex:none;{{ cm.css }}"></span>
+                  <span style="color:#26303a;flex:1;line-height:1.3">{{ cm.label }}</span>
+                  <span class="num" style="color:#33413c;font-weight:600">{{ cm.count }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ comboMore }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ toggleCombos }}" style="margin-top:8px;background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ comboMoreLabel }}</button>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- differenz: größte Abweichungen -->
+          <sc-if value="{{ anDiff }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px">
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:11px">Größte Abweichungen</div>
+              <sc-for list="{{ diffRows }}" as="dr" hint-placeholder-count="4">
+                <div onClick="{{ dr.onClick }}" style="display:flex;align-items:flex-start;gap:9px;font-size:14px;padding:7px 0;border-bottom:1px solid #eef1f2;cursor:pointer" style-hover="background:#f6f8f9">
+                  <span style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ dr.color }};margin-top:3px"></span>
+                  <div style="flex:1">
+                    <div style="color:#26303a;font-weight:600">{{ dr.label }}</div>
+                    <div style="color:#5b6672;font-size:14px;margin-top:1px">{{ dr.gw }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ ovClickHint }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:#8a929a;margin-top:16px;line-height:1.5">Klicken Sie auf eine Zelle, um die Zahlen für diesen Ort zu sehen.</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- CELL DETAIL -->
+      <sc-if value="{{ showCell }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <div>
+              <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
+              <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">Rasterzelle {{ cellLabel }}</div>
+              <div style="font-size:14px;color:#5b6672;margin-top:2px">{{ cellTyp }}</div>
+            </div>
+            <button onClick="{{ clearCell }}" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none">×</button>
+          </div>
+          <button onClick="{{ evaluateRegion }}" style="margin-top:11px;width:100%;background:#eef3f6;border:1px solid #cdddea;color:#2f6690;font-size:14px;font-weight:600;padding:9px;border-radius:8px;cursor:pointer">Zelle auswerten</button>
+
+          <sc-if value="{{ cellShowConflictHint }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding:11px 12px;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;animation:fadeUp .3s">
+              <span style="font-size:14px;color:#6b5726;line-height:1.5;flex:1">{{ cellConflictHint }}</span>
+              <span onClick="{{ dismissConflictHint }}" style="cursor:pointer;color:#b09257;font-size:14px;line-height:1;padding:2px">×</span>
+            </div>
+          </sc-if>
+
+          <!-- Stufe 2+ : Neuzubau + Zubaukonsens als verschachtelter Balken -->
+          <sc-if value="{{ cellHasConsensus }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:14px">
+                <span style="color:#5b6672">Neuzubau dieser Zelle</span>
+                <span class="num" style="color:#26303a;font-weight:500">{{ cellNew }} GW</span>
+              </div>
+              <div style="font-size:14px;color:#5b6672;margin-top:11px">Zubaukonsens dieser Zelle</div>
+              <div class="num" style="font-size:28px;font-weight:600;color:#2f6690;line-height:1.1;margin-top:1px">{{ cellConsensus }} <span style="font-size:14px;color:#5b6672;font-weight:500">GW</span></div>
+              <div style="margin-top:10px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
+                <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:5px"></div>
+              </div>
+              <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">Zubaukonsens = der Anteil des Neuzubaus, den alle gewählten Prinzipien mittragen.</div>
+            </div>
+            <div style="margin-top:14px">
+              <div style="{{ cellBarsHeadStyle }}">Empfohlener Zubau je Prinzip</div>
+              <sc-for list="{{ cellBars }}" as="br" hint-placeholder-count="2">
+                <div style="margin-bottom:9px">
+                  <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:3px">
+                    <span style="width:10px;height:10px;border-radius:3px;background:{{ br.color }}"></span>
+                    <span style="color:#26303a;flex:1">{{ br.name }}</span>
+                    <span style="{{ br.tagStyle }}">{{ br.tag }}</span>
+                    <span class="num" style="color:#33413c">{{ br.gw }} GW</span>
+                  </div>
+                  <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ br.w }};background:{{ br.color }};border-radius:4px;opacity:{{ br.op }}"></div></div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ cellShowDiff }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;padding:11px 13px;background:#f5f7f7;border-radius:10px">
+                <div style="font-size:14px;color:#5b6672">Differenz dieser Zelle</div>
+                <div style="font-size:14px;font-weight:600;color:{{ cellDiffColor }};margin-top:2px">{{ cellDiffLine }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cellShowPos }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;padding:11px 13px;background:#f5f7f7;border-radius:10px;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Anteil ausgewiesen</span><span class="num" style="color:#26303a;font-weight:600">{{ cellAusgPct }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Zubaukonsens dieser Zelle</span><span class="num" style="color:#26303a;font-weight:600">{{ cellKonsGW }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Einordnung</span><span style="color:{{ cellDeckColor }};font-weight:600">{{ cellDeckWord }}</span></div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- Stufe 1 : empfohlener Zubau Leitzahl -->
+          <sc-if value="{{ cellStufe1 }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+              <div style="font-size:14px;color:#5b6672">Empfohlener Zubau ({{ cellPrincipleName }})</div>
+              <div class="num" style="font-size:28px;font-weight:600;color:{{ cellPrincipleColor }};line-height:1.1;margin-top:3px">{{ cellRecommend }} <span style="font-size:14px;color:#5b6672;font-weight:500">GW</span></div>
+              <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ cellSharePct }} des deutschen Zubaus</div>
+            </div>
+          </sc-if>
+
+          <div style="margin-top:15px;display:flex;flex-direction:column;gap:9px">
+            <sc-if value="{{ cellShowBestand }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Bestand</span><span style="color:#26303a;font-weight:500">{{ cellBestandCmp }}</span></div>
+              <div style="font-size:14px;color:#8a929a;line-height:1.45">{{ cellTrend }}</div>
+            </sc-if>
+          </div>
+
+          <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb">
+            <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px">Regionsprofil</div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Ausbau gesamt</span><span class="num" style="color:#26303a">{{ cellTotal }} GW</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} GW</span></div>
+            </div>
+          </div>
+
+          <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Rang deutschlandweit</span><span class="num" style="color:#26303a;font-weight:500">{{ cellRankNat }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
+                <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
+                <span class="num" style="color:#26303a">{{ cellGoalShare }}</span>
+              </div>
+              <div style="{{ goalInfoStyle }}">Wie viel diese Zelle zum Ausbauziel beiträgt — ihr Zubaukonsens geteilt durch das gesamte Ausbauziel.</div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;color:#b3bcc3"><span>Priorität / Reihenfolge</span><span>{{ cellPriority }}</span></div>
+              <div style="font-size:14px;color:#b3bcc3;line-height:1.4">Die Zubaureihenfolge wird noch nicht berechnet.</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </aside>
+  </div>
+
+  <!-- Intro-Overlay: Prämisse -->
+  <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div style="width:min(640px,94vw);background:#fff;border-radius:16px;padding:32px 36px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
+        <div style="font-size:24px;font-weight:700;color:#1b2126;letter-spacing:-.3px">Wo wäre der Ausbau fair?</div>
+        <p style="font-size:14px;line-height:1.65;color:#44505a;margin:14px 0 22px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
+        <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:10px">Dieselbe Aufgabe, verschiedene Antworten.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px">
+          <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
+            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:10px;padding:9px">
+              <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:104px">
+                <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
+                  <polygon points="{{ c.pts }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></polygon>
+                </sc-for>
+              </svg>
+              <div style="font-size:14px;color:#44505a;line-height:1.35;margin-top:7px">{{ im.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="font-size:14px;line-height:1.6;color:#44505a;margin:0 0 22px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
+        <button onClick="{{ closeIntro }}" style="background:#0b6b5a;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Verteilungen ansehen →</button>
+        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#0b6b5a;cursor:pointer;font-weight:500">Mehr dazu</span></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- "Was ist das?" panel -->
+  <sc-if value="{{ infoPanel }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleInfoPanel }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;justify-content:flex-start">
+      <div onClick="{{ stop }}" style="width:440px;height:100%;background:#fff;padding:30px 30px 40px;overflow-y:auto;box-shadow:2px 0 30px rgba(0,0,0,.2)" class="scroll">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <span style="font-weight:700;font-size:18px">Was ist EEquityMap?</span>
+          <button onClick="{{ toggleInfoPanel }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
+        </div>
+        <div style="font-size:14px;line-height:1.65;color:#333c44">
+          <p style="margin:0 0 16px">Der Ausbau erneuerbarer Energien muss irgendwo stattfinden. Die Frage ist nicht nur, wo er technisch möglich ist, sondern wo er als <b>fair</b> gilt — und darüber gehen die Meinungen auseinander.</p>
+          <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Gerechtigkeitsprinzip</div>
+          <p style="margin:0 0 16px">Ein Gerechtigkeitsprinzip ist eine Regel, nach der sich der Ausbau verteilen ließe — etwa nah am Verbrauch, fern der Bevölkerung oder nach dem besten Ertrag. Jede Vorstellung führt zu einer anderen Landkarte.</p>
+          <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Zubaukonsens</div>
+          <p style="margin:0 0 16px">Wählen Sie mehrere Prinzipien, zeigt die Karte den Zubau, den <b>alle</b> mittragen — je Fläche der jeweils niedrigste Vorschlag. So wird sichtbar, wie viel Ausbau von allen betrachteten Vorstellungen gemeinsam getragen würde.</p>
+          <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Beispiel</div>
+          <p style="margin:0 0 16px">In einer verbrauchsstarken Region empfiehlt das Prinzip <b>Verbrauchsnah</b> viel Ausbau, das Prinzip <b>Bevölkerungsnah</b> wenig — hier sind sich die Prinzipien uneinig. In einer Region, die beide hoch bewerten, entsteht Konsens.</p>
+          <div style="background:#f0f5f4;border-radius:10px;padding:14px 15px;font-size:14px;color:#33413c;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Enlarged distribution overlay -->
+  <sc-if value="{{ zoom }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeZoom }}" style="position:fixed;inset:0;background:rgba(20,25,30,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:20px 22px;width:min(760px,90vw)">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+          <span style="width:14px;height:14px;border-radius:4px;background:{{ zoomColor }}"></span>
+          <span style="font-size:16px;font-weight:600">{{ zoomName }}</span>
+          <div style="flex:1"></div>
+          <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
+        </div>
+        <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:min(60vh,520px)">
+          <sc-for list="{{ zoomCells }}" as="c" hint-placeholder-count="60">
+            <polygon points="{{ c.pts }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1.2"></polygon>
+          </sc-for>
+        </svg>
+        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau je Zelle · 0,00 – {{ zoomMax }} GW</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    mode: 'basic',
+    selected: [],
+    committed: false,
+    tech: 'wind',
+    targetKey: 'z2035',
+    targetGW: 160,
+    account: false,
+    accountInfo: false,
+    gran: '10km',
+    tab: 'konsens',
+    plan: 'zubau',
+    compare: null,
+    compareMenu: false,
+    cell: null,
+    hideConflict: false,
+    region: null,
+    search: '',
+    hintTwo: false, seenTwo: false,
+    hintOppo: false, seenOppo: false,
+    intro: true,
+    showMore: false,
+    infoPanel: false,
+    infoPrinc: null,
+    zoom: null,
+    freeTarget: false,
+    revealP: 1,
+    refs: [],
+    infoRef: null
+  };
+
+  refDist(rid) { const r = this.refById[rid]; const raw = this.cells.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
+
+  startReveal() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const t0 = clock(), dur = 550;
+    const step = () => {
+      const p = Math.min(1, (clock() - t0) / dur);
+      this.setState({ revealP: p });
+      if (p < 1) this._raf = requestAnimationFrame(step);
+    };
+    this.setState({ revealP: 0 });
+    this._raf = requestAnimationFrame(step);
+  }
+
+  constructor(props) {
+    super(props);
+    this.targets = { z2030: 115, z2035: 160, z2045: 215 };
+    this.targetLabels = { z2030: 'Ziel 2030', z2035: 'Ziel 2035', z2045: 'Ziel 2045' };
+    this.marks = [{ y: '2030', gw: 115 }, { y: '2035', gw: 160 }, { y: '2045', gw: 215 }];
+    this.principles = [
+      { id: 'verbrauchsnah', name: 'Verbrauchsnah', color: '#D55E00', basic: true, available: true, info: 'Der Zubau folgt dem Stromverbrauch. Regionen mit hoher Nachfrage erhalten mehr Zubau, um Netztransporte zu verringern.', explain: 'Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird — dunkle Zellen bekommen mehr.' },
+      { id: 'bevoelkerungsnah', name: 'Bevölkerungsnah', color: '#0072B2', basic: true, available: true, info: 'Der Zubau folgt der Bevölkerungsdichte. Wer den Strom nutzt, trägt die Anlagen auch in der eigenen Nähe.', explain: 'Bevölkerungsnah verteilt den Ausbau dorthin, wo mehr Menschen wohnen — dunkle Zellen bekommen mehr.' },
+      { id: 'bevoelkerungsfern', name: 'Bevölkerungsfern', color: '#009E73', basic: true, available: true, info: 'Der Zubau meidet dicht besiedelte Räume. Anlagen entstehen bevorzugt dort, wo wenige Menschen betroffen sind.', explain: 'Bevölkerungsfern verteilt den Ausbau in dünn besiedelte Regionen — dunkle Zellen bekommen mehr.' },
+      { id: 'oekonomisch', name: 'Ökonomisch optimiert', color: '#E69F00', basic: true, available: true, info: 'Der Zubau folgt dem besten Ertrag. Windhöffige Lagen im Norden werden zuerst genutzt.', explain: 'Ökonomisch optimiert verteilt den Ausbau dorthin, wo er am günstigsten ist — dunkle Zellen bekommen mehr.' },
+      { id: 'flaeche_gesamt', name: 'Gleicher Anteil an Gesamtfläche', color: '#CC79A7', basic: true, available: true, info: 'Jede Region trägt denselben Anteil je Fläche. Große Regionen erhalten mehr, unabhängig von Ertrag oder Verbrauch.', explain: 'Gleicher Anteil an Gesamtfläche verteilt den Ausbau proportional zur Fläche — größere Zellen bekommen mehr.' },
+      { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche — dunkle Zellen bekommen mehr.' },
+      { id: 'infrastrukturnah', name: 'Infrastrukturnah', basic: false, available: false },
+      { id: 'bruttowert', name: 'Bruttowertschöpfungssensitiv', basic: false, available: false },
+      { id: 'einkommen', name: 'Einkommenssensitiv', basic: false, available: false },
+      { id: 'kommunal', name: 'Vorrang für kommunale Flächen', basic: false, available: false }
+    ];
+    this.CONS = '#2f6690';      // Konsens-Skala (Steel Blue) — getrennt von Prinzip- und Markenfarbe
+    this.CONFLICT = '#c2185b';  // Konfliktflächen — eigene, von Prinzipfarben klar unterscheidbare Kodierung
+    // Externe Referenzverteilungen — keine Gerechtigkeitsprinzipien, sondern vorgegebene Vergleichswerte.
+    // Werden nie in den Konsens gerechnet; erscheinen als zusätzliche blaue Verteilungskarten.
+    this.references = [
+      { id: 'ref_historisch', name: 'Historischer Ausbau', info: 'So wurde bisher real gebaut — die heutige Verteilung des Bestands.', field: c => Math.max(0.05, 0.6*c.y + 0.4*c.x + 0.15*c.noise) },
+      { id: 'ref_kosten', name: 'Günstigster Ausbau', info: 'So sähe der wirtschaftlich optimale Ausbau aus — bester Ertrag zuerst.', field: c => 12 + 70*c.y + 28*(1-c.density) },
+      { id: 'ref_potenzial', name: 'Potenzialflächen', info: 'Verfügbare Potenzialfläche — wo technisch am meisten Platz ist.', field: c => c.potential }
+    ];
+    this.refById = {}; this.references.forEach(r => this.refById[r.id] = r);
+    this.byId = {};
+    this.principles.forEach(p => this.byId[p.id] = p);
+    this.places = [
+      { q: ['ravensburg', '88213', 'oberschwaben'], label: 'Landkreis Ravensburg', level: 'landkreis', center: [6, 10] },
+      { q: ['münchen', 'muenchen', 'munich', '80331'], label: 'München', level: 'gemeinde', center: [6, 9] },
+      { q: ['berlin', '10115'], label: 'Berlin', level: 'gemeinde', center: [7, 3] },
+      { q: ['hamburg', '20095'], label: 'Hamburg', level: 'gemeinde', center: [4, 1] },
+      { q: ['köln', 'koeln', 'cologne', '50667'], label: 'Köln', level: 'gemeinde', center: [1, 5] },
+      { q: ['leipzig', '04109'], label: 'Leipzig', level: 'gemeinde', center: [6, 5] }
+    ];
+    this.buildCells();
+  }
+
+  buildCells() {
+    const rows = [[3,3],[2,5],[2,7],[0,8],[0,8],[0,8],[0,8],[1,7],[1,8],[2,7],[3,5],[4,3]];
+    const maxRow = rows.length - 1, maxCol = 8, size = 26;
+    const w = Math.sqrt(3) * size, pad = 16;
+    const cities = [[4,1],[3,2],[3,3],[7,3],[1,4],[1,5],[3,5],[6,5],[5,7],[3,7],[6,9]];
+    const frac = v => { const r = Math.sin(v) * 43758.5453; return r - Math.floor(r); };
+    const cells = [];
+    let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9;
+    rows.forEach((rd, row) => {
+      const [start, count] = rd;
+      for (let k = 0; k < count; k++) {
+        const col = start + k;
+        const cx = pad + w * col + (row % 2) * (w / 2) + w / 2;
+        const cy = pad + 1.5 * size * row + size;
+        let pts = [];
+        for (let i = 0; i < 6; i++) { const a = Math.PI / 180 * (60 * i - 90); pts.push((cx + size * Math.cos(a)).toFixed(1) + ',' + (cy + size * Math.sin(a)).toFixed(1)); }
+        minx = Math.min(minx, cx - w / 2); maxx = Math.max(maxx, cx + w / 2);
+        miny = Math.min(miny, cy - size); maxy = Math.max(maxy, cy + size);
+        let dens = 0;
+        cities.forEach(ct => { const dc = col - ct[0], dr = row - ct[1]; dens += Math.exp(-(dc*dc + dr*dr) / (2 * 1.55 * 1.55)); });
+        const x = col / maxCol, y = 1 - row / maxRow;
+        cells.push({
+          id: row + '-' + col, row, col, cx, cy, pts: pts.join(' '),
+          label: (col + 1) + '·' + (row + 1),
+          x, y, density: dens,
+          noise: frac(col * 12.9898 + row * 78.233) * 2 - 1,
+          potential: 0.45 + 0.95 * frac(col * 3.17 + row * 7.71 + 1.3),
+          posPlan: 0.3 + 0.9 * frac(col * 5.31 + row * 2.91 + 4.1),
+          // Anteil der Zellfläche, der offiziell als Windgebiet ausgewiesen ist (0–1)
+          ausgAnteil: Math.min(1, Math.max(0, 0.04 + 0.62 * frac(col * 9.71 + row * 4.37 + 2.9))),
+          bestRaw: 0
+        });
+      }
+    });
+    // normalize density
+    const dmax = Math.max(...cells.map(c => c.density));
+    cells.forEach(c => c.density = c.density / dmax);
+    // Bestand pattern: north & east
+    let bsum = 0, bmax = 0;
+    cells.forEach(c => { c.bestRaw = Math.max(0.05, 0.6 * c.y + 0.4 * c.x + 0.15 * c.noise); bsum += c.bestRaw; bmax = Math.max(bmax, c.bestRaw); });
+    cells.forEach(c => { c.bestandGW = 62 * c.bestRaw / bsum; c.bestFrac = c.bestRaw / bmax; });
+    // gemeindetyp
+    cells.forEach(c => { c.typ = c.density > 0.55 ? 'Verdichteter Raum' : c.density > 0.3 ? 'Städtischer Raum' : c.density > 0.12 ? 'Ländlicher Raum' : 'Dünn besiedelter Raum'; });
+    this.hexSize = size; this.hexW = w;
+    this.cells = cells;
+    this.vb = minx.toFixed(0) + ' ' + miny.toFixed(0) + ' ' + (maxx - minx).toFixed(0) + ' ' + (maxy - miny).toFixed(0);
+  }
+
+  // ---- helpers ----
+  fmt(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
+  pct(n, d) { return (n * 100).toFixed(d == null ? 1 : d).replace('.', ',') + ' %'; }
+  hx(h) { h = h.replace('#', ''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+  mix(a, b, t) { const A = this.hx(a), B = this.hx(b); t = Math.max(0, Math.min(1, t)); return 'rgb(' + A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',') + ')'; }
+  seq(t, hex) { return this.mix('#eef1f0', hex, 0.10 + 0.85 * t); }
+  div(t) { return t >= 0 ? this.mix('#f3f2ec', '#0f6b5c', t) : this.mix('#f3f2ec', '#8a5a12', -t); }
+  // Deckung Planung/Konsens: warm = Planung über Konsens, kühl = Konsens über Planung, Mitte hell
+  deckColor(t) { t = Math.max(-1, Math.min(1, t)); return t >= 0 ? this.mix('#f2f1ee', '#a85a17', t) : this.mix('#f2f1ee', '#1d5f80', -t); }
+
+  baseS(c, pid) {
+    const x = c.x, y = c.y, d = c.density;
+    switch (pid) {
+      case 'verbrauchsnah': return 12 + 55 * (1 - x) + 45 * (1 - y);
+      case 'bevoelkerungsnah': return 8 + 100 * d;
+      case 'bevoelkerungsfern': return 10 + 60 * (1 - d) + 50 * (x * y);
+      case 'oekonomisch': return 12 + 70 * y + 28 * (1 - d);
+      case 'flaeche_gesamt': return 50;
+      case 'flaeche_potenzial': return 20 + 80 * c.potential;
+      default: return 40;
+    }
+  }
+  sharesFor(pid, S) {
+    let s = this.cells.map(c => Math.max(1, this.baseS(c, pid) + 5 * c.noise));
+    if (S.tech === 'pv') { const m = s.reduce((a,b)=>a+b,0) / s.length; s = s.map(v => m + 0.18 * (v - m)); }
+    if (S.account) s = s.map((v,i) => v * (1 - 0.6 * this.cells[i].bestFrac));
+    const sum = s.reduce((a,b)=>a+b,0);
+    return s.map(v => v / sum);
+  }
+
+  build() {
+    const S = this.state, cells = this.cells, N = cells.length, target = S.targetGW;
+    const avail = id => this.byId[id] && this.byId[id].available;
+    let sel = S.selected.filter(avail);
+    const isEmpty = sel.length === 0;
+    const stufe = sel.length;
+    const isExt = S.mode === 'erweitert';
+
+    const shareCache = {};
+    const shr = pid => shareCache[pid] || (shareCache[pid] = this.sharesFor(pid, S));
+    const gwArr = pid => shr(pid).map(a => a * target);
+    const gwSel = {}; sel.forEach(p => gwSel[p] = gwArr(p));
+
+    const consArr = set => cells.map((c,i) => Math.min(...set.map(p => gwArr(p)[i])));
+    const consCells = stufe >= 2 ? consArr(sel) : null;
+    const limiting = stufe >= 2 ? cells.map((c,i) => { let best = sel[0], bv = gwSel[sel[0]][i]; sel.forEach(p => { if (gwSel[p][i] < bv - 1e-9) { bv = gwSel[p][i]; best = p; } }); return best; }) : null;
+    const consTotal = consCells ? consCells.reduce((a,b)=>a+b,0) : 0;
+    const consWithout = pid => { const set = sel.filter(x => x !== pid); if (set.length <= 1) return target; return consArr(set).reduce((a,b)=>a+b,0); };
+
+    // scope (region)
+    const inScope = i => !S.region || S.region.ids.includes(cells[i].id);
+    const scopeIdx = cells.map((c,i)=>i).filter(inScope);
+
+    // effektiver Plan — Bestand/Zubau/Gesamt nur sinnvoll bei Bestandsanrechnung
+    const effPlan = S.account ? S.plan : 'zubau';
+
+    // Median je Prinzip → schwellenfreie "empfiehlt"-Definition (Schnittmengen)
+    const medOf = pid => { const a = gwArr(pid).slice().sort((x,y)=>x-y); const n = a.length; return n%2 ? a[(n-1)/2] : (a[n/2-1]+a[n/2])/2; };
+    const medians = {}; sel.forEach(p => medians[p] = medOf(p));
+    const recBy = i => sel.filter(p => gwArr(p)[i] > medians[p]);
+
+    // Konflikt schwellenfrei aus der Minimum-Regel: Konsens ≈ 0 gegenüber Zellmaximum
+    const maxSelGW = stufe >= 2 ? cells.map((c,i) => Math.max(...sel.map(p => gwSel[p][i]))) : null;
+    // Konfliktfläche: mindestens ein Prinzip lässt die Zelle deutlich fallen, obwohl ein anderes
+    // sie empfiehlt — gemessen am Verhältnis Konsens/höchster Empfehlung in derselben Zelle.
+    const CONFLICT_RATIO = 0.4;
+    const isConflict = stufe >= 2 ? cells.map((c,i) => maxSelGW[i] > 0 && consCells[i] / maxSelGW[i] < CONFLICT_RATIO) : cells.map(()=>false);
+
+    // ---------- MAP VIEW ----------
+    // Galerie (Difference-first) = Verteilungen-Tab. Im Erststart und wann immer der
+    // Verteilungen-Tab in der Explorationsphase aktiv ist, zeigt sie ALLE Prinzipien.
+    let view;
+    if (isEmpty) view = 'verteilungen';
+    else if (S.compare) view = 'differenz';
+    else if (S.tab === 'verteilungen') view = 'verteilungen';
+    else if (stufe === 1) view = 'single';
+    else if (S.tab === 'positiv') view = 'positiv';
+    else if (S.tab === 'schnittmengen') view = 'schnittmengen';
+    else if (S.tab === 'minimum') view = 'minimum';
+    else view = 'konsens';
+    // Galerie zeigt alle Prinzipien während der Exploration (≤1 gewählt), sonst die gewählten
+    const galleryAll = view === 'verteilungen' && stufe <= 1;
+
+    const R = {};
+    // Bei eingegrenztem Scope auf die Zelle/Region zoomen (Bounding-Box + Kontextrand)
+    if (S.region && S.region.ids && S.region.ids.length) {
+      const inR = cells.filter(c => S.region.ids.indexOf(c.id) >= 0);
+      const xs = inR.map(c => c.cx), ys = inR.map(c => c.cy);
+      const padX = 118, padY = 108;
+      const x0 = Math.min.apply(null, xs) - padX, x1 = Math.max.apply(null, xs) + padX;
+      const y0 = Math.min.apply(null, ys) - padY, y1 = Math.max.apply(null, ys) + padY;
+      R.vb = Math.round(x0) + ' ' + Math.round(y0) + ' ' + Math.round(x1-x0) + ' ' + Math.round(y1-y0);
+    } else R.vb = this.vb;
+    R.vbFull = this.vb;
+    R.patterns = [];
+    R.overlayCells = [];
+    R.hasOverlay = false;
+    R.isVerteilungen = view === 'verteilungen';
+    R.isSingleMap = !R.isVerteilungen && !isEmpty;
+    R.isEmpty = isEmpty;
+
+    const singlePid = sel[0] || this.principles[0].id;
+
+    if (isEmpty) {
+      // Null-Zustand: blasses Raster als Andeutung, keine Einfärbung
+      R.emptyCells = cells.map(c => ({ pts: c.pts }));
+    }
+    const planVal = i => effPlan === 'bestand' ? cells[i].bestandGW : effPlan === 'gesamt' ? cells[i].bestandGW + gwSel[singlePid][i] : gwSel[singlePid][i];
+
+    const compareVals = () => {
+      const c = S.compare;
+      if (!c) return cells.map(()=>0);
+      if (c.type === 'principle') return gwArr(c.id);
+      if (c.type === 'ref') return this.refDist(c.id);
+      const s = cells.map(x => x.posPlan), su = s.reduce((a,b)=>a+b,0); return s.map(v => v/su*target); // fallback
+    };
+
+    // Metrik für Konflikt-Ausblenden + Reveal-Animation
+    let metric;
+    if (isEmpty) metric = cells.map(()=>0);
+    else if (view === 'single') metric = cells.map((c,i)=>planVal(i));
+    else metric = consCells || cells.map((c,i)=>planVal(i));
+
+    // Reveal-Animation: Zellen leuchten in absteigender Konsens-Reihenfolge auf
+    const revealP = (S.revealP == null ? 1 : S.revealP);
+    const doReveal = revealP < 1 && (view === 'single' || view === 'konsens');
+    const rankFrac = cells.map(()=>0);
+    if (doReveal) { metric.map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v).forEach((o,rk)=> rankFrac[o.idx] = rk / N); }
+
+    const mkCell = (i, fill, opts) => {
+      opts = opts || {};
+      let op = 1;
+      if (S.region && !inScope(i)) op = 0.12;
+      else if (opts.hidden) op = 0.06;
+      else if (doReveal && rankFrac[i] > revealP) op = 0.08;
+      const selc = S.cell === cells[i].id;
+      let stroke = selc ? '#12181d' : '#ffffff', sw = selc ? 2.4 : 1, dash = '0';
+      if (!selc && opts.conflict) { stroke = this.CONFLICT; sw = 1.6; dash = '3,2'; }
+      return { pts: cells[i].pts, fill, stroke, sw, dash, op, onClick: () => this.selectCell(cells[i].id) };
+    };
+
+    if (view === 'single') {
+      const mx = Math.max(...cells.map((c,i)=>planVal(i)));
+      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? planVal(i)/mx : 0, this.byId[singlePid].color)));
+      R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
+      R.legendMax = this.fmt(mx); R.legendTitle = 'Empfohlener Zubau';
+      R.showPlan = true;
+    } else if (view === 'konsens') {
+      const mx = Math.max(...consCells);
+      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? consCells[i]/mx : 0, this.CONS), { hidden: S.hideConflict && isConflict[i] }));
+      R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
+      R.legendMax = this.fmt(mx); R.legendTitle = 'Zubaukonsens je Zelle';
+      R.showPlan = false;
+    } else if (view === 'minimum') {
+      R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
+      R.legendCat = true;
+      R.catItems = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color }));
+      R.showPlan = false;
+    } else if (view === 'schnittmengen') {
+      const combos = {}, fill = [];
+      cells.forEach((c,i) => {
+        const rec = recBy(i);
+        if (rec.length === 0) { fill[i] = '#e4e8eb'; return; }
+        if (rec.length === 1) { fill[i] = this.byId[rec[0]].color; return; }
+        const key = 'sm_' + rec.join('_');
+        if (!combos[key]) { const cols = rec.map(p => this.byId[p].color), bw = 7; combos[key] = { id: key, w: cols.length*bw, bands: cols.map((col,ix)=>({ x: ix*bw, w: bw, color: col })) }; }
+        fill[i] = 'url(#' + key + ')';
+      });
+      R.patterns = Object.values(combos);
+      R.mainCells = cells.map((c,i) => mkCell(i, fill[i], { hidden: S.hideConflict && isConflict[i] }));
+      // Legende: nur Einzelfarben je Prinzip (Kombinationen bleiben auf der Karte, nicht in der Legende)
+      R.legendSchnitt = true;
+      R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color }));
+      R.schnittNote = 'Gestreifte Flächen: mehrere Prinzipien empfehlen dieselbe Fläche.';
+      // UpSet-Aufschlüsselung (nur Erweitert)
+      // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
+      if (isExt && stufe >= 3) {
+        const combo = {};
+        cells.forEach((c,i) => {
+          const rec = recBy(i); if (!rec.length) return;
+          const key = rec.join('|');
+          if (!combo[key]) combo[key] = { rec, n: 0, gw: 0 };
+          combo[key].n++; combo[key].gw += consCells[i];
+        });
+        // 0-Zellen-Kombinationen entfallen; Top 8, Rest als eine Sammelspalte
+        const all = Object.values(combo).filter(r => r.n > 0).sort((a,b)=>b.n-a.n);
+        const TOP = 8;
+        const rows = all.slice(0, TOP);
+        const restRows = all.slice(TOP);
+        const restN = restRows.reduce((a,r)=>a+r.n, 0);
+        const nmax = Math.max.apply(null, rows.map(r=>r.n).concat([1]));
+        // Spaltenweise flache Liste (ein sc-for, kein Nesting): je Kombination 1 Balken + n Punkte
+        const items = [];
+        const pushCol = (title, n, dots) => {
+          items.push({ title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#2f6690;border-radius:3px 3px 0 0',
+            wrapStyle: 'display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:96px', dotStyle: 'display:none', countStyle: 'font-size:14px;color:#33413c;font-weight:600' });
+          dots.forEach(d => items.push({ title, count: '', barStyle: 'display:none', countStyle: 'display:none',
+            wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
+        };
+        rows.forEach(r => pushCol(
+          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' Zellen · ' + this.fmt(r.gw) + ' GW Zubaukonsens',
+          r.n,
+          sel.map(p => 'width:13px;height:13px;border-radius:50%;background:' + (r.rec.indexOf(p) >= 0 ? this.byId[p].color : '#dfe4e7'))
+        ));
+        if (restRows.length) pushCol('+ ' + restRows.length + ' weitere Kombinationen · ' + restN + ' Zellen', restN,
+          sel.map(() => 'width:13px;height:13px;border-radius:50%;background:repeating-linear-gradient(45deg,#c3ccd3 0 3px,#e8ecef 3px 6px)'));
+        R.upsetItems = items;
+        R.upsetRestNote = restRows.length ? 'Letzte Spalte: + ' + restRows.length + ' weitere Kombinationen zusammengefasst.' : '';
+        // volle Containerbreite, Punktmatrix direkt unter den Balken und mit ihnen ausgerichtet
+        R.upsetGridStyle = 'display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-rows:96px repeat(' + sel.length + ',21px);gap:6px 10px;width:100%;padding-bottom:4px';
+        R.upsetPrincipleNames = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color }));
+        R.showUpset = true;
+        R.upsetOpen = S.upsetOpen !== false;
+        R.toggleUpset = () => this.setState({ upsetOpen: !(S.upsetOpen !== false) });
+        R.upsetCaret = R.upsetOpen ? 'Aufschlüsselung ausblenden' : 'Aufschlüsselung anzeigen';
+        R.upsetBodyStyle = R.upsetOpen ? 'display:block' : 'display:none';
+      }
+      R.showPlan = false;
+    } else if (view === 'positiv') {
+      // EINE abgeleitete Größe: Deckung von Planung und Konsens je Zelle.
+      // deck = normierter Ausweisungsanteil − normierter Zubaukonsens  (−1 … +1)
+      const base = consCells || cells.map((c,i)=>gwSel[singlePid][i]);
+      const mx = Math.max.apply(null, base) || 1;
+      const amx = Math.max.apply(null, cells.map(c => c.ausgAnteil)) || 1;
+      const deck = cells.map((c,i) => (c.ausgAnteil / amx) - (base[i] / mx));
+      R.deckVals = deck;
+      R.mainCells = cells.map((c,i) => mkCell(i, this.deckColor(deck[i]), { hidden: S.hideConflict && isConflict[i] }));
+      R.overlayCells = []; R.hasOverlay = false;
+      R.legendDeck = true;
+      R.legendDeckGrad = 'linear-gradient(90deg,' + this.deckColor(-1) + ',' + this.deckColor(0) + ',' + this.deckColor(1) + ')';
+      // Zwei Richtungen desselben Verhältnisses (Flächenanteile)
+      let ausgImKonsens = 0, ausgTot = 0, konsAusg = 0, konsTot = 0;
+      cells.forEach((c,i) => {
+        const imKonsens = !isConflict[i] && base[i] > 0.35 * mx;
+        ausgTot += c.ausgAnteil;
+        if (imKonsens) { ausgImKonsens += c.ausgAnteil; konsTot += base[i]; konsAusg += base[i] * c.ausgAnteil; }
+      });
+      R.posKennzahl = ausgTot ? Math.round(ausgImKonsens/ausgTot*100) : 0;
+      R.posKennzahl2 = konsTot ? Math.round(konsAusg/konsTot*100) : 0;
+      R.showPlan = false;
+    } else if (view === 'differenz') {
+      const base = stufe >= 2 ? consCells : gwSel[singlePid];
+      const cmp = compareVals();
+      const diffs = cells.map((c,i) => base[i] - cmp[i]);
+      const mxa = Math.max(...diffs.map(Math.abs)) || 1;
+      R.mainCells = cells.map((c,i) => mkCell(i, this.div(diffs[i]/mxa)));
+      R.legendDiv = true;
+      R.divGrad = 'linear-gradient(90deg,' + this.div(-1) + ',' + this.div(0) + ',' + this.div(1) + ')';
+      R.divMax = this.fmt(mxa);
+      const baseName = stufe >= 2 ? 'Zubaukonsens' : this.byId[singlePid].name;
+      R.divCaption = 'mehr bei ' + S.compare.label + '  ·  mehr bei ' + baseName;
+      R.divExplain = 'Jede Zelle zeigt die Differenz: grün = ' + baseName + ' weist ihr mehr Zubau zu, braun = ' + S.compare.label + ' weist ihr mehr zu, blass = beide gleich. Je kräftiger, desto größer der Unterschied.';
+      R.showPlan = false;
+    }
+
+    // Verteilungen / Galerie small multiples
+    if (R.isVerteilungen) {
+      const galleryIds = galleryAll ? this.principles.filter(p => (isExt || p.basic) && p.available).map(p => p.id) : sel;
+      const shortExplain = { verbrauchsnah: 'dorthin, wo viel Strom verbraucht wird', bevoelkerungsnah: 'dorthin, wo mehr Menschen wohnen', bevoelkerungsfern: 'in dünn besiedelte Regionen', oekonomisch: 'dorthin, wo er am günstigsten ist', flaeche_gesamt: 'proportional zur Gesamtfläche', flaeche_potenzial: 'nach verfügbarer Potenzialfläche' };
+      R.smallMaps = galleryIds.map(p => {
+        const g = gwArr(p);
+        const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + g[i] : g[i]);
+        const mx = Math.max(...pv);
+        return {
+          name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
+          explain: this.byId[p].name + ': ' + (shortExplain[p] || 'so verteilt sich der Ausbau'),
+          swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
+          max: this.fmt(mx),
+          cells: cells.map((cc,i) => ({ pts: cc.pts, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
+          // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
+          onClick: galleryAll ? () => this.setState({ selected: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
+        };
+      });
+      R.showPlan = !galleryAll;
+      R.galleryAll = galleryAll;
+      // CTA blendet ~2,5 s nach Betreten der Galerie sanft ein
+      // Timer läuft erst, wenn das Modal geschlossen ist — nicht dahinter
+      if (galleryAll && !S.intro && !this._ctaTimer && !S.ctaReady) { this._ctaTimer = setTimeout(() => { this._ctaTimer = null; this.setState({ ctaReady: true }); }, 2500); }
+      // Einstieg: Headline + Legende + Galerie + CTA sind ein zusammenhängender Block oben;
+      // die Galerie wächst nicht in die leere Restfläche, der CTA bleibt an den Karten.
+      R.galleryColStyle = galleryAll
+        ? 'flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;overflow-y:auto'
+        : 'flex:1;min-height:0;display:flex;flex-direction:column';
+      R.galleryGridStyle = galleryAll
+        ? 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;align-content:start;flex:none'
+        : 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;flex:1;min-height:0;align-content:start;overflow-y:auto';
+      R.ctaWrapStyle = 'display:flex;justify-content:center;margin-top:28px;padding-bottom:4px;flex:none;transition:opacity .7s ease;opacity:' + (S.ctaReady ? '1' : '0') + ';pointer-events:' + (S.ctaReady ? 'auto' : 'none');
+      R.galleryHeadline = 'Jedes Gerechtigkeitsprinzip verteilt den Ausbau anders. Hier sehen Sie, wie — und wo sie sich einig sind.';
+    }
+    R.galleryAll = R.galleryAll || false;
+
+    // Dauerhafte Erklärzeile je Ansicht
+    R.explainLine = ({
+      empty: '',
+      single: (this.byId[singlePid].explain || 'Dunkel = viel empfohlener Zubau nach diesem Prinzip.'),
+      konsens: 'Dunkel = viel Zubau, den alle gewählten Prinzipien mittragen.',
+      minimum: 'Farbe = das Prinzip, das hier den Konsens begrenzt.',
+      verteilungen: 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Dunkel = viel.',
+      positiv: 'Wo Ausweisung und Konsens zusammengehen und wo nicht. Mitte = deckt sich.',
+      schnittmengen: 'Farbe = welche Prinzipien dieselbe Fläche empfehlen.',
+      differenz: 'Vergleich: der Konsens gegenüber der gewählten Referenzverteilung. Grün = mehr Konsens, Braun = mehr Referenz.'
+    })[view] || '';
+    if (galleryAll) R.explainLine = ''; // Galerie-Header trägt Titel + Legende bereits
+    R.currentView = view;
+    R.isSingleView = view === 'single';
+    R.showBackToGallery = view === 'single';
+    R.backToGallery = () => this.setState({ tab: 'verteilungen', compare: null, cell: null });
+
+    // ---------- STRINGS / STATE ----------
+    R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
+    R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
+    R.isErweitert = isExt;
+    R.isPV = S.tech === 'pv';
+    R.techWindStyle = this.segLight(S.tech === 'wind');
+    R.techPVStyle = this.segLight(S.tech === 'pv');
+    R.targetGW = S.targetGW;
+
+    R.hasMore = this.principles.some(p => (isExt || p.basic) && !p.available);
+    R.showMore = S.showMore;
+    R.toggleMore = () => this.setState({ showMore: !S.showMore });
+    R.moreLabel = S.showMore ? 'Weniger Prinzipien' : 'Mehr Prinzipien';
+    const cmpTargetId = (S.compare && S.compare.type === 'principle') ? S.compare.id : null;
+    R.princList = this.principles.filter(p => (isExt || p.basic) && (p.available || S.showMore)).map(p => {
+      const on = sel.includes(p.id);
+      const isCmpTarget = p.id === cmpTargetId;
+      const canClick = p.available && !isCmpTarget;
+      return {
+        name: p.name,
+        rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #2f6690;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#e6eef4' : '#eef4f2') : 'transparent') + ';color:' + (canClick ? '#26303a' : '#aab2b9') + ';border:1px solid ' + (on ? '#cbe0d9' : 'transparent'),
+        swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + (canClick ? (p.color || '#c4c9cd') : '#d5d9dc') + ';background:' + (on ? p.color : 'transparent'),
+        tag: isCmpTarget ? '(aktuell Vergleichsziel)' : (canClick ? '' : '(Metrik in Vorbereitung)'),
+        tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#aab2b9;font-style:italic;margin-top:2px',
+        info: p.info || '',
+        infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#8a929a;font-style:italic;cursor:pointer' : 'display:none',
+        infoStyle: (S.infoPrinc === p.id ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;padding:6px 10px 4px 32px',
+        onToggle: canClick ? () => this.toggleP(p.id) : () => {},
+        onInfo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ infoPrinc: S.infoPrinc === p.id ? null : p.id }); }
+      };
+    });
+
+    // Einmaliger Hinweis nach dem CTA-Einstieg: erklärt die Vorauswahl und was Ändern bewirkt
+    // Mount-Flag bleibt während der Ausblende-Transition true, damit das Fade sichtbar wird
+    R.trioHint = !!(S.trioHint || S.trioHintMounted);
+    R.trioHintStyle = 'font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px;'
+      + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
+    R.showCTA = stufe === 1;
+    R.hintOppo = S.hintOppo;
+
+    // Externe Referenzverteilungen (eigene Gruppe, klar abgesetzt)
+    R.refList = this.references.map(r => {
+      const on = S.refs.includes(r.id);
+      return {
+        name: r.name, info: r.info,
+        rowStyle: 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:pointer;background:' + (on ? '#eef3f6' : 'transparent') + ';color:#26303a;border:1px solid ' + (on ? '#cdddea' : 'transparent'),
+        swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + this.CONS + ';background:' + (on ? this.CONS : 'transparent'),
+        infoBtnStyle: 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#8a929a;font-style:italic;cursor:pointer',
+        infoStyle: (S.infoRef === r.id ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;padding:6px 10px 4px 32px',
+        onToggle: () => { const rf = S.refs.includes(r.id) ? S.refs.filter(x=>x!==r.id) : S.refs.concat(r.id); this.setState({ refs: rf }); },
+        onInfo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ infoRef: S.infoRef === r.id ? null : r.id }); }
+      };
+    });
+
+    R.targetBtns = Object.keys(this.targets).map(k => ({
+      label: this.targetLabels[k],
+      onClick: () => { this.setState({ targetKey: k, targetGW: this.targets[k], freeTarget: false }); this.startReveal(); },
+      style: this.chip(S.targetKey === k && !S.freeTarget)
+    }));
+    R.targetMarks = this.marks.map(m => ({ label: ' ' + m.y, title: m.gw + ' GW', style: 'position:absolute;left:' + ((m.gw - 60) / 200 * 100).toFixed(1) + '%;transform:translateX(-50%);font-size:14px;color:#8a929a;white-space:nowrap' }));
+    R.onSlider = e => { this.setState({ targetGW: +e.target.value, targetKey: null, freeTarget: true }); this.startReveal(); };
+    R.sliderResult = stufe >= 2 ? ('Bei ' + this.fmt(target) + ' GW liegen ' + this.fmt(consTotal) + ' GW im Konsens.') : ('Bei ' + this.fmt(target) + ' GW verteilt ' + this.byId[singlePid].name + ' den gesamten Zubau.');
+
+    R.accountSwitchStyle = this.switchStyle(S.account);
+    R.accountKnobStyle = this.knobStyle(S.account);
+    R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
+
+    R.granBtns = ['10km', 'gemeinde', 'landkreis'].map(g => ({
+      label: g === '10km' ? '5 × 5 km' : g === 'gemeinde' ? 'Gemeinde' : 'Landkreis',
+      onClick: () => this.setState({ gran: g }),
+      style: this.segLight(S.gran === g)
+    }));
+
+    // Ansichtsleiste
+    const granLbl = S.gran === '10km' ? '5 × 5 km Raster' : S.gran === 'gemeinde' ? 'Gemeinde' : 'Landkreis';
+    R.ansichtLabel = (S.region ? S.region.label : 'Deutschland') + ' · ' + granLbl;
+    R.region = !!S.region;
+    R.search = S.search;
+
+    // Kernaussage — ändert sich mit der aktiven Ansicht
+    if (view === 'empty') {
+      R.kernaussage = 'Wo wäre der Ausbau fair? Beginnen Sie mit einem Gerechtigkeitsprinzip.';
+    } else if (view === 'differenz') {
+      const bn = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
+      R.kernaussage = 'Wo unterscheiden sich ' + bn + ' und ' + S.compare.label + '?';
+    } else if (view === 'single') {
+      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmt(target) + ' GW so über Deutschland.';
+    } else if (view === 'minimum') {
+      R.kernaussage = 'In jeder Zelle sehen Sie, welches Prinzip den Konsens begrenzt.';
+    } else if (view === 'verteilungen') {
+      // Im Galerie-Einstieg trägt der Galerie-Kopf die Headline — hier keine zweite Zeile
+      R.kernaussage = galleryAll ? '' : 'So unterschiedlich verteilen die einzelnen Prinzipien den Ausbau.';
+    } else if (view === 'positiv') {
+      R.kernaussage = 'Wo deckt sich die offizielle Ausweisung mit dem Konsens?';
+    } else if (view === 'schnittmengen') {
+      R.kernaussage = 'Welche Prinzipien empfehlen jede Fläche?';
+    } else {
+      R.kernaussage = 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
+    }
+
+    // Tabs (erst ab 2 Prinzipien)
+    R.showTabs = stufe >= 2;
+    const tabDefs = [{ id: 'konsens', label: 'Zubaukonsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'schnittmengen', label: 'Übereinstimmungen' }];
+    tabDefs.push({ id: 'verteilungen', label: 'Vergleich' });
+    if (isExt) { tabDefs.push({ id: 'positiv', label: 'Konsens vs. Planung' }); tabDefs.push({ id: '__diff', label: 'Konsens vs. Referenz' }); }
+    R.tabs = tabDefs.map(t => ({
+      label: t.label,
+      onClick: t.id === '__diff' ? () => this.setState(this.dismissTrioHint({ compareMenu: true })) : () => this.setState(this.dismissTrioHint({ tab: t.id, compare: null })),
+      style: this.tabBtn((t.id === '__diff' && S.compare) || (!S.compare && S.tab === t.id))
+    }));
+
+    R.hintTwo = S.hintTwo;
+    R.dismissHintTwo = () => this.setState({ hintTwo: false });
+
+    // legend flags default
+    R.showUpset = R.showUpset || false;
+    R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendDiv = R.legendDiv || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false; R.legendDeck = R.legendDeck || false;
+    // Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle
+    R.showPlan = (R.showPlan || false) && S.account;
+    // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
+    R.showCompare = isExt;
+    R.showHideToggle = stufe >= 2;
+    R.showToolRow = isExt || stufe >= 2;
+    R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
+      label: p === 'bestand' ? 'Bestand' : p === 'zubau' ? 'Zubau' : 'Gesamt',
+      onClick: () => this.setState({ plan: p }),
+      style: this.segLight(S.plan === p)
+    }));
+
+    // compare menu
+    R.compareActive = !!S.compare;
+    R.compareInactive = !S.compare;
+    R.compareName = S.compare ? S.compare.label : '';
+    R.clearCompare = () => this.setState({ compare: null, compareMenu: false });
+    R.toggleCompareMenu = () => this.setState({ compareMenu: !S.compareMenu });
+    R.compareMenuStyle = (S.compareMenu ? 'display:block;' : 'display:none;') + 'position:absolute;bottom:38px;left:0;background:#fff;border:1px solid #d7dbdf;border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:5px;min-width:240px;z-index:15';
+    // Vergleich nur gegen NICHT gewählte Prinzipien oder externe Referenzen (nie gegen ein gewähltes Prinzip)
+    const cmpOpts = this.principles.filter(p => p.available && !sel.includes(p.id)).map(p => ({ label: p.name, type: 'principle', id: p.id, group: 'Prinzipien' }));
+    this.references.forEach(r => cmpOpts.push({ label: r.name, type: 'ref', id: r.id, group: 'Referenzverteilungen (extern)' }));
+    const cmpRows = []; let lastG = null;
+    cmpOpts.forEach(o => {
+      if (o.group !== lastG) { cmpRows.push({ header: true, label: o.group, rowStyle: 'padding:8px 12px 3px;font-size:14px;font-weight:700;letter-spacing:.4px;color:#9aa4ad;text-transform:uppercase', onClick: () => {} }); lastG = o.group; }
+      cmpRows.push({ header: false, label: o.label, rowStyle: 'padding:7px 12px;font-size:14px;color:#26303a;cursor:pointer;border-radius:5px', onClick: () => this.setState({ compare: o, compareMenu: false }) });
+    });
+    R.compareOptions = cmpRows;
+
+    R.hideSwitchStyle = this.switchStyle(S.hideConflict);
+    R.hideKnobStyle = this.knobStyle(S.hideConflict);
+
+    // ============ RIGHT COLUMN ============
+    const selectedCell = S.cell ? cells.find(c => c.id === S.cell) : null;
+    R.showOverview = !selectedCell;
+    R.showCell = !!selectedCell;
+
+    if (!selectedCell) {
+      R.ovScopeLabel = S.region ? 'Ausschnitt' : 'Übersicht';
+      R.ovTitle = S.region ? S.region.label : 'Deutschland gesamt';
+      // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
+      R.anBlockers = false; R.anSums = false; R.anCoverage = false; R.anCombos = false; R.anDiff = false;
+      R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
+
+      if (isEmpty) {
+        R.ovEmpty = true;
+        R.ovLeadLabel = 'Noch kein Prinzip gewählt'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
+        R.ovLeadSub = 'Wählen Sie links ein Gerechtigkeitsprinzip. Sobald zwei oder mehr gewählt sind, erscheint hier der Zubaukonsens.';
+        R.ovClickHint = false;
+      } else if (stufe === 1) {
+        const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
+        R.ovLeadLabel = 'Empfohlener Zubau gesamt (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
+        R.ovLeadSub = 'Sie können ein zweites Prinzip hinzufügen, um den Zubaukonsens zu sehen.';
+      } else {
+        const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
+        // verschachtelter Balken: Ausbauziel = volle Länge, Konsens = gefüllt, Rest = blass
+        R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
+        R.ovBarCaption = 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
+        // Blocker-Daten (für konsens & minimum)
+        const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter((l,idx)=>l===p && inScope(idx)).length, cost: consWithout(p) - consTotal }));
+        bl.sort((a,b)=>b.cost-a.cost);
+        const cmax = Math.max(...bl.map(b=>b.cost), 0.001);
+        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmt(Math.max(0,b.cost)), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmt(consTotal) + ' auf ' + this.fmt(consWithout(top.p)) + ' GW.'; };
+
+        if (view === 'positiv') {
+          // Zwei Richtungen desselben Verhältnisses — bundesweit, in der rechten Spalte
+          R.ovLeadSuppress = true;
+          R.anCoverage = true;
+          R.coverA = String(R.posKennzahl != null ? R.posKennzahl : 0);
+          R.coverB = String(R.posKennzahl2 != null ? R.posKennzahl2 : 0);
+        } else if (view === 'differenz') {
+          const cmp = compareVals();
+          const baseName = 'Konsens';
+          const diffs = scopeIdx.map(i => ({ i, d: consCells[i] - cmp[i] }));
+          const net = diffs.reduce((a,o)=>a+o.d, 0);
+          R.ovLeadLabel = 'Differenz gesamt'; R.ovLeadValue = this.fmt(Math.abs(net)); R.ovLeadUnit = 'GW';
+          R.ovLeadSub = net>=0 ? 'mehr beim ' + baseName + ' als bei ' + S.compare.label : 'mehr bei ' + S.compare.label + ' als beim ' + baseName;
+          R.anDiff = true;
+          const top = diffs.slice().sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,6);
+          // Richtung statt nacktem Vorzeichen (wie in der Kartenlegende)
+          R.diffRows = top.map(o => ({ label: 'Zelle ' + cells[o.i].label, gw: this.fmt(Math.abs(o.d)) + ' GW mehr bei ' + (o.d>=0 ? baseName : S.compare.label), color: o.d>=0 ? '#2f6690' : '#8a5a12', onClick: () => this.selectCell(cells[o.i].id) }));
+        } else if (view === 'verteilungen') {
+          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.anSums = true;
+          const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
+          const smax = Math.max(...sums.map(s=>s.v), 0.001);
+          R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmt(s.v), w: (s.v/smax*100).toFixed(1)+'%' }));
+        } else if (view === 'schnittmengen') {
+          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.anCombos = true;
+          const medians2 = {}; sel.forEach(p => { const a = gwArr(p).slice().sort((x,y)=>x-y); const n=a.length; medians2[p] = n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2; });
+          const cnt = {};
+          scopeIdx.forEach(i => { const rec = sel.filter(p => gwArr(p)[i] > medians2[p]); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
+          const rows = Object.values(cnt).map(o => {
+            let css, label;
+            if (!o.rec.length) { css = 'background:#e4e8eb'; label = 'kein Prinzip'; }
+            else if (o.rec.length === 1) { css = 'background:' + this.byId[o.rec[0]].color; label = this.byId[o.rec[0]].name; }
+            else { const stops = o.rec.map((p,ix)=> this.byId[p].color + ' ' + (ix*6) + 'px ' + ((ix+1)*6) + 'px').join(','); css = 'background:repeating-linear-gradient(45deg,' + stops + ')'; label = o.rec.map(p=>this.byId[p].name).join(' + '); }
+            return { css, label, count: o.n, order: o.rec.length ? o.rec.length : 99 };
+          });
+          // Zusammenfassung zuerst — die eigentliche Antwort; Liste ist Referenz
+          const nAll = (cnt[sel.join(' + ')] || { n: 0 }).n;
+          const nOne = Object.values(cnt).filter(o => o.rec.length === 1).reduce((a,o)=>a+o.n, 0);
+          const nNone = (cnt['__none'] || { n: 0 }).n;
+          R.comboSummary = nAll + ' Zellen von allen gewählten Prinzipien empfohlen · ' + nOne + ' von genau einem · ' + nNone + ' von keinem.';
+          // 0-Zellen-Kombinationen nie zeigen; Top 6 sichtbar, Rest aufklappbar
+          const visible = rows.filter(r => r.count > 0).sort((a,b)=>b.count-a.count);
+          const LIM = 6;
+          R.comboRows = S.combosOpen ? visible : visible.slice(0, LIM);
+          R.comboMore = visible.length > LIM;
+          R.comboMoreLabel = S.combosOpen ? 'Weniger anzeigen' : 'Weitere anzeigen (' + (visible.length - LIM) + ')';
+          R.toggleCombos = () => this.setState({ combosOpen: !S.combosOpen });
+        } else {
+          // konsens & minimum → Was begrenzt den Konsens?
+          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.anBlockers = true; mkBlockers();
+        }
+      }
+      R.ovLeadBoxStyle = R.ovLeadSuppress ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
+      R.ovClickHint = S.gran !== '10km' || !!S.region;
+    } else {
+      const i = cells.indexOf(selectedCell), c = selectedCell;
+      R.cellScope = (S.region ? S.region.label : 'Deutschland') + ' · ' + granLbl;
+      R.cellLabel = c.label; R.cellTyp = c.typ;
+      R.cellHasConsensus = stufe >= 2;
+      R.cellStufe1 = stufe === 1;
+      if (stufe >= 2) {
+        // Konsens dieser Zelle == Minimum über die gewählten Prinzipien == Wert des begrenzenden Prinzips
+        R.cellConsensus = this.fmt(Math.min.apply(null, sel.map(p => gwSel[p][i])));
+        const mx = Math.max(...sel.map(p => gwSel[p][i]));
+        R.cellBars = sel.map(p => {
+          const isLim = limiting[i] === p;
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmt(gwSel[p][i]), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
+        });
+      }
+      R.cellPrincipleName = this.byId[singlePid].name;
+      R.cellPrincipleColor = this.byId[singlePid].color;
+      R.cellRecommend = this.fmt(gwSel[singlePid][i]);
+      R.cellSharePct = this.pct(shr(singlePid)[i], 2);
+      const meanZ = target / N;
+      R.cellRank1 = gwSel[singlePid][i] >= meanZ ? 'überdurchschnittlich' : 'unterdurchschnittlich';
+      const meanB = 62 / N;
+      const bAbove = c.bestandGW >= meanB;
+      R.cellShowBestand = S.account;
+      R.cellBestandCmp = bAbove ? 'überdurchschnittlich' : 'unterdurchschnittlich';
+      const zAbove = gwSel[singlePid][i] >= meanZ;
+      R.cellTrend = (bAbove === zAbove) ? 'Bestand und empfohlener Zubau zeigen in dieselbe Richtung.' : 'Der Bestand weicht vom empfohlenen Zubau ab.';
+      // Neuzubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
+      // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Neuzubau ≤ Gesamt.
+      const neu = sel.reduce((a,p)=>a+gwSel[p][i],0) / sel.length;
+      const total = c.bestandGW + neu;
+      R.cellTotal = this.fmt(total); R.cellBestand = this.fmt(c.bestandGW); R.cellNew = this.fmt(neu);
+      // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
+      // Zubaukonsens ≤ Neuzubau ≤ Ausbau gesamt; gefüllter Anteil ≤ voller Balken.
+      R.cellConsFill = (neu && consCells) ? (Math.min(consCells[i], neu) / neu * 100).toFixed(1) + '%' : '0%';
+      // Live-Beispiel: einmalig beim ersten Klick auf eine Konfliktzelle
+      if (stufe >= 2 && isConflict[i] && !S.seenConflictHint) {
+        const lim = this.byId[limiting[i]].name;
+        const high = sel.slice().sort((a,b)=>gwSel[b][i]-gwSel[a][i])[0];
+        R.cellConflictHint = 'Hier sind sich die Prinzipien uneinig: ' + this.byId[high].name + ' empfiehlt viel Ausbau, ' + lim + ' wenig — deshalb bleibt kaum Konsens.';
+        R.cellShowConflictHint = true;
+        R.dismissConflictHint = () => this.setState({ seenConflictHint: true });
+      } else R.cellShowConflictHint = false;
+      // "Region auswerten" — Scope auf diese Zelle setzen (Demo)
+      R.evaluateRegion = () => this.setState({ region: { label: 'Rasterzelle ' + c.label, level: S.gran, ids: [c.id] } });
+      // erweitert
+      const rankArr = (stufe >= 2 ? consCells : gwSel[singlePid]).map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v);
+      R.cellRankNat = (rankArr.findIndex(r=>r.idx===i) + 1) + ' von ' + N;
+      R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
+      R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
+      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
+      R.cellPriority = '≈ ' + (2030 + Math.round((rankArr.findIndex(r=>r.idx===i)/N)*15)) + ' (nicht berechnet)';
+
+      R.cellConsBox = 'padding:14px;background:#f5f7f7;border-radius:10px;border:1px solid #e2e8e6';
+      R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
+
+      // Positiv-Tab: Zeile zu dieser Zelle
+      if (view === 'positiv' && stufe >= 2) {
+        const inK = consCells[i] >= 0.35 * Math.max(...consCells);
+        R.cellAusgPct = Math.round(c.ausgAnteil * 100) + ' %';
+        R.cellKonsGW = this.fmt(consCells[i]) + ' GW';
+        const d = (R.deckVals || [])[i] || 0;
+        R.cellDeckWord = d > 0.2 ? 'Planung über Konsens' : d < -0.2 ? 'Konsens über Planung' : 'deckt sich';
+        R.cellDeckColor = d > 0.2 ? '#a85a17' : d < -0.2 ? '#1d5f80' : '#5b6672';
+        R.cellShowPos = true;
+      } else R.cellShowPos = false;
+
+      // Differenz-Tab: Differenz DIESER Zelle in Richtungsschreibweise
+      if (S.compare) {
+        const base = stufe >= 2 ? consCells : gwSel[singlePid];
+        const cmp = compareVals();
+        const d = base[i] - cmp[i];
+        const baseName = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
+        R.cellDiffLine = this.fmt(Math.abs(d)) + ' GW mehr bei ' + (d >= 0 ? baseName : S.compare.label);
+        R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
+        R.cellShowDiff = true;
+      } else R.cellShowDiff = false;
+    }
+
+    // panels
+    // Drei echte Prinzip-Karten für das Start-Modal (Frage-Beschriftung statt Fachbegriff)
+    R.introMaps = [
+      { id: 'verbrauchsnah', label: 'Wo der Strom verbraucht wird' },
+      { id: 'bevoelkerungsnah', label: 'Wo mehr Menschen wohnen' },
+      { id: 'oekonomisch', label: 'Wo es am günstigsten ist' }
+    ].map(o => {
+      const g = gwArr(o.id), mx = Math.max.apply(null, g);
+      return { label: o.label, cells: cells.map((c,i) => ({ pts: c.pts, fill: this.seq(mx ? g[i]/mx : 0, this.byId[o.id].color) })) };
+    });
+    R.intro = S.intro;
+    R.reopenIntro = () => this.setState({ intro: true });
+    R.closeIntro = () => this.setState({ intro: false });
+    R.introMore = () => this.setState({ intro: false, infoPanel: true });
+    R.infoPanel = S.infoPanel;
+    R.toggleInfoPanel = () => this.setState({ infoPanel: !S.infoPanel, intro: false });
+    R.stop = e => { if (e && e.stopPropagation) e.stopPropagation(); };
+    // zoom overlay
+    if (S.zoom && typeof S.zoom === 'string' && S.zoom.indexOf('ref:') === 0) {
+      const rid = S.zoom.slice(4); const pv = this.refDist(rid); const mx = Math.max(...pv);
+      R.zoom = true; R.zoomName = this.refById[rid].name + ' · extern'; R.zoomColor = this.CONS; R.zoomMax = this.fmt(mx);
+      R.zoomCells = cells.map((c,i) => ({ pts: c.pts, fill: this.seq(mx ? pv[i]/mx : 0, this.CONS) }));
+    } else if (S.zoom && sel.includes(S.zoom)) {
+      const p = S.zoom;
+      const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
+      const mx = Math.max(...pv);
+      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmt(mx);
+      R.zoomCells = cells.map((c,i) => ({ pts: c.pts, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) }));
+    } else R.zoom = false;
+    R.closeZoom = () => this.setState({ zoom: null });
+
+    // handlers
+    R.setBasic = () => this.setState({ mode: 'basic', gran: '10km', compare: (S.compare && S.compare.type === 'ref') ? null : S.compare, refs: [], tab: this.state.tab === 'positiv' ? 'konsens' : this.state.tab });
+    R.setErweitert = () => this.setState({ mode: 'erweitert' });
+    R.setWind = () => this.setState({ tech: 'wind' });
+    R.setPV = () => this.setState({ tech: 'pv' });
+    R.toggleAccount = () => this.setState({ account: !S.account });
+    R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
+    R.addSecond = () => this.toggleP(sel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
+    R.jumpToConsensus = () => this.setState({ selected: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
+    R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
+    R.clearCell = () => this.setState({ cell: null });
+    R.onSearchInput = e => this.setState({ search: e.target.value });
+    R.onSearchKey = e => { if (e.key === 'Enter') this.doSearch(); };
+    R.showBack = !!S.region || !!S.cell;
+    R.backToDE = () => this.setState({ region: null, cell: null });
+
+    return R;
+  }
+
+  // style helpers
+  segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:600;padding:5px 13px;cursor:pointer;background:' + (on ? '#57c4ab' : 'transparent') + ';color:' + (on ? '#0c2a24' : '#8b98a5'); }
+  segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#7a848c') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
+  chip(on) { return 'flex:1;border:1px solid ' + (on ? '#0b6b5a' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#0b6b5a' : '#fff') + ';color:' + (on ? '#fff' : '#4b555d'); }
+  tabBtn(on) { return 'border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#0b6b5a' : '#7a848c') + ';border-bottom:2px solid ' + (on ? '#0b6b5a' : 'transparent') + ';margin-bottom:-1px'; }
+  switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#0b6b5a' : '#c7ccd1'); }
+  knobStyle(on) { return 'position:absolute;top:2px;left:' + (on ? '17px' : '2px') + ';width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s'; }
+
+  toggleP(id) {
+    const b = this.byId[id];
+    if (!b || !b.available) return;
+    const S = this.state;
+    let sel = S.selected.slice();
+    const was = sel.filter(x => this.byId[x] && this.byId[x].available).length;
+    if (sel.includes(id)) sel = sel.filter(x => x !== id); else sel.push(id);
+    const now = sel.filter(x => this.byId[x] && this.byId[x].available).length;
+    // Zurück auf null nur beim Erststart (noch nicht committed); danach letztes Häkchen nicht abwählbar
+    if (now === 0 && this.state.committed) return;
+    // Handlung bestätigt Verständnis — Hinweis blendet aus (kein Schließen-Button).
+    // Element bleibt für die Dauer der Transition gemountet, danach entfernen.
+    const patch = this.dismissTrioHint({ selected: sel, cell: null });
+    if (now >= 1) patch.committed = true;
+    if (was === 1 && now === 2 && !S.seenTwo) { patch.hintTwo = true; patch.seenTwo = true; }
+    if (sel.includes('bevoelkerungsnah') && sel.includes('bevoelkerungsfern') && !S.seenOppo) { patch.hintOppo = true; patch.seenOppo = true; }
+    if (now < 2) { patch.tab = 'konsens'; patch.hintTwo = false; }
+    if (now < 3 && S.tab === 'verteilungen') { /* keep */ }
+    if (now >= 3 && S.tab === 'verteilungen') patch.tab = 'konsens';
+    this.setState(patch);
+  }
+
+  // Hinweis + Hervorhebung blenden gemeinsam aus, sobald der Nutzer irgendwo handelt
+  dismissTrioHint(patch) {
+    patch = patch || {};
+    if (this.state.trioHint) {
+      patch.trioHint = false;
+      setTimeout(() => this.setState({ trioHintMounted: false }), 520);
+    }
+    return patch;
+  }
+
+  selectCell(id) { this.setState(this.dismissTrioHint({ cell: this.state.cell === id ? null : id })); }
+
+  doSearch() {
+    const q = (this.state.search || '').trim().toLowerCase();
+    if (!q) return;
+    const p = this.places.find(pl => pl.q.some(x => q.includes(x) || x.includes(q)));
+    if (!p) return;
+    const ids = this.cells.filter(c => { const dc = c.col - p.center[0], dr = c.row - p.center[1]; return Math.sqrt(dc*dc + dr*dr) <= 1.7; }).map(c => c.id);
+    this.setState({ region: { label: p.label, level: p.level, ids }, gran: p.level, cell: null, search: '' });
+  }
+
+  renderVals() { return this.build(); }
+}
+</script>
+</body>
+</html>
