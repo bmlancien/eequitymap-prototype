@@ -566,21 +566,45 @@ von Schritt 1 ist das feste Budget von Schritt 2.
   hier**. Scope-Label: „[Landkreis] · 5 × 5 km Raster". Verteilt das für diesen
   Landkreis berechnete Budget über seine Zellen nach den **regionalen Prinzipien**.
 
-**Einstieg:** Klick auf eine Zelle → CTA „Region auswerten" → wechselt in die
-Regionsansicht. Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel
-wechselt (Landkreis X → Zelle Y).
+**Einstieg:** Klick auf eine Zelle (DE-Ansicht) → **Popover an der Zelle
+verankert** mit der Aktion **„[Landkreis] im Detail auswerten →"** (Regionsname
+konkret genannt). **Gestaltung:** an der Zelle verankert mit sichtbarem Zeiger,
+sitzt NEBEN der Zelle (überdeckt weder Zelle noch Nachbarn), kompakt (Chip-Größe,
+keine Banderole), Grün gedämpft (überstrahlt die Karte nicht). Enthält nur die
+Aktion (kein zweites Detail-Kärtchen — das Zelldetail bleibt in der rechten
+Spalte); nicht flüchtig, bleibt bei ausgewählter Zelle, verschwindet bei Klick auf
+den Kartenhintergrund. (Der frühere unscheinbare „Region auswerten"-Button oben in
+der rechten Spalte war zu leicht zu übersehen; die erste Popover-Version war ein
+großer schwebender Block ohne Zellbezug — daher die Verankerungs-/Kompaktheits-
+Vorgaben.) Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel wechselt
+(Landkreis X → Zelle Y).
+
+**Mode-Transition sichtbar machen** (der Wechsel DE → Region war zu leise):
+- **Einmaliger Banner** beim Betreten der Regionsansicht: „Sie werten jetzt
+  [Landkreis] im Detail aus — die nationale Verteilung bleibt oben als Kontext."
+- **Erst-Hinweis** an der Liste „Verteilung innerhalb der Region": „Startet mit
+  denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region
+  anders zu verteilen." (macht die Opt-in-Natur sichtbar).
+- **Breadcrumb** „Auf Regionen verteilt nach: …" bekommt echtes Gewicht (nicht
+  blasse Microcopy) — es ist die einzige sichtbare Verbindung der zwei Ebenen.
 
 **Kriterien auf zwei Ebenen (Kern der Anforderung):**
-- Die zwei Prinzipiensätze werden nach ihrer **Aufgabe** benannt, nicht beide
-  „Gerechtigkeitsprinzipien": **„Verteilung auf Regionen"** (national) /
-  **„Verteilung innerhalb der Region"** (regional).
-- In DE-Ansicht ist die linke Liste der nationale Satz (wie bisher).
+- Die zwei Prinzipiensätze werden **strukturell parallel** benannt — beide
+  „[Skala] verteilt nach:", nur das Skalen-Wort unterscheidet sie, damit sie als
+  zwei Pole EINER Achse lesbar sind: **„Bundesweit verteilt nach: …"** (national) /
+  **„Innerhalb der Region verteilt nach: …"** (regional). NICHT beide
+  „Gerechtigkeitsprinzipien", und NICHT „Auf Regionen verteilt" (das kontrastiert
+  nicht sauber mit „innerhalb").
+- In DE-Ansicht ist die linke Liste der nationale Satz („Bundesweit verteilt
+  nach: …").
 - In Regionsansicht **wird die linke Liste zum regionalen Satz** (gleiche
-  Position, umbenannt „Verteilung innerhalb der Region"). Der nationale Satz steht
-  darüber **eingeklappt/read-only als Kontext** („Auf Regionen verteilt nach:
-  … ▾"). So gibt es immer nur EINE editierbare Liste, die andere Ebene bleibt als
-  Breadcrumb sichtbar — verhindert die „welche Prinzipien stelle ich gerade ein?"-
-  Verwirrung.
+  Position, „Innerhalb der Region verteilt nach: …"). Der nationale Satz steht
+  darüber **eingeklappt/read-only als Kontext-Breadcrumb** („Bundesweit verteilt
+  nach: … ▾"). So gibt es immer nur EINE editierbare Liste, die andere Ebene
+  bleibt als Breadcrumb sichtbar — verhindert die „welche Prinzipien stelle ich
+  gerade ein?"-Verwirrung. Parallelität = derselbe Trick wie bei „Konsens vs. …"
+  und den zwei Planung-Kennzahlen: zwei Versionen einer Beziehung strukturell
+  gleich halten, damit nur der Unterschied variiert.
 
 **Default (verbindlich, gegen Komplexität):** Beim Betreten der Regionsansicht
 sind die **regionalen Prinzipien identisch mit der nationalen Auswahl**
@@ -599,11 +623,14 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
 - **DE-Ansicht ist schnell/reaktiv** (Toggle → sofort), wie der Rest des
   Werkzeugs.
 - **Nur die Regionsansicht** hat eine **echte Backend-Rechenzeit (~30 s)**. Daher
-  eigener CTA **„Berechnung starten"** — regionale Prinzipien werden komponiert,
-  DANN gerechnet. **Kein Auto-Recompute** beim Ändern eines regionalen Prinzips.
+  eigener Button **„Berechnung starten"** mit **festem Platz unten an der Liste
+  „Verteilung innerhalb der Region"** (nicht in der Kartenmitte, nicht
+  verschwindend): prominent solange nichts gerechnet ist, danach als
+  **„Neu berechnen"**, sobald ein regionales Prinzip geändert wurde. **Kein
+  Auto-Recompute.**
 - Nach einer Änderung der regionalen Prinzipien muss der Zustand **sichtbar
-  „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Berechnung starten"
-  gedrückt wird — sonst wirkt es kaputt. Fortschritts-/Spinner-Zustand während der
+  „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Neu berechnen" gedrückt
+  wird — sonst wirkt es kaputt. Fortschritts-/Spinner-Zustand während der
   Rechnung. Im Mock die Verzögerung ehrlich nachbilden (~20–30 s), damit Tests den
   echten Rhythmus erleben (configure → compute → read statt toggle → instant).
 

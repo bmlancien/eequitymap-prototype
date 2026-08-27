@@ -25,6 +25,8 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   @keyframes fadeOutHint{from{opacity:1}to{opacity:0}}
   @keyframes pulseSwatch{0%,100%{box-shadow:0 0 0 0 rgba(47,102,144,0)}50%{box-shadow:0 0 0 5px rgba(47,102,144,.28)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spin{animation:spin 1s linear infinite}
   .scroll::-webkit-scrollbar{width:9px}
   .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
   .hx{transition:opacity .15s}
@@ -60,8 +62,26 @@
 
     <!-- ============ LEFT COLUMN ============ -->
     <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 40px">
-      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126">GERECHTIGKEITSPRINZIPIEN</div>
+      <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14.5px;font-weight:600;color:#1b2126;background:#eef3f6;border:1px solid #cdddea;border-left:4px solid #2f6690;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.5">Auf Regionen verteilt nach: <span style="font-weight:500;color:#33413c">{{ natBreadcrumbValue }}</span> <span style="color:#5b6672;font-weight:500">{{ natBreadcrumbCaret }}</span></div>
+        <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 14px">
+            <sc-for list="{{ natChips }}" as="nc" hint-placeholder-count="2">
+              <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:#5b6672;background:#f4f6f6;border:1px solid #e2e6e8;border-radius:6px;padding:3px 8px"><span style="width:9px;height:9px;border-radius:3px;background:{{ nc.color }}"></span>{{ nc.name }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126">{{ princHeading }}</div>
       <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
+
+      <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
+          <span style="flex:1">Startet mit denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
+          <span onClick="{{ dismissRegionListHint }}" style="cursor:pointer;color:#6f8aa0;font-size:14px;line-height:1;padding:2px;flex:none">×</span>
+        </div>
+      </sc-if>
 
       <sc-if value="{{ trioHint }}" hint-placeholder-val="{{ false }}">
         <div style="{{ trioHintStyle }}">Dieser Konsens beruht auf drei Prinzipien. Ändern Sie die Auswahl, um zu sehen, wie er sich verschiebt.</div>
@@ -89,6 +109,24 @@
         <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #cfe4de;border-radius:8px">
           <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
           <button onClick="{{ addSecond }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:8px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Zweites Prinzip hinzufügen</button>
+        </div>
+      </sc-if>
+
+      <!-- Fester Platz für „Berechnung starten" / „Neu berechnen" — nur Regionsansicht (§M) -->
+      <sc-if value="{{ showRegionCompute }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:12px;padding:12px 13px;border-radius:8px;{{ regionComputeBoxStyle }}">
+          <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:18px;height:18px;border-radius:50%;border:2.5px solid #cdddea;border-top-color:#2f6690;flex:none" class="spin"></div>
+              <div style="font-size:14px;color:#26303a;font-weight:600">Berechnung läuft… {{ regionProgressPct }}</div>
+            </div>
+            <div style="font-size:14px;color:#5b6672;margin-top:6px;line-height:1.45">Regionale Prinzipien werden komponiert und neu gerechnet — rund 20–30 Sekunden.</div>
+          </sc-if>
+          <sc-if value="{{ regionComputeIdle }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
+            <div style="font-size:14px;color:#5b6672;margin-top:4px;margin-bottom:9px;line-height:1.45">{{ regionComputeSub }}</div>
+            <button onClick="{{ startRegionCompute }}" style="{{ regionComputeBtnStyle }}">{{ regionComputeBtnLabel }}</button>
+          </sc-if>
         </div>
       </sc-if>
 
@@ -129,14 +167,6 @@
       </div>
       <div style="{{ accountInfoStyle }}">Bereits bestehende Anlagen zählen als getragene Last — Regionen mit viel Bestand erhalten weniger Neuzubau.</div>
 
-      <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:14px;color:#5b6672;margin:18px 0 6px">Granularität</div>
-        <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
-          <sc-for list="{{ granBtns }}" as="g" hint-placeholder-count="3">
-            <button onClick="{{ g.onClick }}" style="{{ g.style }}">{{ g.label }}</button>
-          </sc-for>
-        </div>
-      </sc-if>
     </aside>
 
     <!-- ============ MIDDLE COLUMN ============ -->
@@ -150,6 +180,14 @@
         <div style="flex:1"></div>
         <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="PLZ, Ort, Gemeinde oder Landkreis…" style="width:250px;background:#11161c;border:1px solid #333d47;color:#e7ecf0;font-size:14px;padding:6px 10px;border-radius:6px">
       </div>
+
+      <!-- Einmaliger Mode-Transition-Banner beim Betreten der Regionsansicht (§M) -->
+      <sc-if value="{{ showRegionBanner }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-top:10px;animation:fadeUp .35s;flex:none">
+          <span style="font-size:14px;line-height:1.5;flex:1">{{ regionBannerText }}</span>
+          <span onClick="{{ dismissRegionBanner }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
+        </div>
+      </sc-if>
 
       <!-- Kernaussage -->
       <sc-if value="{{ kernaussage }}" hint-placeholder-val="{{ true }}">
@@ -230,7 +268,7 @@
         <!-- Single / consensus / minimum / schnittmengen / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
           <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px">
-            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
+            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;opacity:{{ mapOpacity }};transition:opacity .4s">
               <defs>
                 <sc-for list="{{ patterns }}" as="pt" hint-placeholder-count="0">
                   <pattern id="{{ pt.id }}" width="{{ pt.w }}" height="{{ pt.w }}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -240,15 +278,47 @@
                   </pattern>
                 </sc-for>
               </defs>
+              <rect x="{{ vbX }}" y="{{ vbY }}" width="{{ vbW }}" height="{{ vbH }}" fill="transparent" onClick="{{ clearCell }}"></rect>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
                 <polygon class="hx" points="{{ c.pts }}" fill="{{ c.fill }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" style="cursor:pointer" onClick="{{ c.onClick }}"></polygon>
               </sc-for>
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <polygon points="{{ o.pts }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></polygon>
               </sc-for>
+              <!-- Popover an der ausgewählten Zelle: einziger, prominenter Einstieg in die Regionsansicht (§M) -->
+              <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
+                <foreignObject x="{{ cellPopoverX }}" y="{{ cellPopoverY }}" width="{{ cellPopoverW }}" height="{{ cellPopoverH }}" style="overflow:visible;pointer-events:none">
+                  <div style="pointer-events:auto">
+                    <button onClick="{{ evaluateRegionPopover }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:11px 14px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.24);text-align:left;line-height:1.35;white-space:nowrap">{{ cellPopoverLabel }}</button>
+                  </div>
+                </foreignObject>
+              </sc-if>
             </svg>
 
+            <!-- Regionsansicht: Berechnungs-Gate (nicht berechnet / läuft) — Aktion liegt links an der Prinzipienliste -->
+            <sc-if value="{{ regionBlockOverlay }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
+                <div style="max-width:280px">
+                  <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:30px;height:30px;margin:0 auto;border-radius:50%;border:3px solid #cdddea;border-top-color:#2f6690" class="spin"></div>
+                    <div style="font-size:14px;color:#26303a;font-weight:600;margin-top:12px">Berechnung läuft… {{ regionProgressPct }}</div>
+                    <div style="font-size:14px;color:#7a848c;margin-top:3px;line-height:1.45">{{ regionGateSub }}</div>
+                  </sc-if>
+                  <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
+                    <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionGateTitle }}</div>
+                    <div style="font-size:14px;color:#7a848c;margin-top:5px;line-height:1.5">{{ regionGateSub }}</div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
           </div>
+
+          <!-- Regionsansicht: veraltet-Hinweis, Ergebnis vorhanden aber Eingaben geändert — Aktion liegt links -->
+          <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:9px">
+              <span style="font-size:14px;color:#6b5726;line-height:1.4;flex:1">{{ regionGateSub }}</span>
+            </div>
+          </sc-if>
         </sc-if>
       </div>
 
@@ -498,12 +568,11 @@
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
             <div>
               <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
-              <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">Rasterzelle {{ cellLabel }}</div>
+              <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
               <div style="font-size:14px;color:#5b6672;margin-top:2px">{{ cellTyp }}</div>
             </div>
             <button onClick="{{ clearCell }}" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none">×</button>
           </div>
-          <button onClick="{{ evaluateRegion }}" style="margin-top:11px;width:100%;background:#eef3f6;border:1px solid #cdddea;color:#2f6690;font-size:14px;font-weight:600;padding:9px;border-radius:8px;cursor:pointer">Zelle auswerten</button>
 
           <sc-if value="{{ cellShowConflictHint }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding:11px 12px;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;animation:fadeUp .3s">
@@ -519,7 +588,7 @@
                 <span style="color:#5b6672">Neuzubau dieser Zelle</span>
                 <span class="num" style="color:#26303a;font-weight:500">{{ cellNew }} GW</span>
               </div>
-              <div style="font-size:14px;color:#5b6672;margin-top:11px">Zubaukonsens dieser Zelle</div>
+              <div style="font-size:14px;color:#5b6672;margin-top:11px">{{ cellConsensusScopeLabel }}</div>
               <div class="num" style="font-size:28px;font-weight:600;color:#2f6690;line-height:1.1;margin-top:1px">{{ cellConsensus }} <span style="font-size:14px;color:#5b6672;font-weight:500">GW</span></div>
               <div style="margin-top:10px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
                 <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:5px"></div>
@@ -581,7 +650,7 @@
 
           <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb;display:flex;flex-direction:column;gap:9px">
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Rang deutschlandweit</span><span class="num" style="color:#26303a;font-weight:500">{{ cellRankNat }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellRankLabel }}</span><span class="num" style="color:#26303a;font-weight:500">{{ cellRankNat }}</span></div>
               <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
                 <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
                 <span class="num" style="color:#26303a">{{ cellGoalShare }}</span>
@@ -676,14 +745,24 @@ class Component extends DCLogic {
     targetGW: 160,
     account: false,
     accountInfo: false,
-    gran: '10km',
     tab: 'konsens',
     plan: 'zubau',
     compare: null,
     compareMenu: false,
     cell: null,
     hideConflict: false,
-    region: null,
+    // Zwei-Ebenen-Modell (§M): 'de' = Deutschland/Landkreise, 'region' = eine Regionsansicht (5×5 km)
+    level: 'de',
+    region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
+    selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
+    regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
+    regionComputedTarget: null,   // Regionsbudget, mit dem zuletzt gerechnet wurde (eingefroren)
+    regionComputedSig: null,      // Signatur des letzten Rechenlaufs — zum Erkennen von „veraltet"
+    regionComputing: false,
+    regionProgress: 0,
+    natBreadcrumbOpen: false,
+    regionBanner: false, regionBannerSeen: false,   // einmaliger Mode-Transition-Banner (§M)
+    regionHintSeen: false,                          // Erst-Hinweis an der regionalen Liste (Opt-in sichtbar machen)
     search: '',
     hintTwo: false, seenTwo: false,
     hintOppo: false, seenOppo: false,
@@ -698,7 +777,7 @@ class Component extends DCLogic {
     infoRef: null
   };
 
-  refDist(rid) { const r = this.refById[rid]; const raw = this.cells.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
+  refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
 
   startReveal() {
     if (this._raf) cancelAnimationFrame(this._raf);
@@ -750,10 +829,13 @@ class Component extends DCLogic {
       { q: ['köln', 'koeln', 'cologne', '50667'], label: 'Köln', level: 'gemeinde', center: [1, 5] },
       { q: ['leipzig', '04109'], label: 'Leipzig', level: 'gemeinde', center: [6, 5] }
     ];
-    this.buildCells();
+    this.buildKrs();
+    this._regionCache = {};
   }
 
-  buildCells() {
+  // Nationale Ebene: ein Hexagon je Landkreis (schematisch). Ersetzt die frühere
+  // einheitliche 5×5-km-Karte auf DE-Ebene — 5×5 km existiert nur noch in der Regionsansicht (s. regionCellsFor).
+  buildKrs() {
     const rows = [[3,3],[2,5],[2,7],[0,8],[0,8],[0,8],[0,8],[1,7],[1,8],[2,7],[3,5],[4,3]];
     const maxRow = rows.length - 1, maxCol = 8, size = 26;
     const w = Math.sqrt(3) * size, pad = 16;
@@ -797,8 +879,101 @@ class Component extends DCLogic {
     // gemeindetyp
     cells.forEach(c => { c.typ = c.density > 0.55 ? 'Verdichteter Raum' : c.density > 0.3 ? 'Städtischer Raum' : c.density > 0.12 ? 'Ländlicher Raum' : 'Dünn besiedelter Raum'; });
     this.hexSize = size; this.hexW = w;
-    this.cells = cells;
-    this.vb = minx.toFixed(0) + ' ' + miny.toFixed(0) + ' ' + (maxx - minx).toFixed(0) + ' ' + (maxy - miny).toFixed(0);
+    this.krs = cells;
+    this.krsVb = minx.toFixed(0) + ' ' + miny.toFixed(0) + ' ' + (maxx - minx).toFixed(0) + ' ' + (maxy - miny).toFixed(0);
+    this.krsBounds = { minx, miny, maxx, maxy };
+  }
+
+  // Regionsebene: 5×5-km-Zellen INNERHALB eines Landkreises, bewusst als Rechtecke
+  // (nicht Hexagone) — visuell sofort von der Landkreis-Ebene unterscheidbar.
+  regionCellsFor(krsId) {
+    if (this._regionCache[krsId]) return this._regionCache[krsId];
+    const krs = this.krs.find(k => k.id === krsId);
+    const seed = krs ? (krs.row * 97 + krs.col * 131 + 11) : 1;
+    const frac = v => { const r = Math.sin(v) * 43758.5453; return r - Math.floor(r); };
+    const cols = 5, rows = 4, cw = 34, ch = 34, gap = 3, pad = 12;
+    const cells = [];
+    let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x0 = pad + c * cw, y0 = pad + r * ch, x1 = x0 + cw - gap, y1 = y0 + ch - gap;
+        const pts = [x0 + ',' + y0, x1 + ',' + y0, x1 + ',' + y1, x0 + ',' + y1].join(' ');
+        minx = Math.min(minx, x0); maxx = Math.max(maxx, x1); miny = Math.min(miny, y0); maxy = Math.max(maxy, y1);
+        const x = cols > 1 ? c / (cols - 1) : 0.5, y = rows > 1 ? 1 - r / (rows - 1) : 0.5;
+        cells.push({
+          id: krsId + '_' + r + '-' + c, row: r, col: c, pts,
+          label: (c + 1) + '·' + (r + 1),
+          x, y,
+          density: Math.max(0.03, frac(seed * 7.7 + c * 4.3 + r * 9.1 + 0.5)),
+          noise: frac(seed * 3.11 + c * 12.9898 + r * 78.233) * 2 - 1,
+          potential: 0.45 + 0.95 * frac(seed * 3.17 + c * 3.17 + r * 7.71 + 1.3),
+          ausgAnteil: Math.min(1, Math.max(0, 0.04 + 0.62 * frac(seed * 9.71 + c * 9.71 + r * 4.37 + 2.9))),
+          bestRaw: 0
+        });
+      }
+    }
+    const dmax = Math.max(...cells.map(c => c.density));
+    cells.forEach(c => c.density = c.density / dmax);
+    let bsum = 0, bmax = 0;
+    cells.forEach(c => { c.bestRaw = Math.max(0.05, 0.6 * c.y + 0.4 * c.x + 0.15 * c.noise); bsum += c.bestRaw; bmax = Math.max(bmax, c.bestRaw); });
+    // Bestand dieses Landkreises wird beim Zoom in die Region anteilig weiterverwendet
+    const krsBestand = krs ? krs.bestandGW : 0;
+    cells.forEach(c => { c.bestandGW = bsum ? krsBestand * c.bestRaw / bsum : 0; c.bestFrac = bmax ? c.bestRaw / bmax : 0; });
+    cells.forEach(c => { c.typ = c.density > 0.55 ? 'Verdichteter Raum' : c.density > 0.3 ? 'Städtischer Raum' : c.density > 0.12 ? 'Ländlicher Raum' : 'Dünn besiedelter Raum'; });
+    const result = { cells, vb: minx.toFixed(0) + ' ' + miny.toFixed(0) + ' ' + (maxx - minx).toFixed(0) + ' ' + (maxy - miny).toFixed(0), bounds: { minx, miny, maxx, maxy } };
+    this._regionCache[krsId] = result;
+    return result;
+  }
+
+  // Schritt 1 (immer reaktiv): das für einen Landkreis reservierte Budget aus den
+  // NATIONALEN Prinzipien — feste Eingabegröße für Schritt 2 (Regionsansicht).
+  natBudgetFor(krsId) {
+    const S = this.state;
+    const idx = this.krs.findIndex(k => k.id === krsId);
+    if (idx < 0) return 0;
+    const sel = S.selected.filter(id => this.byId[id] && this.byId[id].available);
+    if (!sel.length) return 0;
+    const shr = pid => this.sharesFor(pid, S, this.krs)[idx] * S.targetGW;
+    return sel.length === 1 ? shr(sel[0]) : Math.min(...sel.map(shr));
+  }
+
+  regionSigFrom(krsId, sel, budget) {
+    const S = this.state;
+    return [krsId, sel.slice().sort().join(','), this.fmt(budget), S.tech, S.account ? 1 : 0].join('|');
+  }
+
+  enterRegion(krsId, label) {
+    const S = this.state;
+    this.setState({
+      level: 'region', region: { krsId, label }, cell: null, compare: null, tab: 'konsens',
+      selectedRegional: null, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
+      regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false,
+      // Einmaliger Mode-Transition-Banner — zeigt nur beim allerersten Betreten einer Region (§M)
+      regionBanner: !S.regionBannerSeen, regionBannerSeen: true
+    });
+  }
+
+  startRegionCompute() {
+    const S = this.state;
+    if (!S.region) return;
+    const krsId = S.region.krsId;
+    const avail = id => this.byId[id] && this.byId[id].available;
+    const effSel = (S.selectedRegional != null ? S.selectedRegional : S.selected).filter(avail);
+    const budget = this.natBudgetFor(krsId);
+    const sig = this.regionSigFrom(krsId, effSel, budget);
+    if (this._regionRaf) cancelAnimationFrame(this._regionRaf);
+    const DUR = 24000;
+    const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const t0 = clock();
+    this.setState({ regionComputing: true, regionProgress: 0 });
+    const step = () => {
+      // Falls der Nutzer die Region inzwischen verlassen hat, Ergebnis verwerfen statt falsch zuzuordnen.
+      if (this.state.level !== 'region' || !this.state.region || this.state.region.krsId !== krsId) { this._regionRaf = null; return; }
+      const p = Math.min(1, (clock() - t0) / DUR);
+      if (p < 1) { this.setState({ regionProgress: p }); this._regionRaf = requestAnimationFrame(step); }
+      else this.setState({ regionComputing: false, regionProgress: 1, regionComputedSel: effSel, regionComputedTarget: budget, regionComputedSig: sig });
+    };
+    this._regionRaf = requestAnimationFrame(step);
   }
 
   // ---- helpers ----
@@ -823,24 +998,51 @@ class Component extends DCLogic {
       default: return 40;
     }
   }
-  sharesFor(pid, S) {
-    let s = this.cells.map(c => Math.max(1, this.baseS(c, pid) + 5 * c.noise));
+  sharesFor(pid, S, cellset) {
+    cellset = cellset || this.krs;
+    let s = cellset.map(c => Math.max(1, this.baseS(c, pid) + 5 * c.noise));
     if (S.tech === 'pv') { const m = s.reduce((a,b)=>a+b,0) / s.length; s = s.map(v => m + 0.18 * (v - m)); }
-    if (S.account) s = s.map((v,i) => v * (1 - 0.6 * this.cells[i].bestFrac));
+    if (S.account) s = s.map((v,i) => v * (1 - 0.6 * cellset[i].bestFrac));
     const sum = s.reduce((a,b)=>a+b,0);
     return s.map(v => v / sum);
   }
 
   build() {
-    const S = this.state, cells = this.cells, N = cells.length, target = S.targetGW;
+    const S = this.state;
     const avail = id => this.byId[id] && this.byId[id].available;
-    let sel = S.selected.filter(avail);
-    const isEmpty = sel.length === 0;
-    const stufe = sel.length;
+    const isRegion = S.level === 'region' && !!S.region;
     const isExt = S.mode === 'erweitert';
 
+    // ---------- Zwei-Ebenen-Setup (§M) ----------
+    // DE-Ansicht: cells = Landkreise, sel = nationale Prinzipien, target = Ausbauziel — immer reaktiv.
+    // Regionsansicht: cells = 5×5-km-Zellen des geöffneten Landkreises; sel/target sind auf den Stand
+    // der letzten Berechnung EINGEFROREN (Schritt 2 hat eine echte Rechenzeit, kein Auto-Recompute).
+    let cells, target;
+    const uiSelRegional = (S.selectedRegional != null ? S.selectedRegional : S.selected).filter(avail);
+    // Live-Auswahl fürs Häkchen-Rendering im linken Panel (unabhängig von der eingefrorenen Kartenberechnung)
+    const uiSel = isRegion ? uiSelRegional : S.selected;
+    const selKey = isRegion ? 'selectedRegional' : 'selected';
+    const hasRegionResult = isRegion && S.regionComputedSel != null;
+    if (isRegion) {
+      cells = this.regionCellsFor(S.region.krsId).cells;
+      target = hasRegionResult ? S.regionComputedTarget : 0;
+    } else {
+      cells = this.krs;
+      target = S.targetGW;
+    }
+    const N = cells.length;
+    let sel = isRegion ? (hasRegionResult ? S.regionComputedSel.filter(avail) : []) : S.selected.filter(avail);
+    const isEmpty = sel.length === 0;
+    const stufe = sel.length;
+
+    // Region-Berechnungs-Gate: fehlender/veralteter Rechenlauf
+    const liveBudget = isRegion ? this.natBudgetFor(S.region.krsId) : 0;
+    const liveSig = isRegion ? this.regionSigFrom(S.region.krsId, uiSelRegional, liveBudget) : null;
+    const regionStale = hasRegionResult && S.regionComputedSig !== liveSig;
+    const regionNeedsGate = isRegion && (!hasRegionResult || S.regionComputing);
+
     const shareCache = {};
-    const shr = pid => shareCache[pid] || (shareCache[pid] = this.sharesFor(pid, S));
+    const shr = pid => shareCache[pid] || (shareCache[pid] = this.sharesFor(pid, S, cells));
     const gwArr = pid => shr(pid).map(a => a * target);
     const gwSel = {}; sel.forEach(p => gwSel[p] = gwArr(p));
 
@@ -850,9 +1052,8 @@ class Component extends DCLogic {
     const consTotal = consCells ? consCells.reduce((a,b)=>a+b,0) : 0;
     const consWithout = pid => { const set = sel.filter(x => x !== pid); if (set.length <= 1) return target; return consArr(set).reduce((a,b)=>a+b,0); };
 
-    // scope (region)
-    const inScope = i => !S.region || S.region.ids.includes(cells[i].id);
-    const scopeIdx = cells.map((c,i)=>i).filter(inScope);
+    // Beide Ebenen zeigen ihre je eigene, bereits scope-passende Zellmenge — kein weiterer Scope-Filter nötig.
+    const scopeIdx = cells.map((c,i)=>i);
 
     // effektiver Plan — Bestand/Zubau/Gesamt nur sinnvoll bei Bestandsanrechnung
     const effPlan = S.account ? S.plan : 'zubau';
@@ -873,7 +1074,8 @@ class Component extends DCLogic {
     // Galerie (Difference-first) = Verteilungen-Tab. Im Erststart und wann immer der
     // Verteilungen-Tab in der Explorationsphase aktiv ist, zeigt sie ALLE Prinzipien.
     let view;
-    if (isEmpty) view = 'verteilungen';
+    if (regionNeedsGate) view = 'regionGate';
+    else if (isEmpty) view = 'verteilungen';
     else if (S.compare) view = 'differenz';
     else if (S.tab === 'verteilungen') view = 'verteilungen';
     else if (stufe === 1) view = 'single';
@@ -885,22 +1087,50 @@ class Component extends DCLogic {
     const galleryAll = view === 'verteilungen' && stufe <= 1;
 
     const R = {};
-    // Bei eingegrenztem Scope auf die Zelle/Region zoomen (Bounding-Box + Kontextrand)
-    if (S.region && S.region.ids && S.region.ids.length) {
-      const inR = cells.filter(c => S.region.ids.indexOf(c.id) >= 0);
-      const xs = inR.map(c => c.cx), ys = inR.map(c => c.cy);
-      const padX = 118, padY = 108;
-      const x0 = Math.min.apply(null, xs) - padX, x1 = Math.max.apply(null, xs) + padX;
-      const y0 = Math.min.apply(null, ys) - padY, y1 = Math.max.apply(null, ys) + padY;
-      R.vb = Math.round(x0) + ' ' + Math.round(y0) + ' ' + Math.round(x1-x0) + ' ' + Math.round(y1-y0);
-    } else R.vb = this.vb;
-    R.vbFull = this.vb;
+    R.vb = isRegion ? this.regionCellsFor(S.region.krsId).vb : this.krsVb;
+    R.vbFull = this.krsVb;
     R.patterns = [];
     R.overlayCells = [];
     R.hasOverlay = false;
     R.isVerteilungen = view === 'verteilungen';
-    R.isSingleMap = !R.isVerteilungen && !isEmpty;
+    R.isSingleMap = view === 'regionGate' ? true : (!R.isVerteilungen && !isEmpty);
     R.isEmpty = isEmpty;
+
+    // Regionsansicht: Berechnungs-Gate / veraltet-Hinweis — die Aktion selbst hat ihren
+    // festen Platz unten an der Liste „Verteilung innerhalb der Region" (linke Spalte, §M).
+    // Karte + rechte Spalte zeigen hier nur den „nicht aktuell"-Zustand, keinen eigenen Button.
+    R.regionBlockOverlay = regionNeedsGate;
+    R.regionComputing = !!S.regionComputing;
+    R.regionGateIdle = regionNeedsGate && !S.regionComputing;
+    R.regionStaleBar = isRegion && hasRegionResult && regionStale && !S.regionComputing;
+    R.regionProgressPct = Math.round((S.regionProgress || 0) * 100) + ' %';
+    R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.75' : '1');
+    R.startRegionCompute = () => this.startRegionCompute();
+    R.regionGateTitle = S.regionComputing ? 'Berechnung läuft…' : (hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet');
+    R.regionGateSub = S.regionComputing
+      ? 'Regionale Prinzipien werden komponiert und neu gerechnet — das dauert rund 20–30 Sekunden.'
+      : hasRegionResult
+        ? 'Die Eingaben haben sich geändert — links „Neu berechnen" klicken, um die Karte zu aktualisieren.'
+        : 'Wählen Sie regionale Prinzipien links und klicken Sie „Berechnung starten".';
+
+    // Fester Platz an der linken Liste: prominent solange nichts gerechnet ist, danach
+    // als „Neu berechnen", sobald ein regionales Prinzip geändert wurde. Kein Auto-Recompute.
+    R.showRegionCompute = isRegion && (regionNeedsGate || R.regionStaleBar);
+    R.regionComputeIdle = R.showRegionCompute && !S.regionComputing;
+    R.regionComputeTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet';
+    R.regionComputeSub = hasRegionResult
+      ? 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.'
+      : 'Wählen Sie oben regionale Prinzipien und starten Sie die Berechnung.';
+    R.regionComputeBtnLabel = hasRegionResult ? 'Neu berechnen' : 'Berechnung starten';
+    R.regionComputeBoxStyle = hasRegionResult
+      ? 'background:#fbf3e8;border:1px solid #ead9bf'
+      : 'background:#f0f5f4;border:1px solid #cfe4de';
+    R.regionComputeBtnStyle = hasRegionResult
+      ? 'width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer'
+      : 'width:100%;background:#0b6b5a;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
+
+    // Klick auf den Kartenhintergrund (außerhalb aller Zellen) hebt die Zellauswahl auf — schließt damit auch das Popover
+    { const [bx, by, bw, bh] = R.vb.split(' ').map(Number); R.vbX = bx; R.vbY = by; R.vbW = bw; R.vbH = bh; }
 
     const singlePid = sel[0] || this.principles[0].id;
 
@@ -933,8 +1163,7 @@ class Component extends DCLogic {
     const mkCell = (i, fill, opts) => {
       opts = opts || {};
       let op = 1;
-      if (S.region && !inScope(i)) op = 0.12;
-      else if (opts.hidden) op = 0.06;
+      if (opts.hidden) op = 0.06;
       else if (doReveal && rankFrac[i] > revealP) op = 0.08;
       const selc = S.cell === cells[i].id;
       let stroke = selc ? '#12181d' : '#ffffff', sw = selc ? 2.4 : 1, dash = '0';
@@ -942,7 +1171,13 @@ class Component extends DCLogic {
       return { pts: cells[i].pts, fill, stroke, sw, dash, op, onClick: () => this.selectCell(cells[i].id) };
     };
 
-    if (view === 'single') {
+    if (view === 'regionGate') {
+      // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
+      // Farbe kommt erst mit dem nächsten „Berechnung starten".
+      R.mainCells = cells.map((c,i) => ({ pts: c.pts, fill: '#eef1f0', stroke: S.cell === c.id ? '#12181d' : '#fff', sw: S.cell === c.id ? 2.4 : 1, dash: '0', op: 1, onClick: () => this.selectCell(c.id) }));
+      R.legendSeq = false;
+      R.showPlan = false;
+    } else if (view === 'single') {
       const mx = Math.max(...cells.map((c,i)=>planVal(i)));
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? planVal(i)/mx : 0, this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
@@ -1071,7 +1306,7 @@ class Component extends DCLogic {
           max: this.fmt(mx),
           cells: cells.map((cc,i) => ({ pts: cc.pts, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
-          onClick: galleryAll ? () => this.setState({ selected: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
+          onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
         };
       });
       R.showPlan = !galleryAll;
@@ -1118,13 +1353,34 @@ class Component extends DCLogic {
     R.techPVStyle = this.segLight(S.tech === 'pv');
     R.targetGW = S.targetGW;
 
+    // Zwei benannte Prinzipiensätze (§M): links steht immer genau EINE editierbare Liste;
+    // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
+    R.princHeading = isRegion ? 'VERTEILUNG INNERHALB DER REGION' : 'VERTEILUNG AUF REGIONEN';
+    R.showNatBreadcrumb = isRegion;
+    const natNames = S.selected.filter(avail).map(id => this.byId[id].name);
+    // Einzige sichtbare Verbindung der zwei Ebenen — bewusst als echter Anker gestaltet, nicht als blasse Microcopy.
+    R.natBreadcrumbValue = natNames.length ? natNames.join(', ') : '—';
+    R.natBreadcrumbCaret = S.natBreadcrumbOpen ? '▴' : '▾';
+    R.natBreadcrumbOpen = !!S.natBreadcrumbOpen;
+    R.toggleNatBreadcrumb = () => this.setState({ natBreadcrumbOpen: !S.natBreadcrumbOpen });
+    R.natChips = S.selected.filter(avail).map(id => ({ name: this.byId[id].name, color: this.byId[id].color }));
+
+    // Erst-Hinweis an der regionalen Liste — macht die Opt-in-Natur des zweiten Prinzipiensatzes sichtbar (§M)
+    R.regionListHint = isRegion && !S.regionHintSeen;
+    R.dismissRegionListHint = () => this.setState({ regionHintSeen: true });
+
+    // Einmaliger Mode-Transition-Banner beim Betreten der Regionsansicht (§M)
+    R.showRegionBanner = isRegion && !!S.regionBanner;
+    R.regionBannerText = isRegion ? ('Sie werten jetzt ' + S.region.label + ' im Detail aus — die nationale Verteilung bleibt oben als Kontext.') : '';
+    R.dismissRegionBanner = () => this.setState({ regionBanner: false });
+
     R.hasMore = this.principles.some(p => (isExt || p.basic) && !p.available);
     R.showMore = S.showMore;
     R.toggleMore = () => this.setState({ showMore: !S.showMore });
     R.moreLabel = S.showMore ? 'Weniger Prinzipien' : 'Mehr Prinzipien';
     const cmpTargetId = (S.compare && S.compare.type === 'principle') ? S.compare.id : null;
     R.princList = this.principles.filter(p => (isExt || p.basic) && (p.available || S.showMore)).map(p => {
-      const on = sel.includes(p.id);
+      const on = uiSel.includes(p.id);
       const isCmpTarget = p.id === cmpTargetId;
       const canClick = p.available && !isCmpTarget;
       return {
@@ -1146,7 +1402,7 @@ class Component extends DCLogic {
     R.trioHint = !!(S.trioHint || S.trioHintMounted);
     R.trioHintStyle = 'font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px;'
       + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
-    R.showCTA = stufe === 1;
+    R.showCTA = uiSel.length === 1;
     R.hintOppo = S.hintOppo;
 
     // Externe Referenzverteilungen (eigene Gruppe, klar abgesetzt)
@@ -1176,15 +1432,8 @@ class Component extends DCLogic {
     R.accountKnobStyle = this.knobStyle(S.account);
     R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
 
-    R.granBtns = ['10km', 'gemeinde', 'landkreis'].map(g => ({
-      label: g === '10km' ? '5 × 5 km' : g === 'gemeinde' ? 'Gemeinde' : 'Landkreis',
-      onClick: () => this.setState({ gran: g }),
-      style: this.segLight(S.gran === g)
-    }));
-
-    // Ansichtsleiste
-    const granLbl = S.gran === '10km' ? '5 × 5 km Raster' : S.gran === 'gemeinde' ? 'Gemeinde' : 'Landkreis';
-    R.ansichtLabel = (S.region ? S.region.label : 'Deutschland') + ' · ' + granLbl;
+    // Ansichtsleiste — die zwei Geometrien ersetzen den früheren Granularitäts-Schalter (s. §L/§M)
+    R.ansichtLabel = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
     R.region = !!S.region;
     R.search = S.search;
 
@@ -1213,7 +1462,7 @@ class Component extends DCLogic {
     R.showTabs = stufe >= 2;
     const tabDefs = [{ id: 'konsens', label: 'Zubaukonsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'schnittmengen', label: 'Übereinstimmungen' }];
     tabDefs.push({ id: 'verteilungen', label: 'Vergleich' });
-    if (isExt) { tabDefs.push({ id: 'positiv', label: 'Konsens vs. Planung' }); tabDefs.push({ id: '__diff', label: 'Konsens vs. Referenz' }); }
+    if (isExt) { tabDefs.push({ id: 'positiv', label: 'Konsens vs. Planung' }); if (!isRegion) tabDefs.push({ id: '__diff', label: 'Konsens vs. Referenz' }); }
     R.tabs = tabDefs.map(t => ({
       label: t.label,
       onClick: t.id === '__diff' ? () => this.setState(this.dismissTrioHint({ compareMenu: true })) : () => this.setState(this.dismissTrioHint({ tab: t.id, compare: null })),
@@ -1229,7 +1478,7 @@ class Component extends DCLogic {
     // Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle
     R.showPlan = (R.showPlan || false) && S.account;
     // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
-    R.showCompare = isExt;
+    R.showCompare = isExt && !isRegion;
     R.showHideToggle = stufe >= 2;
     R.showToolRow = isExt || stufe >= 2;
     R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
@@ -1263,29 +1512,39 @@ class Component extends DCLogic {
     R.showOverview = !selectedCell;
     R.showCell = !!selectedCell;
 
+    // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
+    const scopeWord = isRegion ? 'dieser Region' : 'gesamt';
+
     if (!selectedCell) {
-      R.ovScopeLabel = S.region ? 'Ausschnitt' : 'Übersicht';
-      R.ovTitle = S.region ? S.region.label : 'Deutschland gesamt';
+      R.ovScopeLabel = isRegion ? 'Region' : 'Übersicht';
+      R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCoverage = false; R.anCombos = false; R.anDiff = false;
       R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
 
-      if (isEmpty) {
+      if (view === 'regionGate') {
         R.ovEmpty = true;
-        R.ovLeadLabel = 'Noch kein Prinzip gewählt'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
+        R.ovLeadLabel = 'Regionsergebnis'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
+        R.ovLeadSub = hasRegionResult ? 'Eingaben geändert — Ergebnis links neu berechnen.' : 'Noch nicht berechnet — links „Berechnung starten" klicken.';
+        R.ovClickHint = false;
+      } else if (isEmpty) {
+        R.ovEmpty = true;
+        R.ovLeadLabel = isRegion ? 'Noch kein regionales Prinzip gewählt' : 'Noch kein Prinzip gewählt'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
         R.ovLeadSub = 'Wählen Sie links ein Gerechtigkeitsprinzip. Sobald zwei oder mehr gewählt sind, erscheint hier der Zubaukonsens.';
         R.ovClickHint = false;
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
-        R.ovLeadLabel = 'Empfohlener Zubau gesamt (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
+        R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
         R.ovLeadSub = 'Sie können ein zweites Prinzip hinzufügen, um den Zubaukonsens zu sehen.';
       } else {
         const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
-        // verschachtelter Balken: Ausbauziel = volle Länge, Konsens = gefüllt, Rest = blass
+        // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
-        R.ovBarCaption = 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
+        R.ovBarCaption = isRegion
+          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
+          : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
-        const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter((l,idx)=>l===p && inScope(idx)).length, cost: consWithout(p) - consTotal }));
+        const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter(l=>l===p).length, cost: consWithout(p) - consTotal }));
         bl.sort((a,b)=>b.cost-a.cost);
         const cmax = Math.max(...bl.map(b=>b.cost), 0.001);
         const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmt(Math.max(0,b.cost)), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmt(consTotal) + ' auf ' + this.fmt(consWithout(top.p)) + ' GW.'; };
@@ -1308,15 +1567,15 @@ class Component extends DCLogic {
           // Richtung statt nacktem Vorzeichen (wie in der Kartenlegende)
           R.diffRows = top.map(o => ({ label: 'Zelle ' + cells[o.i].label, gw: this.fmt(Math.abs(o.d)) + ' GW mehr bei ' + (o.d>=0 ? baseName : S.compare.label), color: o.d>=0 ? '#2f6690' : '#8a5a12', onClick: () => this.selectCell(cells[o.i].id) }));
         } else if (view === 'verteilungen') {
-          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           R.anSums = true;
           const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
           const smax = Math.max(...sums.map(s=>s.v), 0.001);
           R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmt(s.v), w: (s.v/smax*100).toFixed(1)+'%' }));
         } else if (view === 'schnittmengen') {
-          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           R.anCombos = true;
           const medians2 = {}; sel.forEach(p => { const a = gwArr(p).slice().sort((x,y)=>x-y); const n=a.length; medians2[p] = n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2; });
           const cnt = {};
@@ -1342,16 +1601,32 @@ class Component extends DCLogic {
           R.toggleCombos = () => this.setState({ combosOpen: !S.combosOpen });
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
-          R.ovLeadLabel = 'Zubaukonsens gesamt'; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + ' des Ausbauziels (' + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           R.anBlockers = true; mkBlockers();
         }
       }
       R.ovLeadBoxStyle = R.ovLeadSuppress ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
-      R.ovClickHint = S.gran !== '10km' || !!S.region;
+      R.ovClickHint = view !== 'regionGate' && !isEmpty;
     } else {
       const i = cells.indexOf(selectedCell), c = selectedCell;
-      R.cellScope = (S.region ? S.region.label : 'Deutschland') + ' · ' + granLbl;
+      R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
+      R.cellKindLabel = isRegion ? 'Rasterzelle' : 'Landkreis';
+      R.cellConsensusScopeLabel = isRegion ? 'Zubaukonsens dieser Zelle in der Region' : 'Budget dieser Region';
+
+      // Popover an der Zelle: primärer, prominenter Einstieg in die Regionsansicht dieses
+      // Landkreises (§M) — bleibt verankert, solange die Zelle ausgewählt ist.
+      if (!isRegion) {
+        const popW = 236, popH = 50, b = this.krsBounds, gap = 10;
+        let px = c.cx - popW / 2;
+        px = Math.max(b.minx + 4, Math.min(b.maxx - popW - 4, px));
+        let py = c.cy - this.hexSize - popH - gap;
+        if (py < b.miny + 4) py = c.cy + this.hexSize + gap;
+        R.showCellPopover = true;
+        R.cellPopoverX = px; R.cellPopoverY = py; R.cellPopoverW = popW; R.cellPopoverH = popH;
+        R.cellPopoverLabel = 'Landkreis ' + c.label + ' im Detail auswerten →';
+        R.evaluateRegionPopover = () => this.enterRegion(c.id, 'Landkreis ' + c.label);
+      } else R.showCellPopover = false;
       R.cellLabel = c.label; R.cellTyp = c.typ;
       R.cellHasConsensus = stufe >= 2;
       R.cellStufe1 = stufe === 1;
@@ -1392,11 +1667,10 @@ class Component extends DCLogic {
         R.cellShowConflictHint = true;
         R.dismissConflictHint = () => this.setState({ seenConflictHint: true });
       } else R.cellShowConflictHint = false;
-      // "Region auswerten" — Scope auf diese Zelle setzen (Demo)
-      R.evaluateRegion = () => this.setState({ region: { label: 'Rasterzelle ' + c.label, level: S.gran, ids: [c.id] } });
       // erweitert
       const rankArr = (stufe >= 2 ? consCells : gwSel[singlePid]).map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v);
       R.cellRankNat = (rankArr.findIndex(r=>r.idx===i) + 1) + ' von ' + N;
+      R.cellRankLabel = isRegion ? 'Rang in der Region' : 'Rang deutschlandweit';
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
@@ -1460,20 +1734,20 @@ class Component extends DCLogic {
     R.closeZoom = () => this.setState({ zoom: null });
 
     // handlers
-    R.setBasic = () => this.setState({ mode: 'basic', gran: '10km', compare: (S.compare && S.compare.type === 'ref') ? null : S.compare, refs: [], tab: this.state.tab === 'positiv' ? 'konsens' : this.state.tab });
+    R.setBasic = () => this.setState({ mode: 'basic', compare: (S.compare && S.compare.type === 'ref') ? null : S.compare, refs: [], tab: this.state.tab === 'positiv' ? 'konsens' : this.state.tab });
     R.setErweitert = () => this.setState({ mode: 'erweitert' });
     R.setWind = () => this.setState({ tech: 'wind' });
     R.setPV = () => this.setState({ tech: 'pv' });
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
-    R.addSecond = () => this.toggleP(sel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
-    R.jumpToConsensus = () => this.setState({ selected: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
+    R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
+    R.jumpToConsensus = () => this.setState({ [selKey]: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
     R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
     R.clearCell = () => this.setState({ cell: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });
     R.onSearchKey = e => { if (e.key === 'Enter') this.doSearch(); };
-    R.showBack = !!S.region || !!S.cell;
-    R.backToDE = () => this.setState({ region: null, cell: null });
+    R.showBack = isRegion || !!S.cell;
+    R.backToDE = () => this.setState({ level: 'de', region: null, cell: null, compare: null });
 
     return R;
   }
@@ -1490,6 +1764,16 @@ class Component extends DCLogic {
     const b = this.byId[id];
     if (!b || !b.available) return;
     const S = this.state;
+    // Regionale Prinzipien: eigene, freistehende Liste — spiegelt die nationale Auswahl nur bis zur
+    // ersten bewussten Änderung (Default gegen Komplexität, s. §M). Ändert NICHT die Kartenberechnung
+    // (die bleibt eingefroren, bis „Berechnung starten" gedrückt wird).
+    if (S.level === 'region' && S.region) {
+      let rsel = (S.selectedRegional != null ? S.selectedRegional : S.selected).slice();
+      if (rsel.includes(id)) { if (rsel.length <= 1) return; rsel = rsel.filter(x => x !== id); }
+      else rsel.push(id);
+      this.setState({ selectedRegional: rsel, cell: null, regionHintSeen: true });
+      return;
+    }
     let sel = S.selected.slice();
     const was = sel.filter(x => this.byId[x] && this.byId[x].available).length;
     if (sel.includes(id)) sel = sel.filter(x => x !== id); else sel.push(id);
@@ -1525,8 +1809,12 @@ class Component extends DCLogic {
     if (!q) return;
     const p = this.places.find(pl => pl.q.some(x => q.includes(x) || x.includes(q)));
     if (!p) return;
-    const ids = this.cells.filter(c => { const dc = c.col - p.center[0], dr = c.row - p.center[1]; return Math.sqrt(dc*dc + dr*dr) <= 1.7; }).map(c => c.id);
-    this.setState({ region: { label: p.label, level: p.level, ids }, gran: p.level, cell: null, search: '' });
+    // Nächstgelegenen Landkreis zum gesuchten Ort finden und direkt dessen Regionsansicht öffnen.
+    let best = null, bestD = Infinity;
+    this.krs.forEach(k => { const dc = k.col - p.center[0], dr = k.row - p.center[1], d = dc*dc + dr*dr; if (d < bestD) { bestD = d; best = k; } });
+    if (!best) return;
+    this.enterRegion(best.id, p.label);
+    this.setState({ search: '' });
   }
 
   renderVals() { return this.build(); }
