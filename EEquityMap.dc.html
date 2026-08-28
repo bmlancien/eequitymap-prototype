@@ -76,6 +76,10 @@
       <div style="font-size:14.5px;font-weight:600;color:#1b2126">{{ princHeading }}</div>
       <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
+      <sc-if value="{{ showJumpCTA }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ jumpToConsensus }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:10px 14px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px">Wo sind sich die Prinzipien einig? →</button>
+      </sc-if>
+
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
           <span style="flex:1">Startet mit denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
@@ -257,11 +261,6 @@
                 </div>
               </sc-for>
             </div>
-            <sc-if value="{{ galleryAll }}" hint-placeholder-val="{{ false }}">
-              <div style="{{ ctaWrapStyle }}">
-                <button onClick="{{ jumpToConsensus }}" style="background:#0b6b5a;color:#fff;border:none;padding:11px 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">Wo sind sich die Prinzipien einig? →</button>
-              </div>
-            </sc-if>
           </div>
         </sc-if>
 
@@ -778,7 +777,8 @@ class Component extends DCLogic {
     freeTarget: false,
     revealP: 1,
     refs: [],
-    infoRef: null
+    infoRef: null,
+    jumpClicked: false
   };
 
   refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
@@ -1315,9 +1315,6 @@ class Component extends DCLogic {
       });
       R.showPlan = !galleryAll;
       R.galleryAll = galleryAll;
-      // CTA blendet ~2,5 s nach Betreten der Galerie sanft ein
-      // Timer läuft erst, wenn das Modal geschlossen ist — nicht dahinter
-      if (galleryAll && !S.intro && !this._ctaTimer && !S.ctaReady) { this._ctaTimer = setTimeout(() => { this._ctaTimer = null; this.setState({ ctaReady: true }); }, 2500); }
       // Einstieg: Headline + Legende + Galerie + CTA sind ein zusammenhängender Block oben;
       // die Galerie wächst nicht in die leere Restfläche, der CTA bleibt an den Karten.
       R.galleryColStyle = galleryAll
@@ -1326,7 +1323,6 @@ class Component extends DCLogic {
       R.galleryGridStyle = galleryAll
         ? 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;align-content:start;flex:none'
         : 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;flex:1;min-height:0;align-content:start;overflow-y:auto';
-      R.ctaWrapStyle = 'display:flex;justify-content:center;margin-top:28px;padding-bottom:4px;flex:none;transition:opacity .7s ease;opacity:' + (S.ctaReady ? '1' : '0') + ';pointer-events:' + (S.ctaReady ? 'auto' : 'none');
       R.galleryHeadline = 'Jedes Gerechtigkeitsprinzip verteilt den Ausbau anders. Hier sehen Sie, wie — und wo sie sich einig sind.';
     }
     R.galleryAll = R.galleryAll || false;
@@ -1361,6 +1357,8 @@ class Component extends DCLogic {
     // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
     // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
     R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach:' : 'Bundesweit verteilt nach:';
+    // Sichtbar bis geklickt oder mind. zwei Prinzipien gewählt sind (danach übernimmt die Auswahlliste selbst)
+    R.showJumpCTA = !S.jumpClicked && uiSel.length < 2;
     R.showNatBreadcrumb = isRegion;
     const natNames = S.selected.filter(avail).map(id => this.byId[id].name);
     // Einzige sichtbare Verbindung der zwei Ebenen — bewusst als echter Anker gestaltet, nicht als blasse Microcopy.
@@ -1781,7 +1779,7 @@ class Component extends DCLogic {
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
     R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
-    R.jumpToConsensus = () => this.setState({ [selKey]: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
+    R.jumpToConsensus = () => this.setState({ [selKey]: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, jumpClicked: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
     R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
     R.clearCell = () => this.setState({ cell: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });
