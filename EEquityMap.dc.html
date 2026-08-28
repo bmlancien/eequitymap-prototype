@@ -76,10 +76,6 @@
       <div style="font-size:14.5px;font-weight:600;color:#1b2126">{{ princHeading }}</div>
       <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
-      <sc-if value="{{ showJumpCTA }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ jumpToConsensus }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:10px 14px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px">Wo sind sich die Prinzipien einig? →</button>
-      </sc-if>
-
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
           <span style="flex:1">Startet mit denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
@@ -777,8 +773,7 @@ class Component extends DCLogic {
     freeTarget: false,
     revealP: 1,
     refs: [],
-    infoRef: null,
-    jumpClicked: false
+    infoRef: null
   };
 
   refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
@@ -948,13 +943,19 @@ class Component extends DCLogic {
 
   enterRegion(krsId, label) {
     const S = this.state;
+    const avail = id => this.byId[id] && this.byId[id].available;
+    // Regionale Prinzipien starten als Kopie der nationalen Auswahl, nicht leer — die Region
+    // kommt damit rechenbereit an statt als leere „0,00 GW"-Konfiguration.
+    const initialSel = S.selected.filter(avail);
     this.setState({
       level: 'region', region: { krsId, label }, cell: null, compare: null, tab: 'konsens',
-      selectedRegional: null, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
+      selectedRegional: initialSel, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
       regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false,
       // Einmaliger Mode-Transition-Banner — zeigt nur beim allerersten Betreten einer Region (§M)
       regionBanner: !S.regionBannerSeen, regionBannerSeen: true
     });
+    // Erstes Betreten: Berechnung läuft automatisch einmal, damit sofort ein Ergebnis erscheint.
+    this.startRegionCompute();
   }
 
   startRegionCompute() {
@@ -1110,16 +1111,14 @@ class Component extends DCLogic {
     R.regionProgressPct = Math.round((S.regionProgress || 0) * 100) + ' %';
     R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.75' : '1');
     R.startRegionCompute = () => this.startRegionCompute();
-    R.regionGateTitle = S.regionComputing ? 'Berechnung läuft…' : (hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet');
-    R.regionGateSub = S.regionComputing
-      ? 'Regionale Prinzipien werden komponiert und neu gerechnet — das dauert rund 20–30 Sekunden.'
-      : hasRegionResult
-        ? 'Die Eingaben haben sich geändert — links „Neu berechnen" klicken, um die Karte zu aktualisieren.'
-        : 'Wählen Sie regionale Prinzipien links und klicken Sie „Berechnung starten".';
+    R.regionGateTitle = S.regionComputing ? 'Berechnung läuft…' : (hasRegionResult ? 'Ergebnis veraltet' : 'Wird berechnet…');
+    R.regionGateSub = hasRegionResult
+      ? 'Die Eingaben haben sich geändert — links „Neu berechnen" klicken, um die Karte zu aktualisieren.'
+      : 'Regionale Prinzipien werden komponiert und neu gerechnet — das dauert rund 20–30 Sekunden.';
 
-    // Fester Platz an der linken Liste: prominent solange nichts gerechnet ist, danach
-    // als „Neu berechnen", sobald ein regionales Prinzip geändert wurde. Kein Auto-Recompute.
-    R.showRegionCompute = isRegion && (regionNeedsGate || R.regionStaleBar);
+    // Fester Platz an der linken Liste: nur für „Neu berechnen" nach einer Änderung — die erste
+    // Berechnung läuft automatisch und braucht keinen Klick (kein Auto-Recompute NACH Änderungen).
+    R.showRegionCompute = isRegion && R.regionStaleBar;
     R.regionComputeIdle = R.showRegionCompute && !S.regionComputing;
     R.regionComputeTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet';
     R.regionComputeSub = hasRegionResult
@@ -1357,8 +1356,6 @@ class Component extends DCLogic {
     // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
     // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
     R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach:' : 'Bundesweit verteilt nach:';
-    // Sichtbar bis geklickt oder mind. zwei Prinzipien gewählt sind (danach übernimmt die Auswahlliste selbst)
-    R.showJumpCTA = !S.jumpClicked && uiSel.length < 2;
     R.showNatBreadcrumb = isRegion;
     const natNames = S.selected.filter(avail).map(id => this.byId[id].name);
     // Einzige sichtbare Verbindung der zwei Ebenen — bewusst als echter Anker gestaltet, nicht als blasse Microcopy.
@@ -1443,6 +1440,9 @@ class Component extends DCLogic {
     // Kernaussage — ändert sich mit der aktiven Ansicht
     if (view === 'empty') {
       R.kernaussage = 'Wo wäre der Ausbau fair? Beginnen Sie mit einem Gerechtigkeitsprinzip.';
+    } else if (view === 'regionGate') {
+      // Die Region hat immer ein national berechnetes Budget — nie „0,00 GW" als wäre nichts da.
+      R.kernaussage = 'Regionsbudget ' + this.fmt(liveBudget) + ' GW — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
     } else if (view === 'differenz') {
       const bn = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
       R.kernaussage = 'Wo unterscheiden sich ' + bn + ' und ' + S.compare.label + '?';
@@ -1458,7 +1458,10 @@ class Component extends DCLogic {
     } else if (view === 'schnittmengen') {
       R.kernaussage = 'Welche Prinzipien empfehlen jede Fläche?';
     } else {
-      R.kernaussage = 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
+      // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
+      R.kernaussage = isRegion
+        ? 'Von ' + this.fmt(target) + ' GW Regionsbudget liegen ' + this.fmt(consTotal) + ' GW im Konsens der regionalen Prinzipien.'
+        : 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
     }
 
     // Tabs (erst ab 2 Prinzipien)
@@ -1472,7 +1475,9 @@ class Component extends DCLogic {
       style: this.tabBtn((t.id === '__diff' && S.compare) || (!S.compare && S.tab === t.id))
     }));
 
-    R.hintTwo = S.hintTwo;
+    // DE-Ansicht-Onboarding — gehört nicht in die Regionsansicht (§M), auch wenn der Zustand
+    // noch aus der nationalen Auswahl übrig ist.
+    R.hintTwo = S.hintTwo && !isRegion;
     R.dismissHintTwo = () => this.setState({ hintTwo: false });
 
     // legend flags default
@@ -1526,9 +1531,10 @@ class Component extends DCLogic {
       R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
 
       if (view === 'regionGate') {
+        // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
         R.ovEmpty = true;
         R.ovLeadLabel = 'Regionsergebnis'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
-        R.ovLeadSub = hasRegionResult ? 'Eingaben geändert — Ergebnis links neu berechnen.' : 'Noch nicht berechnet — links „Berechnung starten" klicken.';
+        R.ovLeadSub = '';
         R.ovClickHint = false;
       } else if (isEmpty) {
         R.ovEmpty = true;
@@ -1779,7 +1785,6 @@ class Component extends DCLogic {
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
     R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
-    R.jumpToConsensus = () => this.setState({ [selKey]: ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'], committed: true, tab: 'konsens', compare: null, cell: null, seenTwo: true, jumpClicked: true, trioHint: !S.trioHintSeen, trioHintMounted: !S.trioHintSeen, trioHintSeen: true });
     R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
     R.clearCell = () => this.setState({ cell: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });

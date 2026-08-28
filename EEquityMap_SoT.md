@@ -585,7 +585,7 @@ Vorgaben.) Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel wechs
 - **Erst-Hinweis** an der Liste „Verteilung innerhalb der Region": „Startet mit
   denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region
   anders zu verteilen." (macht die Opt-in-Natur sichtbar).
-- **Breadcrumb** „Bundesweit verteilt nach: …" bekommt echtes Gewicht (nicht
+- **Breadcrumb** „Auf Regionen verteilt nach: …" bekommt echtes Gewicht (nicht
   blasse Microcopy) — es ist die einzige sichtbare Verbindung der zwei Ebenen.
 
 **Kriterien auf zwei Ebenen (Kern der Anforderung):**
@@ -624,15 +624,28 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
   Werkzeugs.
 - **Nur die Regionsansicht** hat eine **echte Backend-Rechenzeit (~30 s)**. Daher
   eigener Button **„Berechnung starten"** mit **festem Platz unten an der Liste
-  „Verteilung innerhalb der Region"** (nicht in der Kartenmitte, nicht
-  verschwindend): prominent solange nichts gerechnet ist, danach als
-  **„Neu berechnen"**, sobald ein regionales Prinzip geändert wurde. **Kein
-  Auto-Recompute.**
+  „Innerhalb der Region verteilt nach: …"** (nicht in der Kartenmitte, nicht
+  verschwindend).
+- **Auto-Berechnung beim ersten Betreten, manuell danach:** Beim ersten Betreten
+  einer Region läuft die Berechnung **automatisch einmal** (mit Spinner), sodass
+  sofort ein Ergebnis erscheint (der Popover-Einstieg soll belohnend sein, kein
+  leerer Screen). Nach einer Änderung eines regionalen Prinzips **kein
+  Auto-Recompute** — Anzeige geht auf „nicht aktuell", Button erscheint als
+  **„Neu berechnen"**, erst Klick rechnet neu.
+- **Headline zeigt das Regionsbudget, nie „0,00 GW":** Vor/während der Rechnung
+  „Regionsbudget [X] GW — wird verteilt …"; danach „Von [Budget] GW Regionsbudget
+  liegen [Y] GW im Konsens der regionalen Prinzipien." Das nationale Ausbauziel
+  gehört NICHT in die Regions-Headline. (Der frühere „0,00 GW"-Zustand war ein
+  Bug — die Region hat immer ein national berechnetes Budget.)
 - Nach einer Änderung der regionalen Prinzipien muss der Zustand **sichtbar
   „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Neu berechnen" gedrückt
   wird — sonst wirkt es kaputt. Fortschritts-/Spinner-Zustand während der
   Rechnung. Im Mock die Verzögerung ehrlich nachbilden (~20–30 s), damit Tests den
   echten Rhythmus erleben (configure → compute → read statt toggle → instant).
+- **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner; der
+  DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" gehört NICHT hierher. „Noch nicht
+  berechnet" nur an einer Stelle (erscheint durch die Auto-Berechnung ohnehin nur
+  kurz als „wird berechnet …").
 
 **Karten-Abstraktion:** weiterhin schematisch, KEINE echten Geodaten
 (vg250_krs.gpkg wird für den Prototyp NICHT gerendert — widerspräche der
