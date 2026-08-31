@@ -112,15 +112,15 @@
         </div>
       </sc-if>
 
-      <!-- Fester Platz für „Berechnung starten" / „Neu berechnen" — nur Regionsansicht (§M) -->
+      <!-- Fester Platz für „Berechnung starten" / „Neu berechnen" / „Abbrechen" — nur Regionsansicht (§M) -->
       <sc-if value="{{ showRegionCompute }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:12px;padding:12px 13px;border-radius:8px;{{ regionComputeBoxStyle }}">
           <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:10px">
               <div style="width:18px;height:18px;border-radius:50%;border:2.5px solid #cdddea;border-top-color:#2f6690;flex:none" class="spin"></div>
-              <div style="font-size:14px;color:#26303a;font-weight:600">Berechnung läuft… {{ regionProgressPct }}</div>
+              <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
             </div>
-            <div style="font-size:14px;color:#5b6672;margin-top:6px;line-height:1.45">Regionale Prinzipien werden komponiert und neu gerechnet — rund 20–30 Sekunden.</div>
+            <button onClick="{{ cancelRegionCompute }}" style="margin-top:10px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px;border-radius:7px;cursor:pointer">Abbrechen</button>
           </sc-if>
           <sc-if value="{{ regionComputeIdle }}" hint-placeholder-val="{{ true }}">
             <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
@@ -300,8 +300,7 @@
                 <div style="max-width:280px">
                   <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
                     <div style="width:30px;height:30px;margin:0 auto;border-radius:50%;border:3px solid #cdddea;border-top-color:#2f6690" class="spin"></div>
-                    <div style="font-size:14px;color:#26303a;font-weight:600;margin-top:12px">Berechnung läuft… {{ regionProgressPct }}</div>
-                    <div style="font-size:14px;color:#7a848c;margin-top:3px;line-height:1.45">{{ regionGateSub }}</div>
+                    <div style="font-size:14px;color:#26303a;font-weight:600;margin-top:12px">Regionsergebnis wird berechnet …</div>
                   </sc-if>
                   <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
                     <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionGateTitle }}</div>
@@ -326,7 +325,8 @@
         <div style="flex:none;margin-top:10px;border-top:1px solid #e2e5e8;padding-top:9px">
           <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ upsetCaret }}</button>
           <div style="{{ upsetBodyStyle }}">
-            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:9px 0 8px">
+            <div style="font-size:14px;color:#5b6672;margin:8px 0 2px;line-height:1.4">{{ schnittNote }}</div>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 8px">
               <sc-for list="{{ upsetPrincipleNames }}" as="pn" hint-placeholder-count="2">
                 <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#5b6672"><span style="width:11px;height:11px;border-radius:50%;background:{{ pn.color }}"></span>{{ pn.name }}</span>
               </sc-for>
@@ -383,7 +383,9 @@
               <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
                 <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
               </sc-for>
-              <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
+              <sc-if value="{{ schnittNoteBelow }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
+              </sc-if>
             </div>
           </sc-if>
           <!-- diverging legend -->
@@ -667,19 +669,24 @@
   <!-- Intro-Overlay: Prämisse -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div style="width:min(640px,94vw);background:#fff;border-radius:16px;padding:32px 36px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
+      <div class="scroll" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:16px;padding:32px 36px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
         <div style="font-size:24px;font-weight:700;color:#1b2126;letter-spacing:-.3px">Wo wäre der Ausbau fair?</div>
-        <p style="font-size:14px;line-height:1.65;color:#44505a;margin:14px 0 22px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
-        <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:10px">Dieselbe Aufgabe, verschiedene Antworten.</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px">
+        <p style="font-size:14px;line-height:1.65;color:#44505a;margin:14px 0 18px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
+        <!-- Ursache: verschiedene Menschen priorisieren Verschiedenes — rein dekorativ, trägt keine Aussage, die der Text nicht auch nennt -->
+        <div style="margin:0 0 20px">
+          <img src="illustration-prinzipien.svg" alt="" style="width:100%;max-width:440px;height:auto;display:block;margin:0 auto">
+        </div>
+        <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:8px">Deshalb: Dieselbe Aufgabe, verschiedene Antworten.</div>
+        <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
           <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
-            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:10px;padding:9px">
-              <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:104px">
+            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:10px;padding:8px">
+              <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:72px">
                 <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
                   <polygon points="{{ c.pts }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></polygon>
                 </sc-for>
               </svg>
-              <div style="font-size:14px;color:#44505a;line-height:1.35;margin-top:7px">{{ im.label }}</div>
+              <div style="font-size:14px;color:#44505a;line-height:1.35;margin-top:6px">{{ im.label }}</div>
             </div>
           </sc-for>
         </div>
@@ -981,6 +988,14 @@ class Component extends DCLogic {
     this._regionRaf = requestAnimationFrame(step);
   }
 
+  // Bricht die laufende Regionsberechnung ab und kehrt zum vorherigen Zustand zurück: das zuletzt
+  // berechnete Ergebnis bleibt stehen (regionComputedSel/-Target unverändert), oder — beim allerersten
+  // Betreten, wenn noch nie gerechnet wurde — der „noch nicht berechnet"-Zustand (§M).
+  cancelRegionCompute() {
+    if (this._regionRaf) { cancelAnimationFrame(this._regionRaf); this._regionRaf = null; }
+    this.setState({ regionComputing: false, regionProgress: 0 });
+  }
+
   // ---- helpers ----
   fmt(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
   pct(n, d) { return (n * 100).toFixed(d == null ? 1 : d).replace('.', ',') + ' %'; }
@@ -1108,26 +1123,29 @@ class Component extends DCLogic {
     R.regionComputing = !!S.regionComputing;
     R.regionGateIdle = regionNeedsGate && !S.regionComputing;
     R.regionStaleBar = isRegion && hasRegionResult && regionStale && !S.regionComputing;
-    R.regionProgressPct = Math.round((S.regionProgress || 0) * 100) + ' %';
     R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.75' : '1');
     R.startRegionCompute = () => this.startRegionCompute();
-    R.regionGateTitle = S.regionComputing ? 'Berechnung läuft…' : (hasRegionResult ? 'Ergebnis veraltet' : 'Wird berechnet…');
+    R.cancelRegionCompute = () => this.cancelRegionCompute();
+    // Dauer der Regionsberechnung ist nicht bekannt — Zustände nennen keine Prozentzahl und keine feste Sekundenangabe.
+    R.regionGateTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Noch nicht berechnet';
     R.regionGateSub = hasRegionResult
       ? 'Die Eingaben haben sich geändert — links „Neu berechnen" klicken, um die Karte zu aktualisieren.'
-      : 'Regionale Prinzipien werden komponiert und neu gerechnet — das dauert rund 20–30 Sekunden.';
+      : 'Links „Berechnung starten" klicken, um das Regionsergebnis zu berechnen.';
 
-    // Fester Platz an der linken Liste: nur für „Neu berechnen" nach einer Änderung — die erste
-    // Berechnung läuft automatisch und braucht keinen Klick (kein Auto-Recompute NACH Änderungen).
-    R.showRegionCompute = isRegion && R.regionStaleBar;
+    // Fester Platz an der linken Liste: Start / Neu berechnen / Abbrechen — die erste Berechnung
+    // läuft automatisch (kein Klick nötig), außer der Nutzer bricht sie ab (§M).
+    R.showRegionCompute = isRegion && (S.regionComputing || !hasRegionResult || regionStale);
     R.regionComputeIdle = R.showRegionCompute && !S.regionComputing;
     R.regionComputeTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet';
     R.regionComputeSub = hasRegionResult
       ? 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.'
       : 'Wählen Sie oben regionale Prinzipien und starten Sie die Berechnung.';
     R.regionComputeBtnLabel = hasRegionResult ? 'Neu berechnen' : 'Berechnung starten';
-    R.regionComputeBoxStyle = hasRegionResult
-      ? 'background:#fbf3e8;border:1px solid #ead9bf'
-      : 'background:#f0f5f4;border:1px solid #cfe4de';
+    R.regionComputeBoxStyle = S.regionComputing
+      ? 'background:#eef3f6;border:1px solid #cdddea'
+      : hasRegionResult
+        ? 'background:#fbf3e8;border:1px solid #ead9bf'
+        : 'background:#f0f5f4;border:1px solid #cfe4de';
     R.regionComputeBtnStyle = hasRegionResult
       ? 'width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer'
       : 'width:100%;background:#0b6b5a;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
@@ -1483,6 +1501,9 @@ class Component extends DCLogic {
     // legend flags default
     R.showUpset = R.showUpset || false;
     R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendDiv = R.legendDiv || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false; R.legendDeck = R.legendDeck || false;
+    // Erklärzeile „Gestreifte Flächen …" steht über dem UpSet-Diagramm, sobald dieses sichtbar ist —
+    // in der unteren Legende dann nicht zusätzlich wiederholen.
+    R.schnittNoteBelow = R.legendSchnitt && !R.showUpset;
     // Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle
     R.showPlan = (R.showPlan || false) && S.account;
     // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
