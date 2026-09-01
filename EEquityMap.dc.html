@@ -277,7 +277,7 @@
               <!-- Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht; leer in der DE-Ansicht) -->
               <path d="{{ regionOutlineD }}" fill="none" stroke="#2f6690" stroke-width="1.6" pointer-events="none"></path>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
-                <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
+                <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" fill-opacity="{{ c.fo }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
               </sc-for>
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <path d="{{ o.d }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></path>
@@ -892,7 +892,9 @@ class Component extends DCLogic {
     const krs = this.krs.find(k => k.id === krsId);
     const seed = krs ? (parseInt(krs.id, 10) % 99991 + 11) : 1;
     const frac = v => { const r = Math.sin(v) * 43758.5453; return r - Math.floor(r); };
-    const CELL = 34, GAP = 3, PAD = 12; // lokale Rastereinheit; CELL entspricht genau 5 echten km (s. cellSizeNat)
+    // Lokale Rastereinheit; CELL entspricht genau 5 echten km (s. cellSizeNat). Kein Gap mehr zwischen
+    // den Zellen — sie liegen lückenlos aneinander, nur eine helle Randlinie trennt sie (s. mkCell).
+    const CELL = 34, GAP = 0, PAD = 12;
 
     const rings = krs ? this.parseD(krs.d) : [];
     const bx0 = krs ? krs.bx0 : 0, by0 = krs ? krs.by0 : 0, bx1 = krs ? krs.bx1 : CELL * 5, by1 = krs ? krs.by1 : CELL * 4;
@@ -1253,6 +1255,11 @@ class Component extends DCLogic {
     const rankFrac = cells.map(()=>0);
     if (doReveal) { metric.map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v).forEach((o,rk)=> rankFrac[o.idx] = rk / N); }
 
+    // Regionsraster: Zellen liegen lückenlos aneinander (kein Gap mehr in regionCellsFor) und sind
+    // 0,8 deckend, damit die echte Landkreis-Umrisslinie (regionOutlineD) auch unter gefüllten Zellen
+    // durchscheint — nur eine helle Trennlinie bleibt zwischen den Zellen sichtbar. Auf der DE-Ebene
+    // unverändert voll deckend.
+    const cellFillOp = isRegion ? 0.8 : 1;
     const mkCell = (i, fill, opts) => {
       opts = opts || {};
       let op = 1;
@@ -1261,13 +1268,13 @@ class Component extends DCLogic {
       const selc = S.cell === cells[i].id;
       let stroke = selc ? '#12181d' : '#ffffff', sw = selc ? 2.4 : 1, dash = '0';
       if (!selc && opts.conflict) { stroke = this.CONFLICT; sw = 1.6; dash = '3,2'; }
-      return { d: cells[i].d, fill, stroke, sw, dash, op, onClick: () => this.selectCell(cells[i].id) };
+      return { d: cells[i].d, fill, fo: cellFillOp, stroke, sw, dash, op, onClick: () => this.selectCell(cells[i].id) };
     };
 
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
-      R.mainCells = cells.map((c,i) => ({ d: c.d, fill: '#eef1f0', stroke: S.cell === c.id ? '#12181d' : '#fff', sw: S.cell === c.id ? 2.4 : 1, dash: '0', op: 1, onClick: () => this.selectCell(c.id) }));
+      R.mainCells = cells.map((c,i) => ({ d: c.d, fill: '#eef1f0', fo: cellFillOp, stroke: S.cell === c.id ? '#12181d' : '#fff', sw: S.cell === c.id ? 2.4 : 1, dash: '0', op: 1, onClick: () => this.selectCell(c.id) }));
       R.legendSeq = false;
       R.showPlan = false;
     } else if (view === 'single') {
