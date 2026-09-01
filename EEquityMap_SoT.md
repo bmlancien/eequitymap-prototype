@@ -356,16 +356,23 @@ answer-first.
 **Prämissen-Overlay beim Start (Inhalt festgelegt):** Kurzes, schließbares
 Ein-Schirm-Modal, das die Idee vermittelt, BEVOR das Wort „Gerechtigkeitsprinzip"
 fällt (konkret vor abstrakt). Aufbau: (1) Titel „Wo wäre der Ausbau fair?";
-(2) Prämisse „…die eine richtige Verteilung gibt es nicht"; (3) **Bild aus drei
-echten, sichtbar unterschiedlichen Prinzip-Karten** unter „Dieselbe Aufgabe,
-verschiedene Antworten.", beschriftet über die FRAGE statt den Begriff („Wo der
-Strom verbraucht wird" / „Wo mehr Menschen wohnen" / „Wo es am günstigsten ist");
+(2) Prämisse „…die eine richtige Verteilung gibt es nicht"; (3) **schematische
+Blasen-Illustration** (drei neutrale, gleichwertige Figuren, je eine Gedankenblase
+mit Icon: Industrie/Verbrauch, Menschen/Bevölkerung, Münze/günstig) — macht die
+Prämisse menschlich (verschiedene Menschen priorisieren Verschiedenes) —
+**gefolgt von** dem **Bild aus drei echten, sichtbar unterschiedlichen
+Prinzip-Karten** unter „Dieselbe Aufgabe, verschiedene Antworten.", beschriftet
+über die FRAGE statt den Begriff („Wo der Strom verbraucht wird" / „Wo mehr
+Menschen wohnen" / „Wo es am günstigsten ist"). Kausale Reihenfolge: Blasen (warum)
+→ Karten (Wirkung); bei Platzmangel führen die Blasen, die Karten werden zum
+Begleitstreifen; beide bleiben. Illustration = Dekoration, nicht Instruktion.
 (4) erst danach der Begriff: „Jede solche Vorstellung ist ein
 Gerechtigkeitsprinzip. EEquityMap … zeigt, wo sie sich einig sind."; (5) CTA
-„Verteilungen ansehen →", Link „Mehr dazu" → „Was ist das?". Keine Stockfotos —
-nur die drei Karten. Lässt nichts auswählen, erzwingt keinen Pfad. Jederzeit über
-„Was ist das?" wieder aufrufbar. **Abgrenzung zum verworfenen Menü-Modal:** kein
-Pfad, keine Auswahl, nur Prämisse + Beispiel.
+„Verteilungen ansehen →", Link „Mehr dazu" → „Was ist das?". Keine Stockfotos
+(keine Windräder o. Ä.) — nur die schematische Illustration und die drei Karten.
+Lässt nichts auswählen, erzwingt keinen Pfad. Jederzeit über „Was ist das?" wieder
+aufrufbar. **Abgrenzung zum verworfenen Menü-Modal:** kein Pfad, keine Auswahl,
+nur Prämisse + Beispiel.
 
 **Trio des Startpunkts:** Die Galerie-Primäraktion („Wo sind sich die Prinzipien
 einig? →", s. o.) wählt **Verbrauchsnah + Bevölkerungsnah + Ökonomisch
@@ -639,19 +646,28 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
   Bug — die Region hat immer ein national berechnetes Budget.)
 - Nach einer Änderung der regionalen Prinzipien muss der Zustand **sichtbar
   „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Neu berechnen" gedrückt
-  wird — sonst wirkt es kaputt. Fortschritts-/Spinner-Zustand während der
-  Rechnung. Im Mock die Verzögerung ehrlich nachbilden (~20–30 s), damit Tests den
-  echten Rhythmus erleben (configure → compute → read statt toggle → instant).
+  wird — sonst wirkt es kaputt. **Fortschritt unbestimmt** (Spinner/animierter
+  Streifen, KEINE Prozentzahl — die Dauer ist real unbekannt; ein %-Balken lügt),
+  Text „Regionsergebnis wird berechnet …", plus **„Abbrechen"**-Button (zurück zum
+  vorherigen Zustand). Im Mock die Verzögerung nur als Delay nachbilden, ohne
+  bekannte Dauer zu behaupten.
 - **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner; der
   DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" gehört NICHT hierher. „Noch nicht
   berechnet" nur an einer Stelle (erscheint durch die Auto-Berechnung ohnehin nur
   kurz als „wird berechnet …").
 
-**Karten-Abstraktion:** weiterhin schematisch, KEINE echten Geodaten
-(vg250_krs.gpkg wird für den Prototyp NICHT gerendert — widerspräche der
-Gründungsvorgabe „keine Live-Karte"). Deutschland = Hexagone (Landkreis-Ebene
-schematisch), Region = Rechtecke. Reale Geodaten sind ein separates, späteres,
-größeres Arbeitspaket, erst nach Konzept-Validierung.
+**Karten-Abstraktion (geändert — Reversal mit Einschränkung):** Für das Testing
+werden **echte Landkreis-Formen** eingeführt (aus vg250_krs.gpkg → **TopoJSON**,
+maßvoll vereinfacht ~150–300 KB → D3-geo/SVG), weil die Hypothese ist, dass die Hexagon-Abstraktion
+Verständnis und Vertrauen beeinflusst (der eigene Landkreis sichtbar). **Wichtige
+Einschränkung: weiterhin KEINE Live-Karte** (kein Leaflet, keine Tiles, kein
+Pan/Zoom, kein Backend) — statisches, vorab vereinfachtes GeoJSON als SVG. Es
+werden nur erfundene Formen durch echte ersetzt; der „schematisch, eigenständig,
+kein Backend"-Charakter bleibt. Sequenzierung: **Deutschland-Ebene (Landkreise)
+zuerst** (billig, hohe Wirkung), **Region-Ebene (5-×-5-Raster im Landkreis, an die
+Grenze geclippt, grob) als Fast-Follow** — bis dahin bleiben die schematischen
+Rechtecke Platzhalter. Region-Zellen bleiben Rechtecke (Kontrast zu den
+Landkreis-Formen). Details s. Build-Task „Real Map".
 
 **Granularität aufgelöst:** 5 × 5 km ist NICHT die Auflösung des nationalen
 Kartenbilds — national ist der Landkreis die Einheit; 5 × 5 km existiert nur
