@@ -27,6 +27,10 @@
   @keyframes pulseSwatch{0%,100%{box-shadow:0 0 0 0 rgba(47,102,144,0)}50%{box-shadow:0 0 0 5px rgba(47,102,144,.28)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   .spin{animation:spin 1s linear infinite}
+  /* Unbestimmter Fortschrittsbalken (keine Prozentzahl — Dauer der Regionsberechnung ist nicht bekannt, s. §M) */
+  @keyframes loadbar{0%{left:-35%;width:35%}55%{left:55%;width:45%}100%{left:100%;width:35%}}
+  .loadbar{position:relative;width:100%;height:6px;background:#dde5ea;border-radius:3px;overflow:hidden}
+  .loadbar-fill{position:absolute;top:0;bottom:0;background:#2f6690;border-radius:3px;animation:loadbar 1.5s ease-in-out infinite}
   .scroll::-webkit-scrollbar{width:9px}
   .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
   .hx{transition:opacity .15s}
@@ -116,11 +120,10 @@
       <sc-if value="{{ showRegionCompute }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:12px;padding:12px 13px;border-radius:8px;{{ regionComputeBoxStyle }}">
           <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div style="width:18px;height:18px;border-radius:50%;border:2.5px solid #cdddea;border-top-color:#2f6690;flex:none" class="spin"></div>
-              <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
-            </div>
-            <button onClick="{{ cancelRegionCompute }}" style="margin-top:10px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px;border-radius:7px;cursor:pointer">Abbrechen</button>
+            <!-- Abbrechen sitzt jetzt mittig auf der Karte unter dem Fortschrittsbalken (besser sichtbar,
+                 der Blick liegt beim Warten ohnehin dort) — hier nur der ruhige Status als Kontext. -->
+            <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
+            <div class="loadbar" style="margin-top:9px"><div class="loadbar-fill"></div></div>
           </sc-if>
           <sc-if value="{{ regionComputeIdle }}" hint-placeholder-val="{{ true }}">
             <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
@@ -296,13 +299,16 @@
               </sc-if>
             </svg>
 
-            <!-- Regionsansicht: Berechnungs-Gate (nicht berechnet / läuft) — Aktion liegt links an der Prinzipienliste -->
+            <!-- Regionsansicht: Berechnungs-Gate (nicht berechnet / läuft) — mittig auf der Karte, wo der
+                 Blick während des Wartens ohnehin liegt; „Abbrechen" sitzt direkt unter dem Fortschrittsbalken,
+                 statt nur klein links an der Prinzipienliste (dort leicht zu übersehen). -->
             <sc-if value="{{ regionBlockOverlay }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
                 <div style="max-width:280px">
                   <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
-                    <div style="width:30px;height:30px;margin:0 auto;border-radius:50%;border:3px solid #cdddea;border-top-color:#2f6690" class="spin"></div>
-                    <div style="font-size:14px;color:#26303a;font-weight:600;margin-top:12px">Regionsergebnis wird berechnet …</div>
+                    <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
+                    <div class="loadbar" style="margin-top:12px"><div class="loadbar-fill"></div></div>
+                    <button onClick="{{ cancelRegionCompute }}" style="margin-top:12px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px;border-radius:7px;cursor:pointer">Abbrechen</button>
                   </sc-if>
                   <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
                     <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionGateTitle }}</div>
