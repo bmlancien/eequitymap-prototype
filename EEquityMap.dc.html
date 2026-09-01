@@ -254,7 +254,7 @@
                     </sc-for>
                   </svg>
                   <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
-                    <span style="font-size:14px;color:#7a848c;flex:1" class="num">0,00 – {{ mp.max }} GW</span>
+                    <span style="font-size:14px;color:#7a848c;flex:1" class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span>
                     <span style="font-size:14px;color:#8d99a3">Einzeln ansehen →</span>
                   </div>
                 </div>
@@ -362,7 +362,7 @@
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:14px;color:#7a848c" class="num">0,00</span>
               <div style="width:150px;height:11px;border-radius:3px;background:{{ legendGrad }}"></div>
-              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMax }} GW</span>
+              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMax }} {{ scopeUnit }}</span>
               <span style="font-size:14px;color:#5b6672;margin-left:2px">{{ legendTitle }}</span>
             </div>
           </sc-if>
@@ -400,9 +400,9 @@
           <sc-if value="{{ legendDiv }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:3px">
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:14px;color:#7a848c" class="num">−{{ divMax }} GW</span>
+                <span style="font-size:14px;color:#7a848c" class="num">−{{ divMax }} {{ scopeUnit }}</span>
                 <div style="width:170px;height:11px;border-radius:3px;background:{{ divGrad }}"></div>
-                <span style="font-size:14px;color:#7a848c" class="num">+{{ divMax }} GW</span>
+                <span style="font-size:14px;color:#7a848c" class="num">+{{ divMax }} {{ scopeUnit }}</span>
               </div>
               <span style="font-size:14px;color:#8a929a">{{ divCaption }}</span>
             </div>
@@ -495,7 +495,7 @@
                   <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
                     <span style="width:11px;height:11px;border-radius:3px;background:{{ b.color }};align-self:center"></span>
                     <span style="color:#26303a;flex:1">{{ b.name }}</span>
-                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">−{{ b.cost }} GW</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">−{{ b.cost }} {{ scopeUnit }}</span>
                   </div>
                   <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
                   <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">begrenzend in {{ b.count }} Zellen</div>
@@ -515,7 +515,7 @@
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:4px">
                     <span style="width:11px;height:11px;border-radius:3px;background:{{ s.color }}"></span>
                     <span style="color:#26303a;flex:1">{{ s.name }}</span>
-                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">{{ s.gw }} GW</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">{{ s.gw }} {{ scopeUnit }}</span>
                   </div>
                   <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ s.w }};background:{{ s.color }};border-radius:4px"></div></div>
                 </div>
@@ -595,10 +595,10 @@
             <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:14px">
                 <span style="color:#5b6672">Neuzubau dieser Zelle</span>
-                <span class="num" style="color:#26303a;font-weight:500">{{ cellNew }} GW</span>
+                <span class="num" style="color:#26303a;font-weight:500">{{ cellNew }} {{ scopeUnit }}</span>
               </div>
               <div style="font-size:14px;color:#5b6672;margin-top:11px">{{ cellConsensusScopeLabel }}</div>
-              <div class="num" style="font-size:28px;font-weight:600;color:#2f6690;line-height:1.1;margin-top:1px">{{ cellConsensus }} <span style="font-size:14px;color:#5b6672;font-weight:500">GW</span></div>
+              <div class="num" style="font-size:28px;font-weight:600;color:#2f6690;line-height:1.1;margin-top:1px">{{ cellConsensus }} <span style="font-size:14px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
               <div style="margin-top:10px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
                 <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:5px"></div>
               </div>
@@ -612,7 +612,7 @@
                     <span style="width:10px;height:10px;border-radius:3px;background:{{ br.color }}"></span>
                     <span style="color:#26303a;flex:1">{{ br.name }}</span>
                     <span style="{{ br.tagStyle }}">{{ br.tag }}</span>
-                    <span class="num" style="color:#33413c">{{ br.gw }} GW</span>
+                    <span class="num" style="color:#33413c">{{ br.gw }} {{ scopeUnit }}</span>
                   </div>
                   <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ br.w }};background:{{ br.color }};border-radius:4px;opacity:{{ br.op }}"></div></div>
                 </div>
@@ -637,8 +637,8 @@
           <sc-if value="{{ cellStufe1 }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
               <div style="font-size:14px;color:#5b6672">Empfohlener Zubau ({{ cellPrincipleName }})</div>
-              <div class="num" style="font-size:28px;font-weight:600;color:{{ cellPrincipleColor }};line-height:1.1;margin-top:3px">{{ cellRecommend }} <span style="font-size:14px;color:#5b6672;font-weight:500">GW</span></div>
-              <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ cellSharePct }} des deutschen Zubaus</div>
+              <div class="num" style="font-size:28px;font-weight:600;color:{{ cellPrincipleColor }};line-height:1.1;margin-top:3px">{{ cellRecommend }} <span style="font-size:14px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
+              <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ cellSharePct }} {{ cellSharePctOf }}</div>
             </div>
           </sc-if>
 
@@ -652,8 +652,8 @@
           <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb">
             <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px">Regionsprofil</div>
             <div style="display:flex;flex-direction:column;gap:7px">
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Ausbau gesamt</span><span class="num" style="color:#26303a">{{ cellTotal }} GW</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} GW</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Ausbau gesamt</span><span class="num" style="color:#26303a">{{ cellTotal }} {{ scopeUnit }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} {{ scopeUnit }}</span></div>
             </div>
           </div>
 
@@ -664,7 +664,7 @@
                 <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
                 <span class="num" style="color:#26303a">{{ cellGoalShare }}</span>
               </div>
-              <div style="{{ goalInfoStyle }}">Wie viel diese Zelle zum Ausbauziel beiträgt — ihr Zubaukonsens geteilt durch das gesamte Ausbauziel.</div>
+              <div style="{{ goalInfoStyle }}">{{ goalInfoText }}</div>
               <div style="display:flex;justify-content:space-between;font-size:14px;color:#b3bcc3"><span>Priorität / Reihenfolge</span><span>{{ cellPriority }}</span></div>
               <div style="font-size:14px;color:#b3bcc3;line-height:1.4">Die Zubaureihenfolge wird noch nicht berechnet.</div>
             </div>
@@ -742,7 +742,7 @@
             <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1.2"></path>
           </sc-for>
         </svg>
-        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau je Zelle · 0,00 – {{ zoomMax }} GW</div>
+        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau je Zelle · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
       </div>
     </div>
   </sc-if>
@@ -1053,6 +1053,13 @@ class Component extends DCLogic {
   // ---- helpers ----
   fmt(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
   pct(n, d) { return (n * 100).toFixed(d == null ? 1 : d).replace('.', ',') + ' %'; }
+  // Regionsansicht rechnet in MW statt GW (Zellwerte sind sonst durchgängig „0,00 GW") — fest nach
+  // Modus, nicht adaptiv je Wert. MW folgt einer eigenen, gröberen Rundung (ganze Zahl oder eine
+  // Nachkommastelle, kein erzwungenes „,0") statt der GW-Zwei-Nachkommastellen-Regel.
+  fmtMW(n) { const mw = Math.round(n * 1000 * 10) / 10, r = Math.round(mw); return Math.abs(mw - r) < 1e-9 ? String(r) : mw.toFixed(1).replace('.', ','); }
+  fmtN(n, region) { return region ? this.fmtMW(n) : this.fmt(n); }
+  unitFor(region) { return region ? 'MW' : 'GW'; }
+  fmtU(n, region) { return this.fmtN(n, region) + ' ' + this.unitFor(region); }
   hx(h) { h = h.replace('#', ''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
   mix(a, b, t) { const A = this.hx(a), B = this.hx(b); t = Math.max(0, Math.min(1, t)); return 'rgb(' + A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',') + ')'; }
   seq(t, hex) { return this.mix('#eef1f0', hex, 0.10 + 0.85 * t); }
@@ -1287,13 +1294,13 @@ class Component extends DCLogic {
       const mx = Math.max(...cells.map((c,i)=>planVal(i)));
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? planVal(i)/mx : 0, this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
-      R.legendMax = this.fmt(mx); R.legendTitle = 'Empfohlener Zubau';
+      R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau';
       R.showPlan = true;
     } else if (view === 'konsens') {
       const mx = Math.max(...consCells);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? consCells[i]/mx : 0, this.CONS), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
-      R.legendMax = this.fmt(mx); R.legendTitle = 'Zubaukonsens je Zelle';
+      R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens je Zelle';
       R.showPlan = false;
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
@@ -1342,7 +1349,7 @@ class Component extends DCLogic {
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
         };
         rows.forEach(r => pushCol(
-          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' Zellen · ' + this.fmt(r.gw) + ' GW Zubaukonsens',
+          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' Zellen · ' + this.fmtU(r.gw, isRegion) + ' Zubaukonsens',
           r.n,
           sel.map(p => 'width:13px;height:13px;border-radius:50%;background:' + (r.rec.indexOf(p) >= 0 ? this.byId[p].color : '#dfe4e7'))
         ));
@@ -1390,7 +1397,7 @@ class Component extends DCLogic {
       R.mainCells = cells.map((c,i) => mkCell(i, this.div(diffs[i]/mxa)));
       R.legendDiv = true;
       R.divGrad = 'linear-gradient(90deg,' + this.div(-1) + ',' + this.div(0) + ',' + this.div(1) + ')';
-      R.divMax = this.fmt(mxa);
+      R.divMax = this.fmtN(mxa, isRegion);
       const baseName = stufe >= 2 ? 'Zubaukonsens' : this.byId[singlePid].name;
       R.divCaption = 'mehr bei ' + S.compare.label + '  ·  mehr bei ' + baseName;
       R.divExplain = 'Jede Zelle zeigt die Differenz: grün = ' + baseName + ' weist ihr mehr Zubau zu, braun = ' + S.compare.label + ' weist ihr mehr zu, blass = beide gleich. Je kräftiger, desto größer der Unterschied.';
@@ -1409,7 +1416,7 @@ class Component extends DCLogic {
           name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
           explain: this.byId[p].name + ': ' + (shortExplain[p] || 'so verteilt sich der Ausbau'),
           swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
-          max: this.fmt(mx),
+          max: this.fmtN(mx, isRegion),
           cells: cells.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
           onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
@@ -1529,7 +1536,7 @@ class Component extends DCLogic {
     }));
     R.targetMarks = this.marks.map(m => ({ label: ' ' + m.y, title: m.gw + ' GW', style: 'position:absolute;left:' + ((m.gw - 60) / 200 * 100).toFixed(1) + '%;transform:translateX(-50%);font-size:14px;color:#8a929a;white-space:nowrap' }));
     R.onSlider = e => { this.setState({ targetGW: +e.target.value, targetKey: null, freeTarget: true }); this.startReveal(); };
-    R.sliderResult = stufe >= 2 ? ('Bei ' + this.fmt(target) + ' GW liegen ' + this.fmt(consTotal) + ' GW im Konsens.') : ('Bei ' + this.fmt(target) + ' GW verteilt ' + this.byId[singlePid].name + ' den gesamten Zubau.');
+    R.sliderResult = stufe >= 2 ? ('Bei ' + this.fmtU(target, isRegion) + ' liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens.') : ('Bei ' + this.fmtU(target, isRegion) + ' verteilt ' + this.byId[singlePid].name + ' den gesamten Zubau.');
 
     R.accountSwitchStyle = this.switchStyle(S.account);
     R.accountKnobStyle = this.knobStyle(S.account);
@@ -1537,6 +1544,9 @@ class Component extends DCLogic {
 
     // Ansichtsleiste — die zwei Geometrien ersetzen den früheren Granularitäts-Schalter (s. §L/§M)
     R.ansichtLabel = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
+    // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
+    R.scopeUnit = this.unitFor(isRegion);
+    R.zeroPrefix = isRegion ? '0' : '0,00'; // Nulluntergrenze in Bereichsangaben („0 – X MW" statt „0,00 – X GW")
     R.region = !!S.region;
     R.search = S.search;
 
@@ -1544,13 +1554,13 @@ class Component extends DCLogic {
     if (view === 'empty') {
       R.kernaussage = 'Wo wäre der Ausbau fair? Beginnen Sie mit einem Gerechtigkeitsprinzip.';
     } else if (view === 'regionGate') {
-      // Die Region hat immer ein national berechnetes Budget — nie „0,00 GW" als wäre nichts da.
-      R.kernaussage = 'Regionsbudget ' + this.fmt(liveBudget) + ' GW — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
+      // Die Region hat immer ein national berechnetes Budget — nie „0 MW" als wäre nichts da.
+      R.kernaussage = 'Regionsbudget ' + this.fmtU(liveBudget, isRegion) + ' — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
     } else if (view === 'differenz') {
       const bn = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
       R.kernaussage = 'Wo unterscheiden sich ' + bn + ' und ' + S.compare.label + '?';
     } else if (view === 'single') {
-      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmt(target) + ' GW so über Deutschland.';
+      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmtU(target, isRegion) + ' so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
     } else if (view === 'minimum') {
       R.kernaussage = 'In jeder Zelle sehen Sie, welches Prinzip den Konsens begrenzt.';
     } else if (view === 'verteilungen') {
@@ -1563,8 +1573,8 @@ class Component extends DCLogic {
     } else {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
       R.kernaussage = isRegion
-        ? 'Von ' + this.fmt(target) + ' GW Regionsbudget liegen ' + this.fmt(consTotal) + ' GW im Konsens der regionalen Prinzipien.'
-        : 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
+        ? 'Von ' + this.fmtU(target, isRegion) + ' Regionsbudget liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens der regionalen Prinzipien.'
+        : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
     }
 
     // Tabs (erst ab 2 Prinzipien)
@@ -1634,7 +1644,7 @@ class Component extends DCLogic {
       R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCoverage = false; R.anCombos = false; R.anDiff = false;
-      R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
+      R.ovLeadUnit = this.unitFor(isRegion); R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
 
       if (view === 'regionGate') {
         // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
@@ -1649,20 +1659,20 @@ class Component extends DCLogic {
         R.ovClickHint = false;
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
-        R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
+        R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmtN(st, isRegion);
         R.ovLeadSub = 'Sie können ein zweites Prinzip hinzufügen, um den Zubaukonsens zu sehen.';
       } else {
         const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
         // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
         R.ovBarCaption = isRegion
-          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
-          : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
+          ? 'Vom Regionsbudget (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens der regionalen Prinzipien.'
+          : 'Vom Ausbauziel (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
         const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter(l=>l===p).length, cost: consWithout(p) - consTotal }));
         bl.sort((a,b)=>b.cost-a.cost);
         const cmax = Math.max(...bl.map(b=>b.cost), 0.001);
-        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmt(Math.max(0,b.cost)), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmt(consTotal) + ' auf ' + this.fmt(consWithout(top.p)) + ' GW.'; };
+        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
 
         if (view === 'positiv') {
           // Zwei Richtungen desselben Verhältnisses — bundesweit, in der rechten Spalte
@@ -1675,22 +1685,22 @@ class Component extends DCLogic {
           const baseName = 'Konsens';
           const diffs = scopeIdx.map(i => ({ i, d: consCells[i] - cmp[i] }));
           const net = diffs.reduce((a,o)=>a+o.d, 0);
-          R.ovLeadLabel = 'Differenz gesamt'; R.ovLeadValue = this.fmt(Math.abs(net)); R.ovLeadUnit = 'GW';
+          R.ovLeadLabel = 'Differenz gesamt'; R.ovLeadValue = this.fmtN(Math.abs(net), isRegion); R.ovLeadUnit = this.unitFor(isRegion);
           R.ovLeadSub = net>=0 ? 'mehr beim ' + baseName + ' als bei ' + S.compare.label : 'mehr bei ' + S.compare.label + ' als beim ' + baseName;
           R.anDiff = true;
           const top = diffs.slice().sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,6);
           // Richtung statt nacktem Vorzeichen (wie in der Kartenlegende)
-          R.diffRows = top.map(o => ({ label: 'Zelle ' + cells[o.i].label, gw: this.fmt(Math.abs(o.d)) + ' GW mehr bei ' + (o.d>=0 ? baseName : S.compare.label), color: o.d>=0 ? '#2f6690' : '#8a5a12', onClick: () => this.selectCell(cells[o.i].id) }));
+          R.diffRows = top.map(o => ({ label: 'Zelle ' + cells[o.i].label, gw: this.fmtU(Math.abs(o.d), isRegion) + ' mehr bei ' + (o.d>=0 ? baseName : S.compare.label), color: o.d>=0 ? '#2f6690' : '#8a5a12', onClick: () => this.selectCell(cells[o.i].id) }));
         } else if (view === 'verteilungen') {
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anSums = true;
           const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
           const smax = Math.max(...sums.map(s=>s.v), 0.001);
-          R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmt(s.v), w: (s.v/smax*100).toFixed(1)+'%' }));
+          R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
         } else if (view === 'schnittmengen') {
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anCombos = true;
           const medians2 = {}; sel.forEach(p => { const a = gwArr(p).slice().sort((x,y)=>x-y); const n=a.length; medians2[p] = n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2; });
           const cnt = {};
@@ -1716,8 +1726,8 @@ class Component extends DCLogic {
           R.toggleCombos = () => this.setState({ combosOpen: !S.combosOpen });
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anBlockers = true; mkBlockers();
         }
       }
@@ -1769,17 +1779,18 @@ class Component extends DCLogic {
       R.cellStufe1 = stufe === 1;
       if (stufe >= 2) {
         // Konsens dieser Zelle == Minimum über die gewählten Prinzipien == Wert des begrenzenden Prinzips
-        R.cellConsensus = this.fmt(Math.min.apply(null, sel.map(p => gwSel[p][i])));
+        R.cellConsensus = this.fmtN(Math.min.apply(null, sel.map(p => gwSel[p][i])), isRegion);
         const mx = Math.max(...sel.map(p => gwSel[p][i]));
         R.cellBars = sel.map(p => {
           const isLim = limiting[i] === p;
-          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmt(gwSel[p][i]), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSel[p][i], isRegion), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
       }
       R.cellPrincipleName = this.byId[singlePid].name;
       R.cellPrincipleColor = this.byId[singlePid].color;
-      R.cellRecommend = this.fmt(gwSel[singlePid][i]);
+      R.cellRecommend = this.fmtN(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
+      R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
       const meanZ = target / N;
       R.cellRank1 = gwSel[singlePid][i] >= meanZ ? 'überdurchschnittlich' : 'unterdurchschnittlich';
       const meanB = 62 / N;
@@ -1792,7 +1803,7 @@ class Component extends DCLogic {
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Neuzubau ≤ Gesamt.
       const neu = sel.reduce((a,p)=>a+gwSel[p][i],0) / sel.length;
       const total = c.bestandGW + neu;
-      R.cellTotal = this.fmt(total); R.cellBestand = this.fmt(c.bestandGW); R.cellNew = this.fmt(neu);
+      R.cellTotal = this.fmtN(total, isRegion); R.cellBestand = this.fmtN(c.bestandGW, isRegion); R.cellNew = this.fmtN(neu, isRegion);
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
       // Zubaukonsens ≤ Neuzubau ≤ Ausbau gesamt; gefüllter Anteil ≤ voller Balken.
       R.cellConsFill = (neu && consCells) ? (Math.min(consCells[i], neu) / neu * 100).toFixed(1) + '%' : '0%';
@@ -1809,6 +1820,9 @@ class Component extends DCLogic {
       R.cellRankNat = (rankArr.findIndex(r=>r.idx===i) + 1) + ' von ' + N;
       R.cellRankLabel = isRegion ? 'Rang in der Region' : 'Rang deutschlandweit';
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
+      R.goalInfoText = isRegion
+        ? 'Wie viel diese Zelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
+        : 'Wie viel diese Zelle zum Ausbauziel beiträgt — ihr Zubaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
       R.cellPriority = '≈ ' + (2030 + Math.round((rankArr.findIndex(r=>r.idx===i)/N)*15)) + ' (nicht berechnet)';
@@ -1820,7 +1834,7 @@ class Component extends DCLogic {
       if (view === 'positiv' && stufe >= 2) {
         const inK = consCells[i] >= 0.35 * Math.max(...consCells);
         R.cellAusgPct = Math.round(c.ausgAnteil * 100) + ' %';
-        R.cellKonsGW = this.fmt(consCells[i]) + ' GW';
+        R.cellKonsGW = this.fmtU(consCells[i], isRegion);
         const d = (R.deckVals || [])[i] || 0;
         R.cellDeckWord = d > 0.2 ? 'Planung über Konsens' : d < -0.2 ? 'Konsens über Planung' : 'deckt sich';
         R.cellDeckColor = d > 0.2 ? '#a85a17' : d < -0.2 ? '#1d5f80' : '#5b6672';
@@ -1833,7 +1847,7 @@ class Component extends DCLogic {
         const cmp = compareVals();
         const d = base[i] - cmp[i];
         const baseName = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
-        R.cellDiffLine = this.fmt(Math.abs(d)) + ' GW mehr bei ' + (d >= 0 ? baseName : S.compare.label);
+        R.cellDiffLine = this.fmtU(Math.abs(d), isRegion) + ' mehr bei ' + (d >= 0 ? baseName : S.compare.label);
         R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
         R.cellShowDiff = true;
       } else R.cellShowDiff = false;
@@ -1865,7 +1879,7 @@ class Component extends DCLogic {
       const p = S.zoom;
       const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
       const mx = Math.max(...pv);
-      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmt(mx);
+      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtN(mx, isRegion);
       R.zoomCells = cells.map((c,i) => ({ d: c.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) }));
     } else R.zoom = false;
     R.closeZoom = () => this.setState({ zoom: null });
