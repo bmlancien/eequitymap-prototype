@@ -117,19 +117,13 @@
       </sc-if>
 
       <!-- Fester Platz für „Berechnung starten" / „Neu berechnen" / „Abbrechen" — nur Regionsansicht (§M) -->
+      <!-- Während der Berechnung zeigt allein die Kartenmitte den Status (Fortschrittsbalken +
+           Abbrechen, s. dort) — hier links nur der Idle-/Veraltet-Zustand mit dem Start-Button. -->
       <sc-if value="{{ showRegionCompute }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:12px;padding:12px 13px;border-radius:8px;{{ regionComputeBoxStyle }}">
-          <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
-            <!-- Abbrechen sitzt jetzt mittig auf der Karte unter dem Fortschrittsbalken (besser sichtbar,
-                 der Blick liegt beim Warten ohnehin dort) — hier nur der ruhige Status als Kontext. -->
-            <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
-            <div class="loadbar" style="margin-top:9px"><div class="loadbar-fill"></div></div>
-          </sc-if>
-          <sc-if value="{{ regionComputeIdle }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
-            <div style="font-size:14px;color:#5b6672;margin-top:4px;margin-bottom:9px;line-height:1.45">{{ regionComputeSub }}</div>
-            <button onClick="{{ startRegionCompute }}" style="{{ regionComputeBtnStyle }}">{{ regionComputeBtnLabel }}</button>
-          </sc-if>
+          <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
+          <div style="font-size:14px;color:#5b6672;margin-top:4px;margin-bottom:9px;line-height:1.45">{{ regionComputeSub }}</div>
+          <button onClick="{{ startRegionCompute }}" style="{{ regionComputeBtnStyle }}">{{ regionComputeBtnLabel }}</button>
         </div>
       </sc-if>
 
@@ -1221,18 +1215,17 @@ class Component extends DCLogic {
 
     // Fester Platz an der linken Liste: Start / Neu berechnen / Abbrechen — die erste Berechnung
     // läuft automatisch (kein Klick nötig), außer der Nutzer bricht sie ab (§M).
-    R.showRegionCompute = isRegion && (S.regionComputing || !hasRegionResult || regionStale);
-    R.regionComputeIdle = R.showRegionCompute && !S.regionComputing;
+    // Während der Berechnung übernimmt allein die Kartenmitte den Status (Fortschrittsbalken +
+    // Abbrechen) — hier links bleibt die Box dann leer/ausgeblendet statt eine zweite Statuszeile zu zeigen.
+    R.showRegionCompute = isRegion && !S.regionComputing && (!hasRegionResult || regionStale);
     R.regionComputeTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Regionsergebnis noch nicht berechnet';
     R.regionComputeSub = hasRegionResult
       ? 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.'
       : 'Wählen Sie oben regionale Prinzipien und starten Sie die Berechnung.';
     R.regionComputeBtnLabel = hasRegionResult ? 'Neu berechnen' : 'Berechnung starten';
-    R.regionComputeBoxStyle = S.regionComputing
-      ? 'background:#eef3f6;border:1px solid #cdddea'
-      : hasRegionResult
-        ? 'background:#fbf3e8;border:1px solid #ead9bf'
-        : 'background:#f0f5f4;border:1px solid #cfe4de';
+    R.regionComputeBoxStyle = hasRegionResult
+      ? 'background:#fbf3e8;border:1px solid #ead9bf'
+      : 'background:#f0f5f4;border:1px solid #cfe4de';
     R.regionComputeBtnStyle = hasRegionResult
       ? 'width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer'
       : 'width:100%;background:#0b6b5a;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
