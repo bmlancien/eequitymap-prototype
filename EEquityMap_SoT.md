@@ -550,6 +550,17 @@ Die schematische Mock-Zellzahl kann bestehen bleiben; nur Beschriftung/Geometrie
 je Ebene wie oben (bei echten Daten entspräche 5 × 5 km einer feineren Zellzahl
 innerhalb jedes Landkreises).
 
+**Einheit nach Scope (geändert — „nur GW"-Regel wird skaliert):** Die frühere
+Stakeholder-Regel „durchgehend GW" gilt weiter **im nationalen Scope** (160 GW,
+114 GW Konsens — GW-große Größen; MW wäre absurd). **Im regionalen Scope: MW**
+(1 GW = 1000 MW), fest nach Modus (nicht adaptiv pro Wert). Grund: eine 5-×-5-km-
+Zelle hält ≈ 0,00–0,01 GW — in GW rundet alles auf „0,00", die Region wirkt tot;
+in MW („6 MW", Legende „0 — 12 MW") sind die Werte lesbar und variieren sichtbar.
+MW ist für Standort-/Zell-Leistung ohnehin die natürlichere Einheit. Der
+Einheitenwechsel begleitet den Moduswechsel und verstärkt die Ebenen-Trennung.
+**Rundung:** Die GW-Zwei-Nachkommastellen-Regel ist eine GW-Regel; MW auf dieser
+Skala als ganze Zahl / eine Nachkommastelle, kein erzwungenes „,00".
+
 ---
 
 ## M. Regionale Auswertung & Zwei-Ebenen-Kriterien (neu, Research-Anforderung)
@@ -584,7 +595,9 @@ den Kartenhintergrund. (Der frühere unscheinbare „Region auswerten"-Button ob
 der rechten Spalte war zu leicht zu übersehen; die erste Popover-Version war ein
 großer schwebender Block ohne Zellbezug — daher die Verankerungs-/Kompaktheits-
 Vorgaben.) Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel wechselt
-(Landkreis X → Zelle Y).
+(Landkreis X → Zelle Y). **Alle Regions-Headlines/Captions nennen den
+Regionsnamen** (aus dem aktiven Scope), nie „Deutschland" oder das Bundesziel; und
+Werte in **MW** statt GW (s. L).
 
 **Mode-Transition sichtbar machen** (der Wechsel DE → Region war zu leise):
 - **Einmaliger Banner** beim Betreten der Regionsansicht: „Sie werten jetzt
