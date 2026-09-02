@@ -174,28 +174,21 @@
           <button onClick="{{ backToDE }}" style="display:flex;align-items:center;gap:5px;background:#57c4ab;color:#0c2a24;border:none;font-size:14px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">← Deutschland</button>
         </sc-if>
         <span style="font-size:14px;color:#e7ecf0;font-weight:500;white-space:nowrap">{{ ansichtLabel }}</span>
-        <button onClick="{{ openSaveScenario }}" style="{{ saveScenarioBtnStyle }}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          Szenario speichern
-        </button>
         <div style="flex:1"></div>
         <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;background:#11161c;border:1px solid #333d47;color:#e7ecf0;font-size:14px;padding:6px 10px;border-radius:6px">
       </div>
 
-      <!-- Szenarien-Ablage: unaufdringliche, umbrechende Chip-Reihe (schmaler Streifen) — kurze Namen,
-           voller Text nur im Hover-Tooltip; Klick = wiederherstellen, × = löschen (§N) -->
-      <sc-if value="{{ showScenarioShelf }}" hint-placeholder-val="{{ false }}">
+      <!-- Szenarien-Indikator: nur Zähler + Vergleichen-Einstieg, keine Chips mehr — die Tabelle
+           (Spaltenköpfe) ist die einzige Verwaltung (wiederherstellen/löschen), skaliert auf viele Szenarien (§N) -->
+      <sc-if value="{{ showScenarioIndicator }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:10px;background:#f4f6f6;border:1px solid #e2e6e8;border-radius:8px;padding:7px 12px;margin-top:9px;flex:none">
-          <span style="font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;flex:none">Gespeicherte Szenarien ({{ scenarioCount }})</span>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0">
-            <sc-for list="{{ scenarioChips }}" as="sch" hint-placeholder-count="2">
-              <span onClick="{{ sch.onRestore }}" title="{{ sch.fullName }}" style="{{ sch.chipStyle }}">{{ sch.shortName }}<span onClick="{{ sch.onDelete }}" style="cursor:pointer;color:#9aa4ad;font-size:14px;margin-left:2px">×</span></span>
-            </sc-for>
-          </div>
+          <span style="font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap">Gespeicherte Szenarien ({{ scenarioCount }})</span>
           <sc-if value="{{ showCompareEntry }}" hint-placeholder-val="{{ false }}">
-            <button onClick="{{ openCompare }}" style="background:#0b6b5a;color:#fff;border:none;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap;flex:none">Vergleichen ({{ scenarioCount }})</button>
+            <span style="color:#c7ccd1">·</span>
+            <span onClick="{{ openCompare }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Vergleichen</span>
           </sc-if>
-          <span style="font-size:14px;color:#9aa4ad;white-space:nowrap;flex:none">Nur für diese Sitzung.</span>
+          <div style="flex:1"></div>
+          <span style="font-size:14px;color:#9aa4ad;white-space:nowrap">Nur für diese Sitzung.</span>
         </div>
       </sc-if>
 
@@ -212,12 +205,32 @@
         <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:12px 2px 10px;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
       </sc-if>
 
-      <!-- Tab row (Stufe 2+) -->
-      <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
-          <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
-            <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
-          </sc-for>
+      <!-- Tab-Reihe + „Zum Vergleich speichern" rechtsbündig, gleiche Zeile — näher an Karte/Ergebnis
+           als die frühere Scope-Leiste (§N). Reihe existiert, sobald Tabs ODER der Speichern-Button
+           etwas zu zeigen haben (keine ausgegrauten Elemente, s. §D — sonst ganz ausgeblendet). -->
+      <sc-if value="{{ showTabRow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
+          <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
+              <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
+            </sc-for>
+          </sc-if>
+          <div style="flex:1"></div>
+          <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ openSaveScenario }}" style="display:flex;align-items:center;gap:6px;background:#0b6b5a;border:none;color:#fff;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              Zum Vergleich speichern
+            </button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- Einmalige Zweck-Bestätigung nach dem allerersten Speichern: erklärt die Sammeln-dann-
+           vergleichen-Schleife im Moment, in dem sie beginnt (§N). -->
+      <sc-if value="{{ scenarioFirstSaveHint }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-bottom:10px;animation:fadeUp .35s;flex:none">
+          <span style="font-size:14px;line-height:1.5;flex:1">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</span>
+          <span onClick="{{ dismissScenarioFirstSaveHint }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
         </div>
       </sc-if>
 
@@ -793,19 +806,22 @@
         <div class="scroll" style="overflow:auto;border:1px solid #e2e5e8;border-radius:10px">
           <div style="display:flex;min-width:max-content">
             <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
-              <div style="height:58px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
+              <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
               <sc-for list="{{ compareRowLabels }}" as="rl" hint-placeholder-count="6">
                 <div style="{{ rl.style }}">{{ rl.label }}</div>
               </sc-for>
             </div>
+            <!-- Spaltenkopf = die einzige Verwaltung je Szenario: Name, „Wiederherstellen" (lädt Config +
+                 Karte) und × (löschen) — kein separates Chip-Control mehr (§N). -->
             <sc-for list="{{ compareScenarios }}" as="csc" hint-placeholder-count="2">
               <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
-                <div style="height:58px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
+                <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
                   <div style="display:flex;align-items:center;gap:8px">
                     <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
                     <span onClick="{{ csc.onRemove }}" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
                   </div>
                   <span style="{{ csc.scopeTagStyle }}">{{ csc.scopeTag }}</span>
+                  <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
                 </div>
                 <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
                   <div style="{{ cell.style }}">{{ cell.value }}</div>
@@ -869,7 +885,9 @@ class Component extends DCLogic {
     scenarios: [],
     scenarioSaveOpen: false,
     scenarioNameDraft: '',
-    scenarioCompareOpen: false
+    scenarioCompareOpen: false,
+    scenarioFirstSaveHint: false,
+    scenarioFirstSaveSeen: false
   };
 
   refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
@@ -1532,11 +1550,9 @@ class Component extends DCLogic {
     // ---------- SZENARIEN speichern & vergleichen (§N) ----------
     // Snapshot = aktuelle Konfiguration + berechnete Kernergebnisse; session-only (im Speicher, kein Login/Persistenz).
     const scenarioReady = !isEmpty && !regionNeedsGate;
-    R.saveScenarioReady = scenarioReady;
-    // Als Aktion gestaltet (Füllung + Icon), nicht wie ein Label neben dem Suchfeld (§N).
-    R.saveScenarioBtnStyle = scenarioReady
-      ? 'display:flex;align-items:center;gap:6px;background:#0b6b5a;border:none;color:#fff;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap'
-      : 'display:flex;align-items:center;gap:6px;background:#2a333c;border:none;color:#5b6672;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:default;white-space:nowrap';
+    // Button nur zeigen, wenn es etwas zu speichern gibt — keine ausgegrauten Elemente (s. §D),
+    // stattdessen ganz ausgeblendet (steuert auch showTabRow weiter unten).
+    R.showSaveScenario = scenarioReady;
     const scenarioAutoName = () => {
       const names = sel.map(p => this.byId[p].name).join(' + ') || 'Kein Prinzip';
       const scopeName = isRegion && S.region ? S.region.label : 'Deutschland';
@@ -1571,33 +1587,18 @@ class Component extends DCLogic {
         tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
         target, consensusTotal, limitingName
       };
-      this.setState({ scenarios: this.state.scenarios.concat(scenario), scenarioSaveOpen: false });
+      // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung (§N).
+      const patch = { scenarios: this.state.scenarios.concat(scenario), scenarioSaveOpen: false };
+      if (!this.state.scenarioFirstSaveSeen) { patch.scenarioFirstSaveHint = true; patch.scenarioFirstSaveSeen = true; }
+      this.setState(patch);
     };
+    R.scenarioFirstSaveHint = !!S.scenarioFirstSaveHint;
+    R.dismissScenarioFirstSaveHint = () => this.setState({ scenarioFirstSaveHint: false });
 
     const scenarios = S.scenarios || [];
     R.scenarioCount = scenarios.length;
-    R.showScenarioShelf = scenarios.length > 0;
+    R.showScenarioIndicator = scenarios.length > 0;
     R.showCompareEntry = scenarios.length >= 2;
-    // Kurzer, scannbarer Chip-Name: bei 1–2 Prinzipien ausgeschrieben, ab 3 als „N Prinzipien"
-    // zusammengefasst — der volle Text bleibt als Hover-Tooltip und als Spaltenkopf im Vergleich (§N).
-    const scenarioShortLabel = sc => {
-      const rsel = sc.regionalSel || [];
-      const principlesPart = rsel.length <= 2
-        ? (rsel.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') || 'Kein Prinzip')
-        : (rsel.length + ' Prinzipien');
-      const scopePart = sc.isRegion ? (sc.regionLabel || 'Region').replace(/^(Landkreis|Stadt)\s+/, '') : 'DE';
-      const period = (sc.targetKey && !sc.freeTarget && this.targetLabels[sc.targetKey])
-        ? sc.targetKey.replace('z', '')
-        : this.fmt(sc.targetGW) + ' GW';
-      return principlesPart + ' · ' + scopePart + ' · ' + period;
-    };
-    R.scenarioChips = scenarios.map(sc => ({
-      shortName: scenarioShortLabel(sc),
-      fullName: sc.name,
-      chipStyle: 'display:flex;align-items:center;gap:6px;font-size:14px;color:#26303a;background:#fff;border:1px solid #ccd2d7;border-radius:16px;padding:5px 10px;cursor:pointer;white-space:nowrap',
-      onRestore: () => this.restoreScenario(sc),
-      onDelete: e => { if (e && e.stopPropagation) e.stopPropagation(); this.deleteScenario(sc.id); }
-    }));
     R.openCompare = () => this.setState({ scenarioCompareOpen: true });
     R.scenarioCompareOpen = !!S.scenarioCompareOpen && scenarios.length > 0;
     R.closeCompare = () => this.setState({ scenarioCompareOpen: false });
@@ -1630,6 +1631,7 @@ class Component extends DCLogic {
           ? 'display:inline-block;font-size:14px;color:#0b6b5a;background:#f0f5f4;border:1px solid #cfe4de;border-radius:5px;padding:1px 7px;margin-top:4px'
           : 'display:inline-block;font-size:14px;color:#2f6690;background:#eef3f6;border:1px solid #cdddea;border-radius:5px;padding:1px 7px;margin-top:4px',
         onRemove: () => this.deleteScenario(sc.id),
+        onRestore: () => this.restoreScenario(sc),
         cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
       }));
     } else {
@@ -1762,6 +1764,8 @@ class Component extends DCLogic {
 
     // Tabs (erst ab 2 Prinzipien)
     R.showTabs = stufe >= 2;
+    // Reihe existiert, sobald Tabs ODER der Speichern-Button etwas zu zeigen haben (§N).
+    R.showTabRow = R.showTabs || R.showSaveScenario;
     const tabDefs = [{ id: 'konsens', label: 'Zubaukonsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'schnittmengen', label: 'Übereinstimmungen' }];
     tabDefs.push({ id: 'verteilungen', label: 'Vergleich' });
     if (isExt) { tabDefs.push({ id: 'positiv', label: 'Konsens vs. Planung' }); if (!isRegion) tabDefs.push({ id: '__diff', label: 'Konsens vs. Referenz' }); }

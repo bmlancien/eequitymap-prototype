@@ -459,6 +459,15 @@ nicht über die volle Breite laufen lassen.
   (Grund: Karte + ganze Spalte gleichzeitig neu = zu viel Bewegung.)
 - **Vergleich Konsens gegen ein gewähltes Prinzip** — nicht angeboten (immer
   negativ, dupliziert „Was begrenzt den Konsens?").
+- **Chip-Shelf für gespeicherte Szenarien** — gebaut, dann verworfen. (Grund:
+  skaliert nicht — ein Chip ist Label UND Control zugleich; bei vielen Szenarien
+  eine Wand, die die Karte verdrängt. Ersetzt durch: kleiner Zähler „(N) ·
+  Vergleichen" + die Vergleichstabelle als einzige Verwaltung, jede Spalte
+  wiederherstellbar/löschbar, horizontal scrollbar. Zwei UI-Flächen zu einer
+  kollabiert.)
+- **Tab pro gespeichertem Szenario** — verworfen. (Grund: zeigt nur eins zugleich
+  — das Gegenteil von Vergleichen; und Tab-Reihe skaliert nicht. Ein
+  Vergleichs-Einstieg, eine Tabelle mit Spalten.)
 - **Tab-abhängige Hervorhebung eines Blocks im Zelldetail** — verworfen. (Grund:
   ohne benannte Kennzeichnung las sich die Hervorhebung als Darstellungsfehler.
   Der eigentliche Wert liegt in der stabilen, tab-unabhängigen Detailansicht; eine
@@ -702,17 +711,18 @@ unlesbar — dieselbe Lehre wie bei der Doppel-Intensität, s. H).
 Neuladen verwirft sie. Klar kommuniziert („nur für diese Sitzung").
 
 **Drei Teile:**
-- **„Szenario speichern"** in der Hauptansicht (speichert das aktuell Angezeigte),
-  editierbarer Auto-Name. Als **Aktion** gestaltet (Umrandung/Füllung/Icon), NICHT
-  wie ein Label — der schlichte Text in der Scope-Leiste war unauffindbar.
-- **Ablage (Shelf):** kompakte **umbrechende Reihe kleiner Chips** (schmaler
-  Streifen, nicht ein Chip pro Zeile). **Chip-Name kurz** („N Prinzipien · Scope ·
-  Jahr", ab 3 Prinzipien zusammengefasst); voller Prinzipien-Text nur im Hover und
-  als Spaltenkopf in der Tabelle. Klick = wiederherstellen (lädt Config + Karte),
-  × = löschen. Kein In-place-Editieren (wiederherstellen → ändern → neu speichern).
-- **Vergleichstabelle:** EIN „Vergleichen"-Einstieg ab ≥ 2 Szenarien (KEIN Tab pro
-  Szenario — skaliert nicht, zeigt nur eins). Zeilen = Kennzahlen (fest), Spalten
-  = Szenarien.
+- **„Zum Vergleich speichern"** (nicht bloß „speichern" — Zweck statt Mechanik)
+  in der **Tab-Reihe, rechtsbündig** (nahe Karte/Ergebnis), als Aktion (Icon +
+  Label), editierbarer Auto-Name. Beim ersten Speichern einmalige Zweck-
+  Bestätigung („Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie
+  sie.").
+- **Kein Chip-Shelf** (skaliert nicht — bei 15 Szenarien eine Wand). Stattdessen
+  nur ein kleiner Indikator „Gespeicherte Szenarien (N) · Vergleichen".
+- **Die Vergleichstabelle ist die einzige Verwaltung:** jedes Szenario = eine
+  Spalte; im Spaltenkopf kurzer Name + „Wiederherstellen" (lädt Config + Karte) +
+  × (löschen). Ansehen/wiederherstellen/löschen passiert dort. Kein
+  In-place-Editieren (wiederherstellen → ändern → neu speichern). „Vergleichen"
+  ab ≥ 2 Szenarien. EIN „Vergleichen"-Einstieg (KEIN Tab pro Szenario).
 
 **Kennzahlen (Zeilen), Default-Set:** Scope · Prinzipien · Ausbauziel ·
 Zubaukonsens · % im Konsens · begrenzendes Prinzip.
