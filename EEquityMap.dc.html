@@ -314,7 +314,7 @@
                  Leerraum links/rechts (bzw. oben/unten), den ein exaktes Viewbox-Rect nicht mit abdeckt — am
                  <svg> deckt der Klick die volle gerenderte Fläche ab. Zell-Klicks (c.onClick) rufen
                  stopPropagation auf, damit Auswählen nicht im selben Klick sofort wieder aufgehoben wird. -->
-            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" onClick="{{ clearCell }}" style="width:100%;height:100%;opacity:{{ mapOpacity }};transition:opacity .4s;cursor:pointer">
+            <svg ref="{{ mapSvgRef }}" viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" onClick="{{ clearCell }}" style="width:100%;height:100%;opacity:{{ mapOpacity }};transition:opacity .4s;cursor:pointer">
               <defs>
                 <sc-for list="{{ patterns }}" as="pt" hint-placeholder-count="0">
                   <pattern id="{{ pt.id }}" width="{{ pt.w }}" height="{{ pt.w }}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -332,19 +332,21 @@
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <path d="{{ o.d }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></path>
               </sc-for>
-              <!-- Popover an der ausgewählten Zelle: kompakter Chip mit Zeiger, seitlich statt darüber (§M) -->
-              <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
-                <foreignObject x="{{ cellPopoverX }}" y="{{ cellPopoverY }}" width="{{ cellPopoverW }}" height="{{ cellPopoverH }}" style="overflow:visible;pointer-events:none">
-                  <div style="position:relative;pointer-events:auto">
-                    <span style="{{ cellPopoverTailStyle }}"></span>
-                    <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;background:#eaf3ef;border:1px solid #b9d9cd;color:#0b6b5a;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#dcece5;border-color:#a7cebe">
-                      <span style="display:block;font-weight:700">{{ cellPopoverLine1 }}</span>
-                      <span style="display:block">{{ cellPopoverLine2 }}</span>
-                    </button>
-                  </div>
-                </foreignObject>
-              </sc-if>
             </svg>
+
+            <!-- Popover an der ausgewählten Zelle: HTML-Overlay ÜBER der Karte (kein SVG-Element im
+                 Kartenraum) — Position folgt der Zelle (aus Kartenraum-Koordinaten in Bildschirm-Pixel
+                 projiziert, s. mapProjection), Größe bleibt fest in Bildschirm-Pixeln, unabhängig von
+                 Kartengröße/Zoom. Kompakter Chip mit Zeiger, seitlich statt darüber (§M). -->
+            <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cellPopoverBoxStyle }}">
+                <span style="{{ cellPopoverTailStyle }}"></span>
+                <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;height:100%;background:#eaf3ef;border:1px solid #b9d9cd;color:#0b6b5a;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#dcece5;border-color:#a7cebe">
+                  <span style="display:block;font-weight:700">{{ cellPopoverLine1 }}</span>
+                  <span style="display:block">{{ cellPopoverLine2 }}</span>
+                </button>
+              </div>
+            </sc-if>
 
             <!-- Regionsansicht: Berechnungs-Gate (nicht berechnet / läuft) — mittig auf der Karte, wo der
                  Blick während des Wartens ohnehin liegt; „Abbrechen" sitzt direkt unter dem Fortschrittsbalken,
@@ -956,7 +958,38 @@ class Component extends DCLogic {
     this.buildKrs();
     this._regionCache = {};
     this._scenarioSeq = 0;
+
+    // Kartenraum-Overlays (Zellen-Popover): Position folgt der Karte, Größe bleibt in Bildschirm-Pixeln
+    // konstant — dafür muss die tatsächlich gerenderte SVG-Box gemessen werden (Zoom/Fenstergröße sind zur
+    // Build-Zeit nicht bekannt). Ref + ResizeObserver halten die Messung aktuell; ein Resize/Layout-Wechsel
+    // stößt einen Re-Render an, damit die Overlay-Position/-Klemmung neu berechnet wird.
+    this._mapSvgEl = null;
+    this._resizeObs = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => this.forceUpdate()) : null;
+    this._mapSvgRef = el => {
+      if (this._resizeObs) {
+        if (this._mapSvgEl) { try { this._resizeObs.unobserve(this._mapSvgEl); } catch (e) {} }
+        if (el) { try { this._resizeObs.observe(el); } catch (e) {} }
+      }
+      this._mapSvgEl = el;
+    };
   }
+
+  // Projiziert eine Kartenraum-Koordinate (SVG-Viewbox-Einheiten von `vb`) in Bildschirm-Pixel relativ zur
+  // gerenderten SVG-Box — unabhängig von deren Skalierung. null, solange noch keine Messung vorliegt (vor
+  // dem ersten Layout); praktisch unkritisch, da ein Zellen-Popover erst nach einem Klick auf die bereits
+  // sichtbare, layoutete Karte erscheint.
+  mapProjection(vb) {
+    const el = this._mapSvgEl;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    const [vx, vy, vw, vh] = vb.split(' ').map(Number);
+    if (!vw || !vh) return null;
+    const scale = Math.min(rect.width / vw, rect.height / vh);
+    return { vx, vy, scale, boxW: rect.width, boxH: rect.height, offX: (rect.width - vw * scale) / 2, offY: (rect.height - vh * scale) / 2 };
+  }
+  toScreenX(proj, x) { return proj.offX + (x - proj.vx) * proj.scale; }
+  toScreenY(proj, y) { return proj.offY + (y - proj.vy) * proj.scale; }
 
   // Nationale Ebene: ein SVG-Pfad je echtem Landkreis (vg250_krs, vereinfachtes TopoJSON — s.
   // landkreise.topo.json — via D3-geo/topojson-Pipeline zu Pfaden vorverarbeitet, s. KRS_GEO oben).
@@ -1308,6 +1341,7 @@ class Component extends DCLogic {
     const R = {};
     R.vb = isRegion ? this.regionCellsFor(S.region.krsId).vb : this.krsVb;
     R.vbFull = this.krsVb;
+    R.mapSvgRef = this._mapSvgRef;
     // Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht, s. regionCellsFor).
     R.regionOutlineD = isRegion ? this.regionCellsFor(S.region.krsId).outlineD : '';
     R.patterns = [];
@@ -1950,6 +1984,11 @@ class Component extends DCLogic {
 
       // Popover an der Zelle: kompakter Chip mit Zeiger, der aus der Zelle „herauswächst" — seitlich
       // platziert (bevorzugt eine freie Nachbarrichtung des Sechsecks), nie über der Zelle selbst (§M).
+      // Position im Kartenraum, Größe im Bildschirmraum: die Richtungswahl bleibt in SVG-/Kartenraum-
+      // Koordinaten (Winkel sind skalenunabhängig), aber der Zellrand wird über mapProjection in
+      // Bildschirm-Pixel relativ zur tatsächlich gerenderten SVG-Box projiziert — Popover-Maße (popW/popH/
+      // tailGapPx) sind feste px-Werte, unabhängig von Kartengröße/Zoom. Das Popover ist ein HTML-Overlay
+      // ÜBER der Karte (Geschwisterelement des <svg>), kein <foreignObject> im Kartenraum mehr.
       if (!isRegion) {
         // Echte Landkreis-Umrisse sind unregelmäßig (kein Hex-Nachbarraster mehr) — Richtung wird
         // daher aus der eigenen Bounding-Box der Zelle plus „nach außen, vom Kartenmittelpunkt weg"
@@ -1966,22 +2005,32 @@ class Component extends DCLogic {
         }, null).d;
         const [vx, vy] = DIRVEC[dir];
         const mag = Math.hypot(vx, vy) || 1, ux = vx / mag, uy = vy / mag;
-        const popW = 160, popH = 54, tailGap = 7;
-        const ax = c.cx + vx + ux * tailGap, ay = c.cy + vy + uy * tailGap;
-        const growRight = ux >= 0;
-        let px = growRight ? ax : ax - popW;
-        let py = ay - popH / 2;
-        px = Math.max(b.minx + 4, Math.min(b.maxx - popW - 4, px));
-        py = Math.max(b.miny + 4, Math.min(b.maxy - popH - 4, py));
-        const tailY = Math.max(14, Math.min(popH - 14, ay - py));
-        R.showCellPopover = true;
-        R.cellPopoverX = px; R.cellPopoverY = py; R.cellPopoverW = popW; R.cellPopoverH = popH;
-        R.cellPopoverLine1 = c.kind + ' ' + c.label;
-        R.cellPopoverLine2 = 'im Detail auswerten →';
-        R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
-          ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
-          : 'right:-5px;border-right:1px solid #b9d9cd;border-top:1px solid #b9d9cd');
-        R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
+        const proj = this.mapProjection(R.vb);
+        if (proj) {
+          const popW = 160, popH = 54, tailGapPx = 8;
+          // Zellrand in der gewählten Richtung, aus Kartenraum in Bildschirm-Pixel projiziert (relativ zur
+          // SVG-eigenen Box); der Zeigerabstand wird erst danach als fester Pixelwert addiert.
+          const edgeXs = this.toScreenX(proj, c.cx + vx), edgeYs = this.toScreenY(proj, c.cy + vy);
+          const ax = edgeXs + ux * tailGapPx, ay = edgeYs + uy * tailGapPx;
+          const growRight = ux >= 0;
+          let px = growRight ? ax : ax - popW;
+          let py = ay - popH / 2;
+          px = Math.max(4, Math.min(proj.boxW - popW - 4, px));
+          py = Math.max(4, Math.min(proj.boxH - popH - 4, py));
+          const tailY = Math.max(14, Math.min(popH - 14, ay - py));
+          // MAP_PAD (8px) gleicht das Padding des Kartencontainers aus: die absolut positionierten
+          // Geschwister von <svg> werden relativ zur Padding-Box gemessen, das <svg> selbst sitzt (100%
+          // seines Elternteils) dagegen innerhalb von dessen Content-Box, also um das Padding versetzt.
+          const MAP_PAD = 8;
+          R.showCellPopover = true;
+          R.cellPopoverBoxStyle = 'position:absolute;left:' + (MAP_PAD + px).toFixed(1) + 'px;top:' + (MAP_PAD + py).toFixed(1) + 'px;width:' + popW + 'px;height:' + popH + 'px';
+          R.cellPopoverLine1 = c.kind + ' ' + c.label;
+          R.cellPopoverLine2 = 'im Detail auswerten →';
+          R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
+            ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
+            : 'right:-5px;border-right:1px solid #b9d9cd;border-top:1px solid #b9d9cd');
+          R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
+        } else R.showCellPopover = false;
       } else R.showCellPopover = false;
       R.cellLabel = c.label; R.cellTyp = c.typ;
       R.cellHasConsensus = stufe >= 2;
