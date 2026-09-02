@@ -634,6 +634,18 @@ Werte in **MW** statt GW (s. L).
   gerade ein?"-Verwirrung. Parallelität = derselbe Trick wie bei „Konsens vs. …"
   und den zwei Planung-Kennzahlen: zwei Versionen einer Beziehung strukturell
   gleich halten, damit nur der Unterschied variiert.
+- **Farb-Rhyme + Hierarchie:** BEIDE Sätze tragen die Prinzip-Farben (nationaler
+  Kontext als farbige Chips, regionale Liste wie gehabt), damit das Auge
+  „dieselben Prinzipien, zwei Ebenen" ohne Lesen verbindet. Der nationale
+  Kontext-Kasten ist zurückgenommen (leiser/recessed = Kontext), die regionale
+  Liste prominenter (= aktives Steuerelement). Ziel: unterscheidbar (Hierarchie)
+  UND zusammengehörig (Farbe). „Einfach" ist nicht das Ziel — zwei Ebenen sind
+  inhärent komplexer als eine Liste; das ist der Preis des Features.
+
+**Zurück von der Zelle zur Übersicht:** primär das **× im Zelldetail-Panel**
+(rechte Spalte) + **Klick auf den Kartenhintergrund** (vergebendes Muster).
+Erneutes Anklicken der Zelle bleibt Bonus, ist aber nicht der primäre (weil
+unauffindbare) Weg. „← Deutschland" verlässt die Region ganz (unverändert).
 
 **Default (verbindlich, gegen Komplexität):** Beim Betreten der Regionsansicht
 sind die **regionalen Prinzipien identisch mit der nationalen Auswahl**

@@ -67,7 +67,17 @@
     <!-- ============ LEFT COLUMN ============ -->
     <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 40px">
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14.5px;font-weight:600;color:#1b2126;background:#eef3f6;border:1px solid #cdddea;border-left:4px solid #2f6690;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.5">Bundesweit verteilt nach: <span style="font-weight:500;color:#33413c">{{ natBreadcrumbValue }}</span> <span style="color:#5b6672;font-weight:500">{{ natBreadcrumbCaret }}</span></div>
+        <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
+             leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#8a929a;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:8px 10px;margin-bottom:14px;line-height:1.6">Bundesweit verteilt nach:
+          <sc-if value="{{ natInlineEmpty }}" hint-placeholder-val="{{ false }}">
+            <span>—</span>
+          </sc-if>
+          <sc-for list="{{ natInline }}" as="ni" hint-placeholder-count="2">
+            <span style="display:inline-flex;align-items:center;color:#5b6672;font-weight:500"><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:{{ ni.color }};margin-right:4px"></span>{{ ni.name }}</span>
+          </sc-for>
+          <span style="color:#aab2b9">{{ natBreadcrumbCaret }}</span>
+        </div>
         <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 14px">
             <sc-for list="{{ natChips }}" as="nc" hint-placeholder-count="2">
@@ -77,7 +87,12 @@
         </sc-if>
       </sc-if>
 
-      <div style="font-size:14.5px;font-weight:600;color:#1b2126">{{ princHeading }}</div>
+      <!-- Prominent: das aktive Steuerelement (im Gegensatz zum zurückgenommenen Kontext-Kasten oben) —
+           Akzentbalken in der Markenfarbe, kräftigere Type. -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:4px;height:16px;border-radius:2px;background:#0b6b5a;flex:none"></span>
+        <span style="font-size:15px;font-weight:700;color:#1b2126">{{ princHeading }}</span>
+      </div>
       <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
@@ -294,7 +309,12 @@
         <!-- Single / consensus / minimum / schnittmengen / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
           <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px">
-            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;opacity:{{ mapOpacity }};transition:opacity .4s">
+            <!-- Klick auf den Kartenhintergrund hebt die Zellauswahl auf. Der Handler sitzt am <svg> selbst,
+                 nicht an einem inneren Rect in Viewbox-Maßen: preserveAspectRatio zentriert die Karte mit
+                 Leerraum links/rechts (bzw. oben/unten), den ein exaktes Viewbox-Rect nicht mit abdeckt — am
+                 <svg> deckt der Klick die volle gerenderte Fläche ab. Zell-Klicks (c.onClick) rufen
+                 stopPropagation auf, damit Auswählen nicht im selben Klick sofort wieder aufgehoben wird. -->
+            <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" onClick="{{ clearCell }}" style="width:100%;height:100%;opacity:{{ mapOpacity }};transition:opacity .4s;cursor:pointer">
               <defs>
                 <sc-for list="{{ patterns }}" as="pt" hint-placeholder-count="0">
                   <pattern id="{{ pt.id }}" width="{{ pt.w }}" height="{{ pt.w }}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -304,7 +324,6 @@
                   </pattern>
                 </sc-for>
               </defs>
-              <rect x="{{ vbX }}" y="{{ vbY }}" width="{{ vbW }}" height="{{ vbH }}" fill="transparent" onClick="{{ clearCell }}"></rect>
               <!-- Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht; leer in der DE-Ansicht) -->
               <path d="{{ regionOutlineD }}" fill="none" stroke="#2f6690" stroke-width="1.6" pointer-events="none"></path>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
@@ -608,7 +627,7 @@
               <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
               <div style="font-size:14px;color:#5b6672;margin-top:2px">{{ cellTyp }}</div>
             </div>
-            <button onClick="{{ clearCell }}" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none">×</button>
+            <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
           </div>
 
           <sc-if value="{{ cellShowConflictHint }}" hint-placeholder-val="{{ false }}">
@@ -1331,9 +1350,6 @@ class Component extends DCLogic {
       ? 'width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer'
       : 'width:100%;background:#0b6b5a;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
 
-    // Klick auf den Kartenhintergrund (außerhalb aller Zellen) hebt die Zellauswahl auf — schließt damit auch das Popover
-    { const [bx, by, bw, bh] = R.vb.split(' ').map(Number); R.vbX = bx; R.vbY = by; R.vbW = bw; R.vbH = bh; }
-
     const singlePid = sel[0] || this.principles[0].id;
 
     if (isEmpty) {
@@ -1375,13 +1391,16 @@ class Component extends DCLogic {
       const selc = S.cell === cells[i].id;
       let stroke = selc ? '#12181d' : '#ffffff', sw = selc ? 2.4 : 1, dash = '0';
       if (!selc && opts.conflict) { stroke = this.CONFLICT; sw = 1.6; dash = '3,2'; }
-      return { d: cells[i].d, fill, fo: cellFillOp, stroke, sw, dash, op, onClick: () => this.selectCell(cells[i].id) };
+      // stopPropagation: das <svg> selbst trägt jetzt onClick=clearCell (Kartenhintergrund) — ohne den
+      // Stopp würde ein Zell-Klick im selben Event bis zum <svg> durchbubbeln und die Auswahl sofort
+      // wieder aufheben.
+      return { d: cells[i].d, fill, fo: cellFillOp, stroke, sw, dash, op, onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectCell(cells[i].id); } };
     };
 
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
-      R.mainCells = cells.map((c,i) => ({ d: c.d, fill: '#eef1f0', fo: cellFillOp, stroke: S.cell === c.id ? '#12181d' : '#fff', sw: S.cell === c.id ? 2.4 : 1, dash: '0', op: 1, onClick: () => this.selectCell(c.id) }));
+      R.mainCells = cells.map((c,i) => ({ d: c.d, fill: '#eef1f0', fo: cellFillOp, stroke: S.cell === c.id ? '#12181d' : '#fff', sw: S.cell === c.id ? 2.4 : 1, dash: '0', op: 1, onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectCell(c.id); } }));
       R.legendSeq = false;
       R.showPlan = false;
     } else if (view === 'single') {
@@ -1652,13 +1671,16 @@ class Component extends DCLogic {
     // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
     R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach:' : 'Bundesweit verteilt nach:';
     R.showNatBreadcrumb = isRegion;
-    const natNames = S.selected.filter(avail).map(id => this.byId[id].name);
-    // Einzige sichtbare Verbindung der zwei Ebenen — bewusst als echter Anker gestaltet, nicht als blasse Microcopy.
-    R.natBreadcrumbValue = natNames.length ? natNames.join(', ') : '—';
+    const natSelForBreadcrumb = S.selected.filter(avail);
+    // Farb-Rhyme: dieselben Prinzipfarben wie in der regionalen Liste, auch schon in der eingeklappten
+    // Kopfzeile (nicht erst nach dem Aufklappen) — Auge verbindet „dieselben Prinzipien, zwei Ebenen"
+    // ohne zu lesen. Einzige sichtbare Verbindung der zwei Ebenen, s. §M.
+    R.natInline = natSelForBreadcrumb.map((id, i) => ({ name: this.byId[id].name + (i < natSelForBreadcrumb.length - 1 ? ', ' : ''), color: this.byId[id].color }));
+    R.natInlineEmpty = natSelForBreadcrumb.length === 0;
     R.natBreadcrumbCaret = S.natBreadcrumbOpen ? '▴' : '▾';
     R.natBreadcrumbOpen = !!S.natBreadcrumbOpen;
     R.toggleNatBreadcrumb = () => this.setState({ natBreadcrumbOpen: !S.natBreadcrumbOpen });
-    R.natChips = S.selected.filter(avail).map(id => ({ name: this.byId[id].name, color: this.byId[id].color }));
+    R.natChips = natSelForBreadcrumb.map(id => ({ name: this.byId[id].name, color: this.byId[id].color }));
 
     // Erst-Hinweis an der regionalen Liste — macht die Opt-in-Natur des zweiten Prinzipiensatzes sichtbar (§M)
     R.regionListHint = isRegion && !S.regionHintSeen;
@@ -1959,7 +1981,7 @@ class Component extends DCLogic {
         R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
           ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
           : 'right:-5px;border-right:1px solid #b9d9cd;border-top:1px solid #b9d9cd');
-        R.evaluateRegionPopover = () => this.enterRegion(c.id, c.kind + ' ' + c.label);
+        R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
       } else R.showCellPopover = false;
       R.cellLabel = c.label; R.cellTyp = c.typ;
       R.cellHasConsensus = stufe >= 2;
