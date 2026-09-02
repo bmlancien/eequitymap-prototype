@@ -543,6 +543,19 @@ Karten-Erklärzeilen und -Wertebereiche, Slider-Beschriftungen (Jahres-Marken un
 GW-Enden), Microcopy unter Toggles/Reglern, Hinweistexte der rechten Spalte,
 Tab-Erklärzeilen und Legenden.
 
+**Meldungs-Format (Design-System-Regel):** Nicht alles, was kommuniziert werden
+muss, braucht ein dauerhaftes vollbreites Band über der Karte — sonst stapeln sich
+die Bänder und drücken die Karte nach unten. Drei Werkzeuge, drei Fälle:
+- **Dauerhafter Zustand** (z. B. „Ergebnis veraltet") → linke Spalte / inline, EIN
+  Ort, nicht dupliziert.
+- **Momentane Bestätigung** (z. B. „Gespeichert …") → **Toast** (erscheint, fadet
+  nach einigen Sekunden), kein dauerhaftes Band.
+- **Einmalige Lehre** (z. B. „Zwei Prinzipien gewählt …", Mode-Transition) →
+  schließbares Band, sparsam, verschwindet nach erstem Lesen und kommt nicht
+  zurück.
+Zwei Meldungen, die dasselbe sagen, werden zusammengeführt (nie das gleiche
+„Eingaben geändert" als Band UND als Panel-Box).
+
 ---
 
 ## L. Rasterauflösung / Ebenen (geändert)

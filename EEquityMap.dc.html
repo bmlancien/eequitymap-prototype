@@ -240,15 +240,6 @@
         </div>
       </sc-if>
 
-      <!-- Einmalige Zweck-Bestätigung nach dem allerersten Speichern: erklärt die Sammeln-dann-
-           vergleichen-Schleife im Moment, in dem sie beginnt (§N). -->
-      <sc-if value="{{ scenarioFirstSaveHint }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-bottom:10px;animation:fadeUp .35s;flex:none">
-          <span style="font-size:14px;line-height:1.5;flex:1">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</span>
-          <span onClick="{{ dismissScenarioFirstSaveHint }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
-        </div>
-      </sc-if>
-
       <!-- Single-View: Zurück zur Galerie + Kennzeichnung -->
       <sc-if value="{{ isSingleView }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:12px;margin:0 2px 8px;flex-wrap:wrap;flex:none">
@@ -854,6 +845,12 @@
       </div>
     </div>
   </sc-if>
+
+  <!-- Speicher-Bestätigung als Toast: momentane Bestätigung einer bereits erfolgten Handlung, kein
+       dauerhafter Zustand — fadet selbst aus, kein ×, belegt keinen Platz im Karten-Stack (s. SoT §K). -->
+  <sc-if value="{{ scenarioToastVisible }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ scenarioToastStyle }}">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
@@ -907,7 +904,8 @@ class Component extends DCLogic {
     scenarioSaveOpen: false,
     scenarioNameDraft: '',
     scenarioCompareOpen: false,
-    scenarioFirstSaveHint: false,
+    scenarioToastShow: false,
+    scenarioToastMounted: false,
     scenarioFirstSaveSeen: false
   };
 
@@ -1640,13 +1638,18 @@ class Component extends DCLogic {
         tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
         target, consensusTotal, limitingName
       };
-      // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung (§N).
+      // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung, als Toast (§N/§K —
+      // momentane Bestätigung einer bereits erfolgten Handlung, kein dauerhaftes Band).
       const patch = { scenarios: this.state.scenarios.concat(scenario), scenarioSaveOpen: false };
-      if (!this.state.scenarioFirstSaveSeen) { patch.scenarioFirstSaveHint = true; patch.scenarioFirstSaveSeen = true; }
+      if (!this.state.scenarioFirstSaveSeen) {
+        patch.scenarioToastShow = true; patch.scenarioToastMounted = true; patch.scenarioFirstSaveSeen = true;
+        this.scheduleScenarioToastDismiss();
+      }
       this.setState(patch);
     };
-    R.scenarioFirstSaveHint = !!S.scenarioFirstSaveHint;
-    R.dismissScenarioFirstSaveHint = () => this.setState({ scenarioFirstSaveHint: false });
+    R.scenarioToastVisible = !!(S.scenarioToastShow || S.scenarioToastMounted);
+    R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#122f28;color:#dff2ec;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:380px;text-align:center;pointer-events:none;'
+      + (S.scenarioToastShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards');
 
     const scenarios = S.scenarios || [];
     R.scenarioCount = scenarios.length;
@@ -2198,6 +2201,15 @@ class Component extends DCLogic {
     if (now < 3 && S.tab === 'verteilungen') { /* keep */ }
     if (now >= 3 && S.tab === 'verteilungen') patch.tab = 'konsens';
     this.setState(patch);
+  }
+
+  // Speicher-Bestätigungs-Toast: fadet sich selbst nach ~3,2 s aus (kein × nötig), DOM bleibt für die
+  // Fade-Out-Transition noch ~0,4 s gemountet — dieselbe Zwei-Flaggen-Technik wie dismissTrioHint.
+  scheduleScenarioToastDismiss() {
+    clearTimeout(this._scenarioToastT1);
+    clearTimeout(this._scenarioToastT2);
+    this._scenarioToastT1 = setTimeout(() => this.setState({ scenarioToastShow: false }), 3200);
+    this._scenarioToastT2 = setTimeout(() => this.setState({ scenarioToastMounted: false }), 3600);
   }
 
   // Hinweis + Hervorhebung blenden gemeinsam aus, sobald der Nutzer irgendwo handelt
