@@ -174,9 +174,30 @@
           <button onClick="{{ backToDE }}" style="display:flex;align-items:center;gap:5px;background:#57c4ab;color:#0c2a24;border:none;font-size:14px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">← Deutschland</button>
         </sc-if>
         <span style="font-size:14px;color:#e7ecf0;font-weight:500;white-space:nowrap">{{ ansichtLabel }}</span>
+        <button onClick="{{ openSaveScenario }}" style="{{ saveScenarioBtnStyle }}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          Szenario speichern
+        </button>
         <div style="flex:1"></div>
         <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;background:#11161c;border:1px solid #333d47;color:#e7ecf0;font-size:14px;padding:6px 10px;border-radius:6px">
       </div>
+
+      <!-- Szenarien-Ablage: unaufdringliche, umbrechende Chip-Reihe (schmaler Streifen) — kurze Namen,
+           voller Text nur im Hover-Tooltip; Klick = wiederherstellen, × = löschen (§N) -->
+      <sc-if value="{{ showScenarioShelf }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;background:#f4f6f6;border:1px solid #e2e6e8;border-radius:8px;padding:7px 12px;margin-top:9px;flex:none">
+          <span style="font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;flex:none">Gespeicherte Szenarien ({{ scenarioCount }})</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0">
+            <sc-for list="{{ scenarioChips }}" as="sch" hint-placeholder-count="2">
+              <span onClick="{{ sch.onRestore }}" title="{{ sch.fullName }}" style="{{ sch.chipStyle }}">{{ sch.shortName }}<span onClick="{{ sch.onDelete }}" style="cursor:pointer;color:#9aa4ad;font-size:14px;margin-left:2px">×</span></span>
+            </sc-for>
+          </div>
+          <sc-if value="{{ showCompareEntry }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ openCompare }}" style="background:#0b6b5a;color:#fff;border:none;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap;flex:none">Vergleichen ({{ scenarioCount }})</button>
+          </sc-if>
+          <span style="font-size:14px;color:#9aa4ad;white-space:nowrap;flex:none">Nur für diese Sitzung.</span>
+        </div>
+      </sc-if>
 
       <!-- Einmaliger Mode-Transition-Banner beim Betreten der Regionsansicht (§M) -->
       <sc-if value="{{ showRegionBanner }}" hint-placeholder-val="{{ false }}">
@@ -740,6 +761,62 @@
       </div>
     </div>
   </sc-if>
+
+  <!-- Szenario speichern: Auto-Name editierbar, Session-only-Hinweis (§N) -->
+  <sc-if value="{{ scenarioSaveOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ cancelSaveScenario }}" style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:55;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:24px 26px;width:min(440px,92vw)">
+        <div style="font-size:17px;font-weight:700;color:#1b2126;margin-bottom:14px">Szenario speichern</div>
+        <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Name</div>
+        <input value="{{ scenarioNameDraft }}" onInput="{{ onScenarioNameInput }}" style="width:100%;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;margin-bottom:14px">
+        <div style="font-size:14px;color:#8a929a;line-height:1.5;margin-bottom:18px">Gespeicherte Szenarien gelten nur für diese Sitzung. Neuladen verwirft sie.</div>
+        <div style="display:flex;gap:9px;justify-content:flex-end">
+          <button onClick="{{ cancelSaveScenario }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Abbrechen</button>
+          <button onClick="{{ confirmSaveScenario }}" style="background:#0b6b5a;color:#fff;border:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Szenarien vergleichen: EINE Tabelle für alle Szenarien, kein Tab pro Szenario (§N) -->
+  <sc-if value="{{ scenarioCompareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCompare }}" style="position:fixed;inset:0;background:rgba(20,25,30,.55);z-index:55;display:flex;align-items:center;justify-content:center;padding:32px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:22px 24px;width:min(1100px,94vw);max-height:88vh;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;margin-bottom:4px">
+          <span style="font-size:17px;font-weight:700;color:#1b2126;flex:1">Szenarien vergleichen</span>
+          <button onClick="{{ closeCompare }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
+        </div>
+        <div style="font-size:14px;color:#8a929a;margin-bottom:14px">Deutschland-Szenarien in GW, Regions-Szenarien in MW — an der Kennzeichnung im Spaltenkopf erkennbar, nicht direkt vergleichbar.</div>
+        <!-- Flex-„Fake-Table" statt echter <table>-Tags (wie überall sonst in diesem Template, s. comboRows/
+             sumRows/blockers): erste Spalte sticky, Zeilenhöhen fest, damit Labelspalte und Szenario-Spalten
+             unabhängig fluchten; Tabelle horizontal scrollbar bei vielen Szenarien. -->
+        <div class="scroll" style="overflow:auto;border:1px solid #e2e5e8;border-radius:10px">
+          <div style="display:flex;min-width:max-content">
+            <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
+              <div style="height:58px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
+              <sc-for list="{{ compareRowLabels }}" as="rl" hint-placeholder-count="6">
+                <div style="{{ rl.style }}">{{ rl.label }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ compareScenarios }}" as="csc" hint-placeholder-count="2">
+              <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
+                <div style="height:58px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
+                    <span onClick="{{ csc.onRemove }}" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
+                  </div>
+                  <span style="{{ csc.scopeTagStyle }}">{{ csc.scopeTag }}</span>
+                </div>
+                <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
+                  <div style="{{ cell.style }}">{{ cell.value }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
@@ -787,7 +864,12 @@ class Component extends DCLogic {
     freeTarget: false,
     revealP: 1,
     refs: [],
-    infoRef: null
+    infoRef: null,
+    // Szenarien speichern & vergleichen (§N) — session-only, im Speicher, keine Persistenz.
+    scenarios: [],
+    scenarioSaveOpen: false,
+    scenarioNameDraft: '',
+    scenarioCompareOpen: false
   };
 
   refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
@@ -836,6 +918,7 @@ class Component extends DCLogic {
     this.principles.forEach(p => this.byId[p.id] = p);
     this.buildKrs();
     this._regionCache = {};
+    this._scenarioSeq = 0;
   }
 
   // Nationale Ebene: ein SVG-Pfad je echtem Landkreis (vg250_krs, vereinfachtes TopoJSON — s.
@@ -1446,6 +1529,113 @@ class Component extends DCLogic {
     R.showBackToGallery = view === 'single';
     R.backToGallery = () => this.setState({ tab: 'verteilungen', compare: null, cell: null });
 
+    // ---------- SZENARIEN speichern & vergleichen (§N) ----------
+    // Snapshot = aktuelle Konfiguration + berechnete Kernergebnisse; session-only (im Speicher, kein Login/Persistenz).
+    const scenarioReady = !isEmpty && !regionNeedsGate;
+    R.saveScenarioReady = scenarioReady;
+    // Als Aktion gestaltet (Füllung + Icon), nicht wie ein Label neben dem Suchfeld (§N).
+    R.saveScenarioBtnStyle = scenarioReady
+      ? 'display:flex;align-items:center;gap:6px;background:#0b6b5a;border:none;color:#fff;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap'
+      : 'display:flex;align-items:center;gap:6px;background:#2a333c;border:none;color:#5b6672;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:default;white-space:nowrap';
+    const scenarioAutoName = () => {
+      const names = sel.map(p => this.byId[p].name).join(' + ') || 'Kein Prinzip';
+      const scopeName = isRegion && S.region ? S.region.label : 'Deutschland';
+      const period = (S.targetKey && !S.freeTarget && this.targetLabels[S.targetKey])
+        ? S.targetKey.replace('z', '')
+        : this.fmt(S.targetGW) + ' GW';
+      return names + ' · ' + scopeName + ' · ' + period;
+    };
+    R.openSaveScenario = scenarioReady ? (() => this.setState({ scenarioSaveOpen: true, scenarioNameDraft: scenarioAutoName() })) : (() => {});
+    R.scenarioSaveOpen = !!S.scenarioSaveOpen;
+    R.scenarioNameDraft = S.scenarioNameDraft || '';
+    R.onScenarioNameInput = e => this.setState({ scenarioNameDraft: e.target.value });
+    R.cancelSaveScenario = () => this.setState({ scenarioSaveOpen: false });
+    R.confirmSaveScenario = () => {
+      const name = (this.state.scenarioNameDraft || '').trim() || scenarioAutoName();
+      // Begrenzendes Prinzip = größter Konsensverlust ohne dieses Prinzip — dieselbe Logik wie „Was begrenzt den Konsens?"
+      let limitingName = '—';
+      if (sel.length >= 2) {
+        let top = null, topCost = -Infinity;
+        sel.forEach(p => { const cost = consWithout(p) - consTotal; if (cost > topCost) { topCost = cost; top = p; } });
+        if (top) limitingName = this.byId[top].name;
+      }
+      const consensusTotal = stufe >= 2 ? consTotal : scopeIdx.reduce((a,i) => a + gwSel[singlePid][i], 0);
+      const scenario = {
+        id: 's' + (++this._scenarioSeq),
+        name,
+        isRegion,
+        regionKrsId: isRegion && S.region ? S.region.krsId : null,
+        regionLabel: isRegion && S.region ? S.region.label : null,
+        nationalSel: S.selected.filter(avail),
+        regionalSel: sel.slice(),
+        tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
+        target, consensusTotal, limitingName
+      };
+      this.setState({ scenarios: this.state.scenarios.concat(scenario), scenarioSaveOpen: false });
+    };
+
+    const scenarios = S.scenarios || [];
+    R.scenarioCount = scenarios.length;
+    R.showScenarioShelf = scenarios.length > 0;
+    R.showCompareEntry = scenarios.length >= 2;
+    // Kurzer, scannbarer Chip-Name: bei 1–2 Prinzipien ausgeschrieben, ab 3 als „N Prinzipien"
+    // zusammengefasst — der volle Text bleibt als Hover-Tooltip und als Spaltenkopf im Vergleich (§N).
+    const scenarioShortLabel = sc => {
+      const rsel = sc.regionalSel || [];
+      const principlesPart = rsel.length <= 2
+        ? (rsel.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') || 'Kein Prinzip')
+        : (rsel.length + ' Prinzipien');
+      const scopePart = sc.isRegion ? (sc.regionLabel || 'Region').replace(/^(Landkreis|Stadt)\s+/, '') : 'DE';
+      const period = (sc.targetKey && !sc.freeTarget && this.targetLabels[sc.targetKey])
+        ? sc.targetKey.replace('z', '')
+        : this.fmt(sc.targetGW) + ' GW';
+      return principlesPart + ' · ' + scopePart + ' · ' + period;
+    };
+    R.scenarioChips = scenarios.map(sc => ({
+      shortName: scenarioShortLabel(sc),
+      fullName: sc.name,
+      chipStyle: 'display:flex;align-items:center;gap:6px;font-size:14px;color:#26303a;background:#fff;border:1px solid #ccd2d7;border-radius:16px;padding:5px 10px;cursor:pointer;white-space:nowrap',
+      onRestore: () => this.restoreScenario(sc),
+      onDelete: e => { if (e && e.stopPropagation) e.stopPropagation(); this.deleteScenario(sc.id); }
+    }));
+    R.openCompare = () => this.setState({ scenarioCompareOpen: true });
+    R.scenarioCompareOpen = !!S.scenarioCompareOpen && scenarios.length > 0;
+    R.closeCompare = () => this.setState({ scenarioCompareOpen: false });
+    // Vergleichstabelle als Flex-„Fake-Table" (wie jede andere Tabellendarstellung in diesem Template,
+    // s. comboRows/sumRows/blockers) statt echter <table>-Tags — vermeidet die HTML-Tabellen-Parsing-
+    // Fallstricke (Foster-Parenting von Nicht-Tabellen-Kindknoten in <tr>/<tbody>) ganz. Sticky-Spalte via
+    // position:sticky auf der ersten Flex-Spalte; alle Zeilen (Kopf + 6 Kennzahlen) mit fester Höhe, damit
+    // Labelspalte und Szenario-Spalten unabhängig voneinander exakt fluchten.
+    const CMP_ROW_H = 40, CMP_HEAD_H = 58;
+    const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;" : 'color:#26303a;');
+    const rowDefs = [
+      { label: 'Scope', numeric: false, get: sc => sc.isRegion ? sc.regionLabel : 'Deutschland' },
+      { label: 'Prinzipien', numeric: false, get: sc => (sc.regionalSel && sc.regionalSel.length) ? sc.regionalSel.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—' },
+      { label: 'Ausbauziel', numeric: true, get: sc => this.fmtU(sc.target, sc.isRegion) },
+      { label: 'Zubaukonsens', numeric: true, get: sc => this.fmtU(sc.consensusTotal, sc.isRegion) },
+      { label: '% im Konsens', numeric: true, get: sc => sc.target ? this.pct(sc.consensusTotal / sc.target) : '—' },
+      { label: 'Begrenzendes Prinzip', numeric: false, get: sc => sc.limitingName || '—' }
+    ];
+    R.compareRowLabels = rowDefs.map((rd, i) => ({
+      label: rd.label,
+      style: 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;' + (i === rowDefs.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;')
+    }));
+    if (R.scenarioCompareOpen) {
+      // DE- (GW) und Region-Szenarien (MW) gruppiert — sonst wirken „160 GW" und „350 MW" direkt vergleichbar.
+      const sorted = scenarios.slice().sort((a,b) => (a.isRegion === b.isRegion) ? 0 : (a.isRegion ? 1 : -1));
+      R.compareScenarios = sorted.map(sc => ({
+        name: sc.name,
+        scopeTag: sc.isRegion ? 'Region · MW' : 'Deutschland · GW',
+        scopeTagStyle: sc.isRegion
+          ? 'display:inline-block;font-size:14px;color:#0b6b5a;background:#f0f5f4;border:1px solid #cfe4de;border-radius:5px;padding:1px 7px;margin-top:4px'
+          : 'display:inline-block;font-size:14px;color:#2f6690;background:#eef3f6;border:1px solid #cdddea;border-radius:5px;padding:1px 7px;margin-top:4px',
+        onRemove: () => this.deleteScenario(sc.id),
+        cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
+      }));
+    } else {
+      R.compareScenarios = [];
+    }
+
     // ---------- STRINGS / STATE ----------
     R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
     R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
@@ -1955,6 +2145,39 @@ class Component extends DCLogic {
     if (!best) return;
     this.enterRegion(best.id, best.kind + ' ' + best.label);
     this.setState({ search: '' });
+  }
+
+  // Wiederherstellen lädt die gespeicherte Konfiguration inkl. eingefrorener Regionsergebnisse (kein
+  // erneutes Rechnen nötig) — kein In-place-Editieren: restore → ändern → als neues Szenario speichern (§N).
+  restoreScenario(sc) {
+    if (sc.isRegion && sc.regionKrsId) {
+      const sig = [sc.regionKrsId, sc.regionalSel.slice().sort().join(','), this.fmt(sc.target), sc.tech, sc.account ? 1 : 0].join('|');
+      this.setState({
+        level: 'region', region: { krsId: sc.regionKrsId, label: sc.regionLabel },
+        selected: sc.nationalSel.slice(), selectedRegional: sc.regionalSel.slice(),
+        regionComputedSel: sc.regionalSel.slice(), regionComputedTarget: sc.target, regionComputedSig: sig,
+        regionComputing: false, regionProgress: 1,
+        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
+        cell: null, compare: null, tab: 'konsens', committed: true,
+        scenarioCompareOpen: false, scenarioSaveOpen: false
+      });
+    } else {
+      this.setState({
+        level: 'de', region: null,
+        selected: sc.nationalSel.slice(), selectedRegional: null,
+        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
+        cell: null, compare: null, tab: 'konsens', committed: true,
+        scenarioCompareOpen: false, scenarioSaveOpen: false
+      });
+    }
+    this.startReveal();
+  }
+
+  deleteScenario(id) {
+    const scenarios = this.state.scenarios.filter(s => s.id !== id);
+    const patch = { scenarios };
+    if (scenarios.length === 0) patch.scenarioCompareOpen = false;
+    this.setState(patch);
   }
 
   renderVals() { return this.build(); }

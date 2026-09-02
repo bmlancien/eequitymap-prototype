@@ -688,3 +688,43 @@ INNERHALB einer Region. Damit ist der Modus die Granularität: Der frühere
 Granularitäts-Schalter („5 × 5 km / Gemeinde / Landkreis") ist durch die
 DE-/Region-Aufteilung weitgehend abgelöst und sollte darin aufgehen, nicht als
 separater Regler bestehen bleiben.
+
+---
+
+## N. Szenarien speichern & vergleichen (neu)
+
+**Konzept:** Ein Szenario = Momentaufnahme der aktuellen Konfiguration (Scope,
+Prinzipien, Technologie, Ausbauziel/-jahr) + berechnete Kernergebnisse. Verglichen
+werden **Zahlen**, nicht Karten nebeneinander (zwei Karten nebeneinander sind
+unlesbar — dieselbe Lehre wie bei der Doppel-Intensität, s. H).
+
+**Session-only:** kein Login, keine Persistenz; Snapshots leben im Speicher,
+Neuladen verwirft sie. Klar kommuniziert („nur für diese Sitzung").
+
+**Drei Teile:**
+- **„Szenario speichern"** in der Hauptansicht (speichert das aktuell Angezeigte),
+  editierbarer Auto-Name. Als **Aktion** gestaltet (Umrandung/Füllung/Icon), NICHT
+  wie ein Label — der schlichte Text in der Scope-Leiste war unauffindbar.
+- **Ablage (Shelf):** kompakte **umbrechende Reihe kleiner Chips** (schmaler
+  Streifen, nicht ein Chip pro Zeile). **Chip-Name kurz** („N Prinzipien · Scope ·
+  Jahr", ab 3 Prinzipien zusammengefasst); voller Prinzipien-Text nur im Hover und
+  als Spaltenkopf in der Tabelle. Klick = wiederherstellen (lädt Config + Karte),
+  × = löschen. Kein In-place-Editieren (wiederherstellen → ändern → neu speichern).
+- **Vergleichstabelle:** EIN „Vergleichen"-Einstieg ab ≥ 2 Szenarien (KEIN Tab pro
+  Szenario — skaliert nicht, zeigt nur eins). Zeilen = Kennzahlen (fest), Spalten
+  = Szenarien.
+
+**Kennzahlen (Zeilen), Default-Set:** Scope · Prinzipien · Ausbauziel ·
+Zubaukonsens · % im Konsens · begrenzendes Prinzip.
+
+**Unbegrenzt viele Szenarien, horizontal scrollbar.** Damit das funktioniert:
+- **Erste Spalte (Kennzahl-Labels) sticky** — bleibt sichtbar beim Scrollen (sonst
+  Zahlen ohne Zeilenbezug).
+- Je Spalte Kopf mit Name + × (die Tabelle verwaltet auch die Ablage).
+- **DE- (GW) und Region-Szenarien (MW) klar unterscheidbar** (Gruppierung/Tag), da
+  160 GW und 350 MW nicht direkt vergleichbar sind; jede Zelle mit eigener Einheit
+  (s. L).
+
+**Bewusst nicht:** keine Karten nebeneinander, kein Tab pro Szenario, kein
+In-place-Editieren, keine Persistenz. Parallelität (Zeilen fest, Spalten variieren)
+ist derselbe Trick wie bei „Konsens vs. …" — nur der Unterschied variiert.
