@@ -207,14 +207,6 @@
         </div>
       </sc-if>
 
-      <!-- Einmaliger Mode-Transition-Banner beim Betreten der Regionsansicht (§M) -->
-      <sc-if value="{{ showRegionBanner }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-top:10px;animation:fadeUp .35s;flex:none">
-          <span style="font-size:14px;line-height:1.5;flex:1">{{ regionBannerText }}</span>
-          <span onClick="{{ dismissRegionBanner }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
-        </div>
-      </sc-if>
-
       <!-- Kernaussage -->
       <sc-if value="{{ kernaussage }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:12px 2px 10px;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
@@ -333,7 +325,7 @@
               <div style="{{ cellPopoverBoxStyle }}">
                 <span style="{{ cellPopoverTailStyle }}"></span>
                 <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;height:100%;background:#eaf3ef;border:1px solid #b9d9cd;color:#0b6b5a;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#dcece5;border-color:#a7cebe">
-                  <span style="display:block;font-weight:700">{{ cellPopoverLine1 }}</span>
+                  <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word">{{ cellPopoverLine1 }}</span>
                   <span style="display:block">{{ cellPopoverLine2 }}</span>
                 </button>
               </div>
@@ -346,7 +338,10 @@
               <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
                 <div style="max-width:280px">
                   <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:14px;color:#26303a;font-weight:600">Regionsergebnis wird berechnet …</div>
+                    <div style="font-size:14px;color:#26303a;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
+                    <sc-if value="{{ regionComputingReassure }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:13px;color:#7a848c;margin-top:4px">{{ regionComputingReassure }}</div>
+                    </sc-if>
                     <div class="loadbar" style="margin-top:12px"><div class="loadbar-fill"></div></div>
                     <button onClick="{{ cancelRegionCompute }}" style="margin-top:12px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px;border-radius:7px;cursor:pointer">Abbrechen</button>
                   </sc-if>
@@ -426,14 +421,17 @@
           </sc-if>
           <!-- schnittmengen legend -->
           <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
-              <span style="font-size:14px;color:#5b6672">empfohlen von:</span>
-              <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
-                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
-              </sc-for>
-              <sc-if value="{{ schnittNoteBelow }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
-              </sc-if>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:14px;color:#8a929a">{{ schnittColorCaption }}</span>
+              <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+                <span style="font-size:14px;color:#5b6672">empfohlen von:</span>
+                <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
+                  <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
+                </sc-for>
+                <sc-if value="{{ schnittNoteBelow }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
+                </sc-if>
+              </div>
             </div>
           </sc-if>
           <!-- diverging legend -->
@@ -885,7 +883,6 @@ class Component extends DCLogic {
     regionComputing: false,
     regionProgress: 0,
     natBreadcrumbOpen: false,
-    regionBanner: false, regionBannerSeen: false,   // einmaliger Mode-Transition-Banner (§M)
     regionHintSeen: false,                          // Erst-Hinweis an der regionalen Liste (Opt-in sichtbar machen)
     search: '',
     hintTwo: false, seenTwo: false,
@@ -1156,9 +1153,7 @@ class Component extends DCLogic {
     this.setState({
       level: 'region', region: { krsId, label }, cell: null, compare: null, tab: 'konsens',
       selectedRegional: initialSel, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
-      regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false,
-      // Einmaliger Mode-Transition-Banner — zeigt nur beim allerersten Betreten einer Region (§M)
-      regionBanner: !S.regionBannerSeen, regionBannerSeen: true
+      regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false
     });
     // Erstes Betreten: Berechnung läuft automatisch einmal, damit sofort ein Ergebnis erscheint.
     this.startRegionCompute();
@@ -1468,6 +1463,8 @@ class Component extends DCLogic {
       R.legendSchnitt = true;
       R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color }));
       R.schnittNote = 'Gestreifte Flächen: mehrere Prinzipien empfehlen dieselbe Fläche.';
+      // Liest sich hier als Farb-Legende (mit den Farbfeldern darunter), nicht als Caption über der Karte (§M)
+      R.schnittColorCaption = 'Farbe = welche Prinzipien dieselbe Fläche empfehlen.';
       // UpSet-Aufschlüsselung (nur Erweitert)
       // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
       if (isExt && stufe >= 3) {
@@ -1589,7 +1586,6 @@ class Component extends DCLogic {
       minimum: 'Farbe = das Prinzip, das hier den Konsens begrenzt.',
       verteilungen: 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Dunkel = viel.',
       positiv: 'Wo Ausweisung und Konsens zusammengehen und wo nicht. Mitte = deckt sich.',
-      schnittmengen: 'Farbe = welche Prinzipien dieselbe Fläche empfehlen.',
       differenz: 'Vergleich: der Konsens gegenüber der gewählten Referenzverteilung. Grün = mehr Konsens, Braun = mehr Referenz.'
     })[view] || '';
     if (galleryAll) R.explainLine = ''; // Galerie-Header trägt Titel + Legende bereits
@@ -1723,10 +1719,13 @@ class Component extends DCLogic {
     R.regionListHint = isRegion && !S.regionHintSeen;
     R.dismissRegionListHint = () => this.setState({ regionHintSeen: true });
 
-    // Einmaliger Mode-Transition-Banner beim Betreten der Regionsansicht (§M)
-    R.showRegionBanner = isRegion && !!S.regionBanner;
-    R.regionBannerText = isRegion ? ('Sie werten jetzt ' + S.region.label + ' im Detail aus — die nationale Verteilung bleibt oben als Kontext.') : '';
-    R.dismissRegionBanner = () => this.setState({ regionBanner: false });
+    // Mode-Transition-Text lebt jetzt im Ladezustand statt als eigenes dauerhaftes Band (§M) — dadurch
+    // an den Lade-Moment gebunden (Auto-Berechnung beim Betreten, „Neu berechnen"), nicht als garantierte
+    // Einmal-Ankündigung; ok, weil die Scope-Leiste den Landkreis ohnehin dauerhaft nennt.
+    R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die nationale Verteilung bleibt oben als Kontext.') : '';
+    // Dauer ist unbekannt (kein Prozent-/Countdown, s.o.) — nach kurzer Zeit eine Beruhigungszeile,
+    // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
+    R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 24000) ? 'Das kann einen Moment dauern …' : '';
 
     R.hasMore = this.principles.some(p => (isExt || p.basic) && !p.available);
     R.showMore = S.showMore;
@@ -2010,7 +2009,12 @@ class Component extends DCLogic {
         const mag = Math.hypot(vx, vy) || 1, ux = vx / mag, uy = vy / mag;
         const proj = this.mapProjection(R.vb);
         if (proj) {
-          const popW = 160, popH = 54, tailGapPx = 8;
+          const nameText = c.kind + ' ' + c.label;
+          const popW = 200, tailGapPx = 8;
+          // Feste Breite (§Popover), nur die Höhe wächst um eine Zeile bei langen Namen. Keine echte
+          // Textmessung im Prototyp — grobe Zeichen-Heuristik statt dessen (Umbruch passiert ohnehin per
+          // CSS; die Schätzung entscheidet nur die Boxhöhe, lieber zu hoch als zu eng).
+          const popH = nameText.length > 20 ? 72 : 54;
           // Zellrand in der gewählten Richtung, aus Kartenraum in Bildschirm-Pixel projiziert (relativ zur
           // SVG-eigenen Box); der Zeigerabstand wird erst danach als fester Pixelwert addiert.
           const edgeXs = this.toScreenX(proj, c.cx + vx), edgeYs = this.toScreenY(proj, c.cy + vy);
@@ -2027,7 +2031,7 @@ class Component extends DCLogic {
           const MAP_PAD = 8;
           R.showCellPopover = true;
           R.cellPopoverBoxStyle = 'position:absolute;left:' + (MAP_PAD + px).toFixed(1) + 'px;top:' + (MAP_PAD + py).toFixed(1) + 'px;width:' + popW + 'px;height:' + popH + 'px';
-          R.cellPopoverLine1 = c.kind + ' ' + c.label;
+          R.cellPopoverLine1 = nameText;
           R.cellPopoverLine2 = 'im Detail auswerten →';
           R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
             ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
