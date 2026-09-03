@@ -621,10 +621,13 @@ Vorgaben.) Rechte Spalte bleibt inhaltlich zunächst gleich, nur der Titel wechs
 Regionsnamen** (aus dem aktiven Scope), nie „Deutschland" oder das Bundesziel; und
 Werte in **MW** statt GW (s. L).
 
-**Mode-Transition sichtbar machen** (der Wechsel DE → Region war zu leise):
-- **Einmaliger Banner** beim Betreten der Regionsansicht: „Sie werten jetzt
-  [Landkreis] im Detail aus — die nationale Verteilung bleibt oben als Kontext."
-- **Erst-Hinweis** an der Liste „Verteilung innerhalb der Region": „Startet mit
+**Mode-Transition (als Ladezustand-Label):** Der Wechsel DE → Region wird nicht
+mehr über ein dauerhaftes Band angekündigt (spart vertikalen Platz), sondern als
+**Label des Ladezustands** gezeigt: während der Regionsberechnung „Landkreis X
+wird ausgewertet — die nationale Verteilung bleibt oben als Kontext." Damit an den
+Lade-Moment gebunden (Auto-Berechnung beim Betreten, „Neu berechnen"), nicht als
+garantierte Einmal-Ankündigung — ok, weil die Scope-Leiste den Landkreis dauerhaft
+nennt. Zusätzlich weiter sichtbar machen:** an der Liste „Verteilung innerhalb der Region": „Startet mit
   denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region
   anders zu verteilen." (macht die Opt-in-Natur sichtbar).
 - **Breadcrumb** „Auf Regionen verteilt nach: …" bekommt echtes Gewicht (nicht
@@ -693,10 +696,12 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
   Bug — die Region hat immer ein national berechnetes Budget.)
 - Nach einer Änderung der regionalen Prinzipien muss der Zustand **sichtbar
   „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Neu berechnen" gedrückt
-  wird — sonst wirkt es kaputt. **Fortschritt unbestimmt** (Spinner/animierter
-  Streifen, KEINE Prozentzahl — die Dauer ist real unbekannt; ein %-Balken lügt),
-  Text „Regionsergebnis wird berechnet …", plus **„Abbrechen"**-Button (zurück zum
-  vorherigen Zustand). Im Mock die Verzögerung nur als Delay nachbilden, ohne
+  wird — sonst wirkt es kaputt. **Fortschritt unbestimmt** (animierter Indikator —
+  sichtbar rotierender Spinner / laufender Streifen; Bewegung = „nicht
+  eingefroren"-Signal), KEINE Prozentzahl/Countdown (Dauer real unbekannt; ein
+  %-Balken lügt). Status-Text zeigt, dass Zeit vergeht (Backend-Stufen wechselnd,
+  sonst nach kurzer Zeit „Das kann einen Moment dauern…"). Text „[Landkreis] wird
+  ausgewertet …", plus **„Abbrechen"**-Button (zurück zum vorherigen Zustand). Im Mock die Verzögerung nur als Delay nachbilden, ohne
   bekannte Dauer zu behaupten.
 - **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner; der
   DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" gehört NICHT hierher. „Noch nicht
