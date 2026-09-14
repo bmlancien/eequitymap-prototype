@@ -728,6 +728,25 @@ Granularitäts-Schalter („5 × 5 km / Gemeinde / Landkreis") ist durch die
 DE-/Region-Aufteilung weitgehend abgelöst und sollte darin aufgehen, nicht als
 separater Regler bestehen bleiben.
 
+**Gemeinde-Ebene (nur Erweitert, zum Testen — erweitert das Modell):** In der
+Regionsansicht ein Ansichts-Umschalter UNTER der Karte, nur im Erweitert-Modus,
+mit drei Optionen: (1) **Raster (5 × 5 km)** — Zellen klickbar (Bestand);
+(2) **Gemeinden** — echte Gemeinde-Formen (aus vg250_gem_simpl250m.gpkg →
+TopoJSON, nur die Gemeinden des aktuellen Landkreises), Gemeinden klickbar;
+(3) **Gemeinden + Raster** — Gemeinde-Grenzen als gedämpfte Kontextlinien über dem
+Raster, Rasterzellen bleiben das Klickbare. **Das klickbare Element wechselt mit
+der Ansicht** — muss eindeutig signalisiert sein (Hover/Cursor), sonst klickt man
+die falsche Einheit.
+- **Gemeinde-Klick = aggregierte Zell-Ergebnisse.** Gerechnet wird weiter auf dem
+  Raster; Gemeinden decken sich nicht mit Zellen. Rahmung, damit das Modell ehrlich
+  bleibt: **Grid = Berechnung, Gemeinde = administrative Ablesung derselben
+  Ergebnisse.** Gemeinde-Detail rechts analog zum Zell-Detail, aggregiert, in MW.
+- Konzeptioneller Hinweis: Das ergänzt zur „zwei Ebenen, zwei Geometrien"-Story
+  eine dritte Ablese-Ebene (Gemeinde). Bewusst als Testfeature (3 Optionen), um zu
+  lernen, ob es das Verständnis verbessert oder die Karte übersichtlich hält —
+  besonders „Gemeinden + Raster" (zwei Grenzsysteme übereinander) ist ein
+  offener Punkt fürs Testing.
+
 ---
 
 ## N. Szenarien speichern & vergleichen (neu)

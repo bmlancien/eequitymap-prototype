@@ -315,6 +315,15 @@
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <path d="{{ o.d }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></path>
               </sc-for>
+              <!-- Gemeinde-Ebene (nur Erweitert, Testfeature): Modus 'gemeinden' macht Gemeinden klickbar
+                   (Raster oben bereits geleert); Modus 'gemeinden-raster' zeigt nur gedämpfte, nicht
+                   klickbare Kontextlinien über dem weiterhin klickbaren Raster (s. SoT §M). -->
+              <sc-for list="{{ gemCells }}" as="gc" hint-placeholder-count="0">
+                <path class="hx" d="{{ gc.d }}" fill="{{ gc.fill }}" fill-opacity="{{ gc.fo }}" stroke="{{ gc.stroke }}" stroke-width="{{ gc.sw }}" opacity="{{ gc.op }}" style="cursor:pointer" onClick="{{ gc.onClick }}"></path>
+              </sc-for>
+              <sc-for list="{{ gemOutlines }}" as="go" hint-placeholder-count="0">
+                <path d="{{ go.d }}" fill="none" stroke="#4b555d" stroke-width="0.8" stroke-opacity="0.4" pointer-events="none"></path>
+              </sc-for>
             </svg>
 
             <!-- Popover an der ausgewählten Zelle: HTML-Overlay ÜBER der Karte (kein SVG-Element im
@@ -487,6 +496,27 @@
                 <button onClick="{{ toggleHide }}" style="{{ hideSwitchStyle }}"><span style="{{ hideKnobStyle }}"></span></button>
                 <span style="font-size:14px;color:#333c44">Konfliktflächen ausblenden</span>
                 <span style="font-size:14px;color:#9aa4ad">Nur Anzeige — ändert die Berechnung nicht.</span>
+              </div>
+            </sc-if>
+
+            <!-- Gemeinde-Ansichts-Umschalter: nur Erweitert + Regionsansicht, Testfeature s. SoT §M -->
+            <sc-if value="{{ showGemToggle }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:12px">
+                <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Ansicht</div>
+                <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+                  <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
+                  <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
+                  <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
+                </div>
+                <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:14px;color:#8a929a;margin-top:6px">{{ gemClickHint }}</div>
+                </sc-if>
+                <sc-if value="{{ gemLoading }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:14px;color:#8a929a;margin-top:6px">Gemeindegrenzen werden geladen …</div>
+                </sc-if>
+                <sc-if value="{{ gemLoadError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:14px;color:#a85a17;margin-top:6px">Gemeindegrenzen konnten nicht geladen werden.</div>
+                </sc-if>
               </div>
             </sc-if>
           </div>
@@ -876,6 +906,9 @@ class Component extends DCLogic {
     // Zwei-Ebenen-Modell (§M): 'de' = Deutschland/Landkreise, 'region' = eine Regionsansicht (5×5 km)
     level: 'de',
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
+    // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
+    regionViewMode: 'raster',
+    gemeinde: null,                // AGS der ausgewählten Gemeinde (nur im Modus 'gemeinden')
     selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
     regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
     regionComputedTarget: null,   // Regionsbudget, mit dem zuletzt gerechnet wurde (eingefroren)
@@ -953,6 +986,12 @@ class Component extends DCLogic {
     this.buildKrs();
     this._regionCache = {};
     this._scenarioSeq = 0;
+    // Gemeinde-Ebene: pro Landkreis nachgeladene Geodaten (gemeinden/<krsId>.json, s. SoT §M) + die
+    // daraus einmalig berechneten, rein geometrischen Zelle→Gemeinde-Überlappungsgewichte (flächengewichtet).
+    this._gemCache = {};
+    this._gemLoading = {};
+    this._gemError = {};
+    this._gemWeightsCache = {};
 
     // Kartenraum-Overlays (Zellen-Popover): Position folgt der Karte, Größe bleibt in Bildschirm-Pixeln
     // konstant — dafür muss die tatsächlich gerenderte SVG-Box gemessen werden (Zoom/Fenstergröße sind zur
@@ -1127,6 +1166,102 @@ class Component extends DCLogic {
     return result;
   }
 
+  // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): lädt die echten Gemeinde-Umrisse eines
+  // Landkreises nach (gemeinden/<krsId>.json), statt alle ~11.000 Gemeinden bundesweit einzubetten —
+  // die Ebene existiert nur in der Regionsansicht, je Landkreis eine Handvoll bis wenige Dutzend. Die
+  // Geometrien liegen bereits im selben lokalen Rasterkoordinatenraum wie regionCellsFor()'s Zellen/
+  // outlineD (Build-Zeit-Vorverarbeitung, s. gemeinden/README bzw. Generierungsskript), also kein
+  // weiterer Projektions-Code hier nötig. Idempotent — sicher aus build() heraus bei jedem Render
+  // aufzurufen, solange Cache/Ladeflag geprüft werden.
+  ensureGemeinden(krsId) {
+    if (!krsId || this._gemCache[krsId] || this._gemLoading[krsId]) return;
+    this._gemLoading[krsId] = true;
+    fetch('gemeinden/' + krsId + '.json')
+      .then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(data => { this._gemCache[krsId] = data; this._gemLoading[krsId] = false; this.forceUpdate(); })
+      .catch(() => { this._gemLoading[krsId] = false; this._gemError[krsId] = true; this.forceUpdate(); });
+  }
+
+  // Sutherland-Hodgman-Clip eines (nicht notwendig geschlossenen) Polygons gegen ein achsenparalleles
+  // Rechteck — genügt hier, da Rasterzellen immer Rechtecke sind (s. regionCellsFor).
+  clipPolygonToRect(pts, x0, y0, x1, y1) {
+    const clip = (input, inside, intersect) => {
+      if (!input.length) return input;
+      const out = [];
+      for (let i = 0; i < input.length; i++) {
+        const cur = input[i], prev = input[(i - 1 + input.length) % input.length];
+        const curIn = inside(cur), prevIn = inside(prev);
+        if (curIn) { if (!prevIn) out.push(intersect(prev, cur)); out.push(cur); }
+        else if (prevIn) out.push(intersect(prev, cur));
+      }
+      return out;
+    };
+    let pts2 = clip(pts, p => p[0] >= x0, (a, b) => [x0, a[1] + (x0 - a[0]) / (b[0] - a[0]) * (b[1] - a[1])]);
+    pts2 = clip(pts2, p => p[0] <= x1, (a, b) => [x1, a[1] + (x1 - a[0]) / (b[0] - a[0]) * (b[1] - a[1])]);
+    pts2 = clip(pts2, p => p[1] >= y0, (a, b) => [a[0] + (y0 - a[1]) / (b[1] - a[1]) * (b[0] - a[0]), y0]);
+    pts2 = clip(pts2, p => p[1] <= y1, (a, b) => [a[0] + (y1 - a[1]) / (b[1] - a[1]) * (b[0] - a[0]), y1]);
+    return pts2;
+  }
+  polygonArea(pts) {
+    let A = 0;
+    for (let i = 0; i < pts.length; i++) { const [x0,y0] = pts[i], [x1,y1] = pts[(i+1)%pts.length]; A += x0*y1 - x1*y0; }
+    return Math.abs(A) / 2;
+  }
+  // Beliebige CSS-Farbe (Hex oder rgb(...), wie von seq()/mix()/div() erzeugt) nach [r,g,b] — Kategorie-
+  // Füllungen wie Muster-URLs (Übereinstimmungen-Tab) fallen auf ein neutrales Grau zurück.
+  colorToRgb(str) {
+    if (str && str[0] === '#') return this.hx(str);
+    const m = str && str.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
+    return m ? [parseInt(m[1],10), parseInt(m[2],10), parseInt(m[3],10)] : [238, 241, 240];
+  }
+
+  // Flächengewichtete Zelle→Gemeinde-Überlappung eines Landkreises: rein geometrisch (Prinzipien-
+  // unabhängig), daher pro Landkreis einmal berechnet und gecacht. Ergebnis parallel zu gemeinden[krsId]:
+  // je Gemeinde eine Liste { i: Zellindex, w: Anteil DIESER Zelle, der in der Gemeinde liegt }. Eine
+  // Zelle, die zu X % in der Gemeinde liegt, trägt mit X % ihres Werts zur Gemeinde-Aggregation bei
+  // (s. SoT §M).
+  // Normierung je Zelle (wichtig): Das 5×5-Raster ist bewusst „grob" an die Kreisgrenze geklippt
+  // (regionCellsFor behält jede Zelle, die den Umriss auch nur berührt, ohne sie zuzuschneiden) — sein
+  // Flächen-Fußabdruck liegt dadurch systematisch ÜBER der echten Kreisfläche. Rohe Gemeinde/Zelle-
+  // Überlappungsflächen würden deshalb je Zelle nicht auf 1 aufsummieren, und Gemeinde-Summen blieben
+  // durchgängig kleiner als die Rasterzell-Summe (kein Rundungsfehler, sondern ein systematischer
+  // Versatz — bei kleinen Kreisen mit wenigen Zellen sehr sichtbar). Die Gewichte werden daher je Zelle
+  // auf 1 renormiert (Anteile an der von Gemeinden tatsächlich beanspruchten Fläche dieser Zelle statt
+  // an der vollen Zellfläche) — dieselbe „konsistente Regel" (s. SoT §M), nur so, dass Gemeinde-Summen
+  // und Rasterzell-Summen einer Region exakt aufgehen statt nur ungefähr, und kein Tester einen
+  // Widerspruch zwischen beiden Ansichten sieht.
+  gemWeightsFor(krsId) {
+    if (this._gemWeightsCache[krsId]) return this._gemWeightsCache[krsId];
+    const gemList = this._gemCache[krsId];
+    if (!gemList) return null;
+    const cellRects = this.regionCellsFor(krsId).cells.map(c => {
+      const ring = this.parseD(c.d)[0] || [];
+      const xs = ring.map(p=>p[0]), ys = ring.map(p=>p[1]);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      return { x0, y0, x1, y1, area: Math.max(1e-6, (x1-x0) * (y1-y0)) };
+    });
+    const result = gemList.map(g => {
+      const outer = this.parseD(g.d)[0] || [];
+      const weights = [];
+      if (outer.length >= 4) {
+        cellRects.forEach((r, ci) => {
+          const clipped = this.clipPolygonToRect(outer, r.x0, r.y0, r.x1, r.y1);
+          if (clipped.length >= 3) {
+            const a = this.polygonArea(clipped);
+            if (a > 1e-6) weights.push({ i: ci, w: a / r.area });
+          }
+        });
+      }
+      return weights;
+    });
+    // je Zellindex auf 1 renormieren (s. Kommentar oben)
+    const cellTotals = new Array(cellRects.length).fill(0);
+    result.forEach(weights => weights.forEach(ww => { cellTotals[ww.i] += ww.w; }));
+    result.forEach(weights => weights.forEach(ww => { if (cellTotals[ww.i] > 1e-9) ww.w = ww.w / cellTotals[ww.i]; }));
+    this._gemWeightsCache[krsId] = result;
+    return result;
+  }
+
   // Schritt 1 (immer reaktiv): das für einen Landkreis reservierte Budget aus den
   // NATIONALEN Prinzipien — feste Eingabegröße für Schritt 2 (Regionsansicht).
   natBudgetFor(krsId) {
@@ -1151,7 +1286,7 @@ class Component extends DCLogic {
     // kommt damit rechenbereit an statt als leere „0,00 GW"-Konfiguration.
     const initialSel = S.selected.filter(avail);
     this.setState({
-      level: 'region', region: { krsId, label }, cell: null, compare: null, tab: 'konsens',
+      level: 'region', region: { krsId, label }, cell: null, gemeinde: null, compare: null, tab: 'konsens',
       selectedRegional: initialSel, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
       regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false
     });
@@ -1578,6 +1713,67 @@ class Component extends DCLogic {
     }
     R.galleryAll = R.galleryAll || false;
 
+    // ---------- Gemeinde-Ebene (nur Erweitert, Regionsansicht — Testfeature s. SoT §M) ----------
+    // Ansichts-Umschalter unter der Karte: 'raster' (Bestand, Zellen klickbar) / 'gemeinden' (echte
+    // Gemeinde-Formen, Gemeinden klickbar, Raster ausgeblendet) / 'gemeinden-raster' (Gemeindegrenzen
+    // als gedämpfte Kontextlinien ÜBER dem vollen, weiterhin klickbaren Raster). Das klickbare Element
+    // wechselt mit der Ansicht — deshalb pointer-events:none auf den Kontextlinien und ein Cursor-/
+    // Hinweistext, welche Einheit gerade klickbar ist.
+    R.showGemToggle = isExt && isRegion;
+    R.regionViewMode = S.regionViewMode || 'raster';
+    R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
+    R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
+    R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', gemeinde: null });
+    R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster');
+    R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden');
+    R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster');
+    R.gemClickHint = R.regionViewMode === 'gemeinden'
+      ? 'Gemeinden anklicken für Details.'
+      : (R.regionViewMode === 'gemeinden-raster' ? 'Rasterzellen anklicken für Details — Gemeindegrenzen dienen nur der Orientierung.' : '');
+
+    const gemActive = isExt && isRegion && (R.regionViewMode === 'gemeinden' || R.regionViewMode === 'gemeinden-raster');
+    const krsId = isRegion ? S.region.krsId : null;
+    let gemList = null, gemWeights = null;
+    if (gemActive) {
+      this.ensureGemeinden(krsId);
+      gemList = this._gemCache[krsId] || null;
+      if (gemList) gemWeights = this.gemWeightsFor(krsId);
+    }
+    R.gemLoading = gemActive && !gemList && !this._gemError[krsId];
+    R.gemLoadError = gemActive && !!this._gemError[krsId];
+
+    R.gemCells = [];
+    R.gemOutlines = [];
+    if (R.regionViewMode === 'gemeinden' && gemList && gemWeights) {
+      // Kartenfarbe je Gemeinde: flächengewichtete RGB-Mischung der bereits fertig eingefärbten
+      // Rasterzellen dieser Ansicht (R.mainCells trägt die aktuelle Tab-Farblogik bereits) — funktioniert
+      // ansichtsunabhängig, ohne jede Kartenfarblogik oben ein zweites Mal für Gemeinden nachzubauen.
+      // Die tatsächlichen Zahlen im rechten Panel werden separat und korrekt aggregiert (s. u.), diese
+      // Mischung ist reine Kartenoptik.
+      R.gemCells = gemList.map((g, gi) => {
+        const weights = gemWeights[gi] || [];
+        let fr = 0, fg = 0, fb = 0, opSum = 0, wSum = 0;
+        weights.forEach(({ i, w }) => {
+          const mc = R.mainCells[i];
+          if (!mc) return;
+          const [rr, gg, bb] = this.colorToRgb(mc.fill);
+          fr += rr * w; fg += gg * w; fb += bb * w;
+          opSum += (mc.op != null ? mc.op : 1) * w; wSum += w;
+        });
+        const fill = wSum ? 'rgb(' + [fr, fg, fb].map(v => Math.round(v / wSum)).join(',') + ')' : '#eef1f0';
+        const selg = S.gemeinde === g.id;
+        return {
+          d: g.d, fill, fo: cellFillOp, stroke: selg ? '#12181d' : '#ffffff', sw: selg ? 2.4 : 1, dash: '0',
+          op: wSum ? opSum / wSum : 1,
+          onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectGemeinde(g.id); }
+        };
+      });
+      // Raster ausgeblendet — in dieser Ansicht sind ausschließlich Gemeinden klickbar (s. SoT §M).
+      R.mainCells = [];
+    } else if (R.regionViewMode === 'gemeinden-raster' && gemList) {
+      R.gemOutlines = gemList.map(g => ({ d: g.d }));
+    }
+
     // Dauerhafte Erklärzeile je Ansicht
     R.explainLine = ({
       empty: '',
@@ -1878,13 +2074,16 @@ class Component extends DCLogic {
 
     // ============ RIGHT COLUMN ============
     const selectedCell = S.cell ? cells.find(c => c.id === S.cell) : null;
-    R.showOverview = !selectedCell;
-    R.showCell = !!selectedCell;
+    // Gemeinde-Detail (nur Modus 'gemeinden', s. o.) — aggregierte Zell-Ergebnisse dieser Gemeinde
+    const selectedGemeindeIdx = (S.gemeinde && gemList) ? gemList.findIndex(g => g.id === S.gemeinde) : -1;
+    const selectedGemeinde = selectedGemeindeIdx >= 0 ? gemList[selectedGemeindeIdx] : null;
+    R.showOverview = !selectedCell && !selectedGemeinde;
+    R.showCell = !!selectedCell || !!selectedGemeinde;
 
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
     const scopeWord = isRegion ? 'dieser Region' : 'gesamt';
 
-    if (!selectedCell) {
+    if (!selectedCell && !selectedGemeinde) {
       R.ovScopeLabel = isRegion ? 'Region' : 'Übersicht';
       R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
@@ -1978,7 +2177,7 @@ class Component extends DCLogic {
       }
       R.ovLeadBoxStyle = R.ovLeadSuppress ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
       R.ovClickHint = view !== 'regionGate' && !isEmpty;
-    } else {
+    } else if (selectedCell) {
       const i = cells.indexOf(selectedCell), c = selectedCell;
       R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
       R.cellKindLabel = isRegion ? 'Rasterzelle' : c.kind;
@@ -2116,6 +2315,93 @@ class Component extends DCLogic {
         R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
         R.cellShowDiff = true;
       } else R.cellShowDiff = false;
+    } else {
+      // ---- Gemeinde-Detail (nur Modus 'gemeinden', s. SoT §M) ----
+      // Gerechnet wird weiter auf dem 5×5-Raster; die Gemeinde zeigt die flächengewichtete Aggregation
+      // der Zellen, die sie abdeckt (Rahmung: Grid = Berechnung, Gemeinde = administrative Ablesung
+      // derselben Ergebnisse). Baut dasselbe Zelldetail-Layout wieder auf (identische R.cell*-Felder),
+      // damit rechts kein zweites, abweichendes Panel-Design entsteht.
+      const g = selectedGemeinde;
+      const weights = (gemWeights && gemWeights[selectedGemeindeIdx]) || [];
+      const covWeight = weights.reduce((a, w) => a + w.w, 0);
+      const gAgg = arr => weights.reduce((a, w) => a + arr[w.i] * w.w, 0);
+
+      R.cellScope = S.region.label + ' · Gemeinden';
+      R.cellKindLabel = g.bez || 'Gemeinde';
+      R.cellLabel = g.name;
+      const densAgg = covWeight ? gAgg(cells.map(c => c.density)) / covWeight : 0;
+      R.cellTyp = densAgg > 0.55 ? 'Verdichteter Raum' : densAgg > 0.3 ? 'Städtischer Raum' : densAgg > 0.12 ? 'Ländlicher Raum' : 'Dünn besiedelter Raum';
+      R.cellConsensusScopeLabel = 'Zubaukonsens dieser Gemeinde in der Region';
+      R.showCellPopover = false;
+      R.cellShowConflictHint = false;
+      R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
+      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
+      R.cellHasConsensus = stufe >= 2;
+      R.cellStufe1 = stufe === 1;
+      R.cellShowBestand = false; R.cellShowPos = false; R.cellShowDiff = false;
+
+      if (stufe >= 2) {
+        const gwSelAgg = {}; sel.forEach(p => gwSelAgg[p] = gAgg(gwSel[p]));
+        const consAgg = gAgg(consCells);
+        R.cellConsensus = this.fmtN(consAgg, isRegion);
+        const mxAgg = Math.max(...sel.map(p => gwSelAgg[p]));
+        const limP = sel.reduce((best, p) => gwSelAgg[p] < gwSelAgg[best] - 1e-9 ? p : best, sel[0]);
+        R.cellBars = sel.map(p => {
+          const isLim = p === limP;
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
+        });
+
+        const neu = sel.reduce((a, p) => a + gwSelAgg[p], 0) / sel.length;
+        const bestandAgg = gAgg(cells.map(c => c.bestandGW));
+        R.cellTotal = this.fmtN(bestandAgg + neu, isRegion); R.cellBestand = this.fmtN(bestandAgg, isRegion); R.cellNew = this.fmtN(neu, isRegion);
+        R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
+
+        R.cellShowBestand = S.account;
+        const meanB = 62 / N;
+        R.cellBestandCmp = bestandAgg >= meanB * Math.max(1, covWeight) ? 'überdurchschnittlich' : 'unterdurchschnittlich';
+        R.cellTrend = 'Bestand und empfohlener Zubau werden aus den Rasterzellen dieser Gemeinde aggregiert.';
+
+        const gemAggAll = gemList.map((gg, gi) => { const ws = gemWeights[gi] || []; return ws.reduce((a, w) => a + consCells[w.i] * w.w, 0); });
+        const rankArrG = gemAggAll.map((v, idx) => ({ v, idx })).sort((a, b) => b.v - a.v);
+        R.cellRankNat = (rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) + 1) + ' von ' + gemList.length;
+        R.cellRankLabel = 'Rang unter den Gemeinden der Region';
+        R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
+        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr aggregierter Zubaukonsens geteilt durch das gesamte Regionsbudget.';
+        R.cellPriority = '≈ ' + (2030 + Math.round((rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) / gemList.length) * 15)) + ' (nicht berechnet)';
+
+        if (view === 'positiv') {
+          const ausgAgg = covWeight ? gAgg(cells.map(c => c.ausgAnteil)) / covWeight : 0;
+          R.cellAusgPct = Math.round(ausgAgg * 100) + ' %';
+          R.cellKonsGW = this.fmtU(consAgg, isRegion);
+          const deckAgg = (R.deckVals && covWeight) ? gAgg(R.deckVals) / covWeight : 0;
+          R.cellDeckWord = deckAgg > 0.2 ? 'Planung über Konsens' : deckAgg < -0.2 ? 'Konsens über Planung' : 'deckt sich';
+          R.cellDeckColor = deckAgg > 0.2 ? '#a85a17' : deckAgg < -0.2 ? '#1d5f80' : '#5b6672';
+          R.cellShowPos = true;
+        }
+        if (S.compare) {
+          const cmp = compareVals();
+          const d = consAgg - gAgg(cmp);
+          R.cellDiffLine = this.fmtU(Math.abs(d), isRegion) + ' mehr bei ' + (d >= 0 ? 'Konsens' : S.compare.label);
+          R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
+          R.cellShowDiff = true;
+        }
+      } else if (stufe === 1) {
+        const gRec = gAgg(gwSel[singlePid]);
+        R.cellPrincipleName = this.byId[singlePid].name;
+        R.cellPrincipleColor = this.byId[singlePid].color;
+        R.cellRecommend = this.fmtN(gRec, isRegion);
+        R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
+        R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
+        const bestandAgg = gAgg(cells.map(c => c.bestandGW));
+        R.cellTotal = this.fmtN(bestandAgg + gRec, isRegion); R.cellBestand = this.fmtN(bestandAgg, isRegion); R.cellNew = this.fmtN(gRec, isRegion);
+        R.cellRankLabel = 'Rang unter den Gemeinden der Region';
+        const gemAggAll = gemList.map((gg, gi) => { const ws = gemWeights[gi] || []; return ws.reduce((a, w) => a + gwSel[singlePid][w.i] * w.w, 0); });
+        const rankArrG = gemAggAll.map((v, idx) => ({ v, idx })).sort((a, b) => b.v - a.v);
+        R.cellRankNat = (rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) + 1) + ' von ' + gemList.length;
+        R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
+        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt.';
+        R.cellPriority = '≈ (nicht berechnet)';
+      }
     }
 
     // panels
@@ -2158,11 +2444,11 @@ class Component extends DCLogic {
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
     R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
     R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
-    R.clearCell = () => this.setState({ cell: null });
+    R.clearCell = () => this.setState({ cell: null, gemeinde: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });
     R.onSearchKey = e => { if (e.key === 'Enter') this.doSearch(); };
     R.showBack = isRegion || !!S.cell;
-    R.backToDE = () => this.setState({ level: 'de', region: null, cell: null, compare: null });
+    R.backToDE = () => this.setState({ level: 'de', region: null, cell: null, gemeinde: null, compare: null });
 
     return R;
   }
@@ -2186,7 +2472,7 @@ class Component extends DCLogic {
       let rsel = (S.selectedRegional != null ? S.selectedRegional : S.selected).slice();
       if (rsel.includes(id)) { if (rsel.length <= 1) return; rsel = rsel.filter(x => x !== id); }
       else rsel.push(id);
-      this.setState({ selectedRegional: rsel, cell: null, regionHintSeen: true });
+      this.setState({ selectedRegional: rsel, cell: null, gemeinde: null, regionHintSeen: true });
       return;
     }
     let sel = S.selected.slice();
@@ -2197,7 +2483,7 @@ class Component extends DCLogic {
     if (now === 0 && this.state.committed) return;
     // Handlung bestätigt Verständnis — Hinweis blendet aus (kein Schließen-Button).
     // Element bleibt für die Dauer der Transition gemountet, danach entfernen.
-    const patch = this.dismissTrioHint({ selected: sel, cell: null });
+    const patch = this.dismissTrioHint({ selected: sel, cell: null, gemeinde: null });
     if (now >= 1) patch.committed = true;
     if (was === 1 && now === 2 && !S.seenTwo) { patch.hintTwo = true; patch.seenTwo = true; }
     if (sel.includes('bevoelkerungsnah') && sel.includes('bevoelkerungsfern') && !S.seenOppo) { patch.hintOppo = true; patch.seenOppo = true; }
@@ -2226,7 +2512,10 @@ class Component extends DCLogic {
     return patch;
   }
 
-  selectCell(id) { this.setState(this.dismissTrioHint({ cell: this.state.cell === id ? null : id })); }
+  selectCell(id) { this.setState(this.dismissTrioHint({ cell: this.state.cell === id ? null : id, gemeinde: null })); }
+  // Gemeinden sind nur im Umschalter-Modus 'gemeinden' klickbar (s. SoT §M) — Rasterzelle bleibt
+  // in diesem Moment bewusst leer, damit das Zelldetail nicht parallel zum Gemeinde-Detail steht.
+  selectGemeinde(id) { this.setState(this.dismissTrioHint({ gemeinde: this.state.gemeinde === id ? null : id, cell: null })); }
 
   doSearch() {
     const q = (this.state.search || '').trim().toLowerCase();
