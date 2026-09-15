@@ -404,7 +404,7 @@
           <!-- sequential legend -->
           <sc-if value="{{ legendSeq }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:14px;color:#7a848c" class="num">0,00</span>
+              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMin }}</span>
               <div style="width:150px;height:11px;border-radius:3px;background:{{ legendGrad }}"></div>
               <span style="font-size:14px;color:#7a848c" class="num">{{ legendMax }} {{ scopeUnit }}</span>
               <span style="font-size:14px;color:#5b6672;margin-left:2px">{{ legendTitle }}</span>
@@ -1566,16 +1566,31 @@ class Component extends DCLogic {
       R.legendSeq = false;
       R.showPlan = false;
     } else if (view === 'single') {
-      const mx = Math.max(...cells.map((c,i)=>planVal(i)));
-      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? planVal(i)/mx : 0, this.byId[singlePid].color)));
+      const vals = cells.map((c,i)=>planVal(i));
+      const mx = Math.max(...vals);
+      // Regionsansicht: Skala auf den tatsächlichen Wertebereich dieser Region strecken (Min–Max der
+      // sichtbaren Zellen) statt auf einen festen 0–Max-Bereich — sonst sitzen eng beieinanderliegende
+      // Zellwerte in einem schmalen Farbband und sind kaum unterscheidbar. National unverändert (0–Max),
+      // da dort die Distanz zu 0 selbst aussagekräftig bleibt.
+      const mn = isRegion ? Math.min(...vals) : 0;
+      const range = mx - mn;
+      const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
+      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(vals[i]), this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
-      R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau';
+      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau';
       R.showPlan = true;
     } else if (view === 'konsens') {
-      const mx = Math.max(...consCells);
-      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(mx ? consCells[i]/mx : 0, this.CONS), { hidden: S.hideConflict && isConflict[i] }));
+      // Min–Max nur über die sichtbaren Zellen (Konfliktflächen bei aktivem Ausblenden nicht mitrechnen —
+      // sonst zieht deren ≈0-Wert die Skala künstlich auf, genau dann, wenn Kontrast am meisten gefragt ist).
+      const visVals = cells.map((c,i) => ({ v: consCells[i], vis: !(S.hideConflict && isConflict[i]) })).filter(o => o.vis).map(o => o.v);
+      const scaleVals = visVals.length ? visVals : consCells;
+      const mx = Math.max(...scaleVals);
+      const mn = isRegion ? Math.min(...scaleVals) : 0;
+      const range = mx - mn;
+      const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
+      R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(consCells[i]), this.CONS), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
-      R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens je Zelle';
+      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens je Zelle';
       R.showPlan = false;
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
