@@ -696,12 +696,16 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
   Bug — die Region hat immer ein national berechnetes Budget.)
 - Nach einer Änderung der regionalen Prinzipien muss der Zustand **sichtbar
   „nicht aktuell"** sein (Karte abgedimmt / Hinweis), bis „Neu berechnen" gedrückt
-  wird — sonst wirkt es kaputt. **Fortschritt unbestimmt** (animierter Indikator —
-  sichtbar rotierender Spinner / laufender Streifen; Bewegung = „nicht
-  eingefroren"-Signal), KEINE Prozentzahl/Countdown (Dauer real unbekannt; ein
-  %-Balken lügt). Status-Text zeigt, dass Zeit vergeht (Backend-Stufen wechselnd,
-  sonst nach kurzer Zeit „Das kann einen Moment dauern…"). Text „[Landkreis] wird
-  ausgewertet …", plus **„Abbrechen"**-Button (zurück zum vorherigen Zustand). Im Mock die Verzögerung nur als Delay nachbilden, ohne
+  wird — sonst wirkt es kaputt. Während der Rechnung liegt ein **abdimmender
+  Scrim** über Karte + Bedienelementen, **nur „Abbrechen" klickbar** (verhindert
+  Eingaben mitten in der Rechnung; der Scrim ist selbst „es arbeitet"-Signal).
+  **Fortschritt als Trickle-Balken:** bewegt sich links→rechts, verlangsamt sich
+  (asymptotisch), erreicht das Ende nicht von selbst, springt erst bei
+  Fertigstellung auf 100 % — zeigt Vorwärtsbewegung („hängt nicht") OHNE %/Dauer zu
+  behaupten. Muss in den ersten 1–2 s sichtbar kriechen (sonst liest man ihn als
+  hängend). KEINE Prozentzahl/Countdown, kein konstanter Sweep. Status-Text zeigt,
+  dass Zeit vergeht (Backend-Stufen wechselnd, sonst nach kurzer Zeit „Das kann
+  einen Moment dauern…"). Text „[Landkreis] wird ausgewertet …", plus **„Abbrechen"**. Im Mock die Verzögerung nur als Delay nachbilden, ohne
   bekannte Dauer zu behaupten.
 - **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner; der
   DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" gehört NICHT hierher. „Noch nicht

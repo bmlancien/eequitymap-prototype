@@ -27,10 +27,13 @@
   @keyframes pulseSwatch{0%,100%{box-shadow:0 0 0 0 rgba(47,102,144,0)}50%{box-shadow:0 0 0 5px rgba(47,102,144,.28)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   .spin{animation:spin 1s linear infinite}
-  /* Unbestimmter Fortschrittsbalken (keine Prozentzahl — Dauer der Regionsberechnung ist nicht bekannt, s. §M) */
-  @keyframes loadbar{0%{left:-35%;width:35%}55%{left:55%;width:45%}100%{left:100%;width:35%}}
+  /* Trickle-Fortschrittsbalken (keine Prozentzahl — Dauer der Regionsberechnung ist nicht bekannt, s. §M):
+     Breite wird pro Frame aus dem echten Fortschritt berechnet und gesetzt (s. R.trickleBarStyle), nicht
+     per CSS-Loop — bewegt sich dadurch von links nach rechts, verlangsamt sich asymptotisch und bleibt
+     unter 100 %, bis die Rechnung tatsächlich fertig ist. Die kurze Transition glättet nur zwischen zwei
+     Frames, behauptet keine Dauer. */
   .loadbar{position:relative;width:100%;height:6px;background:#dde5ea;border-radius:3px;overflow:hidden}
-  .loadbar-fill{position:absolute;top:0;bottom:0;background:#2f6690;border-radius:3px;animation:loadbar 1.5s ease-in-out infinite}
+  .loadbar-fill{position:absolute;top:0;left:0;bottom:0;background:#2f6690;border-radius:3px;transition:width .2s linear}
   .scroll::-webkit-scrollbar{width:9px}
   .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
   .hx{transition:opacity .15s}
@@ -340,20 +343,13 @@
               </div>
             </sc-if>
 
-            <!-- Regionsansicht: Berechnungs-Gate (nicht berechnet / läuft) — mittig auf der Karte, wo der
-                 Blick während des Wartens ohnehin liegt; „Abbrechen" sitzt direkt unter dem Fortschrittsbalken,
-                 statt nur klein links an der Prinzipienliste (dort leicht zu übersehen). -->
+            <!-- Regionsansicht, noch nicht berechnet (Idle) — mittig auf der Karte. Der „läuft"-Zustand hat
+                 einen eigenen Vollflächen-Scrim über Karte UND Bedienelemente (s. u., nahe Dateiende), nicht
+                 mehr diese kleine Kartenbox — sonst blieben Eingaben links/rechts während der Rechnung
+                 bedienbar. -->
             <sc-if value="{{ regionBlockOverlay }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
                 <div style="max-width:280px">
-                  <sc-if value="{{ regionComputing }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:14px;color:#26303a;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
-                    <sc-if value="{{ regionComputingReassure }}" hint-placeholder-val="{{ false }}">
-                      <div style="font-size:13px;color:#7a848c;margin-top:4px">{{ regionComputingReassure }}</div>
-                    </sc-if>
-                    <div class="loadbar" style="margin-top:12px"><div class="loadbar-fill"></div></div>
-                    <button onClick="{{ cancelRegionCompute }}" style="margin-top:12px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px;border-radius:7px;cursor:pointer">Abbrechen</button>
-                  </sc-if>
                   <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
                     <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionGateTitle }}</div>
                     <div style="font-size:14px;color:#7a848c;margin-top:5px;line-height:1.5">{{ regionGateSub }}</div>
@@ -879,6 +875,24 @@
   <sc-if value="{{ scenarioToastVisible }}" hint-placeholder-val="{{ false }}">
     <div style="{{ scenarioToastStyle }}">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</div>
   </sc-if>
+
+  <!-- Regionsberechnung läuft: Vollflächen-Scrim über Karte UND Bedienelemente (linke/rechte Spalte,
+       Tabs, Bottom-Toolbar) — deckt per position:fixed;inset:0 alles ab, nur „Abbrechen" bleibt klickbar
+       (liegt als einziges interaktives Element im Scrim selbst). Sichtbar abgedimmt statt still
+       deaktiviert: der Scrim ist selbst Teil des „es arbeitet"-Signals, damit klar ist, warum gerade
+       nichts reagiert — verhindert Fehleingaben mitten in der Rechnung. -->
+  <sc-if value="{{ regionComputingScrim }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(238,241,242,.82);z-index:54;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="max-width:300px;width:100%;background:#fff;border:1px solid #e2e8e6;border-radius:12px;padding:22px 24px;box-shadow:0 14px 36px rgba(0,0,0,.18);text-align:center">
+        <div style="font-size:15px;color:#26303a;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
+        <sc-if value="{{ regionComputingReassure }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#7a848c;margin-top:5px">{{ regionComputingReassure }}</div>
+        </sc-if>
+        <div class="loadbar" style="margin-top:16px"><div class="loadbar-fill" style="{{ trickleBarStyle }}"></div></div>
+        <button onClick="{{ cancelRegionCompute }}" style="margin-top:16px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer">Abbrechen</button>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
@@ -1318,11 +1332,19 @@ class Component extends DCLogic {
   }
 
   // Bricht die laufende Regionsberechnung ab und kehrt zum vorherigen Zustand zurück: das zuletzt
-  // berechnete Ergebnis bleibt stehen (regionComputedSel/-Target unverändert), oder — beim allerersten
-  // Betreten, wenn noch nie gerechnet wurde — der „noch nicht berechnet"-Zustand (§M).
+  // berechnete Ergebnis bleibt stehen (regionComputedSel/-Target unverändert), wenn eins existiert (Abbruch
+  // eines „Neu berechnen"). Beim allerersten Betreten einer Region läuft die Berechnung aber automatisch
+  // an, ohne dass der Nutzer sie ausgelöst hat — es gibt dort noch kein „vorheriges Ergebnis dieser Region"
+  // zum Zurückkehren. Abbrechen führt dann zurück zur Deutschland-Ansicht, die vor dem Klick auf den
+  // Landkreis sichtbar war, statt in die leere „noch nicht berechnet"-Region-Gate-Seite zu laufen (die dort
+  // nichts zum Zurückkehren böte, nur den Berechnung-erneut-starten-Button).
   cancelRegionCompute() {
     if (this._regionRaf) { cancelAnimationFrame(this._regionRaf); this._regionRaf = null; }
-    this.setState({ regionComputing: false, regionProgress: 0 });
+    if (this.state.regionComputedSel != null) {
+      this.setState({ regionComputing: false, regionProgress: 0 });
+    } else {
+      this.setState({ regionComputing: false, regionProgress: 0, level: 'de', region: null, cell: null, gemeinde: null, compare: null });
+    }
   }
 
   // ---- helpers ----
@@ -1482,13 +1504,25 @@ class Component extends DCLogic {
     // Regionsansicht: Berechnungs-Gate / veraltet-Hinweis — die Aktion selbst hat ihren
     // festen Platz unten an der Liste „Verteilung innerhalb der Region" (linke Spalte, §M).
     // Karte + rechte Spalte zeigen hier nur den „nicht aktuell"-Zustand, keinen eigenen Button.
-    R.regionBlockOverlay = regionNeedsGate;
     R.regionComputing = !!S.regionComputing;
     R.regionGateIdle = regionNeedsGate && !S.regionComputing;
+    // Kleine Kartenbox nur noch für „nicht berechnet" (Idle) — der „läuft"-Zustand hat einen eigenen
+    // Vollflächen-Scrim (regionComputingScrim, s. u.), damit während der Rechnung nichts links/rechts
+    // bedienbar bleibt, das die laufende Berechnung verfälschen könnte.
+    R.regionBlockOverlay = R.regionGateIdle;
+    R.regionComputingScrim = R.regionComputing;
     R.regionStaleBar = isRegion && hasRegionResult && regionStale && !S.regionComputing;
     R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.75' : '1');
     R.startRegionCompute = () => this.startRegionCompute();
     R.cancelRegionCompute = () => this.cancelRegionCompute();
+    // Trickle-Balken: bewegt sich von links nach rechts und wird dabei asymptotisch langsamer (Kappung bei
+    // TRICKLE_CAP %), erreicht das Ende NICHT von selbst — die tatsächliche Fertigstellung (regionComputing
+    // wird false) blendet den ganzen Scrim aus, bevor „100 %" je sichtbar würde. TRICKLE_TAU ist als Anteil
+    // des Fortschritts (0–1) kalibriert, nicht in Sekunden — bei der aktuellen 24-s-Mock-Dauer entspricht
+    // das ~8 s, spürbar genug, um in den ersten 1–2 s sichtbar zu kriechen statt sofort weit zu springen.
+    const TRICKLE_CAP = 92, TRICKLE_TAU = 0.33;
+    const tricklePct = TRICKLE_CAP * (1 - Math.exp(-(S.regionProgress || 0) / TRICKLE_TAU));
+    R.trickleBarStyle = 'width:' + (R.regionComputing ? tricklePct.toFixed(1) : '100') + '%';
     // Dauer der Regionsberechnung ist nicht bekannt — Zustände nennen keine Prozentzahl und keine feste Sekundenangabe.
     R.regionGateTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Noch nicht berechnet';
     R.regionGateSub = hasRegionResult
