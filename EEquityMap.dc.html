@@ -313,14 +313,14 @@
               <!-- Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht; leer in der DE-Ansicht) -->
               <path d="{{ regionOutlineD }}" fill="none" stroke="#2f6690" stroke-width="1.6" pointer-events="none"></path>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
-                <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" fill-opacity="{{ c.fo }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
+                <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" fill-opacity="{{ c.fo }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" pointer-events="{{ c.pe }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
               </sc-for>
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <path d="{{ o.d }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></path>
               </sc-for>
-              <!-- Gemeinde-Ebene (nur Erweitert, Testfeature): Modus 'gemeinden' macht Gemeinden klickbar
-                   (Raster oben bereits geleert); Modus 'gemeinden-raster' zeigt nur gedämpfte, nicht
-                   klickbare Kontextlinien über dem weiterhin klickbaren Raster (s. SoT §M). -->
+              <!-- Gemeinde-Ebene: Modus 'gemeinden' (Basic-Standard) macht Gemeinden klickbar (Raster oben
+                   bereits geleert); Modus 'gemeinden-raster' legt klickbare, transparent gefüllte Gemeinden
+                   über das gedämpfte, nicht klickbare Hintergrund-Raster (s. SoT §M). -->
               <sc-for list="{{ gemCells }}" as="gc" hint-placeholder-count="0">
                 <path class="hx" d="{{ gc.d }}" fill="{{ gc.fill }}" fill-opacity="{{ gc.fo }}" stroke="{{ gc.stroke }}" stroke-width="{{ gc.sw }}" opacity="{{ gc.op }}" style="cursor:pointer" onClick="{{ gc.onClick }}"></path>
               </sc-for>
@@ -500,9 +500,9 @@
               <div style="margin-top:12px">
                 <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Ansicht</div>
                 <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+                  <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                   <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
                   <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
-                  <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                 </div>
                 <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
                   <div style="font-size:14px;color:#8a929a;margin-top:6px">{{ gemClickHint }}</div>
@@ -921,7 +921,7 @@ class Component extends DCLogic {
     level: 'de',
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
     // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
-    regionViewMode: 'raster',
+    regionViewMode: 'gemeinden-raster',
     gemeinde: null,                // AGS der ausgewählten Gemeinde (nur im Modus 'gemeinden')
     selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
     regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
@@ -1768,19 +1768,20 @@ class Component extends DCLogic {
     // als gedämpfte Kontextlinien ÜBER dem vollen, weiterhin klickbaren Raster). Das klickbare Element
     // wechselt mit der Ansicht — deshalb pointer-events:none auf den Kontextlinien und ein Cursor-/
     // Hinweistext, welche Einheit gerade klickbar ist.
+    // Basic hat keinen Umschalter und zeigt immer die Gemeinden; der Raster-Umschalter bleibt Erweitert.
     R.showGemToggle = isExt && isRegion;
-    R.regionViewMode = S.regionViewMode || 'raster';
+    R.regionViewMode = isExt ? (S.regionViewMode || 'gemeinden-raster') : 'gemeinden';
     R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
     R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
-    R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', gemeinde: null });
+    R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', cell: null });
     R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster');
     R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden');
     R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster');
     R.gemClickHint = R.regionViewMode === 'gemeinden'
       ? 'Gemeinden anklicken für Details.'
-      : (R.regionViewMode === 'gemeinden-raster' ? 'Rasterzellen anklicken für Details — Gemeindegrenzen dienen nur der Orientierung.' : '');
+      : (R.regionViewMode === 'gemeinden-raster' ? 'Gemeinden anklicken für Details — das Raster im Hintergrund dient nur der Orientierung.' : '');
 
-    const gemActive = isExt && isRegion && (R.regionViewMode === 'gemeinden' || R.regionViewMode === 'gemeinden-raster');
+    const gemActive = isRegion && (R.regionViewMode === 'gemeinden' || R.regionViewMode === 'gemeinden-raster');
     const krsId = isRegion ? S.region.krsId : null;
     let gemList = null, gemWeights = null;
     if (gemActive) {
@@ -1803,7 +1804,7 @@ class Component extends DCLogic {
         const weights = gemWeights[gi] || [];
         let fr = 0, fg = 0, fb = 0, opSum = 0, wSum = 0;
         weights.forEach(({ i, w }) => {
-          const mc = R.mainCells[i];
+          const mc = R.mainCells && R.mainCells[i];
           if (!mc) return;
           const [rr, gg, bb] = this.colorToRgb(mc.fill);
           fr += rr * w; fg += gg * w; fb += bb * w;
@@ -1820,8 +1821,18 @@ class Component extends DCLogic {
       // Raster ausgeblendet — in dieser Ansicht sind ausschließlich Gemeinden klickbar (s. SoT §M).
       R.mainCells = [];
     } else if (R.regionViewMode === 'gemeinden-raster' && gemList) {
-      R.gemOutlines = gemList.map(g => ({ d: g.d }));
+      // Raster als gedämpfter, nicht klickbarer Hintergrund; darüber klickbare Gemeinden mit
+      // unsichtbarer Füllung (fill-opacity 0 fängt Klicks weiterhin ab) und deutlichen Grenzen.
+      R.mainCells = (R.mainCells || []).map(c => Object.assign({}, c, { pe: 'none', stroke: '#fff', sw: 1, op: (c.op != null ? c.op : 1) * 0.55 }));
+      R.gemCells = gemList.map(g => {
+        const selg = S.gemeinde === g.id;
+        return {
+          d: g.d, fill: '#ffffff', fo: 0, stroke: selg ? '#12181d' : '#3d474f', sw: selg ? 2.4 : 1.1, op: 1,
+          onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectGemeinde(g.id); }
+        };
+      });
     }
+    if (R.mainCells) R.mainCells = R.mainCells.map(c => c.pe ? c : Object.assign({}, c, { pe: 'auto' }));
 
     // Dauerhafte Erklärzeile je Ansicht
     R.explainLine = ({
@@ -2031,7 +2042,7 @@ class Component extends DCLogic {
     R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
 
     // Ansichtsleiste — die zwei Geometrien ersetzen den früheren Granularitäts-Schalter (s. §L/§M)
-    R.ansichtLabel = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
+    R.ansichtLabel = isRegion ? (S.region.label + ({ raster: ' · 5 × 5 km Raster', gemeinden: ' · Gemeinden', 'gemeinden-raster': ' · Gemeinden + Raster' }[R.regionViewMode] || '')) : 'Deutschland · Landkreise';
     // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
     R.scopeUnit = this.unitFor(isRegion);
     R.zeroPrefix = isRegion ? '0' : '0,00'; // Nulluntergrenze in Bereichsangaben („0 – X MW" statt „0,00 – X GW")
@@ -2122,9 +2133,12 @@ class Component extends DCLogic {
     R.hideKnobStyle = this.knobStyle(S.hideConflict);
 
     // ============ RIGHT COLUMN ============
-    const selectedCell = S.cell ? cells.find(c => c.id === S.cell) : null;
-    // Gemeinde-Detail (nur Modus 'gemeinden', s. o.) — aggregierte Zell-Ergebnisse dieser Gemeinde
-    const selectedGemeindeIdx = (S.gemeinde && gemList) ? gemList.findIndex(g => g.id === S.gemeinde) : -1;
+    // Im Regionsraum ist je Ansicht genau eine Einheit klickbar — eine noch gesetzte Auswahl der anderen
+    // Einheit (z. B. nach Basic/Erweitert-Wechsel) wird ignoriert statt angezeigt.
+    const gemSelectable = isRegion && R.regionViewMode !== 'raster';
+    const selectedCell = (S.cell && !gemSelectable) ? cells.find(c => c.id === S.cell) : null;
+    // Gemeinde-Detail (Modi 'gemeinden' / 'gemeinden-raster', s. o.) — aggregierte Zell-Ergebnisse dieser Gemeinde
+    const selectedGemeindeIdx = (S.gemeinde && gemList && gemSelectable) ? gemList.findIndex(g => g.id === S.gemeinde) : -1;
     const selectedGemeinde = selectedGemeindeIdx >= 0 ? gemList[selectedGemeindeIdx] : null;
     R.showOverview = !selectedCell && !selectedGemeinde;
     R.showCell = !!selectedCell || !!selectedGemeinde;
