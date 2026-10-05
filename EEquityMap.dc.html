@@ -730,6 +730,10 @@
           <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
             <div style="font-size:14px;color:#5b6672">{{ cellHeroLabel }}</div>
             <div class="num" style="font-size:34px;font-weight:700;color:#2f6690;line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
+            <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Regionsprofil -->
+            <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:#8a929a;margin-top:5px;line-height:1.45">{{ cellHeroCaption }}</div>
+            </sc-if>
             <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
             <!-- Kontextzeile nur bei Bestandsanrechnung: Bestand + Hauptzahl = installierte Leistung -->
@@ -784,8 +788,8 @@
             </sc-if>
           </sc-if>
 
-          <!-- Regionsprofil: nur Zubaukonsens (ZUBAU_AS_HERO — Bestand/Zubau stehen in der Kontextzeile der
-               Hauptzahl). Ohne Flag adaptiv: Bestand an → davon Bestand · davon Zubau · Zubaukonsens. -->
+          <!-- Regionsprofil: mit ZUBAU_AS_HERO ausgeblendet (Bestand/Zubau stehen in der Kontextzeile, der
+               Zubaukonsens ist die Hauptzahl). Ohne Flag adaptiv: Bestand an → davon Bestand · davon Zubau · Zubaukonsens. -->
           <sc-if value="{{ cellShowProfile }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb">
             <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px">Regionsprofil</div>
@@ -2304,17 +2308,18 @@ class Component extends DCLogic {
     R.cellShowGoal = stufe >= 1;
     R.cellShowBestand = !!S.account;
     // Profil nur, wenn es etwas Eigenes zeigt (Bestandsaufteilung und/oder Zubaukonsens)
-    R.cellShowProfile = ZUBAU_AS_HERO ? stufe >= 2 : (!!S.account || stufe >= 2);
+    R.cellShowProfile = !ZUBAU_AS_HERO && (!!S.account || stufe >= 2);
     R.cellShowDavon = !ZUBAU_AS_HERO && !!S.account;
     // Hauptzahl + Kontextzeile. Eigene Rundung nur hier: MW immer mit einer Nachkommastelle („1,0"), und
     // die Kontextzeile summiert die bereits gerundeten Teile, damit sie sichtbar aufgeht.
     const heroNum = v => isRegion ? Math.round(v * 1000 * 10) / 10 : Math.round(v * 100) / 100;
     const heroStr = n => n.toFixed(isRegion ? 1 : 2).replace('.', ',');
     const setHero = (zubau, cons, bestand) => {
-      if (!ZUBAU_AS_HERO) { R.cellHeroLabel = 'Ausbau gesamt'; R.cellHeroValue = R.cellTotal; R.cellContextLine = ''; return; }
+      if (!ZUBAU_AS_HERO) { R.cellHeroLabel = 'Ausbau gesamt'; R.cellHeroValue = R.cellTotal; R.cellHeroCaption = ''; R.cellContextLine = ''; return; }
       const v = heroNum(stufe >= 2 ? cons : zubau), b = heroNum(bestand);
       R.cellHeroLabel = stufe >= 2 ? 'Zubaukonsens' : 'Zubau';
       R.cellHeroValue = heroStr(v);
+      R.cellHeroCaption = stufe >= 2 ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.' : '';
       R.cellContextLine = S.account ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' ' + this.unitFor(isRegion) + ' installierte Leistung' : '';
     };
     // „% des deutschen Zubaus": Zubau dieser Einheit am nationalen Ausbauziel (Werte intern in GW)
