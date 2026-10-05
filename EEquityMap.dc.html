@@ -123,10 +123,6 @@
         </div>
       </sc-for>
 
-      <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ toggleMore }}" style="margin-top:6px;background:none;border:none;color:#0b6b5a;font-size:14px;font-weight:600;cursor:pointer;padding:4px 9px">{{ moreLabel }}</button>
-      </sc-if>
-
       <sc-if value="{{ showCTA }}" hint-placeholder-val="{{ true }}">
         <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #cfe4de;border-radius:8px">
           <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
@@ -219,7 +215,7 @@
            als die frühere Scope-Leiste (§N). Reihe existiert, sobald Tabs ODER der Speichern-Button
            etwas zu zeigen haben (keine ausgegrauten Elemente, s. §D — sonst ganz ausgeblendet). -->
       <sc-if value="{{ showTabRow }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;align-items:center;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
               <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
@@ -243,12 +239,25 @@
         </div>
       </sc-if>
 
-      <!-- Dauerhafte Erklärzeile je Tab -->
-      <sc-if value="{{ explainLine }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size:14px;color:#5b6672;margin:0 2px 10px;line-height:1.4;display:flex;align-items:center;gap:8px;flex:none">
-          <span style="width:6px;height:6px;border-radius:50%;background:#57c4ab;flex:none"></span>{{ explainLine }}
-        </div>
-      </sc-if>
+      <!-- Dauerhafte graue Erklärzeile je Tab/Karte direkt unter der Tab-Reihe (nicht flow-/bannerabhängig)
+           + Konsens-Disclaimer, der früher am Seitenende stand. -->
+      <div style="flex:none;margin:0 2px 10px">
+        <sc-if value="{{ showKonfliktToggle }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin:8px 0 4px">
+            <button onClick="{{ setKonfliktDissens }}" style="{{ konfliktDissensStyle }}">Dissens</button>
+            <button onClick="{{ setKonfliktAnders }}" style="{{ konfliktAndersStyle }}">Wer denkt anders?</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showVergleichToggle }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin:8px 0 4px">
+            <button onClick="{{ setVergleichReferenz }}" style="{{ vergleichReferenzStyle }}">Konsens vs. Referenz</button>
+            <button onClick="{{ setVergleichPlanung }}" style="{{ vergleichPlanungStyle }}">Konsens vs. Planung</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#9aa4ad;line-height:1.45;margin-top:2px">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+        </sc-if>
+      </div>
 
       <sc-if value="{{ hintTwo }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-bottom:10px;animation:fadeUp .35s;flex:none">
@@ -258,7 +267,7 @@
       </sc-if>
 
       <!-- MAP AREA -->
-      <div style="flex:1;min-height:360px;display:flex;flex-direction:column">
+      <div style="{{ mapAreaStyle }}">
         <!-- Verteilungen / Galerie (Difference-first) -->
         <sc-if value="{{ isVerteilungen }}" hint-placeholder-val="{{ false }}">
           <div style="{{ galleryColStyle }}">
@@ -292,7 +301,77 @@
           </div>
         </sc-if>
 
-        <!-- Single / consensus / minimum / schnittmengen / differenz / positiv map -->
+        <!-- Szenarien vergleichen (Reiter, ab ≥ 2 Szenarien): Tabelle = allgemeine Vergleichssicht für alle
+             Szenarien; Differenzkarte zusätzlich nur für genau zwei Szenarien derselben Ebene (§N). -->
+        <sc-if value="{{ isSzenarien }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:none;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:14px;color:#8a929a">Deutschland-Szenarien in GW, Regions-Szenarien in MW — an der Kennzeichnung im Spaltenkopf erkennbar, nicht direkt vergleichbar.</div>
+            <div class="scroll" style="flex:none;overflow-x:auto;border:1px solid #e2e5e8;border-radius:10px">
+              <div style="display:flex;min-width:max-content">
+                <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
+                  <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
+                  <sc-for list="{{ compareRowLabels }}" as="rl" hint-placeholder-count="6">
+                    <div style="{{ rl.style }}">{{ rl.label }}</div>
+                  </sc-for>
+                </div>
+                <!-- Spaltenkopf = die einzige Verwaltung je Szenario: Name, „Wiederherstellen" (lädt Config +
+                     Karte) und × (löschen) — kein separates Chip-Control mehr (§N). -->
+                <sc-for list="{{ compareScenarios }}" as="csc" hint-placeholder-count="2">
+                  <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
+                    <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <span style="{{ csc.pairTagStyle }}">{{ csc.pairTag }}</span>
+                        <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
+                        <span onClick="{{ csc.onRemove }}" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
+                      </div>
+                      <span style="{{ csc.scopeTagStyle }}">{{ csc.scopeTag }}</span>
+                      <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
+                    </div>
+                    <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
+                      <div style="{{ cell.style }}">{{ cell.value }}</div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
+              <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: Zubaukonsens A − B</div>
+              <sc-if value="{{ scenPickShow }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#5b6672;margin:8px 0 6px">Genau zwei Szenarien für die Karte wählen (die Tabelle zeigt weiter alle):</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ scenPick }}" as="sp" hint-placeholder-count="3">
+                    <div onClick="{{ sp.onClick }}" style="{{ sp.style }}"><span style="{{ sp.badgeStyle }}">{{ sp.badge }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sp.name }}</span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div style="font-size:14px;color:#5b6672;margin-top:8px;line-height:1.5">A = {{ scenAName }} · B = {{ scenBName }}</div>
+              <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
+              </sc-if>
+              <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#9aa4ad;margin-top:2px">{{ scenDiffScope }}</div>
+                <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
+                  <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.6"></path>
+                  <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
+                    <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1"></path>
+                  </sc-for>
+                </svg>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+                  <span style="font-size:14px;color:#5b6672">mehr in A</span>
+                  <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                  <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
+                  <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                  <span style="font-size:14px;color:#5b6672">mehr in B</span>
+                  <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
+                </div>
+                <div style="font-size:14px;color:#33413c;margin-top:8px">{{ scenDiffSummary }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
           <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px">
             <!-- Klick auf den Kartenhintergrund hebt die Zellauswahl auf. Der Handler sitzt am <svg> selbst,
@@ -395,6 +474,12 @@
 
       <!-- UNDER CARD -->
       <div style="flex:none;margin-top:10px">
+        <!-- Kartenlegende in Worten (z. B. „Dunkel = viel Zubau …"), direkt unter der Karte -->
+        <sc-if value="{{ explainLine }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#5b6672;margin:0 0 6px;line-height:1.4;display:flex;align-items:center;gap:8px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#57c4ab;flex:none"></span>{{ explainLine }}
+          </div>
+        </sc-if>
         <!-- Legend + plan toggle -->
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;min-height:34px">
           <!-- sequential legend -->
@@ -424,12 +509,12 @@
               <span style="font-size:14px;color:#9aa4ad">· Mitte = deckt sich</span>
             </div>
           </sc-if>
-          <!-- schnittmengen legend -->
+          <!-- Konfliktflächen „Wer denkt anders?"-Legende -->
           <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:6px">
               <span style="font-size:14px;color:#8a929a">{{ schnittColorCaption }}</span>
               <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
-                <span style="font-size:14px;color:#5b6672">empfohlen von:</span>
+                <span style="font-size:14px;color:#5b6672">eingefärbt von:</span>
                 <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
                   <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
                 </sc-for>
@@ -466,23 +551,15 @@
         <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #e2e5e8">
             <sc-if value="{{ showCompare }}" hint-placeholder-val="{{ false }}">
-              <sc-if value="{{ compareActive }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;gap:8px;background:#eef2f1;border:1px solid #cfd9d6;border-radius:7px;padding:5px 6px 5px 10px">
-                  <span style="font-size:14px;color:#33413c">Vergleich: {{ compareName }}</span>
-                  <button onClick="{{ clearCompare }}" style="background:none;border:none;color:#2f6690;font-size:14px;cursor:pointer;font-weight:600">aufheben</button>
+              <div style="position:relative">
+                <span style="font-size:14px;color:#5b6672;margin-right:8px">Konsens verglichen mit:</span>
+                <button onClick="{{ toggleCompareMenu }}" style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 11px;font-size:14px;color:#26303a;cursor:pointer;font-weight:500">{{ compareName }} ▾</button>
+                <div style="{{ compareMenuStyle }}">
+                  <sc-for list="{{ compareOptions }}" as="co" hint-placeholder-count="4">
+                    <div onClick="{{ co.onClick }}" style="{{ co.rowStyle }}" style-hover="background:#eff3f2">{{ co.label }}</div>
+                  </sc-for>
                 </div>
-              </sc-if>
-              <sc-if value="{{ compareInactive }}" hint-placeholder-val="{{ true }}">
-                <div style="position:relative">
-                  <span style="font-size:14px;color:#5b6672;margin-right:8px">Wo unterscheiden sie sich?</span>
-                  <button onClick="{{ toggleCompareMenu }}" style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 11px;font-size:14px;color:#26303a;cursor:pointer;font-weight:500">Mit einer anderen Verteilung vergleichen ▾</button>
-                  <div style="{{ compareMenuStyle }}">
-                    <sc-for list="{{ compareOptions }}" as="co" hint-placeholder-count="4">
-                      <div onClick="{{ co.onClick }}" style="{{ co.rowStyle }}" style-hover="background:#eff3f2">{{ co.label }}</div>
-                    </sc-for>
-                  </div>
-                </div>
-              </sc-if>
+              </div>
             </sc-if>
 
             <div style="flex:1"></div>
@@ -518,14 +595,10 @@
           </div>
         </sc-if>
 
-        <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;gap:10px;margin-top:9px">
-            <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Daten herunterladen</button>
-            <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Methodik ansehen</button>
-          </div>
-        </sc-if>
-
-        <div style="font-size: 14px; color: #9aa4ad; line-height: 1.45; margin-top: 9px; width: 100%">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+        <div style="display:flex;gap:10px;margin-top:9px">
+          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Daten herunterladen</button>
+          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Methodik ansehen</button>
+        </div>
       </div>
     </main>
 
@@ -553,7 +626,7 @@
           <sc-if value="{{ anBlockers }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Was begrenzt den Konsens?</div>
-              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Längerer Balken = begrenzt den Konsens stärker (mehr entgangener Zubau).</div>
+              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">{{ blockersCaption }}</div>
               <sc-for list="{{ blockers }}" as="b" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
@@ -561,7 +634,7 @@
                     <span style="color:#26303a;flex:1">{{ b.name }}</span>
                     <span class="num" style="font-size:14px;font-weight:600;color:#33413c">−{{ b.cost }} {{ scopeUnit }}</span>
                   </div>
-                  <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
+                  <div style="{{ b.trackStyle }}"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
                   <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">begrenzend in {{ b.count }} Zellen</div>
                 </div>
               </sc-for>
@@ -595,10 +668,10 @@
             </div>
           </sc-if>
 
-          <!-- schnittmengen: Zellen je Kombination -->
+          <!-- Konfliktflächen: Zellen je abweichender Verteilung -->
           <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
-              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:7px">Zellen je Prinzip-Kombination</div>
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:7px">Zellen je abweichender Verteilung</div>
               <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:11px;padding:10px 11px;background:#eef3f6;border-radius:8px">{{ comboSummary }}</div>
               <sc-for list="{{ comboRows }}" as="cm" hint-placeholder-count="3">
                 <div style="display:flex;align-items:center;gap:9px;font-size:14px;padding:6px 0;border-bottom:1px solid #eef1f2">
@@ -642,7 +715,6 @@
             <div>
               <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
               <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
-              <div style="font-size:14px;color:#5b6672;margin-top:2px">{{ cellTyp }}</div>
             </div>
             <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
           </div>
@@ -654,21 +726,32 @@
             </div>
           </sc-if>
 
-          <!-- Stufe 2+ : Neuzubau + Zubaukonsens als verschachtelter Balken -->
+          <!-- Hauptzahl: Ausbau gesamt (= Bestand + Neuzubau; ohne Bestandsanrechnung = Neuzubau) -->
+          <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+            <div style="font-size:14px;color:#5b6672">Ausbau gesamt</div>
+            <div class="num" style="font-size:34px;font-weight:700;color:#2f6690;line-height:1.1;margin-top:3px">{{ cellTotal }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
+            <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
+            <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
+          </div>
+
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
+            <sc-if value="{{ cellShowGoal }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
+                <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
+                <span class="num" style="color:#26303a;font-weight:500">{{ cellGoalShare }}</span>
+              </div>
+              <div style="{{ goalInfoStyle }}">{{ goalInfoText }}</div>
+            </sc-if>
+            <sc-if value="{{ cellEinordnung }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:14px">
+                <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5b6672">Einordnung</span><span style="color:#26303a;font-weight:500;text-align:right">{{ cellEinordnung }}</span></div>
+                <div style="color:#8a929a;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
+              </div>
+            </sc-if>
+          </div>
+
           <sc-if value="{{ cellHasConsensus }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:14px">
-                <span style="color:#5b6672">Neuzubau dieser Zelle</span>
-                <span class="num" style="color:#26303a;font-weight:500">{{ cellNew }} {{ scopeUnit }}</span>
-              </div>
-              <div style="font-size:14px;color:#5b6672;margin-top:11px">{{ cellConsensusScopeLabel }}</div>
-              <div class="num" style="font-size:28px;font-weight:600;color:#2f6690;line-height:1.1;margin-top:1px">{{ cellConsensus }} <span style="font-size:14px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
-              <div style="margin-top:10px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
-                <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:5px"></div>
-              </div>
-              <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">Zubaukonsens = der Anteil des Neuzubaus, den alle gewählten Prinzipien mittragen.</div>
-            </div>
-            <div style="margin-top:14px">
+            <div style="margin-top:16px">
               <div style="{{ cellBarsHeadStyle }}">Empfohlener Zubau je Prinzip</div>
               <sc-for list="{{ cellBars }}" as="br" hint-placeholder-count="2">
                 <div style="margin-bottom:9px">
@@ -697,38 +780,29 @@
             </sc-if>
           </sc-if>
 
-          <!-- Stufe 1 : empfohlener Zubau Leitzahl -->
-          <sc-if value="{{ cellStufe1 }}" hint-placeholder-val="{{ true }}">
-            <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
-              <div style="font-size:14px;color:#5b6672">Empfohlener Zubau ({{ cellPrincipleName }})</div>
-              <div class="num" style="font-size:28px;font-weight:600;color:{{ cellPrincipleColor }};line-height:1.1;margin-top:3px">{{ cellRecommend }} <span style="font-size:14px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
-              <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ cellSharePct }} {{ cellSharePctOf }}</div>
-            </div>
-          </sc-if>
-
-          <div style="margin-top:15px;display:flex;flex-direction:column;gap:9px">
-            <sc-if value="{{ cellShowBestand }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Bestand</span><span style="color:#26303a;font-weight:500">{{ cellBestandCmp }}</span></div>
-              <div style="font-size:14px;color:#8a929a;line-height:1.45">{{ cellTrend }}</div>
-            </sc-if>
-          </div>
-
+          <!-- Regionsprofil adaptiv: Bestand aus → Ausbau gesamt = Zubau, daher keine Zubau-Zeile (wäre
+               die Hauptzahl doppelt), nur Zubaukonsens; Bestand an → davon Bestand · davon Zubau · Zubaukonsens. -->
+          <sc-if value="{{ cellShowProfile }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb">
             <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px">Regionsprofil</div>
             <div style="display:flex;flex-direction:column;gap:7px">
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Ausbau gesamt</span><span class="num" style="color:#26303a">{{ cellTotal }} {{ scopeUnit }}</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} {{ scopeUnit }}</span></div>
+              <sc-if value="{{ cellShowBestand }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} {{ scopeUnit }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellNewLabel }}</span><span class="num" style="color:#26303a">{{ cellNew }} {{ scopeUnit }}</span></div>
+              </sc-if>
+              <sc-if value="{{ cellHasConsensus }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Zubaukonsens</span><span class="num" style="color:#2f6690;font-weight:600">{{ cellConsensus }} {{ scopeUnit }}</span></div>
+                <div style="height:8px;border-radius:4px;background:#dbe4ec;overflow:hidden">
+                  <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:4px"></div>
+                </div>
+                <div style="font-size:14px;color:#8a929a;line-height:1.45">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.</div>
+              </sc-if>
             </div>
           </div>
+          </sc-if>
 
           <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb;display:flex;flex-direction:column;gap:9px">
-              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellRankLabel }}</span><span class="num" style="color:#26303a;font-weight:500">{{ cellRankNat }}</span></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
-                <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
-                <span class="num" style="color:#26303a">{{ cellGoalShare }}</span>
-              </div>
-              <div style="{{ goalInfoStyle }}">{{ goalInfoText }}</div>
               <div style="display:flex;justify-content:space-between;font-size:14px;color:#b3bcc3"><span>Priorität / Reihenfolge</span><span>{{ cellPriority }}</span></div>
               <div style="font-size:14px;color:#b3bcc3;line-height:1.4">Die Zubaureihenfolge wird noch nicht berechnet.</div>
             </div>
@@ -827,49 +901,6 @@
     </div>
   </sc-if>
 
-  <!-- Szenarien vergleichen: EINE Tabelle für alle Szenarien, kein Tab pro Szenario (§N) -->
-  <sc-if value="{{ scenarioCompareOpen }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closeCompare }}" style="position:fixed;inset:0;background:rgba(20,25,30,.55);z-index:55;display:flex;align-items:center;justify-content:center;padding:32px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:22px 24px;width:min(1100px,94vw);max-height:88vh;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;margin-bottom:4px">
-          <span style="font-size:17px;font-weight:700;color:#1b2126;flex:1">Szenarien vergleichen</span>
-          <button onClick="{{ closeCompare }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
-        </div>
-        <div style="font-size:14px;color:#8a929a;margin-bottom:14px">Deutschland-Szenarien in GW, Regions-Szenarien in MW — an der Kennzeichnung im Spaltenkopf erkennbar, nicht direkt vergleichbar.</div>
-        <!-- Flex-„Fake-Table" statt echter <table>-Tags (wie überall sonst in diesem Template, s. comboRows/
-             sumRows/blockers): erste Spalte sticky, Zeilenhöhen fest, damit Labelspalte und Szenario-Spalten
-             unabhängig fluchten; Tabelle horizontal scrollbar bei vielen Szenarien. -->
-        <div class="scroll" style="overflow:auto;border:1px solid #e2e5e8;border-radius:10px">
-          <div style="display:flex;min-width:max-content">
-            <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
-              <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
-              <sc-for list="{{ compareRowLabels }}" as="rl" hint-placeholder-count="6">
-                <div style="{{ rl.style }}">{{ rl.label }}</div>
-              </sc-for>
-            </div>
-            <!-- Spaltenkopf = die einzige Verwaltung je Szenario: Name, „Wiederherstellen" (lädt Config +
-                 Karte) und × (löschen) — kein separates Chip-Control mehr (§N). -->
-            <sc-for list="{{ compareScenarios }}" as="csc" hint-placeholder-count="2">
-              <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
-                <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
-                    <span onClick="{{ csc.onRemove }}" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
-                  </div>
-                  <span style="{{ csc.scopeTagStyle }}">{{ csc.scopeTag }}</span>
-                  <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
-                </div>
-                <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
-                  <div style="{{ cell.style }}">{{ cell.value }}</div>
-                </sc-for>
-              </div>
-            </sc-for>
-          </div>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
   <!-- Speicher-Bestätigung als Toast: momentane Bestätigung einer bereits erfolgten Handlung, kein
        dauerhafter Zustand — fadet selbst aus, kein ×, belegt keinen Platz im Karten-Stack (s. SoT §K). -->
   <sc-if value="{{ scenarioToastVisible }}" hint-placeholder-val="{{ false }}">
@@ -947,7 +978,7 @@ class Component extends DCLogic {
     scenarios: [],
     scenarioSaveOpen: false,
     scenarioNameDraft: '',
-    scenarioCompareOpen: false,
+    konfliktMode: 'dissens',
     scenarioToastShow: false,
     scenarioToastMounted: false,
     scenarioFirstSaveSeen: false
@@ -979,11 +1010,7 @@ class Component extends DCLogic {
       { id: 'bevoelkerungsfern', name: 'Bevölkerungsfern', color: '#009E73', basic: true, available: true, info: 'Der Zubau meidet dicht besiedelte Räume. Anlagen entstehen bevorzugt dort, wo wenige Menschen betroffen sind.', explain: 'Bevölkerungsfern verteilt den Ausbau in dünn besiedelte Regionen — dunkle Zellen bekommen mehr.' },
       { id: 'oekonomisch', name: 'Ökonomisch optimiert', color: '#E69F00', basic: true, available: true, info: 'Der Zubau folgt dem besten Ertrag. Windhöffige Lagen im Norden werden zuerst genutzt.', explain: 'Ökonomisch optimiert verteilt den Ausbau dorthin, wo er am günstigsten ist — dunkle Zellen bekommen mehr.' },
       { id: 'flaeche_gesamt', name: 'Gleicher Anteil an Gesamtfläche', color: '#CC79A7', basic: true, available: true, info: 'Jede Region trägt denselben Anteil je Fläche. Große Regionen erhalten mehr, unabhängig von Ertrag oder Verbrauch.', explain: 'Gleicher Anteil an Gesamtfläche verteilt den Ausbau proportional zur Fläche — größere Zellen bekommen mehr.' },
-      { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche — dunkle Zellen bekommen mehr.' },
-      { id: 'infrastrukturnah', name: 'Infrastrukturnah', basic: false, available: false },
-      { id: 'bruttowert', name: 'Bruttowertschöpfungssensitiv', basic: false, available: false },
-      { id: 'einkommen', name: 'Einkommenssensitiv', basic: false, available: false },
-      { id: 'kommunal', name: 'Vorrang für kommunale Flächen', basic: false, available: false }
+      { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche — dunkle Zellen bekommen mehr.' }
     ];
     this.CONS = '#2f6690';      // Konsens-Skala (Steel Blue) — getrennt von Prinzip- und Markenfarbe
     this.CONFLICT = '#c2185b';  // Konfliktflächen — eigene, von Prinzipfarben klar unterscheidbare Kodierung
@@ -1360,6 +1387,7 @@ class Component extends DCLogic {
   hx(h) { h = h.replace('#', ''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
   mix(a, b, t) { const A = this.hx(a), B = this.hx(b); t = Math.max(0, Math.min(1, t)); return 'rgb(' + A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',') + ')'; }
   seq(t, hex) { return this.mix('#eef1f0', hex, 0.10 + 0.85 * t); }
+  brown(t) { return this.mix('#f3efe6', '#6b3f0e', 0.08 + 0.9 * t); }
   div(t) { return t >= 0 ? this.mix('#f3f2ec', '#0f6b5c', t) : this.mix('#f3f2ec', '#8a5a12', -t); }
   // Deckung Planung/Konsens: warm = Planung über Konsens, kühl = Konsens über Planung, Mitte hell
   deckColor(t) { t = Math.max(-1, Math.min(1, t)); return t >= 0 ? this.mix('#f2f1ee', '#a85a17', t) : this.mix('#f2f1ee', '#1d5f80', -t); }
@@ -1464,6 +1492,13 @@ class Component extends DCLogic {
     const medOf = pid => { const a = gwArr(pid).slice().sort((x,y)=>x-y); const n = a.length; return n%2 ? a[(n-1)/2] : (a[n/2-1]+a[n/2])/2; };
     const medians = {}; sel.forEach(p => medians[p] = medOf(p));
     const recBy = i => sel.filter(p => gwArr(p)[i] > medians[p]);
+    // Konfliktflächen / „Wer denkt anders?": feste 20-%-Regel NUR für diese Einfärbung — die
+    // Konsensrechnung (Minimum-Regel) bleibt unberührt. Abweichung = |Prinzipwert − Konsens| / Konsens
+    // > 20 % (beide Richtungen); bei Konsens = 0 zählt jeder positive Prinzipwert als abweichend.
+    const DEV_RULE = 0.2;
+    const devBy = i => stufe >= 2 ? sel.filter(p => { const c = consCells[i], v = gwSel[p][i]; return c > 1e-12 ? Math.abs(v - c) / c > DEV_RULE : v > 1e-12; }) : [];
+    // Dissens je Zelle: maximale Distanz eines gewählten Prinzips zum Konsens
+    const dissens = stufe >= 2 ? cells.map((c,i) => Math.max(...sel.map(p => Math.abs(gwSel[p][i] - consCells[i])))) : null;
 
     // Konflikt schwellenfrei aus der Minimum-Regel: Konsens ≈ 0 gegenüber Zellmaximum
     const maxSelGW = stufe >= 2 ? cells.map((c,i) => Math.max(...sel.map(p => gwSel[p][i]))) : null;
@@ -1476,13 +1511,15 @@ class Component extends DCLogic {
     // Galerie (Difference-first) = Verteilungen-Tab. Im Erststart und wann immer der
     // Verteilungen-Tab in der Explorationsphase aktiv ist, zeigt sie ALLE Prinzipien.
     let view;
-    if (regionNeedsGate) view = 'regionGate';
+    const scenariosAll = S.scenarios || [];
+    if (S.tab === 'szenarien' && scenariosAll.length >= 2) view = 'szenarien';
+    else if (regionNeedsGate) view = 'regionGate';
     else if (isEmpty) view = 'verteilungen';
     else if (S.compare) view = 'differenz';
     else if (S.tab === 'verteilungen') view = 'verteilungen';
     else if (stufe === 1) view = 'single';
     else if (S.tab === 'positiv') view = 'positiv';
-    else if (S.tab === 'schnittmengen') view = 'schnittmengen';
+    else if (S.tab === 'konflikt') view = 'konflikt';
     else if (S.tab === 'minimum') view = 'minimum';
     else view = 'konsens';
     // Galerie zeigt alle Prinzipien während der Exploration (≤1 gewählt), sonst die gewählten
@@ -1498,7 +1535,11 @@ class Component extends DCLogic {
     R.overlayCells = [];
     R.hasOverlay = false;
     R.isVerteilungen = view === 'verteilungen';
-    R.isSingleMap = view === 'regionGate' ? true : (!R.isVerteilungen && !isEmpty);
+    R.isSzenarien = view === 'szenarien';
+    // Szenarien-Reiter: Tabelle + Differenzkarte wachsen mit ihrem Inhalt (Spalte scrollt), statt in die
+    // feste Kartenhöhe gequetscht zu werden.
+    R.mapAreaStyle = R.isSzenarien ? 'flex:none;display:flex;flex-direction:column' : 'flex:1;min-height:360px;display:flex;flex-direction:column';
+    R.isSingleMap = view === 'regionGate' ? true : (!R.isVerteilungen && !isEmpty && !R.isSzenarien);
     R.isEmpty = isEmpty;
 
     // Regionsansicht: Berechnungs-Gate / veraltet-Hinweis — die Aktion selbst hat ihren
@@ -1631,10 +1672,23 @@ class Component extends DCLogic {
       R.legendCat = true;
       R.catItems = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color }));
       R.showPlan = false;
-    } else if (view === 'schnittmengen') {
+    } else if (view === 'konflikt' && S.konfliktMode !== 'anders') {
+      // Dissens: max. Distanz zum Konsens, braune sequenzielle Skala (dunkel = große Abweichung)
+      const visVals = cells.map((c,i) => ({ v: dissens[i], vis: !(S.hideConflict && isConflict[i]) })).filter(o => o.vis).map(o => o.v);
+      const scaleVals = visVals.length ? visVals : dissens;
+      const mx = Math.max(...scaleVals);
+      const mn = isRegion ? Math.min(...scaleVals) : 0;
+      const range = mx - mn;
+      const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
+      R.mainCells = cells.map((c,i) => mkCell(i, this.brown(norm(dissens[i])), { hidden: S.hideConflict && isConflict[i] }));
+      R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.brown(0) + ',' + this.brown(1) + ')';
+      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Max. Abweichung vom Konsens je Zelle';
+      R.showPlan = false;
+    } else if (view === 'konflikt') {
+      // „Wer denkt anders?": Farbe der Verteilung(en), die hier > 20 % vom Konsens abweichen; mehrere = schraffiert
       const combos = {}, fill = [];
       cells.forEach((c,i) => {
-        const rec = recBy(i);
+        const rec = devBy(i);
         if (rec.length === 0) { fill[i] = '#e4e8eb'; return; }
         if (rec.length === 1) { fill[i] = this.byId[rec[0]].color; return; }
         const key = 'sm_' + rec.join('_');
@@ -1645,16 +1699,15 @@ class Component extends DCLogic {
       R.mainCells = cells.map((c,i) => mkCell(i, fill[i], { hidden: S.hideConflict && isConflict[i] }));
       // Legende: nur Einzelfarben je Prinzip (Kombinationen bleiben auf der Karte, nicht in der Legende)
       R.legendSchnitt = true;
-      R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color }));
-      R.schnittNote = 'Gestreifte Flächen: mehrere Prinzipien empfehlen dieselbe Fläche.';
-      // Liest sich hier als Farb-Legende (mit den Farbfeldern darunter), nicht als Caption über der Karte (§M)
-      R.schnittColorCaption = 'Farbe = welche Prinzipien dieselbe Fläche empfehlen.';
+      R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color })).concat([{ label: 'keine Abweichung > 20 %', css: 'background:#e4e8eb' }]);
+      R.schnittNote = 'Gestreifte Flächen: mehrere Verteilungen weichen hier stark ab.';
+      R.schnittColorCaption = 'Farbe = die Verteilung, die hier mehr als 20 % vom Konsens abweicht.';
       // UpSet-Aufschlüsselung (nur Erweitert)
       // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
       if (isExt && stufe >= 3) {
         const combo = {};
         cells.forEach((c,i) => {
-          const rec = recBy(i); if (!rec.length) return;
+          const rec = devBy(i); if (!rec.length) return;
           const key = rec.join('|');
           if (!combo[key]) combo[key] = { rec, n: 0, gw: 0 };
           combo[key].n++; combo[key].gw += consCells[i];
@@ -1728,6 +1781,50 @@ class Component extends DCLogic {
       R.divCaption = 'mehr bei ' + S.compare.label + '  ·  mehr bei ' + baseName;
       R.divExplain = 'Jede Zelle zeigt die Differenz: grün = ' + baseName + ' weist ihr mehr Zubau zu, braun = ' + S.compare.label + ' weist ihr mehr zu, blass = beide gleich. Je kräftiger, desto größer der Unterschied.';
       R.showPlan = false;
+    }
+
+    // Szenarien vergleichen: Differenzkarte (Zubaukonsens A − B) nur für GENAU zwei Szenarien derselben
+    // Ebene (zwei DE-Szenarien bzw. zwei Szenarien desselben Landkreises) — sonst kein gemeinsamer
+    // räumlicher Rahmen, also keine Karte, nur der Hinweis. Die Tabelle zeigt weiter alle Szenarien.
+    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenPick = []; R.scenDiffCells = [];
+    if (view === 'szenarien') {
+      const byIdS = {}; scenariosAll.forEach(sc => byIdS[sc.id] = sc);
+      let pair = (S.scenPair || []).filter(id => byIdS[id]);
+      if (!S.scenPair && scenariosAll.length >= 2) pair = scenariosAll.slice(0, 2).map(sc => sc.id);
+      R.scenPickShow = scenariosAll.length > 2;
+      R.scenPick = scenariosAll.map(sc => {
+        const ix = pair.indexOf(sc.id), on = ix >= 0;
+        return {
+          name: sc.name, badge: on ? (ix === 0 ? 'A' : 'B') : '',
+          badgeStyle: on ? 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none' : 'display:none',
+          style: 'display:flex;align-items:center;gap:7px;max-width:260px;border:1px solid ' + (on ? '#9fb9b2' : '#d2d7db') + ';background:' + (on ? '#eef4f2' : '#fff') + ';border-radius:7px;padding:5px 10px;font-size:14px;color:#26303a;cursor:pointer',
+          onClick: () => {
+            let np = pair.slice();
+            if (np.includes(sc.id)) np = np.filter(x => x !== sc.id); else { np.push(sc.id); if (np.length > 2) np = np.slice(-2); }
+            this.setState({ scenPair: np });
+          }
+        };
+      });
+      const A = byIdS[pair[0]], B = byIdS[pair[1]];
+      const sameLevel = A && B && pair.length === 2 && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId)
+        && A.cellCons && B.cellCons && A.cellCons.length === B.cellCons.length;
+      R.scenAName = A ? A.name : '—'; R.scenBName = B ? B.name : '—';
+      if (!sameLevel) {
+        R.scenDiffHint = 'Kartenvergleich nur für zwei Szenarien derselben Ebene möglich.';
+      } else {
+        const lvl = A.isRegion ? this.regionCellsFor(A.regionKrsId) : { cells: this.krs, vb: this.krsVb, outlineD: '' };
+        const d = A.cellCons.map((v, i) => v - B.cellCons[i]);
+        const mxa = Math.max(...d.map(Math.abs)) || 1;
+        R.showScenDiffMap = true;
+        R.scenDiffVb = lvl.vb;
+        R.scenDiffOutline = lvl.outlineD || '';
+        R.scenDiffCells = lvl.cells.map((c, i) => ({ d: c.d, fill: this.div(d[i] / mxa) }));
+        R.scenDiffGrad = 'linear-gradient(90deg,' + this.div(1) + ',' + this.div(0) + ',' + this.div(-1) + ')';
+        R.scenDiffMax = this.fmtU(mxa, A.isRegion);
+        R.scenDiffScope = A.isRegion ? A.regionLabel + ' · je 5 × 5-km-Zelle' : 'Deutschland · je Landkreis';
+        const sumA = A.cellCons.reduce((a, b) => a + b, 0), sumB = B.cellCons.reduce((a, b) => a + b, 0);
+        R.scenDiffSummary = 'Zubaukonsens gesamt: A ' + this.fmtU(sumA, A.isRegion) + ' · B ' + this.fmtU(sumB, A.isRegion) + ' · Differenz A − B ' + (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), A.isRegion);
+      }
     }
 
     // Verteilungen / Galerie small multiples
@@ -1834,17 +1931,23 @@ class Component extends DCLogic {
     }
     if (R.mainCells) R.mainCells = R.mainCells.map(c => c.pe ? c : Object.assign({}, c, { pe: 'auto' }));
 
-    // Dauerhafte Erklärzeile je Ansicht
-    R.explainLine = ({
-      empty: '',
+    // Was zeigt diese Ansicht? — dauerhaft unter der Tab-Reihe, unabhängig vom Einmal-Banner (hintTwo).
+    R.tabExplain = ({
+      regionGate: '',
       single: (this.byId[singlePid].explain || 'Dunkel = viel empfohlener Zubau nach diesem Prinzip.'),
       konsens: 'Dunkel = viel Zubau, den alle gewählten Prinzipien mittragen.',
+      konflikt: S.konfliktMode === 'anders'
+        ? 'Farbe = die Verteilung, die hier stark vom Konsens abweicht (> 20 %). Zeigt, welche Verteilungen mehr Konsens ermöglichen würden.'
+        : 'Dunkel = große Abweichung vom Konsens. Zeigt, wo — und durch welche Verteilungen — mehr Konsens möglich wäre.',
       minimum: 'Farbe = das Prinzip, das hier den Konsens begrenzt.',
-      verteilungen: 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Dunkel = viel.',
+      verteilungen: isEmpty ? 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Wählen Sie links ein Prinzip.' : 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau.',
       positiv: 'Wo Ausweisung und Konsens zusammengehen und wo nicht. Mitte = deckt sich.',
-      differenz: 'Vergleich: der Konsens gegenüber der gewählten Referenzverteilung. Grün = mehr Konsens, Braun = mehr Referenz.'
+      differenz: 'Vergleich: der Konsens gegenüber der gewählten Verteilung. Grün = mehr Konsens, Braun = mehr bei der Vergleichsverteilung.',
+      szenarien: 'Tabelle: alle gespeicherten Szenarien. Karte: Differenz im Zubaukonsens zweier Szenarien derselben Ebene (A − B).'
     })[view] || '';
-    if (galleryAll) R.explainLine = ''; // Galerie-Header trägt Titel + Legende bereits
+    // Kurze Erklärzeile je Ansicht steht unter der Karte (direkt über der Farb-Legende), nicht unter den Reitern.
+    R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
+    R.showKonsensDisclaimer = view !== 'regionGate' && stufe >= 2;
     R.currentView = view;
     R.isSingleView = view === 'single';
     R.showBackToGallery = view === 'single';
@@ -1888,7 +1991,8 @@ class Component extends DCLogic {
         nationalSel: S.selected.filter(avail),
         regionalSel: sel.slice(),
         tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
-        target, consensusTotal, limitingName
+        target, consensusTotal, limitingName,
+        cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice()
       };
       // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung, als Toast (§N/§K —
       // momentane Bestätigung einer bereits erfolgten Handlung, kein dauerhaftes Band).
@@ -1907,9 +2011,8 @@ class Component extends DCLogic {
     R.scenarioCount = scenarios.length;
     R.showScenarioIndicator = scenarios.length > 0;
     R.showCompareEntry = scenarios.length >= 2;
-    R.openCompare = () => this.setState({ scenarioCompareOpen: true });
-    R.scenarioCompareOpen = !!S.scenarioCompareOpen && scenarios.length > 0;
-    R.closeCompare = () => this.setState({ scenarioCompareOpen: false });
+    // „Szenarien vergleichen" ist ein Reiter (ab ≥ 2 Szenarien), kein Popup mehr.
+    R.openCompare = () => this.setState({ tab: 'szenarien', compare: null, compareMenu: false });
     // Vergleichstabelle als Flex-„Fake-Table" (wie jede andere Tabellendarstellung in diesem Template,
     // s. comboRows/sumRows/blockers) statt echter <table>-Tags — vermeidet die HTML-Tabellen-Parsing-
     // Fallstricke (Foster-Parenting von Nicht-Tabellen-Kindknoten in <tr>/<tbody>) ganz. Sticky-Spalte via
@@ -1929,7 +2032,8 @@ class Component extends DCLogic {
       label: rd.label,
       style: 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;' + (i === rowDefs.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;')
     }));
-    if (R.scenarioCompareOpen) {
+    if (view === 'szenarien') {
+      const pairIds = (S.scenPair || scenarios.slice(0, 2).map(sc => sc.id));
       // DE- (GW) und Region-Szenarien (MW) gruppiert — sonst wirken „160 GW" und „350 MW" direkt vergleichbar.
       const sorted = scenarios.slice().sort((a,b) => (a.isRegion === b.isRegion) ? 0 : (a.isRegion ? 1 : -1));
       R.compareScenarios = sorted.map(sc => ({
@@ -1940,6 +2044,8 @@ class Component extends DCLogic {
           : 'display:inline-block;font-size:14px;color:#2f6690;background:#eef3f6;border:1px solid #cdddea;border-radius:5px;padding:1px 7px;margin-top:4px',
         onRemove: () => this.deleteScenario(sc.id),
         onRestore: () => this.restoreScenario(sc),
+        pairTag: pairIds.indexOf(sc.id) === 0 ? 'A' : pairIds.indexOf(sc.id) === 1 ? 'B' : '',
+        pairTagStyle: pairIds.indexOf(sc.id) >= 0 ? 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (pairIds.indexOf(sc.id) === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none' : 'display:none',
         cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
       }));
     } else {
@@ -1983,12 +2089,8 @@ class Component extends DCLogic {
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
     R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 24000) ? 'Das kann einen Moment dauern …' : '';
 
-    R.hasMore = this.principles.some(p => (isExt || p.basic) && !p.available);
-    R.showMore = S.showMore;
-    R.toggleMore = () => this.setState({ showMore: !S.showMore });
-    R.moreLabel = S.showMore ? 'Weniger Prinzipien' : 'Mehr Prinzipien';
     const cmpTargetId = (S.compare && S.compare.type === 'principle') ? S.compare.id : null;
-    R.princList = this.principles.filter(p => (isExt || p.basic) && (p.available || S.showMore)).map(p => {
+    R.princList = this.principles.filter(p => (isExt || p.basic) && p.available).map(p => {
       const on = uiSel.includes(p.id);
       const isCmpTarget = p.id === cmpTargetId;
       const canClick = p.available && !isCmpTarget;
@@ -2067,8 +2169,10 @@ class Component extends DCLogic {
       R.kernaussage = galleryAll ? '' : 'So unterschiedlich verteilen die einzelnen Prinzipien den Ausbau.';
     } else if (view === 'positiv') {
       R.kernaussage = 'Wo deckt sich die offizielle Ausweisung mit dem Konsens?';
-    } else if (view === 'schnittmengen') {
-      R.kernaussage = 'Welche Prinzipien empfehlen jede Fläche?';
+    } else if (view === 'konflikt') {
+      R.kernaussage = 'Wo weichen die Prinzipien am stärksten vom Konsens ab — und welche?';
+    } else if (view === 'szenarien') {
+      R.kernaussage = 'Wie unterscheiden sich Ihre gespeicherten Szenarien?';
     } else {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
       R.kernaussage = isRegion
@@ -2076,22 +2180,53 @@ class Component extends DCLogic {
         : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
     }
 
-    // Tabs (erst ab 2 Prinzipien)
-    R.showTabs = stufe >= 2;
+    // Vergleichsoptionen: nie gegen ein gewähltes Prinzip; externe Referenzen nur Erweitert + national
+    const cmpOpts = this.principles.filter(p => p.available && !sel.includes(p.id)).map(p => ({ label: p.name, type: 'principle', id: p.id, group: 'Prinzipien' }));
+    if (isExt && !isRegion) this.references.forEach(r => cmpOpts.push({ label: r.name, type: 'ref', id: r.id, group: 'Referenzverteilungen (extern)' }));
+
+    // Reiter: Konsens → Konfliktflächen → Was begrenzt? → Einzelverteilungen → Vergleich
+    // (→ Konsens vs. Planung, nur Erweitert) → Szenarien vergleichen (nur ab ≥ 2 Szenarien)
+    const scenTab = scenariosAll.length >= 2;
+    R.showTabs = stufe >= 2 || scenTab;
     // Reihe existiert, sobald Tabs ODER der Speichern-Button etwas zu zeigen haben (§N).
     R.showTabRow = R.showTabs || R.showSaveScenario;
-    const tabDefs = [{ id: 'konsens', label: 'Zubaukonsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'schnittmengen', label: 'Übereinstimmungen' }];
-    tabDefs.push({ id: 'verteilungen', label: 'Vergleich' });
-    if (isExt) { tabDefs.push({ id: 'positiv', label: 'Konsens vs. Planung' }); if (!isRegion) tabDefs.push({ id: '__diff', label: 'Konsens vs. Referenz' }); }
+    let tabDefs;
+    if (stufe >= 2) {
+      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'konflikt', label: 'Konfliktflächen' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
+      if (cmpOpts.length || isExt) tabDefs.push({ id: 'vergleich', label: 'Vergleich' });
+    } else {
+      tabDefs = [{ id: 'konsens', label: stufe === 1 ? 'Einzelverteilung' : 'Übersicht' }];
+    }
+    if (scenTab) tabDefs.push({ id: 'szenarien', label: 'Szenarien vergleichen' });
+    const activeTab = view === 'szenarien' ? 'szenarien' : (view === 'differenz' || view === 'positiv') ? 'vergleich'
+      : (stufe >= 2 && ['konsens', 'konflikt', 'minimum', 'verteilungen'].includes(S.tab) ? S.tab : 'konsens');
+    // Vergleich-Reiter: Unteransichten „Konsens vs. Referenz" (Differenz gegen eine andere Verteilung) und
+    // „Konsens vs. Planung" (nur Erweitert) — Logik der beiden Ansichten unverändert, nur hier gebündelt.
+    const validCmp = c => (c && cmpOpts.some(o => o.type === c.type && o.id === c.id)) ? c : null;
+    const goReferenz = () => this.setState(this.dismissTrioHint({ tab: 'vergleich', vergleichSub: 'referenz', compare: validCmp(S.compare) || validCmp(S.lastCompare) || cmpOpts[0], compareMenu: false }));
+    const goPlanung = () => this.setState(this.dismissTrioHint({ tab: 'positiv', vergleichSub: 'planung', compare: null, lastCompare: S.compare || S.lastCompare || null, compareMenu: false }));
     R.tabs = tabDefs.map(t => ({
       label: t.label,
-      onClick: t.id === '__diff' ? () => this.setState(this.dismissTrioHint({ compareMenu: true })) : () => this.setState(this.dismissTrioHint({ tab: t.id, compare: null })),
-      style: this.tabBtn((t.id === '__diff' && S.compare) || (!S.compare && S.tab === t.id))
+      onClick: t.id === 'vergleich'
+        ? ((isExt && (S.vergleichSub === 'planung' || !cmpOpts.length)) ? goPlanung : goReferenz)
+        : () => this.setState(this.dismissTrioHint({ tab: t.id, compare: null, compareMenu: false })),
+      style: this.tabBtn(activeTab === t.id)
     }));
+    R.showVergleichToggle = isExt && activeTab === 'vergleich' && cmpOpts.length > 0;
+    R.setVergleichReferenz = goReferenz;
+    R.setVergleichPlanung = goPlanung;
+    R.vergleichReferenzStyle = this.segLight(view === 'differenz') + ';flex:none;white-space:nowrap;padding:6px 14px';
+    R.vergleichPlanungStyle = this.segLight(view === 'positiv') + ';flex:none;white-space:nowrap;padding:6px 14px';
+    // In-Tab-Umschalter der Konfliktflächen: Dissens (braune Heatmap) / Wer denkt anders? (Einfärbung)
+    R.showKonfliktToggle = view === 'konflikt';
+    R.setKonfliktDissens = () => this.setState({ konfliktMode: 'dissens', cell: null });
+    R.setKonfliktAnders = () => this.setState({ konfliktMode: 'anders', cell: null });
+    R.konfliktDissensStyle = this.segLight(S.konfliktMode !== 'anders') + ';flex:none;white-space:nowrap;padding:6px 14px';
+    R.konfliktAndersStyle = this.segLight(S.konfliktMode === 'anders') + ';flex:none;white-space:nowrap;padding:6px 14px';
 
     // DE-Ansicht-Onboarding — gehört nicht in die Regionsansicht (§M), auch wenn der Zustand
     // noch aus der nationalen Auswahl übrig ist.
-    R.hintTwo = S.hintTwo && !isRegion;
+    R.hintTwo = S.hintTwo && !isRegion && view === 'konsens';
     R.dismissHintTwo = () => this.setState({ hintTwo: false });
 
     // legend flags default
@@ -2103,9 +2238,10 @@ class Component extends DCLogic {
     // Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle
     R.showPlan = (R.showPlan || false) && S.account;
     // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
-    R.showCompare = isExt && !isRegion;
-    R.showHideToggle = stufe >= 2;
-    R.showToolRow = isExt || stufe >= 2;
+    // Vergleichsauswahl nur im Vergleich-Reiter (Differenzansicht)
+    R.showCompare = view === 'differenz';
+    R.showHideToggle = stufe >= 2 && view !== 'szenarien';
+    R.showToolRow = (isExt || stufe >= 2) && view !== 'szenarien';
     R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
       label: p === 'bestand' ? 'Bestand' : p === 'zubau' ? 'Zubau' : 'Gesamt',
       onClick: () => this.setState({ plan: p }),
@@ -2113,15 +2249,11 @@ class Component extends DCLogic {
     }));
 
     // compare menu
-    R.compareActive = !!S.compare;
-    R.compareInactive = !S.compare;
     R.compareName = S.compare ? S.compare.label : '';
     R.clearCompare = () => this.setState({ compare: null, compareMenu: false });
     R.toggleCompareMenu = () => this.setState({ compareMenu: !S.compareMenu });
     R.compareMenuStyle = (S.compareMenu ? 'display:block;' : 'display:none;') + 'position:absolute;bottom:38px;left:0;background:#fff;border:1px solid #d7dbdf;border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:5px;min-width:240px;z-index:15';
     // Vergleich nur gegen NICHT gewählte Prinzipien oder externe Referenzen (nie gegen ein gewähltes Prinzip)
-    const cmpOpts = this.principles.filter(p => p.available && !sel.includes(p.id)).map(p => ({ label: p.name, type: 'principle', id: p.id, group: 'Prinzipien' }));
-    this.references.forEach(r => cmpOpts.push({ label: r.name, type: 'ref', id: r.id, group: 'Referenzverteilungen (extern)' }));
     const cmpRows = []; let lastG = null;
     cmpOpts.forEach(o => {
       if (o.group !== lastG) { cmpRows.push({ header: true, label: o.group, rowStyle: 'padding:8px 12px 3px;font-size:14px;font-weight:700;letter-spacing:.4px;color:#9aa4ad;text-transform:uppercase', onClick: () => {} }); lastG = o.group; }
@@ -2145,6 +2277,31 @@ class Component extends DCLogic {
 
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
     const scopeWord = isRegion ? 'dieser Region' : 'gesamt';
+
+    // Zelldetail-Kennzahlen: Hauptzahl „Ausbau gesamt" = Bestand (nur bei Bestandsanrechnung) + Neuzubau,
+    // Anteil am Ausbau im Scope, Anteil an der deutschen Fläche und Einordnung des Zubaubedarfs je km²
+    // gegenüber dem Durchschnitt aller Landkreise (= Ausbauziel / Fläche Deutschlands).
+    const DE_KM2 = this._deKm2 || (this._deKm2 = this.krs.reduce((a, k) => a + (k.kfl || 0), 0) || 357588);
+    const CELL_KM2 = 25;
+    const neuOf = i => stufe >= 2 ? sel.reduce((a, p) => a + gwSel[p][i], 0) / sel.length : (stufe === 1 ? gwSel[singlePid][i] : 0);
+    const bestOf = i => S.account ? (cells[i].bestandGW || 0) : 0;
+    const areaOf = i => isRegion ? CELL_KM2 : (cells[i].kfl || 0);
+    const natZubauPerKm2 = S.targetGW / DE_KM2;
+    const einordnungFor = (neu, km2) => {
+      if (stufe < 1 || !km2 || !natZubauPerKm2) return '';
+      const r = (neu / km2) / natZubauPerKm2;
+      return 'Zubaubedarf ' + (r > 1.15 ? 'überdurchschnittlich' : r < 0.85 ? 'unterdurchschnittlich' : 'durchschnittlich');
+    };
+    const pctArea = x => this.pct(x, x < 0.0001 ? 3 : x < 0.01 ? 2 : 1);
+    R.cellNewLabel = stufe === 1 ? 'davon Zubau (' + this.byId[singlePid].name + ')' : 'davon Zubau';
+    R.cellShowGoal = stufe >= 1;
+    R.cellShowBestand = !!S.account;
+    // Profil nur, wenn es etwas Eigenes zeigt (Bestandsaufteilung und/oder Zubaukonsens)
+    R.cellShowProfile = !!S.account || stufe >= 2;
+    // „% des deutschen Zubaus": Zubau dieser Einheit am nationalen Ausbauziel (Werte intern in GW)
+    const pctZubau = neu => this.pct(S.targetGW ? neu / S.targetGW : 0, 2);
+    R.cellEinordnung = '';
+    R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
 
     if (!selectedCell && !selectedGemeinde) {
       R.ovScopeLabel = isRegion ? 'Region' : 'Übersicht';
@@ -2179,7 +2336,13 @@ class Component extends DCLogic {
         const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter(l=>l===p).length, cost: consWithout(p) - consTotal }));
         bl.sort((a,b)=>b.cost-a.cost);
         const cmax = Math.max(...bl.map(b=>b.cost), 0.001);
-        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
+        // Bei genau 2 Prinzipien sind beide Kosten identisch (ohne eines bleibt das andere allein) —
+        // gleich lange Balken täuschten eine Vergleichbarkeit vor; dann nur Werte + „Ohne X …".
+        const blockerBars = sel.length >= 3;
+        R.blockersCaption = blockerBars
+          ? 'Längerer Balken = begrenzt den Konsens stärker (mehr entgangener Zubau).'
+          : 'Entgangener Zubaukonsens durch jedes Prinzip — bei zwei Prinzipien ist er für beide gleich.';
+        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%', trackStyle: blockerBars ? 'height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
 
         if (view === 'positiv') {
           // Zwei Richtungen desselben Verhältnisses — bundesweit, in der rechten Spalte
@@ -2205,25 +2368,24 @@ class Component extends DCLogic {
           const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
           const smax = Math.max(...sums.map(s=>s.v), 0.001);
           R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
-        } else if (view === 'schnittmengen') {
+        } else if (view === 'konflikt') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anCombos = true;
-          const medians2 = {}; sel.forEach(p => { const a = gwArr(p).slice().sort((x,y)=>x-y); const n=a.length; medians2[p] = n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2; });
           const cnt = {};
-          scopeIdx.forEach(i => { const rec = sel.filter(p => gwArr(p)[i] > medians2[p]); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
+          scopeIdx.forEach(i => { const rec = devBy(i); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
           const rows = Object.values(cnt).map(o => {
             let css, label;
-            if (!o.rec.length) { css = 'background:#e4e8eb'; label = 'kein Prinzip'; }
+            if (!o.rec.length) { css = 'background:#e4e8eb'; label = 'keine Abweichung > 20 %'; }
             else if (o.rec.length === 1) { css = 'background:' + this.byId[o.rec[0]].color; label = this.byId[o.rec[0]].name; }
             else { const stops = o.rec.map((p,ix)=> this.byId[p].color + ' ' + (ix*6) + 'px ' + ((ix+1)*6) + 'px').join(','); css = 'background:repeating-linear-gradient(45deg,' + stops + ')'; label = o.rec.map(p=>this.byId[p].name).join(' + '); }
             return { css, label, count: o.n, order: o.rec.length ? o.rec.length : 99 };
           });
           // Zusammenfassung zuerst — die eigentliche Antwort; Liste ist Referenz
-          const nAll = (cnt[sel.join(' + ')] || { n: 0 }).n;
           const nOne = Object.values(cnt).filter(o => o.rec.length === 1).reduce((a,o)=>a+o.n, 0);
+          const nMulti = Object.values(cnt).filter(o => o.rec.length >= 2).reduce((a,o)=>a+o.n, 0);
           const nNone = (cnt['__none'] || { n: 0 }).n;
-          R.comboSummary = nAll + ' Zellen von allen gewählten Prinzipien empfohlen · ' + nOne + ' von genau einem · ' + nNone + ' von keinem.';
+          R.comboSummary = nOne + ' Zellen: genau eine Verteilung weicht > 20 % vom Konsens ab · ' + nMulti + ' Zellen: mehrere · ' + nNone + ' Zellen: keine.';
           // 0-Zellen-Kombinationen nie zeigen; Top 6 sichtbar, Rest aufklappbar
           const visible = rows.filter(r => r.count > 0).sort((a,b)=>b.count-a.count);
           const LIM = 6;
@@ -2301,7 +2463,7 @@ class Component extends DCLogic {
           R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
         } else R.showCellPopover = false;
       } else R.showCellPopover = false;
-      R.cellLabel = c.label; R.cellTyp = c.typ;
+      R.cellLabel = c.label;
       R.cellHasConsensus = stufe >= 2;
       R.cellStufe1 = stufe === 1;
       if (stufe >= 2) {
@@ -2318,19 +2480,14 @@ class Component extends DCLogic {
       R.cellRecommend = this.fmtN(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
       R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
-      const meanZ = target / N;
-      R.cellRank1 = gwSel[singlePid][i] >= meanZ ? 'überdurchschnittlich' : 'unterdurchschnittlich';
-      const meanB = 62 / N;
-      const bAbove = c.bestandGW >= meanB;
-      R.cellShowBestand = S.account;
-      R.cellBestandCmp = bAbove ? 'überdurchschnittlich' : 'unterdurchschnittlich';
-      const zAbove = gwSel[singlePid][i] >= meanZ;
-      R.cellTrend = (bAbove === zAbove) ? 'Bestand und empfohlener Zubau zeigen in dieselbe Richtung.' : 'Der Bestand weicht vom empfohlenen Zubau ab.';
       // Neuzubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Neuzubau ≤ Gesamt.
-      const neu = sel.reduce((a,p)=>a+gwSel[p][i],0) / sel.length;
-      const total = c.bestandGW + neu;
+      const neu = neuOf(i);
+      const total = bestOf(i) + neu;
       R.cellTotal = this.fmtN(total, isRegion); R.cellBestand = this.fmtN(c.bestandGW, isRegion); R.cellNew = this.fmtN(neu, isRegion);
+      R.cellZubauPct = pctZubau(neu);
+      R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
+      R.cellEinordnung = einordnungFor(neu, areaOf(i));
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
       // Zubaukonsens ≤ Neuzubau ≤ Ausbau gesamt; gefüllter Anteil ≤ voller Balken.
       R.cellConsFill = (neu && consCells) ? (Math.min(consCells[i], neu) / neu * 100).toFixed(1) + '%' : '0%';
@@ -2344,8 +2501,6 @@ class Component extends DCLogic {
       } else R.cellShowConflictHint = false;
       // erweitert
       const rankArr = (stufe >= 2 ? consCells : gwSel[singlePid]).map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v);
-      R.cellRankNat = (rankArr.findIndex(r=>r.idx===i) + 1) + ' von ' + N;
-      R.cellRankLabel = isRegion ? 'Rang in der Region' : 'Rang deutschlandweit';
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
       R.goalInfoText = isRegion
         ? 'Wie viel diese Zelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
@@ -2392,8 +2547,6 @@ class Component extends DCLogic {
       R.cellScope = S.region.label + ' · Gemeinden';
       R.cellKindLabel = g.bez || 'Gemeinde';
       R.cellLabel = g.name;
-      const densAgg = covWeight ? gAgg(cells.map(c => c.density)) / covWeight : 0;
-      R.cellTyp = densAgg > 0.55 ? 'Verdichteter Raum' : densAgg > 0.3 ? 'Städtischer Raum' : densAgg > 0.12 ? 'Ländlicher Raum' : 'Dünn besiedelter Raum';
       R.cellConsensusScopeLabel = 'Zubaukonsens dieser Gemeinde in der Region';
       R.showCellPopover = false;
       R.cellShowConflictHint = false;
@@ -2401,7 +2554,16 @@ class Component extends DCLogic {
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
       R.cellHasConsensus = stufe >= 2;
       R.cellStufe1 = stufe === 1;
-      R.cellShowBestand = false; R.cellShowPos = false; R.cellShowDiff = false;
+      R.cellShowPos = false; R.cellShowDiff = false;
+      // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
+      const gNeu = gAgg(cells.map((c, i) => neuOf(i)));
+      const gBest = gAgg(cells.map(c => c.bestandGW || 0));
+      const gTotal = (S.account ? gBest : 0) + gNeu;
+      const gKm2 = covWeight * CELL_KM2;
+      R.cellTotal = this.fmtN(gTotal, isRegion); R.cellBestand = this.fmtN(gBest, isRegion); R.cellNew = this.fmtN(gNeu, isRegion);
+      R.cellZubauPct = pctZubau(gNeu);
+      R.cellAreaPct = pctArea(gKm2 / DE_KM2);
+      R.cellEinordnung = einordnungFor(gNeu, gKm2);
 
       if (stufe >= 2) {
         const gwSelAgg = {}; sel.forEach(p => gwSelAgg[p] = gAgg(gwSel[p]));
@@ -2414,20 +2576,11 @@ class Component extends DCLogic {
           return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
 
-        const neu = sel.reduce((a, p) => a + gwSelAgg[p], 0) / sel.length;
-        const bestandAgg = gAgg(cells.map(c => c.bestandGW));
-        R.cellTotal = this.fmtN(bestandAgg + neu, isRegion); R.cellBestand = this.fmtN(bestandAgg, isRegion); R.cellNew = this.fmtN(neu, isRegion);
+        const neu = gNeu;
         R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
-
-        R.cellShowBestand = S.account;
-        const meanB = 62 / N;
-        R.cellBestandCmp = bestandAgg >= meanB * Math.max(1, covWeight) ? 'überdurchschnittlich' : 'unterdurchschnittlich';
-        R.cellTrend = 'Bestand und empfohlener Zubau werden aus den Rasterzellen dieser Gemeinde aggregiert.';
 
         const gemAggAll = gemList.map((gg, gi) => { const ws = gemWeights[gi] || []; return ws.reduce((a, w) => a + consCells[w.i] * w.w, 0); });
         const rankArrG = gemAggAll.map((v, idx) => ({ v, idx })).sort((a, b) => b.v - a.v);
-        R.cellRankNat = (rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) + 1) + ' von ' + gemList.length;
-        R.cellRankLabel = 'Rang unter den Gemeinden der Region';
         R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
         R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr aggregierter Zubaukonsens geteilt durch das gesamte Regionsbudget.';
         R.cellPriority = '≈ ' + (2030 + Math.round((rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) / gemList.length) * 15)) + ' (nicht berechnet)';
@@ -2455,12 +2608,6 @@ class Component extends DCLogic {
         R.cellRecommend = this.fmtN(gRec, isRegion);
         R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
         R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
-        const bestandAgg = gAgg(cells.map(c => c.bestandGW));
-        R.cellTotal = this.fmtN(bestandAgg + gRec, isRegion); R.cellBestand = this.fmtN(bestandAgg, isRegion); R.cellNew = this.fmtN(gRec, isRegion);
-        R.cellRankLabel = 'Rang unter den Gemeinden der Region';
-        const gemAggAll = gemList.map((gg, gi) => { const ws = gemWeights[gi] || []; return ws.reduce((a, w) => a + gwSel[singlePid][w.i] * w.w, 0); });
-        const rankArrG = gemAggAll.map((v, idx) => ({ v, idx })).sort((a, b) => b.v - a.v);
-        R.cellRankNat = (rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) + 1) + ' von ' + gemList.length;
         R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
         R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt.';
         R.cellPriority = '≈ (nicht berechnet)';
@@ -2520,7 +2667,7 @@ class Component extends DCLogic {
   segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:600;padding:5px 13px;cursor:pointer;background:' + (on ? '#57c4ab' : 'transparent') + ';color:' + (on ? '#0c2a24' : '#8b98a5'); }
   segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#7a848c') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
   chip(on) { return 'flex:1;border:1px solid ' + (on ? '#0b6b5a' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#0b6b5a' : '#fff') + ';color:' + (on ? '#fff' : '#4b555d'); }
-  tabBtn(on) { return 'border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#0b6b5a' : '#7a848c') + ';border-bottom:2px solid ' + (on ? '#0b6b5a' : 'transparent') + ';margin-bottom:-1px'; }
+  tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#0b6b5a' : '#7a848c') + ';border-bottom:2px solid ' + (on ? '#0b6b5a' : 'transparent') + ';margin-bottom:-1px'; }
   switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#0b6b5a' : '#c7ccd1'); }
   knobStyle(on) { return 'position:absolute;top:2px;left:' + (on ? '17px' : '2px') + ';width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s'; }
 
@@ -2586,8 +2733,9 @@ class Component extends DCLogic {
     // Sucht direkt im echten Landkreis-/Stadt-Namen (vg250) — exakter Treffer zuerst, sonst Teilstring.
     const best = this.krs.find(k => k.label.toLowerCase() === q) || this.krs.find(k => k.label.toLowerCase().includes(q));
     if (!best) return;
-    this.enterRegion(best.id, best.kind + ' ' + best.label);
-    this.setState({ search: '' });
+    // Wie ein Kartenklick: Deutschland-Karte bleibt, der Landkreis wird nur ausgewählt — das Popover
+    // „im Detail auswerten →" startet erst die Regionsauswertung (kein Auto-Drill aus der Suche).
+    this.setState(this.dismissTrioHint({ level: 'de', region: null, gemeinde: null, compare: null, cell: best.id, search: '', tab: this.state.tab === 'szenarien' ? 'konsens' : this.state.tab }));
   }
 
   // Wiederherstellen lädt die gespeicherte Konfiguration inkl. eingefrorener Regionsergebnisse (kein
@@ -2602,7 +2750,7 @@ class Component extends DCLogic {
         regionComputing: false, regionProgress: 1,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
         cell: null, compare: null, tab: 'konsens', committed: true,
-        scenarioCompareOpen: false, scenarioSaveOpen: false
+        scenarioSaveOpen: false
       });
     } else {
       this.setState({
@@ -2610,7 +2758,7 @@ class Component extends DCLogic {
         selected: sc.nationalSel.slice(), selectedRegional: null,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
         cell: null, compare: null, tab: 'konsens', committed: true,
-        scenarioCompareOpen: false, scenarioSaveOpen: false
+        scenarioSaveOpen: false
       });
     }
     this.startReveal();
@@ -2619,7 +2767,8 @@ class Component extends DCLogic {
   deleteScenario(id) {
     const scenarios = this.state.scenarios.filter(s => s.id !== id);
     const patch = { scenarios };
-    if (scenarios.length === 0) patch.scenarioCompareOpen = false;
+    if (this.state.scenPair) patch.scenPair = this.state.scenPair.filter(x => x !== id);
+    if (scenarios.length < 2 && this.state.tab === 'szenarien') patch.tab = 'konsens';
     this.setState(patch);
   }
 
