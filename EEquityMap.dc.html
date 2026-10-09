@@ -224,6 +224,13 @@
             </sc-for>
           </sc-if>
           <div style="flex:1"></div>
+          <!-- Im Hub steht an derselben Stelle „Vergleich teilen" (Speichern ist dort ausgeblendet) -->
+          <sc-if value="{{ showShareCompare }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;background:#0b6b5a;border:none;color:#fff;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
+              Vergleich teilen
+            </button>
+          </sc-if>
           <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
             <button onClick="{{ openSaveScenario }}" style="display:flex;align-items:center;gap:6px;background:#0b6b5a;border:none;color:#fff;font-size:14px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;white-space:nowrap">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
@@ -590,6 +597,20 @@
           </sc-if>
         </div>
 
+        <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab 2 Prinzipien): Zubaukonsens je
+             Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
+        <sc-if value="{{ showPairMatrix }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e2e5e8">
+            <div style="font-size:15px;font-weight:600;color:#1b2126">Zubaukonsens je Prinzipienpaar</div>
+            <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Zubaukonsens.</div>
+            <div style="{{ pairGridStyle }}">
+              <sc-for list="{{ pairCells }}" as="pc" hint-placeholder-count="9">
+                <div title="{{ pc.title }}" style="{{ pc.style }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
         <!-- Ansichts-Zeile (Regionsansicht, Erweitert) -->
         <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #e2e5e8">
@@ -910,6 +931,24 @@
     </div>
   </sc-if>
 
+  <!-- Vergleich teilen: kopierbarer Link (Prototyp: Platzhalter, keine Persistenz) -->
+  <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeShare }}" style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:55;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:24px 26px;width:min(480px,92vw)">
+        <div style="font-size:17px;font-weight:700;color:#1b2126;margin-bottom:6px">Vergleich teilen</div>
+        <div style="font-size:14px;color:#5b6672;line-height:1.5;margin-bottom:14px">Der Link teilt den aktuellen Vergleich: {{ shareSummary }}.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+          <input readonly value="{{ shareLink }}" onFocus="{{ selectShareInput }}" style="flex:1;min-width:0;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;font-family:'IBM Plex Mono',monospace">
+          <button onClick="{{ copyShareLink }}" style="{{ shareCopyBtnStyle }}">{{ shareCopyLabel }}</button>
+        </div>
+        <div style="font-size:14px;color:#8a929a;line-height:1.5;margin-bottom:18px">Prototyp: Platzhalter-Link — der Vergleich wird noch nicht gespeichert.</div>
+        <div style="display:flex;justify-content:flex-end">
+          <button onClick="{{ closeShare }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Schließen</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- Szenario speichern: Auto-Name editierbar, Session-only-Hinweis (§N) -->
   <sc-if value="{{ scenarioSaveOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ cancelSaveScenario }}" style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:55;display:flex;align-items:center;justify-content:center;padding:40px">
@@ -1013,6 +1052,8 @@ class Component extends DCLogic {
     hubTech: null,      // Technologie-Filter im Vergleichs-Hub (null = wie links)
     hubPairs: null,     // A/B je Technologie: { wind: [idA, idB], pv: [...] }
     hubRefInfo: null,
+    shareOpen: false,
+    shareCopied: false,
     hubPending: null,   // Objekt, das bei zwei vollen Slots auf die A-oder-B-Wahl wartet
     hubCollapsed: null, // eingeklappte Objekt-Gruppen im Hub
     undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
@@ -1562,6 +1603,7 @@ class Component extends DCLogic {
     const galleryAll = view === 'verteilungen' && stufe <= 1;
 
     const R = {};
+    R.showPairMatrix = false; R.pairCells = []; R.pairGridStyle = '';
     R.vb = isRegion ? this.regionCellsFor(S.region.krsId).vb : this.krsVb;
     R.vbFull = this.krsVb;
     R.mapSvgRef = this._mapSvgRef;
@@ -1695,6 +1737,44 @@ class Component extends DCLogic {
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
       R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens je Zelle';
       R.showPlan = false;
+      // Paarweise Prinzipien-Matrix (nur Erweitert): Zubaukonsens je Paar = Minimum-Regel über genau diese
+      // zwei Prinzipien, Summe über alle Zellen. Dreieck ohne Diagonale; Konsens-Blauskala über den
+      // Wertebereich der Matrix (dunkel = hoch).
+      if (isExt) {
+        const pairVal = {};
+        sel.forEach((p, a) => sel.forEach((q, b) => {
+          if (b >= a) return;
+          let sum = 0; const gp = gwSel[p], gq = gwSel[q];
+          for (let i = 0; i < N; i++) sum += Math.min(gp[i], gq[i]);
+          pairVal[p + '|' + q] = sum;
+        }));
+        const vals = Object.values(pairVal);
+        const pmx = Math.max(...vals), pmn = Math.min(...vals), pr = pmx - pmn;
+        const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
+        const hdr = 'font-size:14px;color:#26303a;font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
+        const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color;
+        const cellsOut = [{
+          text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
+          title: '', swatchStyle: 'display:none',
+          style: 'font-size:14px;color:#5b6672;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
+        }];
+        sel.forEach(q => cellsOut.push({ text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q), style: hdr + ';align-items:flex-end' }));
+        sel.forEach((p, a) => {
+          cellsOut.push({ text: this.byId[p].name, title: this.byId[p].name, swatchStyle: sw(p), style: hdr });
+          sel.forEach((q, b) => {
+            if (b >= a) { cellsOut.push({ text: '', title: '', swatchStyle: 'display:none', style: 'border-radius:6px;background:#f7f8f9' }); return; }
+            const v = pairVal[p + '|' + q], t = pnorm(v);
+            cellsOut.push({
+              text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
+              swatchStyle: 'display:none',
+              style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
+            });
+          });
+        });
+        R.pairCells = cellsOut;
+        R.pairGridStyle = 'display:grid;grid-template-columns:minmax(150px,1.2fr) repeat(' + sel.length + ',minmax(90px,1fr));gap:4px;align-items:stretch';
+        R.showPairMatrix = true;
+      }
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
       R.legendCat = true;
@@ -1783,7 +1863,7 @@ class Component extends DCLogic {
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
     R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubPlanung = false;
     R.hubGroups = []; R.hubSlots = []; R.hubTables = []; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
-    R.hubPendingShow = false;
+    R.hubPendingShow = false; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
       const hubTech = S.hubTech || S.tech;
       const hubScen = scenariosAll.filter(sc => sc.tech === hubTech);
@@ -1878,6 +1958,11 @@ class Component extends DCLogic {
 
       const A = pair[0] ? objById[pair[0]] : null, B = pair[1] ? objById[pair[1]] : null;
       R.scenAName = A ? A.name : '—'; R.scenBName = B ? B.name : '—';
+      // „Vergleich teilen": Platzhalter-Link aus A/B + Technologie (Prototyp, keine Persistenz)
+      const shareKey = [hubTech, pair[0] || '-', pair[1] || '-'].join('.');
+      let h = 0; for (let i = 0; i < shareKey.length; i++) h = (h * 31 + shareKey.charCodeAt(i)) >>> 0;
+      R.shareLink = 'https://eequitymap.de/vergleich/' + h.toString(36).padStart(7, '0');
+      R.shareSummary = 'A = ' + (A ? A.name : '—') + ', B = ' + (B ? B.name : '—') + ' (' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + ')';
       // Ebene + Ziel bestimmen: ein Szenario gibt sie vor; zwei Szenarien müssen übereinstimmen
       const scenSide = [A, B].filter(o => o && !o.isRef);
       let lvlOk = !!(A && B), lvlRegion = false, lvlKrs = null, lvlLabel = 'Deutschland', lvlTarget = S.targetGW;
@@ -2159,6 +2244,25 @@ class Component extends DCLogic {
     // Button nur zeigen, wenn es etwas zu speichern gibt — keine ausgegrauten Elemente (s. §D),
     // stattdessen ganz ausgeblendet (steuert auch showTabRow weiter unten).
     R.showSaveScenario = scenarioReady && view !== 'szenarien';
+    // Im Hub an derselben Stelle: „Vergleich teilen" → Popup mit kopierbarem Platzhalter-Link
+    R.showShareCompare = view === 'szenarien';
+    R.shareOpen = !!S.shareOpen && view === 'szenarien';
+    R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
+    R.closeShare = () => this.setState({ shareOpen: false, shareCopied: false });
+    R.selectShareInput = e => { if (e && e.target && e.target.select) e.target.select(); };
+    R.copyShareLink = () => {
+      const link = R.shareLink || '';
+      const done = () => this.setState({ shareCopied: true });
+      const fallback = () => {
+        const ta = document.createElement('textarea'); ta.value = link; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (err) { /* ignorieren — Link bleibt markierbar */ }
+        document.body.removeChild(ta); done();
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, fallback); else fallback();
+    };
+    R.shareCopyLabel = S.shareCopied ? 'Kopiert ✓' : 'Link kopieren';
+    R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#0b6b5a');
     const scenarioAutoName = () => {
       const names = sel.map(p => this.byId[p].name).join(' + ') || 'Kein Prinzip';
       const scopeName = isRegion && S.region ? S.region.label : 'Deutschland';

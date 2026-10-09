@@ -876,3 +876,21 @@ schrittweise auf dem Vorjahr auf."
 - **Einstieg:** Haupteinstieg ist der Reiter; die Zeile „Gespeicherte Szenarien (N)
   · Vergleichen →" ist nur Shortcut und im Hub ausgeblendet. Leere GW-/MW-Tabellen
   werden nicht gerendert.
+
+## P. Paarweise Prinzipien-Matrix & „Vergleich teilen" (Session 2026-10-09)
+
+**Paarweise Matrix** (Reiter „Konsens", direkt unter Karte + Legende; nur
+Erweitert; DE- und Regionsmodus; erst ab 2 Prinzipien):
+- Zeilen/Spalten = aktuell gewählte Prinzipien (n gewählt → n × n), Dreieck
+  unterhalb der Diagonale, Diagonale und obere Hälfte leer — jedes Paar genau einmal.
+- Zellwert = Zubaukonsens des Paars: Minimum-Regel über genau diese zwei
+  Prinzipien, Summe über alle Zellen — GW (DE) bzw. MW (Region).
+- Eckzelle: „Zubaukonsens in GW (Ziel: …)" bzw. „Zubaukonsens in MW
+  (Regionsbudget: …)".
+- Farbe: Konsens-Blauskala der Konsenskarte, über den Wertebereich der Matrix
+  gespannt (dunkel = hoch); keine neue Farbsprache.
+
+**„Vergleich teilen"** (Hub „Szenarien vergleichen", an der Stelle von „Zum
+Vergleich speichern"): Popup mit kopierbarem Link + „Link kopieren" und kurzem
+Hinweis, welchen Vergleich der Link teilt (A, B, Technologie). Prototyp:
+Platzhalter-Link aus A/B + Technologie, keine Persistenz.
