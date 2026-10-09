@@ -829,14 +829,15 @@ wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
 - **Kopf:** Wind/PV-Umschalter — eigener Filter des Hubs (startet mit der
   Technologie links, ändert die Berechnung nicht). Hub-Rahmen/-Hintergrund blau
   (Wind) bzw. gelb (PV). Nur Szenarien der gewählten Technologie.
-- **Vergleichsobjekte oben**, gruppiert: Referenzen · Deutschland · je Landkreis.
+- **Vergleichsobjekte** (im Dropdown der Slots, s. u.), gruppiert: Referenzen ·
+  Deutschland · je Landkreis.
 - **Referenzen (immer vorhanden):** „Historischer Ausbau" und „Planungsflächen"
   (Zubau nach ausgewiesenem Flächenanteil je Zelle), je auf dasselbe Ausbauziel
   skaliert. Visuell abgesetzt (gestrichelter Rahmen, eigener Grundton), je ein
   (i) mit Kurzinfo.
 - **A = Ausgangspunkt, B = Vergleichsobjekt** — je ein Szenario oder eine
-  Referenz. Klick setzt den ersten freien Slot (sonst B); × im Slot nimmt das
-  Objekt aus dem Vergleich (ohne zu löschen). Default: zwei Szenarien; bei einem
+  Referenz. Die Slots sind selbst Auswahl-Picker (s. Slot-Picker unten); × im Slot
+  leert ihn (ohne zu löschen). Default: zwei Szenarien; bei einem
   Szenario dieses vs. Planungsflächen; ohne Szenario die zwei Referenzen.
 - **Differenzkarte A − B** nur auf gemeinsamer Ebene: zwei Szenarien derselben
   Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios (Region → 5 × 5 km,
@@ -856,12 +857,9 @@ basiert auf einer separaten Greenfield-Berechnung; die Ergebnisse bauen nicht
 schrittweise auf dem Vorjahr auf."
 
 **Vereinfachung (Session 2026-10-09, nachgezogen):**
-- **Held = A/B-Slots + Differenzkarte** (breit, rechts im Hub); die Objektliste steht
-  links daneben, optisch zurückgenommen. Gruppen per ▸/▾ einklappbar; bei > 6
-  Szenarien starten Gruppen ohne A/B-Objekt eingeklappt.
-- **A/B-Auswahl lesbar:** Der Slot, den der nächste Klick füllt, trägt „Nächster
-  Klick" (gestrichelter Rahmen). Sind beide belegt, erscheint statt stillem
-  Ersetzen eine Leiste „„X" ersetzt: [A] [B] Abbrechen".
+- **Held = A/B-Slots + Differenzkarte** (volle Breite des Hubs).
+- ~~Objektliste mit Klick-Regel, „Nächster Klick"-Hinweis, „ersetzt: A/B"-Leiste~~
+  → abgelöst durch den **Slot-Picker** (s. u.).
 - **Rechte Spalte im Hub:** A/B-Zusammenfassung (Kernzahlen je Seite + Differenz
   gesamt), nie die Links-Konfiguration. Ohne Auswahl: „Noch nicht gewählt".
 - **Konsens-Disclaimer** im Hub ausgeblendet (übrige Reiter unverändert).
@@ -897,3 +895,16 @@ Erweitert; DE- und Regionsmodus; erst ab 2 Prinzipien):
 Vergleich speichern"): Popup mit kopierbarem Link + „Link kopieren" und kurzem
 Hinweis, welchen Vergleich der Link teilt (A, B, Technologie). Prototyp:
 Platzhalter-Link aus A/B + Technologie, keine Persistenz.
+
+**Slot-Picker (Session 2026-10-09, ersetzt Klick-Regel):**
+- A und B sind selbst Dropdowns: Klick auf den Slot öffnet die Liste aller
+  wählbaren Objekte, gruppiert „Referenzen (immer vorhanden)" · „Deutschland" · je
+  „Landkreis …"; Referenzen mit gestricheltem Kennzeichen + (i). Auswahl füllt
+  genau diesen Slot. **Wechseln = Slot erneut anklicken**, kein ×-zuerst.
+- Ein Objekt im anderen Slot ist deaktiviert und markiert („bereits in A/B"), das
+  aktuelle als „gewählt" — A und B können nicht identisch werden.
+- × leert den Slot („— bitte wählen"); Klick außerhalb schließt das Dropdown.
+- Wind/PV-Filter gilt für den Dropdown-Inhalt; ohne Szenarien der Technologie
+  zeigt das Dropdown einen Hinweis statt einer leeren Gruppe.
+- Die Tabellen je Ebene sind die Gesamtübersicht aller gespeicherten Szenarien
+  (ersetzt die weggefallene Objektliste).
