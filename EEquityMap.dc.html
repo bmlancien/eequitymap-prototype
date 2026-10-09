@@ -574,9 +574,11 @@
 
             <!-- Gemeinde-Ansichts-Umschalter: nur Erweitert + Regionsansicht, Testfeature s. SoT §M -->
             <sc-if value="{{ showGemToggle }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:12px">
+              <!-- Eigene volle Zeile + feste Breite/gleich breite Spalten: die Auswahl (fetter Text, wechselnder
+                   Hinweis darunter) darf die Position im umbrechenden Toolbar-Flex nicht verschieben. -->
+              <div style="flex:0 0 100%;margin-top:2px">
                 <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Ansicht</div>
-                <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);width:480px;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;box-sizing:border-box">
                   <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                   <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
                   <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
@@ -1355,7 +1357,7 @@ class Component extends DCLogic {
     const budget = this.natBudgetFor(krsId);
     const sig = this.regionSigFrom(krsId, effSel, budget);
     if (this._regionRaf) cancelAnimationFrame(this._regionRaf);
-    const DUR = 24000;
+    const DUR = 5000;
     const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
     const t0 = clock();
     this.setState({ regionComputing: true, regionProgress: 0 });
@@ -1882,9 +1884,9 @@ class Component extends DCLogic {
     R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
     R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
     R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', cell: null });
-    R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster');
-    R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden');
-    R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster');
+    R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster') + ';white-space:nowrap';
+    R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden') + ';white-space:nowrap';
+    R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster') + ';white-space:nowrap';
     R.gemClickHint = R.regionViewMode === 'gemeinden'
       ? 'Gemeinden anklicken für Details.'
       : (R.regionViewMode === 'gemeinden-raster' ? 'Gemeinden anklicken für Details — das Raster im Hintergrund dient nur der Orientierung.' : '');
@@ -1902,7 +1904,31 @@ class Component extends DCLogic {
 
     R.gemCells = [];
     R.gemOutlines = [];
-    if (R.regionViewMode === 'gemeinden' && gemList && gemWeights) {
+    // „Wer denkt anders?" ist kategorial (Farbe je abweichender Verteilung, mehrere = schraffiert) — eine
+    // RGB-Mischung je Gemeinde würde daraus eine Choropleth machen. Daher übernimmt jede Gemeinde die
+    // Kategorie (Füllung inkl. Schraffur-Pattern) mit dem größten Flächenanteil ihrer Rasterzellen.
+    // Reine Kartenoptik — die >20-%-Regel selbst bleibt auf Zellebene unverändert.
+    const andersCells = view === 'konflikt' && S.konfliktMode === 'anders';
+    if (R.regionViewMode === 'gemeinden' && gemList && gemWeights && andersCells) {
+      R.gemCells = gemList.map((g, gi) => {
+        const byFill = {};
+        let opSum = 0, wSum = 0;
+        (gemWeights[gi] || []).forEach(({ i, w }) => {
+          const mc = R.mainCells && R.mainCells[i];
+          if (!mc) return;
+          byFill[mc.fill] = (byFill[mc.fill] || 0) + w;
+          opSum += (mc.op != null ? mc.op : 1) * w; wSum += w;
+        });
+        const top = Object.keys(byFill).sort((x, y) => byFill[y] - byFill[x])[0];
+        const selg = S.gemeinde === g.id;
+        return {
+          d: g.d, fill: top || '#eef1f0', fo: cellFillOp, stroke: selg ? '#12181d' : '#ffffff', sw: selg ? 2.4 : 1, dash: '0',
+          op: wSum ? opSum / wSum : 1,
+          onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectGemeinde(g.id); }
+        };
+      });
+      R.mainCells = [];
+    } else if (R.regionViewMode === 'gemeinden' && gemList && gemWeights) {
       // Kartenfarbe je Gemeinde: flächengewichtete RGB-Mischung der bereits fertig eingefärbten
       // Rasterzellen dieser Ansicht (R.mainCells trägt die aktuelle Tab-Farblogik bereits) — funktioniert
       // ansichtsunabhängig, ohne jede Kartenfarblogik oben ein zweites Mal für Gemeinden nachzubauen.
@@ -2098,7 +2124,7 @@ class Component extends DCLogic {
     R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die nationale Verteilung bleibt oben als Kontext.') : '';
     // Dauer ist unbekannt (kein Prozent-/Countdown, s.o.) — nach kurzer Zeit eine Beruhigungszeile,
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
-    R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 24000) ? 'Das kann einen Moment dauern …' : '';
+    R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 5000) ? 'Das kann einen Moment dauern …' : '';
 
     const cmpTargetId = (S.compare && S.compare.type === 'principle') ? S.compare.id : null;
     R.princList = this.principles.filter(p => (isExt || p.basic) && p.available).map(p => {
@@ -2395,7 +2421,8 @@ class Component extends DCLogic {
         } else if (view === 'konflikt') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
-          R.anCombos = true;
+          // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
+          R.anCombos = S.konfliktMode === 'anders';
           const cnt = {};
           scopeIdx.forEach(i => { const rec = devBy(i); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
           const rows = Object.values(cnt).map(o => {
