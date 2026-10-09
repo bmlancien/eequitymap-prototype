@@ -201,7 +201,7 @@
           <span style="font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap">Gespeicherte Szenarien ({{ scenarioCount }})</span>
           <sc-if value="{{ showCompareEntry }}" hint-placeholder-val="{{ false }}">
             <span style="color:#c7ccd1">·</span>
-            <span onClick="{{ openCompare }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Vergleichen</span>
+            <span onClick="{{ openCompare }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Vergleichen →</span>
           </sc-if>
           <div style="flex:1"></div>
           <span style="font-size:14px;color:#9aa4ad;white-space:nowrap">Nur für diese Sitzung.</span>
@@ -297,85 +297,107 @@
           </div>
         </sc-if>
 
-        <!-- Szenarien vergleichen = einziger Vergleichs-Hub (immer sichtbar): oben alle gespeicherten Szenarien
-             der gewählten Technologie, gruppiert nach Ebene, plus die zwei Referenzen (immer vorhanden). A =
-             Ausgangspunkt, B = Vergleichsobjekt — je ein Szenario oder eine Referenz. Differenzkarte nur für
-             zwei Objekte derselben Ebene (eine Referenz übernimmt die Ebene des Szenarios). Tabellen je Ebene. -->
+        <!-- Szenarien vergleichen = einziger Vergleichs-Hub (immer sichtbar). Held = A/B-Slots + Differenzkarte
+             (rechts, breit); die Objektliste (Referenzen + gespeicherte Szenarien je Ebene) steht links daneben,
+             optisch zurückgenommen, damit Auswählen ohne Scrollen geht. Tabellen je Ebene darunter. -->
         <sc-if value="{{ isSzenarien }}" hint-placeholder-val="{{ false }}">
           <div style="{{ hubStyle }}">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-              <div style="font-size:15px;font-weight:600;color:#1b2126">Vergleichsobjekte</div>
+              <div style="font-size:15px;font-weight:600;color:#1b2126">Vergleich A − B</div>
               <div style="flex:1"></div>
+              <span style="{{ hubTechNoteStyle }}">{{ hubTechNote }} <span onClick="{{ resetHubTech }}" style="color:#0b6b5a;font-weight:600;cursor:pointer;margin-left:4px">Wie links</span></span>
               <span style="font-size:14px;color:#5b6672">Technologie</span>
               <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
                 <button onClick="{{ setHubWind }}" style="{{ hubWindStyle }}">Wind</button>
                 <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
               </div>
             </div>
-            <div style="font-size:14px;color:#5b6672;line-height:1.45">Szenario oder Referenz anklicken, um es als A (Ausgangspunkt) oder B (Vergleichsobjekt) zu setzen.</div>
 
-            <sc-for list="{{ hubGroups }}" as="hg" hint-placeholder-count="2">
-              <div>
-                <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ hg.label }}</div>
-                <div style="display:flex;flex-wrap:wrap;gap:6px">
-                  <sc-for list="{{ hg.items }}" as="hi" hint-placeholder-count="2">
-                    <div style="{{ hi.style }}">
-                      <span onClick="{{ hi.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;min-width:0">
-                        <span style="{{ hi.badgeStyle }}">{{ hi.badge }}</span>
-                        <span title="{{ hi.name }}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hi.name }}</span>
-                      </span>
-                      <span style="{{ hi.infoBtnStyle }}" onClick="{{ hi.onInfo }}">i</span>
+            <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+              <!-- Objektliste: zurückgenommen (kein Rahmen-Kasten, graue Gruppenköpfe), Gruppen einklappbar -->
+              <div style="flex:0 0 250px;min-width:0;display:flex;flex-direction:column;gap:12px;background:rgba(255,255,255,.55);border-radius:10px;padding:10px 11px">
+                <div style="font-size:14px;color:#5b6672;line-height:1.4">Objekt anklicken, um es in A oder B zu setzen.</div>
+                <sc-for list="{{ hubGroups }}" as="hg" hint-placeholder-count="2">
+                  <div>
+                    <div onClick="{{ hg.onToggle }}" style="{{ hg.headStyle }}"><span style="{{ hg.caretStyle }}">{{ hg.caret }}</span><span style="flex:1">{{ hg.label }}</span><span style="color:#9aa4ad">{{ hg.count }}</span></div>
+                    <div style="{{ hg.itemsStyle }}">
+                      <sc-for list="{{ hg.items }}" as="hi" hint-placeholder-count="2">
+                        <div style="{{ hi.style }}">
+                          <span onClick="{{ hi.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;min-width:0;flex:1">
+                            <span style="{{ hi.badgeStyle }}">{{ hi.badge }}</span>
+                            <span title="{{ hi.name }}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hi.name }}</span>
+                          </span>
+                          <span style="{{ hi.infoBtnStyle }}" onClick="{{ hi.onInfo }}">i</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div style="{{ hg.infoStyle }}">{{ hg.infoText }}</div>
+                    <div style="{{ hg.emptyStyle }}">{{ hg.emptyText }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- Held: A/B-Slots + Differenzkarte -->
+              <div style="flex:1;min-width:420px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <sc-for list="{{ hubSlots }}" as="sl" hint-placeholder-count="2">
+                    <div style="{{ sl.style }}">
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <span style="{{ sl.badgeStyle }}">{{ sl.badge }}</span>
+                        <span style="font-size:14px;color:#5b6672;flex:1">{{ sl.role }}</span>
+                        <span style="{{ sl.nextStyle }}">Nächster Klick</span>
+                        <span onClick="{{ sl.onClear }}" title="Aus dem Vergleich entfernen" style="{{ sl.clearStyle }}">×</span>
+                      </div>
+                      <div title="{{ sl.name }}" style="{{ sl.nameStyle }}">{{ sl.name }}</div>
                     </div>
                   </sc-for>
                 </div>
-                <div style="{{ hg.infoStyle }}">{{ hg.infoText }}</div>
-                <div style="{{ hg.emptyStyle }}">{{ hg.emptyText }}</div>
+                <!-- Beide Slots belegt: kurze A-oder-B-Auswahl statt stillem Ersetzen -->
+                <sc-if value="{{ hubPendingShow }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#122f28;color:#dff2ec;border-radius:8px;padding:9px 12px;font-size:14px">
+                    <span style="flex:1;min-width:180px">„{{ hubPendingName }}" ersetzt:</span>
+                    <button onClick="{{ hubPendingA }}" style="background:#0f6b5c;color:#fff;border:none;border-radius:6px;padding:5px 11px;font-size:14px;font-weight:600;cursor:pointer">A</button>
+                    <button onClick="{{ hubPendingB }}" style="background:#8a5a12;color:#fff;border:none;border-radius:6px;padding:5px 11px;font-size:14px;font-weight:600;cursor:pointer">B</button>
+                    <button onClick="{{ hubPendingCancel }}" style="background:none;color:#9fd4c6;border:none;font-size:14px;cursor:pointer;padding:5px 6px">Abbrechen</button>
+                  </div>
+                </sc-if>
+
+                <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
+                  <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B</div>
+                  <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
+                  </sc-if>
+                  <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:14px;color:#9aa4ad;margin-top:2px">{{ scenDiffScope }}</div>
+                    <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
+                      <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.6"></path>
+                      <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
+                        <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1"></path>
+                      </sc-for>
+                    </svg>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+                      <span style="font-size:14px;color:#5b6672">mehr in A</span>
+                      <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                      <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
+                      <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                      <span style="font-size:14px;color:#5b6672">mehr in B</span>
+                      <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
+                    </div>
+                    <div style="font-size:14px;color:#33413c;margin-top:8px">{{ scenDiffSummary }}</div>
+                    <sc-if value="{{ hubRefGapNote }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:14px;color:#5b6672;background:#f4f6f7;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
+                    </sc-if>
+                  </sc-if>
+                  <!-- Konsens vs. Planung: die zwei Deckungs-Kennzahlen, sobald ein Szenario gegen „Planungsflächen" steht -->
+                  <sc-if value="{{ showHubPlanung }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
+                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Von der Ausweisung trifft <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> den Konsens.</div>
+                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
+                    </div>
+                    <div style="font-size:14px;color:#9aa4ad;margin-top:6px">Bezogen auf {{ hubCoverScen }}.</div>
+                  </sc-if>
+                </div>
               </div>
-            </sc-for>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <sc-for list="{{ hubSlots }}" as="sl" hint-placeholder-count="2">
-                <div style="{{ sl.style }}">
-                  <span style="{{ sl.badgeStyle }}">{{ sl.badge }}</span>
-                  <span style="font-size:14px;color:#5b6672;flex:none">{{ sl.role }}</span>
-                  <span title="{{ sl.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sl.name }}</span>
-                  <span onClick="{{ sl.onClear }}" title="Aus dem Vergleich entfernen" style="{{ sl.clearStyle }}">×</span>
-                </div>
-              </sc-for>
-            </div>
-
-            <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
-              <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B</div>
-              <div style="font-size:14px;color:#5b6672;margin-top:4px;line-height:1.5">A = {{ scenAName }} · B = {{ scenBName }}</div>
-              <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
-              </sc-if>
-              <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#9aa4ad;margin-top:2px">{{ scenDiffScope }}</div>
-                <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
-                  <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.6"></path>
-                  <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
-                    <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1"></path>
-                  </sc-for>
-                </svg>
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
-                  <span style="font-size:14px;color:#5b6672">mehr in A</span>
-                  <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
-                  <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
-                  <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
-                  <span style="font-size:14px;color:#5b6672">mehr in B</span>
-                  <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
-                </div>
-                <div style="font-size:14px;color:#33413c;margin-top:8px">{{ scenDiffSummary }}</div>
-              </sc-if>
-              <!-- Konsens vs. Planung: die zwei Deckungs-Kennzahlen, sobald ein Szenario gegen „Planungsflächen" steht -->
-              <sc-if value="{{ showHubPlanung }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
-                  <div style="flex:1;min-width:240px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Von der Ausweisung trifft <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> den Konsens.</div>
-                  <div style="flex:1;min-width:240px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
-                </div>
-                <div style="font-size:14px;color:#9aa4ad;margin-top:6px">Bezogen auf {{ hubCoverScen }}.</div>
-              </sc-if>
             </div>
 
             <!-- Tabellen je Ebene: Deutschland (GW) und je Landkreis (MW) getrennt — nicht direkt vergleichbar. -->
@@ -605,6 +627,37 @@
 
     <!-- ============ RIGHT COLUMN ============ -->
     <aside class="scroll" style="width:340px;flex:none;background:#fff;border-left:1px solid #dde1e5;overflow-y:auto;padding:18px 18px 40px">
+      <!-- Hub: A/B-Zusammenfassung statt der Links-Konfiguration (sonst eine dritte, verwechselbare
+           Konsenszahl neben A und B). Ohne Auswahl nur ein kurzer Hinweis. -->
+      <sc-if value="{{ showHubSummary }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">Szenarien vergleichen</div>
+            <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
+          </div>
+          <sc-for list="{{ hubSumCards }}" as="hc" hint-placeholder-count="2">
+            <div style="{{ hc.boxStyle }}">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="{{ hc.badgeStyle }}">{{ hc.badge }}</span>
+                <span style="font-size:14px;color:#5b6672">{{ hc.kind }}</span>
+              </div>
+              <div title="{{ hc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
+              <div style="{{ hc.rowsStyle }}">
+                <sc-for list="{{ hc.rows }}" as="hr" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+              <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
+              <div class="num" style="font-size:24px;font-weight:700;color:#2f6690;margin-top:2px">{{ hubSumDiff }}</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
       <!-- OVERVIEW (no cell selected) -->
       <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
         <div>
@@ -879,6 +932,15 @@
     <div style="{{ scenarioToastStyle }}">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</div>
   </sc-if>
 
+  <!-- Löschen im Hub: Undo-Toast statt Dialog — stellt Szenario inkl. A/B-Zuordnung wieder her, blendet aus. -->
+  <sc-if value="{{ undoToastVisible }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ undoToastStyle }}">
+      <span>Szenario gelöscht</span>
+      <span style="color:#7fb8ac">·</span>
+      <span onClick="{{ undoDelete }}" style="color:#9fe0cf;font-weight:600;cursor:pointer">Rückgängig</span>
+    </div>
+  </sc-if>
+
   <!-- Regionsberechnung läuft: Vollflächen-Scrim über Karte UND Bedienelemente (linke/rechte Spalte,
        Tabs, Bottom-Toolbar) — deckt per position:fixed;inset:0 alles ab, nur „Abbrechen" bleibt klickbar
        (liegt als einziges interaktives Element im Scrim selbst). Sichtbar abgedimmt statt still
@@ -951,6 +1013,11 @@ class Component extends DCLogic {
     hubTech: null,      // Technologie-Filter im Vergleichs-Hub (null = wie links)
     hubPairs: null,     // A/B je Technologie: { wind: [idA, idB], pv: [...] }
     hubRefInfo: null,
+    hubPending: null,   // Objekt, das bei zwei vollen Slots auf die A-oder-B-Wahl wartet
+    hubCollapsed: null, // eingeklappte Objekt-Gruppen im Hub
+    undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
+    undoShow: false,
+    undoMounted: false,
     scenarioNameDraft: '',
     konfliktMode: 'dissens',
     scenarioToastShow: false,
@@ -1715,7 +1782,8 @@ class Component extends DCLogic {
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
     R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubPlanung = false;
-    R.hubGroups = []; R.hubSlots = []; R.hubTables = [];
+    R.hubGroups = []; R.hubSlots = []; R.hubTables = []; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
+    R.hubPendingShow = false;
     if (view === 'szenarien') {
       const hubTech = S.hubTech || S.tech;
       const hubScen = scenariosAll.filter(sc => sc.tech === hubTech);
@@ -1729,51 +1797,80 @@ class Component extends DCLogic {
         pair = pool.slice(0, 2);
       }
       pair = [0, 1].map(k => (pair[k] && objById[pair[k]]) ? pair[k] : null);
-      const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubTech]: np }) });
+      const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubTech]: np }), hubPending: null });
+      // Nächster Klick füllt den ersten freien Slot; sind beide belegt, fragt eine kurze A-oder-B-Auswahl
+      // (statt B still zu ersetzen).
+      const nextSlot = !pair[0] ? 0 : (!pair[1] ? 1 : -1);
+      const pending = S.hubPending && objById[S.hubPending] && !pair.includes(S.hubPending) ? S.hubPending : null;
       const pickObj = id => {
         if (pair.includes(id)) return;
-        const np = pair.slice();
-        if (!np[0]) np[0] = id; else if (!np[1]) np[1] = id; else np[1] = id;
-        setPair(np);
+        if (nextSlot === -1) { this.setState({ hubPending: id }); return; }
+        const np = pair.slice(); np[nextSlot] = id; setPair(np);
       };
+      R.hubPendingShow = !!pending;
+      if (pending) {
+        R.hubPendingName = objById[pending].name;
+        R.hubPendingA = () => setPair([pending, pair[1]]);
+        R.hubPendingB = () => setPair([pair[0], pending]);
+        R.hubPendingCancel = () => this.setState({ hubPending: null });
+      }
       const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
       const chip = o => {
         const ix = pair.indexOf(o.id), on = ix >= 0;
         // Referenzen visuell abgesetzt: gestrichelter Rahmen, eigener Grundton
-        const border = on ? '1px solid #9fb9b2' : (o.isRef ? '1px dashed #9aa4ad' : '1px solid #d2d7db');
+        const isPending = o.id === pending;
+        const border = isPending ? '2px solid #122f28' : on ? '1px solid #9fb9b2' : (o.isRef ? '1px dashed #9aa4ad' : '1px solid #d2d7db');
         const bg = on ? '#eef4f2' : (o.isRef ? '#f4f5f6' : '#fff');
         return {
           name: o.name, badge: on ? (ix === 0 ? 'A' : 'B') : '',
           badgeStyle: on ? badgeCss(ix) : 'display:none',
-          style: 'display:flex;align-items:center;gap:7px;max-width:300px;border:' + border + ';background:' + bg + ';border-radius:7px;padding:5px 10px;font-size:14px;color:#26303a',
+          style: 'display:flex;align-items:center;gap:7px;width:100%;box-sizing:border-box;border:' + border + ';background:' + bg + ';border-radius:7px;padding:5px 9px;font-size:14px;color:#26303a',
           onClick: () => pickObj(o.id),
           infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none' : 'display:none',
           onInfo: o.isRef ? (() => this.setState({ hubRefInfo: this.state.hubRefInfo === o.id ? null : o.id })) : (() => {})
         };
       };
       const infoRef = refObjs.find(r => r.id === S.hubRefInfo);
-      const groups = [{ label: 'Referenzen (immer vorhanden)', items: refObjs.map(chip),
-        infoText: infoRef ? infoRef.name + ': ' + infoRef.info : '',
-        infoStyle: infoRef ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:6px;line-height:1.45' : 'display:none',
-        emptyText: '', emptyStyle: 'display:none' }];
       const deScen = hubScen.filter(sc => !sc.isRegion);
       const regionKeys = [];
       hubScen.forEach(sc => { if (sc.isRegion && !regionKeys.includes(sc.regionKrsId)) regionKeys.push(sc.regionKrsId); });
       const levelGroups = [];
-      if (deScen.length) levelGroups.push({ label: 'Deutschland', isRegion: false, list: deScen });
-      regionKeys.forEach(k => { const list = hubScen.filter(sc => sc.isRegion && sc.regionKrsId === k); levelGroups.push({ label: list[0].regionLabel, isRegion: true, list }); });
-      levelGroups.forEach(g => groups.push({ label: g.label, items: g.list.map(chip), infoText: '', infoStyle: 'display:none', emptyText: '', emptyStyle: 'display:none' }));
-      if (!hubScen.length) groups.push({ label: 'Gespeicherte Szenarien', items: [], infoText: '', infoStyle: 'display:none',
+      if (deScen.length) levelGroups.push({ key: 'de', label: 'Deutschland', isRegion: false, list: deScen });
+      regionKeys.forEach(k => { const list = hubScen.filter(sc => sc.isRegion && sc.regionKrsId === k); levelGroups.push({ key: 'r_' + k, label: list[0].regionLabel, isRegion: true, list }); });
+      // Einklappbar: bei vielen Szenarien (> 6) starten Gruppen ohne A/B-Objekt eingeklappt
+      const manyScen = hubScen.length > 6;
+      const collapsedMap = S.hubCollapsed || {};
+      const mkGroup = (key, label, objs, extra) => {
+        const hasPick = objs.some(o => pair.includes(o.id) || o.id === pending);
+        const collapsed = key in collapsedMap ? collapsedMap[key] : (manyScen && key !== 'refs' && !hasPick);
+        return Object.assign({
+          label, count: objs.length ? String(objs.length) : '', caret: collapsed ? '▸' : '▾',
+          caretStyle: 'width:12px;flex:none;color:#9aa4ad',
+          headStyle: 'display:flex;align-items:center;gap:6px;font-size:14px;color:#5b6672;cursor:pointer;margin-bottom:6px;user-select:none',
+          onToggle: () => this.setState({ hubCollapsed: Object.assign({}, this.state.hubCollapsed || {}, { [key]: !collapsed }) }),
+          itemsStyle: collapsed ? 'display:none' : 'display:flex;flex-direction:column;gap:5px',
+          items: objs.map(chip),
+          infoText: '', infoStyle: 'display:none', emptyText: '', emptyStyle: 'display:none'
+        }, extra || {});
+      };
+      const groups = [mkGroup('refs', 'Referenzen (immer vorhanden)', refObjs, {
+        infoText: infoRef ? infoRef.name + ': ' + infoRef.info : '',
+        infoStyle: infoRef ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:6px;line-height:1.45' : 'display:none'
+      })];
+      levelGroups.forEach(g => groups.push(mkGroup(g.key, g.label, g.list)));
+      if (!hubScen.length) groups.push(mkGroup('none', 'Gespeicherte Szenarien', [], {
         emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. In einem anderen Reiter mit „Zum Vergleich speichern" anlegen — bis dahin lassen sich die Referenzen vergleichen.',
-        emptyStyle: 'font-size:14px;color:#8a929a;line-height:1.45' });
+        emptyStyle: 'font-size:14px;color:#8a929a;line-height:1.45' }));
       R.hubGroups = groups;
 
       R.hubSlots = [0, 1].map(k => {
-        const o = pair[k] ? objById[pair[k]] : null;
+        const o = pair[k] ? objById[pair[k]] : null, isNext = k === nextSlot;
         return {
           badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), role: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt',
-          name: o ? o.name + (o.isRef ? ' (Referenz)' : '') : '— bitte oben wählen',
-          style: 'flex:1;min-width:260px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #d2d7db;border-radius:8px;padding:8px 11px',
+          name: o ? o.name + (o.isRef ? ' (Referenz)' : '') : 'Noch leer — links ein Objekt anklicken',
+          nameStyle: 'font-size:' + (o ? '16px;font-weight:600;color:#1b2126' : '14px;font-weight:400;color:#8a929a') + ';margin-top:6px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
+          nextStyle: isNext ? 'font-size:12px;font-weight:700;letter-spacing:.3px;color:#0b6b5a;background:#e3f1ec;border-radius:4px;padding:2px 6px;flex:none' : 'display:none',
+          style: 'flex:1;min-width:200px;background:#fff;border:' + (isNext ? '2px dashed #57a893' : '1px solid #d2d7db') + ';border-radius:10px;padding:10px 13px',
           clearStyle: o ? 'cursor:pointer;color:#9aa4ad;font-size:16px;line-height:1;padding:2px;flex:none' : 'display:none',
           onClear: () => { const np = pair.slice(); np[k] = null; setPair(np); }
         };
@@ -1808,6 +1905,12 @@ class Component extends DCLogic {
         const sumA = va.reduce((x, y) => x + y, 0), sumB = vb.reduce((x, y) => x + y, 0);
         const what = o => o.isRef ? o.name : 'Zubaukonsens';
         R.scenDiffSummary = 'Gesamt: A (' + what(A) + ') ' + this.fmtU(sumA, lvlRegion) + ' · B (' + what(B) + ') ' + this.fmtU(sumB, lvlRegion) + ' · Differenz A − B ' + (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        R.hubSumDiff = (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        // Referenz verteilt das volle Ziel, das Szenario nur den Konsens darunter — nur Hinweis, Logik bleibt
+        const refSide = [A, B].find(o => o.isRef);
+        if (refSide && scenSide.length === 1) {
+          R.hubRefGapNote = 'Hinweis: ' + refSide.name + ' verteilt das volle Ausbauziel, das Szenario nur den Konsens darunter — ein Teil der Differenz ist diese Lücke, nicht nur die räumliche Verteilung.';
+        }
         // Konsens vs. Planung: Szenario gegen „Planungsflächen" → die zwei Deckungs-Kennzahlen (gleiche Logik
         // wie die frühere Planungsansicht, aus dem gespeicherten Zubaukonsens + Konfliktflächen des Szenarios)
         const planSide = [A, B].find(o => o.id === 'ref_planung'), scenOther = [A, B].find(o => !o.isRef);
@@ -1826,6 +1929,33 @@ class Component extends DCLogic {
           R.hubCoverScen = scenOther.name;
         }
       }
+
+      // Rechte Spalte: Kernzahlen von A und B gegenübergestellt (statt der Links-Konfiguration)
+      const prinz = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
+      const numCss = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;font-weight:600;text-align:right";
+      const txtCss = 'color:#26303a;text-align:right';
+      R.hubSumCards = [0, 1].map(k => {
+        const o = pair[k] ? objById[pair[k]] : null;
+        const card = { badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), rows: [],
+          boxStyle: 'padding:12px 13px;border-radius:10px;border:1px solid #e2e8e6;background:' + (o ? '#fff' : '#f7f8f9'),
+          rowsStyle: 'margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px' };
+        if (!o) return Object.assign(card, { kind: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt', name: 'Noch nicht gewählt', rowsStyle: 'display:none' });
+        if (o.isRef) {
+          const reg = scenSide.length ? lvlRegion : false;
+          return Object.assign(card, { kind: 'Referenz', name: o.name, rows: [
+            { k: 'Ebene', v: scenSide.length ? lvlLabel : 'Deutschland', vStyle: txtCss },
+            { k: 'Verteilt', v: this.fmtU(scenSide.length ? lvlTarget : S.targetGW, reg) + ' (volles Ziel)', vStyle: numCss }
+          ] });
+        }
+        const rows = [{ k: 'Ebene', v: o.isRegion ? o.regionLabel : 'Deutschland', vStyle: txtCss }];
+        if (o.isRegion) { rows.push({ k: 'Prinzipien DE', v: prinz(o.nationalSel), vStyle: txtCss }); rows.push({ k: 'Prinzipien regional', v: prinz(o.regionalSel), vStyle: txtCss }); }
+        else rows.push({ k: 'Prinzipien', v: prinz(o.regionalSel), vStyle: txtCss });
+        rows.push({ k: 'Ausbauziel', v: this.fmtU(o.target, o.isRegion), vStyle: numCss });
+        rows.push({ k: 'Zubaukonsens', v: this.fmtU(o.consensusTotal, o.isRegion), vStyle: numCss });
+        rows.push({ k: '% im Konsens', v: o.target ? this.pct(o.consensusTotal / o.target) : '—', vStyle: numCss });
+        rows.push({ k: 'Begrenzend', v: o.limitingName || '—', vStyle: txtCss });
+        return Object.assign(card, { kind: 'Szenario', name: o.name, rows });
+      });
 
       // Tabellen je Ebene — Region-Szenarien mit zwei Prinzipien-Zeilen (DE + regional), DE mit einer
       const CMP_ROW_H = 40;
@@ -1859,8 +1989,14 @@ class Component extends DCLogic {
       });
 
       // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
-      R.setHubWind = () => this.setState({ hubTech: 'wind' });
-      R.setHubPV = () => this.setState({ hubTech: 'pv' });
+      // Hub folgt der Technologie links, bis der Hub-Umschalter bewusst betätigt wird; danach sichtbar markiert
+      R.setHubWind = () => this.setState({ hubTech: 'wind', hubPending: null });
+      R.setHubPV = () => this.setState({ hubTech: 'pv', hubPending: null });
+      R.resetHubTech = () => this.setState({ hubTech: null, hubPending: null });
+      const techName = t => t === 'pv' ? 'Freiflächen-PV' : 'Wind';
+      const techDiverges = !!S.hubTech && S.hubTech !== S.tech;
+      R.hubTechNote = techDiverges ? 'Abweichend von links (' + techName(S.tech) + ')' : '';
+      R.hubTechNoteStyle = techDiverges ? 'font-size:14px;color:#8a5a12;background:#fbf3e8;border:1px solid #ead9bf;border-radius:6px;padding:3px 9px' : 'display:none';
       R.hubWindStyle = this.segLight(hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
       R.hubPVStyle = this.segLight(hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
       R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
@@ -2007,11 +2143,11 @@ class Component extends DCLogic {
       verteilungen: isEmpty ? 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Wählen Sie links ein Prinzip.' : 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau.',
       positiv: 'Wo Ausweisung und Konsens zusammengehen und wo nicht. Mitte = deckt sich.',
       differenz: 'Vergleich: der Konsens gegenüber der gewählten Verteilung. Grün = mehr Konsens, Braun = mehr bei der Vergleichsverteilung.',
-      szenarien: 'Tabelle: alle gespeicherten Szenarien. Karte: Differenz im Zubaukonsens zweier Szenarien derselben Ebene (A − B).'
+      szenarien: 'Karte: Differenz A − B — Szenario oder Referenz, auf derselben Ebene. Tabellen: gespeicherte Szenarien je Ebene.'
     })[view] || '';
     // Kurze Erklärzeile je Ansicht steht unter der Karte (direkt über der Farb-Legende), nicht unter den Reitern.
     R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
-    R.showKonsensDisclaimer = view !== 'regionGate' && stufe >= 2;
+    R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && stufe >= 2;
     R.currentView = view;
     R.isSingleView = view === 'single';
     R.showBackToGallery = view === 'single';
@@ -2069,12 +2205,17 @@ class Component extends DCLogic {
       this.setState(patch);
     };
     R.scenarioToastVisible = !!(S.scenarioToastShow || S.scenarioToastMounted);
+    R.undoToastVisible = !!(S.undoDelete && (S.undoShow || S.undoMounted));
+    R.undoDelete = () => this.undoDeleteScenario();
+    R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#122f28;color:#dff2ec;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);'
+      + (S.undoShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards;pointer-events:none');
     R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#122f28;color:#dff2ec;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:380px;text-align:center;pointer-events:none;'
       + (S.scenarioToastShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards');
 
     const scenarios = S.scenarios || [];
     R.scenarioCount = scenarios.length;
-    R.showScenarioIndicator = scenarios.length > 0;
+    // Nur Shortcut — der Haupteinstieg ist der Reiter; im Hub selbst überflüssig.
+    R.showScenarioIndicator = scenarios.length > 0 && view !== 'szenarien';
     R.showCompareEntry = scenarios.length >= 1;
     // „Szenarien vergleichen" ist ein Reiter (immer sichtbar), kein Popup.
     R.openCompare = () => this.setState({ tab: 'szenarien' });
@@ -2246,8 +2387,10 @@ class Component extends DCLogic {
     // Gemeinde-Detail (Modi 'gemeinden' / 'gemeinden-raster', s. o.) — aggregierte Zell-Ergebnisse dieser Gemeinde
     const selectedGemeindeIdx = (S.gemeinde && gemList && gemSelectable) ? gemList.findIndex(g => g.id === S.gemeinde) : -1;
     const selectedGemeinde = selectedGemeindeIdx >= 0 ? gemList[selectedGemeindeIdx] : null;
-    R.showOverview = !selectedCell && !selectedGemeinde;
-    R.showCell = !!selectedCell || !!selectedGemeinde;
+    // Im Hub zeigt die rechte Spalte die A/B-Zusammenfassung, nicht die Links-Konfiguration.
+    R.showHubSummary = view === 'szenarien';
+    R.showOverview = !R.showHubSummary && !selectedCell && !selectedGemeinde;
+    R.showCell = !R.showHubSummary && (!!selectedCell || !!selectedGemeinde);
 
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
     const scopeWord = isRegion ? 'dieser Region' : 'gesamt';
@@ -2694,14 +2837,31 @@ class Component extends DCLogic {
     this.startReveal();
   }
 
+  // Löschen ohne Dialog: Undo-Toast „Szenario gelöscht · Rückgängig" (≈ 6 s), stellt Szenario an seiner
+  // Position inkl. A/B-Zuordnung wieder her.
   deleteScenario(id) {
+    const idx = this.state.scenarios.findIndex(s => s.id === id);
+    if (idx < 0) return;
     const scenarios = this.state.scenarios.filter(s => s.id !== id);
-    const patch = { scenarios };
+    const patch = { scenarios, hubPending: null,
+      undoDelete: { sc: this.state.scenarios[idx], idx, hubPairs: this.state.hubPairs }, undoShow: true, undoMounted: true };
+    clearTimeout(this._undoT1); clearTimeout(this._undoT2);
+    this._undoT1 = setTimeout(() => this.setState({ undoShow: false }), 6000);
+    this._undoT2 = setTimeout(() => this.setState({ undoMounted: false, undoDelete: null }), 6400);
     if (this.state.hubPairs) {
       const hp = {}; Object.keys(this.state.hubPairs).forEach(t => hp[t] = this.state.hubPairs[t].map(x => x === id ? null : x));
       patch.hubPairs = hp;
     }
     this.setState(patch);
+  }
+
+  undoDeleteScenario() {
+    const u = this.state.undoDelete;
+    if (!u) return;
+    clearTimeout(this._undoT1); clearTimeout(this._undoT2);
+    const scenarios = this.state.scenarios.slice();
+    scenarios.splice(Math.min(u.idx, scenarios.length), 0, u.sc);
+    this.setState({ scenarios, hubPairs: u.hubPairs, undoDelete: null, undoShow: false, undoMounted: false });
   }
 
   renderVals() { return this.build(); }

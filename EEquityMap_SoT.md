@@ -854,3 +854,25 @@ wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
 Zeitreihe zeigt berechnete Zielzustände für verschiedene Jahre. Jeder Zustand
 basiert auf einer separaten Greenfield-Berechnung; die Ergebnisse bauen nicht
 schrittweise auf dem Vorjahr auf."
+
+**Vereinfachung (Session 2026-10-09, nachgezogen):**
+- **Held = A/B-Slots + Differenzkarte** (breit, rechts im Hub); die Objektliste steht
+  links daneben, optisch zurückgenommen. Gruppen per ▸/▾ einklappbar; bei > 6
+  Szenarien starten Gruppen ohne A/B-Objekt eingeklappt.
+- **A/B-Auswahl lesbar:** Der Slot, den der nächste Klick füllt, trägt „Nächster
+  Klick" (gestrichelter Rahmen). Sind beide belegt, erscheint statt stillem
+  Ersetzen eine Leiste „„X" ersetzt: [A] [B] Abbrechen".
+- **Rechte Spalte im Hub:** A/B-Zusammenfassung (Kernzahlen je Seite + Differenz
+  gesamt), nie die Links-Konfiguration. Ohne Auswahl: „Noch nicht gewählt".
+- **Konsens-Disclaimer** im Hub ausgeblendet (übrige Reiter unverändert).
+- **Löschen:** kein Dialog; Undo-Toast „Szenario gelöscht · Rückgängig" (≈ 6 s),
+  stellt Szenario an seiner Position inkl. A/B-Zuordnung wieder her.
+- **Wind/PV:** Hub folgt links, bis der Hub-Umschalter betätigt wird; danach
+  Kennzeichnung „Abweichend von links (…)" mit „Wie links" zum Zurücksetzen.
+- **Referenz-Hinweis:** Steht ein Szenario gegen eine Referenz: „Hinweis:
+  [Referenz] verteilt das volle Ausbauziel, das Szenario nur den Konsens
+  darunter — ein Teil der Differenz ist diese Lücke, nicht nur die räumliche
+  Verteilung." (Logik unverändert.)
+- **Einstieg:** Haupteinstieg ist der Reiter; die Zeile „Gespeicherte Szenarien (N)
+  · Vergleichen →" ist nur Shortcut und im Hub ausgeblendet. Leere GW-/MW-Tabellen
+  werden nicht gerendert.
