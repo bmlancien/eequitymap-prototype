@@ -908,3 +908,15 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   zeigt das Dropdown einen Hinweis statt einer leeren Gruppe.
 - Die Tabellen je Ebene sind die Gesamtübersicht aller gespeicherten Szenarien
   (ersetzt die weggefallene Objektliste).
+
+**Button-Positionen (Session 2026-10-09):**
+- „Zum Vergleich speichern" steht in der linken Spalte direkt unter den
+  Prinzipien (volle Breite, umrandet wie „Vergleich teilen"), nicht mehr in der
+  Tab-Reihe. Sichtbar nur, wenn es etwas zu speichern gibt UND die aktuelle
+  Konfiguration noch nicht gespeichert ist (gleiche Ebene, Prinzipien DE +
+  regional, Technologie, Ausbauziel, Bestandsanrechnung); im Hub ausgeblendet.
+- „Vergleich teilen" steht rechtsbündig unter der Tab-Linie, direkt über der
+  Wind-/PV-Hub-Box. Die Tab-Reihe enthält nur noch die Reiter.
+- Die Zeile „Gespeicherte Szenarien (N) · Vergleichen → · Nur für diese Sitzung."
+  entfällt; Einstieg ist allein der Reiter. Der Session-only-Hinweis steht weiter
+  im Speichern-Dialog.
