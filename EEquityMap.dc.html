@@ -169,6 +169,8 @@
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#9aa4ad;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
         <div style="font-size:14px;color:#33413c;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
+        <!-- Greenfield-Hinweis zu den Jahres-Marken (2030/2035/2045) -->
+        <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">Die dargestellte Zeitreihe zeigt berechnete Zielzustände für verschiedene Jahre. Jeder Zustand basiert auf einer separaten Greenfield-Berechnung; die Ergebnisse bauen nicht schrittweise auf dem Vorjahr auf.</div>
       </div>
 
       <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
@@ -248,12 +250,6 @@
             <button onClick="{{ setKonfliktAnders }}" style="{{ konfliktAndersStyle }}">Wer denkt anders?</button>
           </div>
         </sc-if>
-        <sc-if value="{{ showVergleichToggle }}" hint-placeholder-val="{{ false }}">
-          <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin:8px 0 4px">
-            <button onClick="{{ setVergleichReferenz }}" style="{{ vergleichReferenzStyle }}">Konsens vs. Referenz</button>
-            <button onClick="{{ setVergleichPlanung }}" style="{{ vergleichPlanungStyle }}">Konsens vs. Planung</button>
-          </div>
-        </sc-if>
         <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
           <div style="font-size:14px;color:#9aa4ad;line-height:1.45;margin-top:2px">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </sc-if>
@@ -301,51 +297,56 @@
           </div>
         </sc-if>
 
-        <!-- Szenarien vergleichen (Reiter, ab ≥ 2 Szenarien): Tabelle = allgemeine Vergleichssicht für alle
-             Szenarien; Differenzkarte zusätzlich nur für genau zwei Szenarien derselben Ebene (§N). -->
+        <!-- Szenarien vergleichen = einziger Vergleichs-Hub (immer sichtbar): oben alle gespeicherten Szenarien
+             der gewählten Technologie, gruppiert nach Ebene, plus die zwei Referenzen (immer vorhanden). A =
+             Ausgangspunkt, B = Vergleichsobjekt — je ein Szenario oder eine Referenz. Differenzkarte nur für
+             zwei Objekte derselben Ebene (eine Referenz übernimmt die Ebene des Szenarios). Tabellen je Ebene. -->
         <sc-if value="{{ isSzenarien }}" hint-placeholder-val="{{ false }}">
-          <div style="flex:none;display:flex;flex-direction:column;gap:14px">
-            <div style="font-size:14px;color:#8a929a">Deutschland-Szenarien in GW, Regions-Szenarien in MW — an der Kennzeichnung im Spaltenkopf erkennbar, nicht direkt vergleichbar.</div>
-            <div class="scroll" style="flex:none;overflow-x:auto;border:1px solid #e2e5e8;border-radius:10px">
-              <div style="display:flex;min-width:max-content">
-                <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
-                  <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
-                  <sc-for list="{{ compareRowLabels }}" as="rl" hint-placeholder-count="6">
-                    <div style="{{ rl.style }}">{{ rl.label }}</div>
-                  </sc-for>
-                </div>
-                <!-- Spaltenkopf = die einzige Verwaltung je Szenario: Name, „Wiederherstellen" (lädt Config +
-                     Karte) und × (löschen) — kein separates Chip-Control mehr (§N). -->
-                <sc-for list="{{ compareScenarios }}" as="csc" hint-placeholder-count="2">
-                  <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
-                    <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
-                      <div style="display:flex;align-items:center;gap:8px">
-                        <span style="{{ csc.pairTagStyle }}">{{ csc.pairTag }}</span>
-                        <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
-                        <span onClick="{{ csc.onRemove }}" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
-                      </div>
-                      <span style="{{ csc.scopeTagStyle }}">{{ csc.scopeTag }}</span>
-                      <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
-                    </div>
-                    <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
-                      <div style="{{ cell.style }}">{{ cell.value }}</div>
-                    </sc-for>
-                  </div>
-                </sc-for>
+          <div style="{{ hubStyle }}">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-size:15px;font-weight:600;color:#1b2126">Vergleichsobjekte</div>
+              <div style="flex:1"></div>
+              <span style="font-size:14px;color:#5b6672">Technologie</span>
+              <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+                <button onClick="{{ setHubWind }}" style="{{ hubWindStyle }}">Wind</button>
+                <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
               </div>
             </div>
+            <div style="font-size:14px;color:#5b6672;line-height:1.45">Szenario oder Referenz anklicken, um es als A (Ausgangspunkt) oder B (Vergleichsobjekt) zu setzen.</div>
 
-            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
-              <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: Zubaukonsens A − B</div>
-              <sc-if value="{{ scenPickShow }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#5b6672;margin:8px 0 6px">Genau zwei Szenarien für die Karte wählen (die Tabelle zeigt weiter alle):</div>
+            <sc-for list="{{ hubGroups }}" as="hg" hint-placeholder-count="2">
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ hg.label }}</div>
                 <div style="display:flex;flex-wrap:wrap;gap:6px">
-                  <sc-for list="{{ scenPick }}" as="sp" hint-placeholder-count="3">
-                    <div onClick="{{ sp.onClick }}" style="{{ sp.style }}"><span style="{{ sp.badgeStyle }}">{{ sp.badge }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sp.name }}</span></div>
+                  <sc-for list="{{ hg.items }}" as="hi" hint-placeholder-count="2">
+                    <div style="{{ hi.style }}">
+                      <span onClick="{{ hi.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;min-width:0">
+                        <span style="{{ hi.badgeStyle }}">{{ hi.badge }}</span>
+                        <span title="{{ hi.name }}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hi.name }}</span>
+                      </span>
+                      <span style="{{ hi.infoBtnStyle }}" onClick="{{ hi.onInfo }}">i</span>
+                    </div>
                   </sc-for>
                 </div>
-              </sc-if>
-              <div style="font-size:14px;color:#5b6672;margin-top:8px;line-height:1.5">A = {{ scenAName }} · B = {{ scenBName }}</div>
+                <div style="{{ hg.infoStyle }}">{{ hg.infoText }}</div>
+                <div style="{{ hg.emptyStyle }}">{{ hg.emptyText }}</div>
+              </div>
+            </sc-for>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <sc-for list="{{ hubSlots }}" as="sl" hint-placeholder-count="2">
+                <div style="{{ sl.style }}">
+                  <span style="{{ sl.badgeStyle }}">{{ sl.badge }}</span>
+                  <span style="font-size:14px;color:#5b6672;flex:none">{{ sl.role }}</span>
+                  <span title="{{ sl.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sl.name }}</span>
+                  <span onClick="{{ sl.onClear }}" title="Aus dem Vergleich entfernen" style="{{ sl.clearStyle }}">×</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
+              <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B</div>
+              <div style="font-size:14px;color:#5b6672;margin-top:4px;line-height:1.5">A = {{ scenAName }} · B = {{ scenBName }}</div>
               <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
               </sc-if>
@@ -367,7 +368,48 @@
                 </div>
                 <div style="font-size:14px;color:#33413c;margin-top:8px">{{ scenDiffSummary }}</div>
               </sc-if>
+              <!-- Konsens vs. Planung: die zwei Deckungs-Kennzahlen, sobald ein Szenario gegen „Planungsflächen" steht -->
+              <sc-if value="{{ showHubPlanung }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
+                  <div style="flex:1;min-width:240px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Von der Ausweisung trifft <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> den Konsens.</div>
+                  <div style="flex:1;min-width:240px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
+                </div>
+                <div style="font-size:14px;color:#9aa4ad;margin-top:6px">Bezogen auf {{ hubCoverScen }}.</div>
+              </sc-if>
             </div>
+
+            <!-- Tabellen je Ebene: Deutschland (GW) und je Landkreis (MW) getrennt — nicht direkt vergleichbar. -->
+            <sc-for list="{{ hubTables }}" as="tbl" hint-placeholder-count="1">
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ tbl.title }}</div>
+                <div class="scroll" style="flex:none;overflow-x:auto;border:1px solid #e2e5e8;border-radius:10px;background:#fff">
+                  <div style="display:flex;min-width:max-content">
+                    <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
+                      <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
+                      <sc-for list="{{ tbl.rowLabels }}" as="rl" hint-placeholder-count="6">
+                        <div style="{{ rl.style }}">{{ rl.label }}</div>
+                      </sc-for>
+                    </div>
+                    <!-- Spaltenkopf = Verwaltung je Szenario: „Wiederherstellen" (lädt Config + Karte) und × (löschen) -->
+                    <sc-for list="{{ tbl.cols }}" as="csc" hint-placeholder-count="2">
+                      <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
+                        <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
+                          <div style="display:flex;align-items:center;gap:8px">
+                            <span style="{{ csc.pairTagStyle }}">{{ csc.pairTag }}</span>
+                            <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
+                            <span onClick="{{ csc.onRemove }}" title="Szenario löschen" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
+                          </div>
+                          <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
+                        </div>
+                        <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
+                          <div style="{{ cell.style }}">{{ cell.value }}</div>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
           </div>
         </sc-if>
 
@@ -500,15 +542,6 @@
               </sc-for>
             </div>
           </sc-if>
-          <!-- positiv: eine Deckungsachse -->
-          <sc-if value="{{ legendDeck }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:9px">
-              <span style="font-size:14px;color:#5b6672">Konsens über Planung</span>
-              <div style="width:150px;height:11px;border-radius:3px;background:{{ legendDeckGrad }}"></div>
-              <span style="font-size:14px;color:#5b6672">Planung über Konsens</span>
-              <span style="font-size:14px;color:#9aa4ad">· Mitte = deckt sich</span>
-            </div>
-          </sc-if>
           <!-- Konfliktflächen „Wer denkt anders?"-Legende -->
           <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:6px">
@@ -524,18 +557,6 @@
               </div>
             </div>
           </sc-if>
-          <!-- diverging legend -->
-          <sc-if value="{{ legendDiv }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;flex-direction:column;gap:3px">
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:14px;color:#7a848c" class="num">−{{ divMax }} {{ scopeUnit }}</span>
-                <div style="width:170px;height:11px;border-radius:3px;background:{{ divGrad }}"></div>
-                <span style="font-size:14px;color:#7a848c" class="num">+{{ divMax }} {{ scopeUnit }}</span>
-              </div>
-              <span style="font-size:14px;color:#8a929a">{{ divCaption }}</span>
-            </div>
-          </sc-if>
-
           <div style="flex:1"></div>
 
           <sc-if value="{{ showPlan }}" hint-placeholder-val="{{ true }}">
@@ -547,31 +568,9 @@
           </sc-if>
         </div>
 
-        <!-- compare + toggles row -->
+        <!-- Ansichts-Zeile (Regionsansicht, Erweitert) -->
         <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #e2e5e8">
-            <sc-if value="{{ showCompare }}" hint-placeholder-val="{{ false }}">
-              <div style="position:relative">
-                <span style="font-size:14px;color:#5b6672;margin-right:8px">Konsens verglichen mit:</span>
-                <button onClick="{{ toggleCompareMenu }}" style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 11px;font-size:14px;color:#26303a;cursor:pointer;font-weight:500">{{ compareName }} ▾</button>
-                <div style="{{ compareMenuStyle }}">
-                  <sc-for list="{{ compareOptions }}" as="co" hint-placeholder-count="4">
-                    <div onClick="{{ co.onClick }}" style="{{ co.rowStyle }}" style-hover="background:#eff3f2">{{ co.label }}</div>
-                  </sc-for>
-                </div>
-              </div>
-            </sc-if>
-
-            <div style="flex:1"></div>
-
-            <sc-if value="{{ showHideToggle }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;align-items:center;gap:8px">
-                <button onClick="{{ toggleHide }}" style="{{ hideSwitchStyle }}"><span style="{{ hideKnobStyle }}"></span></button>
-                <span style="font-size:14px;color:#333c44">Konfliktflächen ausblenden</span>
-                <span style="font-size:14px;color:#9aa4ad">Nur Anzeige — ändert die Berechnung nicht.</span>
-              </div>
-            </sc-if>
-
             <!-- Gemeinde-Ansichts-Umschalter: nur Erweitert + Regionsansicht, Testfeature s. SoT §M -->
             <sc-if value="{{ showGemToggle }}" hint-placeholder-val="{{ false }}">
               <!-- Eigene volle Zeile + feste Breite/gleich breite Spalten: die Auswahl (fetter Text, wechselnder
@@ -662,14 +661,6 @@
             </div>
           </sc-if>
 
-          <!-- positiv: Deckung -->
-          <sc-if value="{{ anCoverage }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
-              <div style="padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Von der Ausweisung trifft <b class="num" style="font-size:22px;color:#a85a17">{{ coverA }} %</b> den Konsens.</div>
-              <div style="padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ coverB }} %</b> ausgewiesen.</div>
-            </div>
-          </sc-if>
-
           <!-- Konfliktflächen: Zellen je abweichender Verteilung -->
           <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
@@ -685,22 +676,6 @@
               <sc-if value="{{ comboMore }}" hint-placeholder-val="{{ false }}">
                 <button onClick="{{ toggleCombos }}" style="margin-top:8px;background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ comboMoreLabel }}</button>
               </sc-if>
-            </div>
-          </sc-if>
-
-          <!-- differenz: größte Abweichungen -->
-          <sc-if value="{{ anDiff }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:18px">
-              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:11px">Größte Abweichungen</div>
-              <sc-for list="{{ diffRows }}" as="dr" hint-placeholder-count="4">
-                <div onClick="{{ dr.onClick }}" style="display:flex;align-items:flex-start;gap:9px;font-size:14px;padding:7px 0;border-bottom:1px solid #eef1f2;cursor:pointer" style-hover="background:#f6f8f9">
-                  <span style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ dr.color }};margin-top:3px"></span>
-                  <div style="flex:1">
-                    <div style="color:#26303a;font-weight:600">{{ dr.label }}</div>
-                    <div style="color:#5b6672;font-size:14px;margin-top:1px">{{ dr.gw }}</div>
-                  </div>
-                </div>
-              </sc-for>
             </div>
           </sc-if>
 
@@ -775,19 +750,6 @@
                 </div>
               </sc-for>
             </div>
-            <sc-if value="{{ cellShowDiff }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:14px;padding:11px 13px;background:#f5f7f7;border-radius:10px">
-                <div style="font-size:14px;color:#5b6672">Differenz dieser Zelle</div>
-                <div style="font-size:14px;font-weight:600;color:{{ cellDiffColor }};margin-top:2px">{{ cellDiffLine }}</div>
-              </div>
-            </sc-if>
-            <sc-if value="{{ cellShowPos }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:14px;padding:11px 13px;background:#f5f7f7;border-radius:10px;display:flex;flex-direction:column;gap:7px">
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Anteil ausgewiesen</span><span class="num" style="color:#26303a;font-weight:600">{{ cellAusgPct }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Zubaukonsens dieser Zelle</span><span class="num" style="color:#26303a;font-weight:600">{{ cellKonsGW }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Einordnung</span><span style="color:{{ cellDeckColor }};font-weight:600">{{ cellDeckWord }}</span></div>
-              </div>
-            </sc-if>
           </sc-if>
 
           <!-- Regionsprofil: mit ZUBAU_AS_HERO ausgeblendet (Bestand/Zubau stehen in der Kontextzeile, der
@@ -957,8 +919,6 @@ class Component extends DCLogic {
     accountInfo: false,
     tab: 'konsens',
     plan: 'zubau',
-    compare: null,
-    compareMenu: false,
     cell: null,
     hideConflict: false,
     // Zwei-Ebenen-Modell (§M): 'de' = Deutschland/Landkreise, 'region' = eine Regionsansicht (5×5 km)
@@ -985,11 +945,12 @@ class Component extends DCLogic {
     zoom: null,
     freeTarget: false,
     revealP: 1,
-    refs: [],
-    infoRef: null,
     // Szenarien speichern & vergleichen (§N) — session-only, im Speicher, keine Persistenz.
     scenarios: [],
     scenarioSaveOpen: false,
+    hubTech: null,      // Technologie-Filter im Vergleichs-Hub (null = wie links)
+    hubPairs: null,     // A/B je Technologie: { wind: [idA, idB], pv: [...] }
+    hubRefInfo: null,
     scenarioNameDraft: '',
     konfliktMode: 'dissens',
     scenarioToastShow: false,
@@ -997,7 +958,8 @@ class Component extends DCLogic {
     scenarioFirstSaveSeen: false
   };
 
-  refDist(rid) { const r = this.refById[rid]; const raw = this.krs.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*this.state.targetGW); }
+  // Referenzwerte einer Hub-Referenz auf beliebigen Zellen (Landkreise oder 5×5-km-Raster), auf ein Ziel skaliert.
+  refValsFor(rid, cells, target) { const r = this.hubRefs.find(x => x.id === rid); const raw = cells.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*target); }
 
   startReveal() {
     if (this._raf) cancelAnimationFrame(this._raf);
@@ -1027,14 +989,11 @@ class Component extends DCLogic {
     ];
     this.CONS = '#2f6690';      // Konsens-Skala (Steel Blue) — getrennt von Prinzip- und Markenfarbe
     this.CONFLICT = '#c2185b';  // Konfliktflächen — eigene, von Prinzipfarben klar unterscheidbare Kodierung
-    // Externe Referenzverteilungen — keine Gerechtigkeitsprinzipien, sondern vorgegebene Vergleichswerte.
-    // Werden nie in den Konsens gerechnet; erscheinen als zusätzliche blaue Verteilungskarten.
-    this.references = [
-      { id: 'ref_historisch', name: 'Historischer Ausbau', info: 'So wurde bisher real gebaut — die heutige Verteilung des Bestands.', field: c => Math.max(0.05, 0.6*c.y + 0.4*c.x + 0.15*c.noise) },
-      { id: 'ref_kosten', name: 'Günstigster Ausbau', info: 'So sähe der wirtschaftlich optimale Ausbau aus — bester Ertrag zuerst.', field: c => 12 + 70*c.y + 28*(1-c.density) },
-      { id: 'ref_potenzial', name: 'Potenzialflächen', info: 'Verfügbare Potenzialfläche — wo technisch am meisten Platz ist.', field: c => c.potential }
+    // Die zwei festen Referenzen im Vergleichs-Hub („Szenarien vergleichen") — immer vorhanden, als A/B wählbar.
+    this.hubRefs = [
+      { id: 'ref_historisch', name: 'Historischer Ausbau', info: 'So wurde bisher real gebaut — die heutige Verteilung des Bestands, auf dasselbe Ausbauziel skaliert.', field: c => Math.max(0.05, 0.6*c.y + 0.4*c.x + 0.15*c.noise) },
+      { id: 'ref_planung', name: 'Planungsflächen', info: 'Offiziell ausgewiesene Flächen — der Zubau verteilt nach dem ausgewiesenen Flächenanteil je Zelle, auf dasselbe Ausbauziel skaliert.', field: c => c.ausgAnteil }
     ];
-    this.refById = {}; this.references.forEach(r => this.refById[r.id] = r);
     this.byId = {};
     this.principles.forEach(p => this.byId[p.id] = p);
     this.buildKrs();
@@ -1340,7 +1299,7 @@ class Component extends DCLogic {
     // kommt damit rechenbereit an statt als leere „0,00 GW"-Konfiguration.
     const initialSel = S.selected.filter(avail);
     this.setState({
-      level: 'region', region: { krsId, label }, cell: null, gemeinde: null, compare: null, tab: 'konsens',
+      level: 'region', region: { krsId, label }, cell: null, gemeinde: null, tab: 'konsens',
       selectedRegional: initialSel, regionComputedSel: null, regionComputedTarget: null, regionComputedSig: null,
       regionComputing: false, regionProgress: 0, natBreadcrumbOpen: false
     });
@@ -1383,7 +1342,7 @@ class Component extends DCLogic {
     if (this.state.regionComputedSel != null) {
       this.setState({ regionComputing: false, regionProgress: 0 });
     } else {
-      this.setState({ regionComputing: false, regionProgress: 0, level: 'de', region: null, cell: null, gemeinde: null, compare: null });
+      this.setState({ regionComputing: false, regionProgress: 0, level: 'de', region: null, cell: null, gemeinde: null });
     }
   }
 
@@ -1403,7 +1362,6 @@ class Component extends DCLogic {
   brown(t) { return this.mix('#f3efe6', '#6b3f0e', 0.08 + 0.9 * t); }
   div(t) { return t >= 0 ? this.mix('#f3f2ec', '#0f6b5c', t) : this.mix('#f3f2ec', '#8a5a12', -t); }
   // Deckung Planung/Konsens: warm = Planung über Konsens, kühl = Konsens über Planung, Mitte hell
-  deckColor(t) { t = Math.max(-1, Math.min(1, t)); return t >= 0 ? this.mix('#f2f1ee', '#a85a17', t) : this.mix('#f2f1ee', '#1d5f80', -t); }
 
   // Zerlegt einen mit ringToPath (buildKrs/regionCellsFor) erzeugten Pfad ("Mx,yLx,yLx,y…Z" je Ring,
   // ohne Leerzeichen, direkt aneinandergereiht) zurück in Ring-Punktlisten — für die 5×5-km-Clipping-
@@ -1525,13 +1483,11 @@ class Component extends DCLogic {
     // Verteilungen-Tab in der Explorationsphase aktiv ist, zeigt sie ALLE Prinzipien.
     let view;
     const scenariosAll = S.scenarios || [];
-    if (S.tab === 'szenarien' && scenariosAll.length >= 2) view = 'szenarien';
+    if (S.tab === 'szenarien') view = 'szenarien';
     else if (regionNeedsGate) view = 'regionGate';
     else if (isEmpty) view = 'verteilungen';
-    else if (S.compare) view = 'differenz';
     else if (S.tab === 'verteilungen') view = 'verteilungen';
     else if (stufe === 1) view = 'single';
-    else if (S.tab === 'positiv') view = 'positiv';
     else if (S.tab === 'konflikt') view = 'konflikt';
     else if (S.tab === 'minimum') view = 'minimum';
     else view = 'konsens';
@@ -1607,14 +1563,6 @@ class Component extends DCLogic {
       R.emptyCells = cells.map(c => ({ d: c.d }));
     }
     const planVal = i => effPlan === 'bestand' ? cells[i].bestandGW : effPlan === 'gesamt' ? cells[i].bestandGW + gwSel[singlePid][i] : gwSel[singlePid][i];
-
-    const compareVals = () => {
-      const c = S.compare;
-      if (!c) return cells.map(()=>0);
-      if (c.type === 'principle') return gwArr(c.id);
-      if (c.type === 'ref') return this.refDist(c.id);
-      const s = cells.map(x => x.posPlan), su = s.reduce((a,b)=>a+b,0); return s.map(v => v/su*target); // fallback
-    };
 
     // Metrik für Konflikt-Ausblenden + Reveal-Animation
     let metric;
@@ -1759,85 +1707,164 @@ class Component extends DCLogic {
         R.upsetBodyStyle = R.upsetOpen ? 'display:block' : 'display:none';
       }
       R.showPlan = false;
-    } else if (view === 'positiv') {
-      // EINE abgeleitete Größe: Deckung von Planung und Konsens je Zelle.
-      // deck = normierter Ausweisungsanteil − normierter Zubaukonsens  (−1 … +1)
-      const base = consCells || cells.map((c,i)=>gwSel[singlePid][i]);
-      const mx = Math.max.apply(null, base) || 1;
-      const amx = Math.max.apply(null, cells.map(c => c.ausgAnteil)) || 1;
-      const deck = cells.map((c,i) => (c.ausgAnteil / amx) - (base[i] / mx));
-      R.deckVals = deck;
-      R.mainCells = cells.map((c,i) => mkCell(i, this.deckColor(deck[i]), { hidden: S.hideConflict && isConflict[i] }));
-      R.overlayCells = []; R.hasOverlay = false;
-      R.legendDeck = true;
-      R.legendDeckGrad = 'linear-gradient(90deg,' + this.deckColor(-1) + ',' + this.deckColor(0) + ',' + this.deckColor(1) + ')';
-      // Zwei Richtungen desselben Verhältnisses (Flächenanteile)
-      let ausgImKonsens = 0, ausgTot = 0, konsAusg = 0, konsTot = 0;
-      cells.forEach((c,i) => {
-        const imKonsens = !isConflict[i] && base[i] > 0.35 * mx;
-        ausgTot += c.ausgAnteil;
-        if (imKonsens) { ausgImKonsens += c.ausgAnteil; konsTot += base[i]; konsAusg += base[i] * c.ausgAnteil; }
-      });
-      R.posKennzahl = ausgTot ? Math.round(ausgImKonsens/ausgTot*100) : 0;
-      R.posKennzahl2 = konsTot ? Math.round(konsAusg/konsTot*100) : 0;
-      R.showPlan = false;
-    } else if (view === 'differenz') {
-      const base = stufe >= 2 ? consCells : gwSel[singlePid];
-      const cmp = compareVals();
-      const diffs = cells.map((c,i) => base[i] - cmp[i]);
-      const mxa = Math.max(...diffs.map(Math.abs)) || 1;
-      R.mainCells = cells.map((c,i) => mkCell(i, this.div(diffs[i]/mxa)));
-      R.legendDiv = true;
-      R.divGrad = 'linear-gradient(90deg,' + this.div(-1) + ',' + this.div(0) + ',' + this.div(1) + ')';
-      R.divMax = this.fmtN(mxa, isRegion);
-      const baseName = stufe >= 2 ? 'Zubaukonsens' : this.byId[singlePid].name;
-      R.divCaption = 'mehr bei ' + S.compare.label + '  ·  mehr bei ' + baseName;
-      R.divExplain = 'Jede Zelle zeigt die Differenz: grün = ' + baseName + ' weist ihr mehr Zubau zu, braun = ' + S.compare.label + ' weist ihr mehr zu, blass = beide gleich. Je kräftiger, desto größer der Unterschied.';
-      R.showPlan = false;
     }
 
-    // Szenarien vergleichen: Differenzkarte (Zubaukonsens A − B) nur für GENAU zwei Szenarien derselben
-    // Ebene (zwei DE-Szenarien bzw. zwei Szenarien desselben Landkreises) — sonst kein gemeinsamer
-    // räumlicher Rahmen, also keine Karte, nur der Hinweis. Die Tabelle zeigt weiter alle Szenarien.
-    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenPick = []; R.scenDiffCells = [];
+    // ---------- Szenarien vergleichen = Vergleichs-Hub (§N) ----------
+    // Objekte: gespeicherte Szenarien der im Hub gewählten Technologie (eigener Filter, startet mit der
+    // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
+    // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
+    // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
+    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubPlanung = false;
+    R.hubGroups = []; R.hubSlots = []; R.hubTables = [];
     if (view === 'szenarien') {
-      const byIdS = {}; scenariosAll.forEach(sc => byIdS[sc.id] = sc);
-      let pair = (S.scenPair || []).filter(id => byIdS[id]);
-      if (!S.scenPair && scenariosAll.length >= 2) pair = scenariosAll.slice(0, 2).map(sc => sc.id);
-      R.scenPickShow = scenariosAll.length > 2;
-      R.scenPick = scenariosAll.map(sc => {
-        const ix = pair.indexOf(sc.id), on = ix >= 0;
+      const hubTech = S.hubTech || S.tech;
+      const hubScen = scenariosAll.filter(sc => sc.tech === hubTech);
+      const refObjs = this.hubRefs.map(r => ({ id: r.id, name: r.name, info: r.info, isRef: true }));
+      const objById = {}; hubScen.forEach(sc => objById[sc.id] = sc); refObjs.forEach(r => objById[r.id] = r);
+      const pairs = S.hubPairs || {};
+      let pair = pairs[hubTech];
+      if (!pair) {
+        // Default: zwei Szenarien; bei nur einem Szenario gegen „Planungsflächen"; ohne Szenario die zwei Referenzen
+        const pool = hubScen.map(sc => sc.id).concat(['ref_planung', 'ref_historisch']);
+        pair = pool.slice(0, 2);
+      }
+      pair = [0, 1].map(k => (pair[k] && objById[pair[k]]) ? pair[k] : null);
+      const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubTech]: np }) });
+      const pickObj = id => {
+        if (pair.includes(id)) return;
+        const np = pair.slice();
+        if (!np[0]) np[0] = id; else if (!np[1]) np[1] = id; else np[1] = id;
+        setPair(np);
+      };
+      const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
+      const chip = o => {
+        const ix = pair.indexOf(o.id), on = ix >= 0;
+        // Referenzen visuell abgesetzt: gestrichelter Rahmen, eigener Grundton
+        const border = on ? '1px solid #9fb9b2' : (o.isRef ? '1px dashed #9aa4ad' : '1px solid #d2d7db');
+        const bg = on ? '#eef4f2' : (o.isRef ? '#f4f5f6' : '#fff');
         return {
-          name: sc.name, badge: on ? (ix === 0 ? 'A' : 'B') : '',
-          badgeStyle: on ? 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none' : 'display:none',
-          style: 'display:flex;align-items:center;gap:7px;max-width:260px;border:1px solid ' + (on ? '#9fb9b2' : '#d2d7db') + ';background:' + (on ? '#eef4f2' : '#fff') + ';border-radius:7px;padding:5px 10px;font-size:14px;color:#26303a;cursor:pointer',
-          onClick: () => {
-            let np = pair.slice();
-            if (np.includes(sc.id)) np = np.filter(x => x !== sc.id); else { np.push(sc.id); if (np.length > 2) np = np.slice(-2); }
-            this.setState({ scenPair: np });
-          }
+          name: o.name, badge: on ? (ix === 0 ? 'A' : 'B') : '',
+          badgeStyle: on ? badgeCss(ix) : 'display:none',
+          style: 'display:flex;align-items:center;gap:7px;max-width:300px;border:' + border + ';background:' + bg + ';border-radius:7px;padding:5px 10px;font-size:14px;color:#26303a',
+          onClick: () => pickObj(o.id),
+          infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none' : 'display:none',
+          onInfo: o.isRef ? (() => this.setState({ hubRefInfo: this.state.hubRefInfo === o.id ? null : o.id })) : (() => {})
+        };
+      };
+      const infoRef = refObjs.find(r => r.id === S.hubRefInfo);
+      const groups = [{ label: 'Referenzen (immer vorhanden)', items: refObjs.map(chip),
+        infoText: infoRef ? infoRef.name + ': ' + infoRef.info : '',
+        infoStyle: infoRef ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:6px;line-height:1.45' : 'display:none',
+        emptyText: '', emptyStyle: 'display:none' }];
+      const deScen = hubScen.filter(sc => !sc.isRegion);
+      const regionKeys = [];
+      hubScen.forEach(sc => { if (sc.isRegion && !regionKeys.includes(sc.regionKrsId)) regionKeys.push(sc.regionKrsId); });
+      const levelGroups = [];
+      if (deScen.length) levelGroups.push({ label: 'Deutschland', isRegion: false, list: deScen });
+      regionKeys.forEach(k => { const list = hubScen.filter(sc => sc.isRegion && sc.regionKrsId === k); levelGroups.push({ label: list[0].regionLabel, isRegion: true, list }); });
+      levelGroups.forEach(g => groups.push({ label: g.label, items: g.list.map(chip), infoText: '', infoStyle: 'display:none', emptyText: '', emptyStyle: 'display:none' }));
+      if (!hubScen.length) groups.push({ label: 'Gespeicherte Szenarien', items: [], infoText: '', infoStyle: 'display:none',
+        emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. In einem anderen Reiter mit „Zum Vergleich speichern" anlegen — bis dahin lassen sich die Referenzen vergleichen.',
+        emptyStyle: 'font-size:14px;color:#8a929a;line-height:1.45' });
+      R.hubGroups = groups;
+
+      R.hubSlots = [0, 1].map(k => {
+        const o = pair[k] ? objById[pair[k]] : null;
+        return {
+          badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), role: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt',
+          name: o ? o.name + (o.isRef ? ' (Referenz)' : '') : '— bitte oben wählen',
+          style: 'flex:1;min-width:260px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #d2d7db;border-radius:8px;padding:8px 11px',
+          clearStyle: o ? 'cursor:pointer;color:#9aa4ad;font-size:16px;line-height:1;padding:2px;flex:none' : 'display:none',
+          onClear: () => { const np = pair.slice(); np[k] = null; setPair(np); }
         };
       });
-      const A = byIdS[pair[0]], B = byIdS[pair[1]];
-      const sameLevel = A && B && pair.length === 2 && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId)
-        && A.cellCons && B.cellCons && A.cellCons.length === B.cellCons.length;
+
+      const A = pair[0] ? objById[pair[0]] : null, B = pair[1] ? objById[pair[1]] : null;
       R.scenAName = A ? A.name : '—'; R.scenBName = B ? B.name : '—';
-      if (!sameLevel) {
+      // Ebene + Ziel bestimmen: ein Szenario gibt sie vor; zwei Szenarien müssen übereinstimmen
+      const scenSide = [A, B].filter(o => o && !o.isRef);
+      let lvlOk = !!(A && B), lvlRegion = false, lvlKrs = null, lvlLabel = 'Deutschland', lvlTarget = S.targetGW;
+      if (scenSide.length === 2) {
+        lvlOk = lvlOk && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId) && A.cellCons.length === B.cellCons.length;
+      }
+      if (scenSide.length) { const s0 = scenSide[0]; lvlRegion = s0.isRegion; lvlKrs = s0.regionKrsId; lvlLabel = s0.isRegion ? s0.regionLabel : 'Deutschland'; lvlTarget = s0.target; }
+      if (!A || !B) {
+        R.scenDiffHint = 'Für die Differenzkarte A und B wählen.';
+      } else if (!lvlOk) {
         R.scenDiffHint = 'Kartenvergleich nur für zwei Szenarien derselben Ebene möglich.';
       } else {
-        const lvl = A.isRegion ? this.regionCellsFor(A.regionKrsId) : { cells: this.krs, vb: this.krsVb, outlineD: '' };
-        const d = A.cellCons.map((v, i) => v - B.cellCons[i]);
+        const lvl = lvlRegion ? this.regionCellsFor(lvlKrs) : { cells: this.krs, vb: this.krsVb, outlineD: '' };
+        const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget) : o.cellCons;
+        const va = valsOf(A), vb = valsOf(B);
+        const d = va.map((v, i) => v - vb[i]);
         const mxa = Math.max(...d.map(Math.abs)) || 1;
         R.showScenDiffMap = true;
         R.scenDiffVb = lvl.vb;
         R.scenDiffOutline = lvl.outlineD || '';
         R.scenDiffCells = lvl.cells.map((c, i) => ({ d: c.d, fill: this.div(d[i] / mxa) }));
         R.scenDiffGrad = 'linear-gradient(90deg,' + this.div(1) + ',' + this.div(0) + ',' + this.div(-1) + ')';
-        R.scenDiffMax = this.fmtU(mxa, A.isRegion);
-        R.scenDiffScope = A.isRegion ? A.regionLabel + ' · je 5 × 5-km-Zelle' : 'Deutschland · je Landkreis';
-        const sumA = A.cellCons.reduce((a, b) => a + b, 0), sumB = B.cellCons.reduce((a, b) => a + b, 0);
-        R.scenDiffSummary = 'Zubaukonsens gesamt: A ' + this.fmtU(sumA, A.isRegion) + ' · B ' + this.fmtU(sumB, A.isRegion) + ' · Differenz A − B ' + (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), A.isRegion);
+        R.scenDiffMax = this.fmtU(mxa, lvlRegion);
+        R.scenDiffScope = lvlLabel + (lvlRegion ? ' · je 5 × 5-km-Zelle' : ' · je Landkreis');
+        const sumA = va.reduce((x, y) => x + y, 0), sumB = vb.reduce((x, y) => x + y, 0);
+        const what = o => o.isRef ? o.name : 'Zubaukonsens';
+        R.scenDiffSummary = 'Gesamt: A (' + what(A) + ') ' + this.fmtU(sumA, lvlRegion) + ' · B (' + what(B) + ') ' + this.fmtU(sumB, lvlRegion) + ' · Differenz A − B ' + (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        // Konsens vs. Planung: Szenario gegen „Planungsflächen" → die zwei Deckungs-Kennzahlen (gleiche Logik
+        // wie die frühere Planungsansicht, aus dem gespeicherten Zubaukonsens + Konfliktflächen des Szenarios)
+        const planSide = [A, B].find(o => o.id === 'ref_planung'), scenOther = [A, B].find(o => !o.isRef);
+        if (planSide && scenOther) {
+          const base = scenOther.cellCons, conf = scenOther.cellConflict || base.map(() => false);
+          const mx = Math.max.apply(null, base) || 1;
+          let ausgImKonsens = 0, ausgTot = 0, konsAusg = 0, konsTot = 0;
+          lvl.cells.forEach((c, i) => {
+            const imKonsens = !conf[i] && base[i] > 0.35 * mx;
+            ausgTot += c.ausgAnteil;
+            if (imKonsens) { ausgImKonsens += c.ausgAnteil; konsTot += base[i]; konsAusg += base[i] * c.ausgAnteil; }
+          });
+          R.showHubPlanung = true;
+          R.hubCoverA = ausgTot ? Math.round(ausgImKonsens / ausgTot * 100) : 0;
+          R.hubCoverB = konsTot ? Math.round(konsAusg / konsTot * 100) : 0;
+          R.hubCoverScen = scenOther.name;
+        }
       }
+
+      // Tabellen je Ebene — Region-Szenarien mit zwei Prinzipien-Zeilen (DE + regional), DE mit einer
+      const CMP_ROW_H = 40;
+      const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;" : 'color:#26303a;');
+      const names = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
+      R.hubTables = levelGroups.map(g => {
+        const rowDefs = (g.isRegion
+          ? [{ label: 'Prinzipien DE', numeric: false, get: sc => names(sc.nationalSel) }, { label: 'Prinzipien regional', numeric: false, get: sc => names(sc.regionalSel) }]
+          : [{ label: 'Prinzipien', numeric: false, get: sc => names(sc.regionalSel) }]
+        ).concat([
+          { label: 'Ausbauziel', numeric: true, get: sc => this.fmtU(sc.target, sc.isRegion) },
+          { label: 'Zubaukonsens', numeric: true, get: sc => this.fmtU(sc.consensusTotal, sc.isRegion) },
+          { label: '% im Konsens', numeric: true, get: sc => sc.target ? this.pct(sc.consensusTotal / sc.target) : '—' },
+          { label: 'Begrenzendes Prinzip', numeric: false, get: sc => sc.limitingName || '—' }
+        ]);
+        return {
+          title: g.label + (g.isRegion ? ' · MW' : ' · GW'),
+          rowLabels: rowDefs.map((rd, i) => ({
+            label: rd.label,
+            style: 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;' + (i === rowDefs.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;')
+          })),
+          cols: g.list.map(sc => ({
+            name: sc.name,
+            onRemove: () => this.deleteScenario(sc.id),
+            onRestore: () => this.restoreScenario(sc),
+            pairTag: pair.indexOf(sc.id) === 0 ? 'A' : pair.indexOf(sc.id) === 1 ? 'B' : '',
+            pairTagStyle: pair.indexOf(sc.id) >= 0 ? badgeCss(pair.indexOf(sc.id)) : 'display:none',
+            cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
+          }))
+        };
+      });
+
+      // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
+      R.setHubWind = () => this.setState({ hubTech: 'wind' });
+      R.setHubPV = () => this.setState({ hubTech: 'pv' });
+      R.hubWindStyle = this.segLight(hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
+      R.hubPVStyle = this.segLight(hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
+      R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
+        + (hubTech === 'pv' ? 'background:#fdf8e8;border:2px solid #e3c35a' : 'background:#eef4f9;border:2px solid #6f9fc6');
     }
 
     // Verteilungen / Galerie small multiples
@@ -1988,14 +2015,14 @@ class Component extends DCLogic {
     R.currentView = view;
     R.isSingleView = view === 'single';
     R.showBackToGallery = view === 'single';
-    R.backToGallery = () => this.setState({ tab: 'verteilungen', compare: null, cell: null });
+    R.backToGallery = () => this.setState({ tab: 'verteilungen', cell: null });
 
     // ---------- SZENARIEN speichern & vergleichen (§N) ----------
     // Snapshot = aktuelle Konfiguration + berechnete Kernergebnisse; session-only (im Speicher, kein Login/Persistenz).
     const scenarioReady = !isEmpty && !regionNeedsGate;
     // Button nur zeigen, wenn es etwas zu speichern gibt — keine ausgegrauten Elemente (s. §D),
     // stattdessen ganz ausgeblendet (steuert auch showTabRow weiter unten).
-    R.showSaveScenario = scenarioReady;
+    R.showSaveScenario = scenarioReady && view !== 'szenarien';
     const scenarioAutoName = () => {
       const names = sel.map(p => this.byId[p].name).join(' + ') || 'Kein Prinzip';
       const scopeName = isRegion && S.region ? S.region.label : 'Deutschland';
@@ -2029,7 +2056,8 @@ class Component extends DCLogic {
         regionalSel: sel.slice(),
         tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
         target, consensusTotal, limitingName,
-        cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice()
+        cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice(),
+        cellConflict: isConflict.slice()
       };
       // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung, als Toast (§N/§K —
       // momentane Bestätigung einer bereits erfolgten Handlung, kein dauerhaftes Band).
@@ -2047,47 +2075,9 @@ class Component extends DCLogic {
     const scenarios = S.scenarios || [];
     R.scenarioCount = scenarios.length;
     R.showScenarioIndicator = scenarios.length > 0;
-    R.showCompareEntry = scenarios.length >= 2;
-    // „Szenarien vergleichen" ist ein Reiter (ab ≥ 2 Szenarien), kein Popup mehr.
-    R.openCompare = () => this.setState({ tab: 'szenarien', compare: null, compareMenu: false });
-    // Vergleichstabelle als Flex-„Fake-Table" (wie jede andere Tabellendarstellung in diesem Template,
-    // s. comboRows/sumRows/blockers) statt echter <table>-Tags — vermeidet die HTML-Tabellen-Parsing-
-    // Fallstricke (Foster-Parenting von Nicht-Tabellen-Kindknoten in <tr>/<tbody>) ganz. Sticky-Spalte via
-    // position:sticky auf der ersten Flex-Spalte; alle Zeilen (Kopf + 6 Kennzahlen) mit fester Höhe, damit
-    // Labelspalte und Szenario-Spalten unabhängig voneinander exakt fluchten.
-    const CMP_ROW_H = 40, CMP_HEAD_H = 58;
-    const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;" : 'color:#26303a;');
-    const rowDefs = [
-      { label: 'Scope', numeric: false, get: sc => sc.isRegion ? sc.regionLabel : 'Deutschland' },
-      { label: 'Prinzipien', numeric: false, get: sc => (sc.regionalSel && sc.regionalSel.length) ? sc.regionalSel.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—' },
-      { label: 'Ausbauziel', numeric: true, get: sc => this.fmtU(sc.target, sc.isRegion) },
-      { label: 'Zubaukonsens', numeric: true, get: sc => this.fmtU(sc.consensusTotal, sc.isRegion) },
-      { label: '% im Konsens', numeric: true, get: sc => sc.target ? this.pct(sc.consensusTotal / sc.target) : '—' },
-      { label: 'Begrenzendes Prinzip', numeric: false, get: sc => sc.limitingName || '—' }
-    ];
-    R.compareRowLabels = rowDefs.map((rd, i) => ({
-      label: rd.label,
-      style: 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;' + (i === rowDefs.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;')
-    }));
-    if (view === 'szenarien') {
-      const pairIds = (S.scenPair || scenarios.slice(0, 2).map(sc => sc.id));
-      // DE- (GW) und Region-Szenarien (MW) gruppiert — sonst wirken „160 GW" und „350 MW" direkt vergleichbar.
-      const sorted = scenarios.slice().sort((a,b) => (a.isRegion === b.isRegion) ? 0 : (a.isRegion ? 1 : -1));
-      R.compareScenarios = sorted.map(sc => ({
-        name: sc.name,
-        scopeTag: sc.isRegion ? 'Region · MW' : 'Deutschland · GW',
-        scopeTagStyle: sc.isRegion
-          ? 'display:inline-block;font-size:14px;color:#0b6b5a;background:#f0f5f4;border:1px solid #cfe4de;border-radius:5px;padding:1px 7px;margin-top:4px'
-          : 'display:inline-block;font-size:14px;color:#2f6690;background:#eef3f6;border:1px solid #cdddea;border-radius:5px;padding:1px 7px;margin-top:4px',
-        onRemove: () => this.deleteScenario(sc.id),
-        onRestore: () => this.restoreScenario(sc),
-        pairTag: pairIds.indexOf(sc.id) === 0 ? 'A' : pairIds.indexOf(sc.id) === 1 ? 'B' : '',
-        pairTagStyle: pairIds.indexOf(sc.id) >= 0 ? 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (pairIds.indexOf(sc.id) === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none' : 'display:none',
-        cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
-      }));
-    } else {
-      R.compareScenarios = [];
-    }
+    R.showCompareEntry = scenarios.length >= 1;
+    // „Szenarien vergleichen" ist ein Reiter (immer sichtbar), kein Popup.
+    R.openCompare = () => this.setState({ tab: 'szenarien' });
 
     // ---------- STRINGS / STATE ----------
     R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
@@ -2126,16 +2116,14 @@ class Component extends DCLogic {
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
     R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 5000) ? 'Das kann einen Moment dauern …' : '';
 
-    const cmpTargetId = (S.compare && S.compare.type === 'principle') ? S.compare.id : null;
     R.princList = this.principles.filter(p => (isExt || p.basic) && p.available).map(p => {
       const on = uiSel.includes(p.id);
-      const isCmpTarget = p.id === cmpTargetId;
-      const canClick = p.available && !isCmpTarget;
+      const canClick = p.available;
       return {
         name: p.name,
         rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #2f6690;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#e6eef4' : '#eef4f2') : 'transparent') + ';color:' + (canClick ? '#26303a' : '#aab2b9') + ';border:1px solid ' + (on ? '#cbe0d9' : 'transparent'),
         swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + (canClick ? (p.color || '#c4c9cd') : '#d5d9dc') + ';background:' + (on ? p.color : 'transparent'),
-        tag: isCmpTarget ? '(aktuell Vergleichsziel)' : (canClick ? '' : '(Metrik in Vorbereitung)'),
+        tag: canClick ? '' : '(Metrik in Vorbereitung)',
         tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#aab2b9;font-style:italic;margin-top:2px',
         info: p.info || '',
         infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#8a929a;font-style:italic;cursor:pointer' : 'display:none',
@@ -2152,20 +2140,6 @@ class Component extends DCLogic {
       + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
     R.showCTA = uiSel.length === 1;
     R.hintOppo = S.hintOppo;
-
-    // Externe Referenzverteilungen (eigene Gruppe, klar abgesetzt)
-    R.refList = this.references.map(r => {
-      const on = S.refs.includes(r.id);
-      return {
-        name: r.name, info: r.info,
-        rowStyle: 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:pointer;background:' + (on ? '#eef3f6' : 'transparent') + ';color:#26303a;border:1px solid ' + (on ? '#cdddea' : 'transparent'),
-        swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + this.CONS + ';background:' + (on ? this.CONS : 'transparent'),
-        infoBtnStyle: 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#8a929a;font-style:italic;cursor:pointer',
-        infoStyle: (S.infoRef === r.id ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;padding:6px 10px 4px 32px',
-        onToggle: () => { const rf = S.refs.includes(r.id) ? S.refs.filter(x=>x!==r.id) : S.refs.concat(r.id); this.setState({ refs: rf }); },
-        onInfo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ infoRef: S.infoRef === r.id ? null : r.id }); }
-      };
-    });
 
     R.targetBtns = Object.keys(this.targets).map(k => ({
       label: this.targetLabels[k],
@@ -2194,9 +2168,6 @@ class Component extends DCLogic {
     } else if (view === 'regionGate') {
       // Die Region hat immer ein national berechnetes Budget — nie „0 MW" als wäre nichts da.
       R.kernaussage = 'Regionsbudget ' + this.fmtU(liveBudget, isRegion) + ' — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
-    } else if (view === 'differenz') {
-      const bn = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
-      R.kernaussage = 'Wo unterscheiden sich ' + bn + ' und ' + S.compare.label + '?';
     } else if (view === 'single') {
       R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmtU(target, isRegion) + ' so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
     } else if (view === 'minimum') {
@@ -2204,12 +2175,10 @@ class Component extends DCLogic {
     } else if (view === 'verteilungen') {
       // Im Galerie-Einstieg trägt der Galerie-Kopf die Headline — hier keine zweite Zeile
       R.kernaussage = galleryAll ? '' : 'So unterschiedlich verteilen die einzelnen Prinzipien den Ausbau.';
-    } else if (view === 'positiv') {
-      R.kernaussage = 'Wo deckt sich die offizielle Ausweisung mit dem Konsens?';
     } else if (view === 'konflikt') {
       R.kernaussage = 'Wo weichen die Prinzipien am stärksten vom Konsens ab — und welche?';
     } else if (view === 'szenarien') {
-      R.kernaussage = 'Wie unterscheiden sich Ihre gespeicherten Szenarien?';
+      R.kernaussage = 'Wie unterscheiden sich Ihre Szenarien — untereinander und von den Referenzen?';
     } else {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
       R.kernaussage = isRegion
@@ -2217,43 +2186,27 @@ class Component extends DCLogic {
         : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
     }
 
-    // Vergleichsoptionen: nie gegen ein gewähltes Prinzip; externe Referenzen nur Erweitert + national
-    const cmpOpts = this.principles.filter(p => p.available && !sel.includes(p.id)).map(p => ({ label: p.name, type: 'principle', id: p.id, group: 'Prinzipien' }));
-    if (isExt && !isRegion) this.references.forEach(r => cmpOpts.push({ label: r.name, type: 'ref', id: r.id, group: 'Referenzverteilungen (extern)' }));
 
-    // Reiter: Konsens → Konfliktflächen → Was begrenzt? → Einzelverteilungen → Vergleich
-    // (→ Konsens vs. Planung, nur Erweitert) → Szenarien vergleichen (nur ab ≥ 2 Szenarien)
-    const scenTab = scenariosAll.length >= 2;
-    R.showTabs = stufe >= 2 || scenTab;
+    // Reiter: Konsens → Was begrenzt? → Konfliktflächen → Einzelverteilungen → Szenarien vergleichen.
+    // „Szenarien vergleichen" ist der einzige Vergleichs-Hub und immer sichtbar (Referenzen sind immer da);
+    // der frühere „Vergleich"-Reiter (Konsens vs. Referenz / Planung) ist darin aufgegangen.
+    R.showTabs = true;
     // Reihe existiert, sobald Tabs ODER der Speichern-Button etwas zu zeigen haben (§N).
-    R.showTabRow = R.showTabs || R.showSaveScenario;
+    R.showTabRow = true;
     let tabDefs;
     if (stufe >= 2) {
-      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'konflikt', label: 'Konfliktflächen' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
-      if (cmpOpts.length || isExt) tabDefs.push({ id: 'vergleich', label: 'Vergleich' });
+      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'konflikt', label: 'Konfliktflächen' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
     } else {
       tabDefs = [{ id: 'konsens', label: stufe === 1 ? 'Einzelverteilung' : 'Übersicht' }];
     }
-    if (scenTab) tabDefs.push({ id: 'szenarien', label: 'Szenarien vergleichen' });
-    const activeTab = view === 'szenarien' ? 'szenarien' : (view === 'differenz' || view === 'positiv') ? 'vergleich'
+    tabDefs.push({ id: 'szenarien', label: 'Szenarien vergleichen' });
+    const activeTab = view === 'szenarien' ? 'szenarien'
       : (stufe >= 2 && ['konsens', 'konflikt', 'minimum', 'verteilungen'].includes(S.tab) ? S.tab : 'konsens');
-    // Vergleich-Reiter: Unteransichten „Konsens vs. Referenz" (Differenz gegen eine andere Verteilung) und
-    // „Konsens vs. Planung" (nur Erweitert) — Logik der beiden Ansichten unverändert, nur hier gebündelt.
-    const validCmp = c => (c && cmpOpts.some(o => o.type === c.type && o.id === c.id)) ? c : null;
-    const goReferenz = () => this.setState(this.dismissTrioHint({ tab: 'vergleich', vergleichSub: 'referenz', compare: validCmp(S.compare) || validCmp(S.lastCompare) || cmpOpts[0], compareMenu: false }));
-    const goPlanung = () => this.setState(this.dismissTrioHint({ tab: 'positiv', vergleichSub: 'planung', compare: null, lastCompare: S.compare || S.lastCompare || null, compareMenu: false }));
     R.tabs = tabDefs.map(t => ({
       label: t.label,
-      onClick: t.id === 'vergleich'
-        ? ((isExt && (S.vergleichSub === 'planung' || !cmpOpts.length)) ? goPlanung : goReferenz)
-        : () => this.setState(this.dismissTrioHint({ tab: t.id, compare: null, compareMenu: false })),
+      onClick: () => this.setState(this.dismissTrioHint({ tab: t.id })),
       style: this.tabBtn(activeTab === t.id)
     }));
-    R.showVergleichToggle = isExt && activeTab === 'vergleich' && cmpOpts.length > 0;
-    R.setVergleichReferenz = goReferenz;
-    R.setVergleichPlanung = goPlanung;
-    R.vergleichReferenzStyle = this.segLight(view === 'differenz') + ';flex:none;white-space:nowrap;padding:6px 14px';
-    R.vergleichPlanungStyle = this.segLight(view === 'positiv') + ';flex:none;white-space:nowrap;padding:6px 14px';
     // In-Tab-Umschalter der Konfliktflächen: Dissens (braune Heatmap) / Wer denkt anders? (Einfärbung)
     R.showKonfliktToggle = view === 'konflikt';
     R.setKonfliktDissens = () => this.setState({ konfliktMode: 'dissens', cell: null });
@@ -2268,7 +2221,7 @@ class Component extends DCLogic {
 
     // legend flags default
     R.showUpset = R.showUpset || false;
-    R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendDiv = R.legendDiv || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false; R.legendDeck = R.legendDeck || false;
+    R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false;
     // Erklärzeile „Gestreifte Flächen …" steht über dem UpSet-Diagramm, sobald dieses sichtbar ist —
     // in der unteren Legende dann nicht zusätzlich wiederholen.
     R.schnittNoteBelow = R.legendSchnitt && !R.showUpset;
@@ -2276,30 +2229,14 @@ class Component extends DCLogic {
     R.showPlan = (R.showPlan || false) && S.account;
     // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
     // Vergleichsauswahl nur im Vergleich-Reiter (Differenzansicht)
-    R.showCompare = view === 'differenz';
-    R.showHideToggle = stufe >= 2 && view !== 'szenarien';
-    R.showToolRow = (isExt || stufe >= 2) && view !== 'szenarien';
+    // Vergleichsauswahl und „Konfliktflächen ausblenden" entfallen — Vergleiche nur noch im Hub,
+    // weitere Prinzipien nur links. Übrig bleibt der Ansichts-Umschalter der Regionsansicht.
+    R.showToolRow = !!R.showGemToggle && view !== 'szenarien';
     R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
       label: p === 'bestand' ? 'Bestand' : p === 'zubau' ? 'Zubau' : 'Gesamt',
       onClick: () => this.setState({ plan: p }),
       style: this.segLight(S.plan === p)
     }));
-
-    // compare menu
-    R.compareName = S.compare ? S.compare.label : '';
-    R.clearCompare = () => this.setState({ compare: null, compareMenu: false });
-    R.toggleCompareMenu = () => this.setState({ compareMenu: !S.compareMenu });
-    R.compareMenuStyle = (S.compareMenu ? 'display:block;' : 'display:none;') + 'position:absolute;bottom:38px;left:0;background:#fff;border:1px solid #d7dbdf;border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:5px;min-width:240px;z-index:15';
-    // Vergleich nur gegen NICHT gewählte Prinzipien oder externe Referenzen (nie gegen ein gewähltes Prinzip)
-    const cmpRows = []; let lastG = null;
-    cmpOpts.forEach(o => {
-      if (o.group !== lastG) { cmpRows.push({ header: true, label: o.group, rowStyle: 'padding:8px 12px 3px;font-size:14px;font-weight:700;letter-spacing:.4px;color:#9aa4ad;text-transform:uppercase', onClick: () => {} }); lastG = o.group; }
-      cmpRows.push({ header: false, label: o.label, rowStyle: 'padding:7px 12px;font-size:14px;color:#26303a;cursor:pointer;border-radius:5px', onClick: () => this.setState({ compare: o, compareMenu: false }) });
-    });
-    R.compareOptions = cmpRows;
-
-    R.hideSwitchStyle = this.switchStyle(S.hideConflict);
-    R.hideKnobStyle = this.knobStyle(S.hideConflict);
 
     // ============ RIGHT COLUMN ============
     // Im Regionsraum ist je Ansicht genau eine Einheit klickbar — eine noch gesetzte Auswahl der anderen
@@ -2357,8 +2294,8 @@ class Component extends DCLogic {
       R.ovScopeLabel = isRegion ? 'Region' : 'Übersicht';
       R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
-      R.anBlockers = false; R.anSums = false; R.anCoverage = false; R.anCombos = false; R.anDiff = false;
-      R.ovLeadUnit = this.unitFor(isRegion); R.ovBarShow = false; R.ovEmpty = false; R.ovLeadSuppress = false;
+      R.anBlockers = false; R.anSums = false; R.anCombos = false;
+      R.ovLeadUnit = this.unitFor(isRegion); R.ovBarShow = false; R.ovEmpty = false;
 
       if (view === 'regionGate') {
         // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
@@ -2394,24 +2331,7 @@ class Component extends DCLogic {
           : 'Entgangener Zubaukonsens durch jedes Prinzip — bei zwei Prinzipien ist er für beide gleich.';
         const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%', trackStyle: blockerBars ? 'height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
 
-        if (view === 'positiv') {
-          // Zwei Richtungen desselben Verhältnisses — bundesweit, in der rechten Spalte
-          R.ovLeadSuppress = true;
-          R.anCoverage = true;
-          R.coverA = String(R.posKennzahl != null ? R.posKennzahl : 0);
-          R.coverB = String(R.posKennzahl2 != null ? R.posKennzahl2 : 0);
-        } else if (view === 'differenz') {
-          const cmp = compareVals();
-          const baseName = 'Konsens';
-          const diffs = scopeIdx.map(i => ({ i, d: consCells[i] - cmp[i] }));
-          const net = diffs.reduce((a,o)=>a+o.d, 0);
-          R.ovLeadLabel = 'Differenz gesamt'; R.ovLeadValue = this.fmtN(Math.abs(net), isRegion); R.ovLeadUnit = this.unitFor(isRegion);
-          R.ovLeadSub = net>=0 ? 'mehr beim ' + baseName + ' als bei ' + S.compare.label : 'mehr bei ' + S.compare.label + ' als beim ' + baseName;
-          R.anDiff = true;
-          const top = diffs.slice().sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,6);
-          // Richtung statt nacktem Vorzeichen (wie in der Kartenlegende)
-          R.diffRows = top.map(o => ({ label: 'Zelle ' + cells[o.i].label, gw: this.fmtU(Math.abs(o.d), isRegion) + ' mehr bei ' + (o.d>=0 ? baseName : S.compare.label), color: o.d>=0 ? '#2f6690' : '#8a5a12', onClick: () => this.selectCell(cells[o.i].id) }));
-        } else if (view === 'verteilungen') {
+        if (view === 'verteilungen') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anSums = true;
@@ -2451,7 +2371,7 @@ class Component extends DCLogic {
           R.anBlockers = true; mkBlockers();
         }
       }
-      R.ovLeadBoxStyle = R.ovLeadSuppress ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
+      R.ovLeadBoxStyle = 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
       R.ovClickHint = view !== 'regionGate' && !isEmpty;
     } else if (selectedCell) {
       const i = cells.indexOf(selectedCell), c = selectedCell;
@@ -2564,27 +2484,6 @@ class Component extends DCLogic {
       R.cellConsBox = 'padding:14px;background:#f5f7f7;border-radius:10px;border:1px solid #e2e8e6';
       R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
 
-      // Positiv-Tab: Zeile zu dieser Zelle
-      if (view === 'positiv' && stufe >= 2) {
-        const inK = consCells[i] >= 0.35 * Math.max(...consCells);
-        R.cellAusgPct = Math.round(c.ausgAnteil * 100) + ' %';
-        R.cellKonsGW = this.fmtU(consCells[i], isRegion);
-        const d = (R.deckVals || [])[i] || 0;
-        R.cellDeckWord = d > 0.2 ? 'Planung über Konsens' : d < -0.2 ? 'Konsens über Planung' : 'deckt sich';
-        R.cellDeckColor = d > 0.2 ? '#a85a17' : d < -0.2 ? '#1d5f80' : '#5b6672';
-        R.cellShowPos = true;
-      } else R.cellShowPos = false;
-
-      // Differenz-Tab: Differenz DIESER Zelle in Richtungsschreibweise
-      if (S.compare) {
-        const base = stufe >= 2 ? consCells : gwSel[singlePid];
-        const cmp = compareVals();
-        const d = base[i] - cmp[i];
-        const baseName = stufe >= 2 ? 'Konsens' : this.byId[singlePid].name;
-        R.cellDiffLine = this.fmtU(Math.abs(d), isRegion) + ' mehr bei ' + (d >= 0 ? baseName : S.compare.label);
-        R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
-        R.cellShowDiff = true;
-      } else R.cellShowDiff = false;
     } else {
       // ---- Gemeinde-Detail (nur Modus 'gemeinden', s. SoT §M) ----
       // Gerechnet wird weiter auf dem 5×5-Raster; die Gemeinde zeigt die flächengewichtete Aggregation
@@ -2606,7 +2505,6 @@ class Component extends DCLogic {
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
       R.cellHasConsensus = stufe >= 2;
       R.cellStufe1 = stufe === 1;
-      R.cellShowPos = false; R.cellShowDiff = false;
       // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
       const gNeu = gAgg(cells.map((c, i) => neuOf(i)));
       const gBest = gAgg(cells.map(c => c.bestandGW || 0));
@@ -2638,22 +2536,6 @@ class Component extends DCLogic {
         R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr aggregierter Zubaukonsens geteilt durch das gesamte Regionsbudget.';
         R.cellPriority = '≈ ' + (2030 + Math.round((rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) / gemList.length) * 15)) + ' (nicht berechnet)';
 
-        if (view === 'positiv') {
-          const ausgAgg = covWeight ? gAgg(cells.map(c => c.ausgAnteil)) / covWeight : 0;
-          R.cellAusgPct = Math.round(ausgAgg * 100) + ' %';
-          R.cellKonsGW = this.fmtU(consAgg, isRegion);
-          const deckAgg = (R.deckVals && covWeight) ? gAgg(R.deckVals) / covWeight : 0;
-          R.cellDeckWord = deckAgg > 0.2 ? 'Planung über Konsens' : deckAgg < -0.2 ? 'Konsens über Planung' : 'deckt sich';
-          R.cellDeckColor = deckAgg > 0.2 ? '#a85a17' : deckAgg < -0.2 ? '#1d5f80' : '#5b6672';
-          R.cellShowPos = true;
-        }
-        if (S.compare) {
-          const cmp = compareVals();
-          const d = consAgg - gAgg(cmp);
-          R.cellDiffLine = this.fmtU(Math.abs(d), isRegion) + ' mehr bei ' + (d >= 0 ? 'Konsens' : S.compare.label);
-          R.cellDiffColor = d >= 0 ? '#2f6690' : '#8a5a12';
-          R.cellShowDiff = true;
-        }
       } else if (stufe === 1) {
         const gRec = gAgg(gwSel[singlePid]);
         R.cellPrincipleName = this.byId[singlePid].name;
@@ -2685,11 +2567,7 @@ class Component extends DCLogic {
     R.toggleInfoPanel = () => this.setState({ infoPanel: !S.infoPanel, intro: false });
     R.stop = e => { if (e && e.stopPropagation) e.stopPropagation(); };
     // zoom overlay
-    if (S.zoom && typeof S.zoom === 'string' && S.zoom.indexOf('ref:') === 0) {
-      const rid = S.zoom.slice(4); const pv = this.refDist(rid); const mx = Math.max(...pv);
-      R.zoom = true; R.zoomName = this.refById[rid].name + ' · extern'; R.zoomColor = this.CONS; R.zoomMax = this.fmt(mx);
-      R.zoomCells = cells.map((c,i) => ({ d: c.d, fill: this.seq(mx ? pv[i]/mx : 0, this.CONS) }));
-    } else if (S.zoom && sel.includes(S.zoom)) {
+    if (S.zoom && sel.includes(S.zoom)) {
       const p = S.zoom;
       const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
       const mx = Math.max(...pv);
@@ -2699,19 +2577,18 @@ class Component extends DCLogic {
     R.closeZoom = () => this.setState({ zoom: null });
 
     // handlers
-    R.setBasic = () => this.setState({ mode: 'basic', compare: (S.compare && S.compare.type === 'ref') ? null : S.compare, refs: [], tab: this.state.tab === 'positiv' ? 'konsens' : this.state.tab });
+    R.setBasic = () => this.setState({ mode: 'basic' });
     R.setErweitert = () => this.setState({ mode: 'erweitert' });
     R.setWind = () => this.setState({ tech: 'wind' });
     R.setPV = () => this.setState({ tech: 'pv' });
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
     R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
-    R.toggleHide = () => this.setState({ hideConflict: !S.hideConflict });
     R.clearCell = () => this.setState({ cell: null, gemeinde: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });
     R.onSearchKey = e => { if (e.key === 'Enter') this.doSearch(); };
     R.showBack = isRegion || !!S.cell;
-    R.backToDE = () => this.setState({ level: 'de', region: null, cell: null, gemeinde: null, compare: null });
+    R.backToDE = () => this.setState({ level: 'de', region: null, cell: null, gemeinde: null });
 
     return R;
   }
@@ -2788,7 +2665,7 @@ class Component extends DCLogic {
     if (!best) return;
     // Wie ein Kartenklick: Deutschland-Karte bleibt, der Landkreis wird nur ausgewählt — das Popover
     // „im Detail auswerten →" startet erst die Regionsauswertung (kein Auto-Drill aus der Suche).
-    this.setState(this.dismissTrioHint({ level: 'de', region: null, gemeinde: null, compare: null, cell: best.id, search: '', tab: this.state.tab === 'szenarien' ? 'konsens' : this.state.tab }));
+    this.setState(this.dismissTrioHint({ level: 'de', region: null, gemeinde: null, cell: best.id, search: '', tab: this.state.tab === 'szenarien' ? 'konsens' : this.state.tab }));
   }
 
   // Wiederherstellen lädt die gespeicherte Konfiguration inkl. eingefrorener Regionsergebnisse (kein
@@ -2802,7 +2679,7 @@ class Component extends DCLogic {
         regionComputedSel: sc.regionalSel.slice(), regionComputedTarget: sc.target, regionComputedSig: sig,
         regionComputing: false, regionProgress: 1,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
-        cell: null, compare: null, tab: 'konsens', committed: true,
+        cell: null, tab: 'konsens', committed: true,
         scenarioSaveOpen: false
       });
     } else {
@@ -2810,7 +2687,7 @@ class Component extends DCLogic {
         level: 'de', region: null,
         selected: sc.nationalSel.slice(), selectedRegional: null,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
-        cell: null, compare: null, tab: 'konsens', committed: true,
+        cell: null, tab: 'konsens', committed: true,
         scenarioSaveOpen: false
       });
     }
@@ -2820,8 +2697,10 @@ class Component extends DCLogic {
   deleteScenario(id) {
     const scenarios = this.state.scenarios.filter(s => s.id !== id);
     const patch = { scenarios };
-    if (this.state.scenPair) patch.scenPair = this.state.scenPair.filter(x => x !== id);
-    if (scenarios.length < 2 && this.state.tab === 'szenarien') patch.tab = 'konsens';
+    if (this.state.hubPairs) {
+      const hp = {}; Object.keys(this.state.hubPairs).forEach(t => hp[t] = this.state.hubPairs[t].map(x => x === id ? null : x));
+      patch.hubPairs = hp;
+    }
     this.setState(patch);
   }
 

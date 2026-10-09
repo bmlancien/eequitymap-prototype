@@ -27,8 +27,8 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 - **Konflikt ohne Schwelle definiert.** Konsensfläche = jedes gewählte Prinzip
   baut hier noch (Zubaukonsens > kleiner Floor, z. B. > 5 % des Zellmaximums);
   Konfliktfläche = mindestens ein Prinzip lässt die Zelle fallen (Zubaukonsens
-  ≈ 0, obwohl ein anderes Prinzip sie empfiehlt). „Konfliktflächen ausblenden"
-  blendet die ≈0-Zellen aus.
+  ≈ 0, obwohl ein anderes Prinzip sie empfiehlt). ~~„Konfliktflächen ausblenden"
+  blendet die ≈0-Zellen aus.~~ → Switch entfernt (s. O).
 - **Mindestens ein Prinzip** ist immer ausgewählt; das letzte Häkchen lässt sich
   nicht abwählen. Der 0-Prinzipien-Fall existiert nicht mehr.
 - **Ausbauziel-Mechanik (Zeitstrahl).** Zellen werden in absteigender
@@ -85,6 +85,9 @@ durchziehen.
 
 ## C. Ansichten / Tabs — finaler Stand
 
+> **Teilweise abgelöst durch O (2026-10-09):** Reiter-Reihenfolge, Wegfall von
+> „Konsens vs. Planung" / „Konsens vs. Referenz" als eigene Ansichten.
+
 Tab-Reihe (Zubaukonsens als Default). Namen final:
 
 1. **Zubaukonsens** — Karte des Minimums je Zelle
@@ -115,6 +118,9 @@ Tab-Reihe (Zubaukonsens als Default). Namen final:
    keine schwebende Karten-Box): „Von der Ausweisung trifft X % den Konsens" +
    „Vom Konsens sind erst Y % ausgewiesen" (beide nötig, s. F).
 6. **Konsens vs. Referenz** (früher „Differenz") — s. F
+
+→ 5. und 6. entfallen als eigene Ansichten; Vergleiche nur noch im Hub
+„Szenarien vergleichen" (s. O).
 
 Beide Vergleichs-Tabs beginnen mit „Konsens vs. …": der Konsens ist der feste
 Bezugspunkt, Planung/Referenz das Verglichene; die gleiche Form macht sie als
@@ -165,6 +171,9 @@ Presets) — er ist die erzählerisch stärkste Interaktion.
 misst (Vergleich). Damit ist **jeder Vergleich Erweitert-only**: externe
 Referenzverteilungen, der Tab „Konsens vs. Referenz" und das Element „Mit einer
 anderen Verteilung vergleichen". In Basic erscheint keine Vergleichs-Auswahl.
+→ **Abgelöst durch O:** Der Hub „Szenarien vergleichen" (inkl. der zwei
+Referenzen) ist in Basic und Erweitert sichtbar; „Mit einer anderen Verteilung
+vergleichen" ist entfernt.
 
 Regeln gegen Leaks: Bottom-Toolbar (Vergleichen / Download / Methodik) nur in
 Erweitert; Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle; Konflikt-Toggle
@@ -174,6 +183,9 @@ ausgegrauten Elemente in Basic.
 ---
 
 ## E. Rechte Spalte — Hybrid-Verhalten (neu)
+
+> **Abgelöst durch O:** Zeilen „Konsens vs. Planung" und „Konsens vs. Referenz" sowie
+> die Differenz-Zeile im Zelldetail entfallen mit diesen Ansichten.
 
 **Skelett konstant, Inhalt tab-abhängig.** Immer: große Kennzahl oben,
 Analyseblock darunter. Nur der Block wechselt mit dem Tab:
@@ -227,6 +239,10 @@ sekundär.
 ---
 
 ## F. Referenzen & „Konsens vs. Referenz" (neu / korrigiert) — nur Erweitert
+
+> **Abgelöst durch O:** Referenzen sind jetzt „Historischer Ausbau" und
+> „Planungsflächen" als Vergleichsobjekte im Hub. Begriffe (Positivflächen ≠
+> Potentialflächen) und die zwei Deckungs-Kennzahlen gelten weiter.
 
 Vergleich ist die Frage, die Basic bewusst nicht stellt. Der gesamte Abschnitt F
 gilt daher **nur im Erweitert-Modus**. Der Tab „Vergleich" zeigt in beiden
@@ -755,6 +771,9 @@ die falsche Einheit.
 
 ## N. Szenarien speichern & vergleichen (neu)
 
+> **Erweitert durch O:** „Szenarien vergleichen" ist jetzt der einzige
+> Vergleichs-Hub und immer sichtbar (nicht erst ab ≥ 2 Szenarien).
+
 **Konzept:** Ein Szenario = Momentaufnahme der aktuellen Konfiguration (Scope,
 Prinzipien, Technologie, Ausbauziel/-jahr) + berechnete Kernergebnisse. Verglichen
 werden **Zahlen**, nicht Karten nebeneinander (zwei Karten nebeneinander sind
@@ -791,3 +810,47 @@ Zubaukonsens · % im Konsens · begrenzendes Prinzip.
 **Bewusst nicht:** keine Karten nebeneinander, kein Tab pro Szenario, kein
 In-place-Editieren, keine Persistenz. Parallelität (Zeilen fest, Spalten variieren)
 ist derselbe Trick wie bei „Konsens vs. …" — nur der Unterschied variiert.
+
+---
+
+## O. Vergleichs-Hub „Szenarien vergleichen" (Reversal, Session 2026-10-09)
+
+**Reversal (bewusst):** Der Reiter „Vergleich" (Konsens vs. Referenz / Konsens vs.
+Planung) ist entfernt. Referenzen sind auswählbare Vergleichsobjekte im Reiter
+„Szenarien vergleichen", der damit der **einzige Vergleichs-Hub** ist.
+
+**Reiter:** Konsens | Was begrenzt? | Konfliktflächen | Einzelverteilungen |
+Szenarien vergleichen. „Szenarien vergleichen" ist **immer sichtbar** (auch bei
+0/1 Szenarien, Basic und Erweitert). Entfernt: „Mit einer anderen Verteilung
+vergleichen", Switch „Konfliktflächen ausblenden". Weitere Prinzipien nur links
+wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
+
+**Hub-Aufbau:**
+- **Kopf:** Wind/PV-Umschalter — eigener Filter des Hubs (startet mit der
+  Technologie links, ändert die Berechnung nicht). Hub-Rahmen/-Hintergrund blau
+  (Wind) bzw. gelb (PV). Nur Szenarien der gewählten Technologie.
+- **Vergleichsobjekte oben**, gruppiert: Referenzen · Deutschland · je Landkreis.
+- **Referenzen (immer vorhanden):** „Historischer Ausbau" und „Planungsflächen"
+  (Zubau nach ausgewiesenem Flächenanteil je Zelle), je auf dasselbe Ausbauziel
+  skaliert. Visuell abgesetzt (gestrichelter Rahmen, eigener Grundton), je ein
+  (i) mit Kurzinfo.
+- **A = Ausgangspunkt, B = Vergleichsobjekt** — je ein Szenario oder eine
+  Referenz. Klick setzt den ersten freien Slot (sonst B); × im Slot nimmt das
+  Objekt aus dem Vergleich (ohne zu löschen). Default: zwei Szenarien; bei einem
+  Szenario dieses vs. Planungsflächen; ohne Szenario die zwei Referenzen.
+- **Differenzkarte A − B** nur auf gemeinsamer Ebene: zwei Szenarien derselben
+  Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios (Region → 5 × 5 km,
+  MW); zwei Referenzen = Deutschland.
+- **Konsens vs. Planung:** Steht ein Szenario gegen „Planungsflächen", erscheinen
+  unter der Differenzkarte die zwei Kennzahlen „Von der Ausweisung trifft X % den
+  Konsens" / „Vom Konsens sind erst Y % ausgewiesen" (Logik wie bisher, aus
+  gespeichertem Zubaukonsens + Konfliktflächen des Szenarios). Die frühere
+  Deckungskarte entfällt.
+- **Tabellen je Ebene** (Deutschland · GW, je Landkreis · MW); Spaltenkopf mit
+  Wiederherstellen + × (löschen). Region-Szenarien: zwei Zeilen „Prinzipien DE" +
+  „Prinzipien regional"; DE-Szenarien: eine Zeile „Prinzipien".
+
+**Greenfield-Hinweis** bei den Jahres-Marken (2030/2035/2045): „Die dargestellte
+Zeitreihe zeigt berechnete Zielzustände für verschiedene Jahre. Jeder Zustand
+basiert auf einer separaten Greenfield-Berechnung; die Ergebnisse bauen nicht
+schrittweise auf dem Vorjahr auf."
