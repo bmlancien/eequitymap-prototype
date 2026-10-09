@@ -881,8 +881,11 @@ schrittweise auf dem Vorjahr auf."
 
 **Paarweise Matrix** (Reiter „Konsens", direkt unter Karte + Legende; nur
 Erweitert; DE- und Regionsmodus; erst ab 2 Prinzipien):
-- Zeilen/Spalten = aktuell gewählte Prinzipien (n gewählt → n × n), Dreieck
-  unterhalb der Diagonale, Diagonale und obere Hälfte leer — jedes Paar genau einmal.
+- Zeilen/Spalten = aktuell gewählte Prinzipien, Dreieck unterhalb der Diagonale,
+  jedes Paar genau einmal. Die stets leere erste Zeile und letzte Spalte entfallen
+  (n gewählt → (n−1) × (n−1): Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1).
+- Spaltenköpfe 45° gedreht, mit Farbpunkt; Kopfhöhe nach dem längsten Namen,
+  damit nichts überlappt oder abgeschnitten wird. Feste Spaltenbreiten (kompakt).
 - Zellwert = Zubaukonsens des Paars: Minimum-Regel über genau diese zwei
   Prinzipien, Summe über alle Zellen — GW (DE) bzw. MW (Region).
 - Eckzelle: „Zubaukonsens in GW (Ziel: …)" bzw. „Zubaukonsens in MW

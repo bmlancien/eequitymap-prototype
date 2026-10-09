@@ -603,11 +603,11 @@
           <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e2e5e8">
             <div style="font-size:15px;font-weight:600;color:#1b2126">Zubaukonsens je Prinzipienpaar</div>
             <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Zubaukonsens.</div>
-            <div style="{{ pairGridStyle }}">
+            <div style="{{ pairWrapStyle }}"><div style="{{ pairGridStyle }}">
               <sc-for list="{{ pairCells }}" as="pc" hint-placeholder-count="9">
-                <div title="{{ pc.title }}" style="{{ pc.style }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div>
+                <div title="{{ pc.title }}" style="{{ pc.style }}"><div style="{{ pc.innerStyle }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div></div>
               </sc-for>
-            </div>
+            </div></div>
           </div>
         </sc-if>
 
@@ -1603,7 +1603,7 @@ class Component extends DCLogic {
     const galleryAll = view === 'verteilungen' && stufe <= 1;
 
     const R = {};
-    R.showPairMatrix = false; R.pairCells = []; R.pairGridStyle = '';
+    R.showPairMatrix = false; R.pairCells = []; R.pairGridStyle = ''; R.pairWrapStyle = '';
     R.vb = isRegion ? this.regionCellsFor(S.region.krsId).vb : this.krsVb;
     R.vbFull = this.krsVb;
     R.mapSvgRef = this._mapSvgRef;
@@ -1753,26 +1753,43 @@ class Component extends DCLogic {
         const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
         const hdr = 'font-size:14px;color:#26303a;font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
         const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color;
+        const flat = 'display:contents';
+        // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
+        // Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1. Werte bleiben dieselben Paare an denselben Plätzen.
+        const rowsP = sel.slice(1), colsP = sel.slice(0, -1);
+        // Spaltenköpfe 45° gedreht (Farbpunkt bleibt vorn); Kopfhöhe und rechter Überstand aus der
+        // geschätzten Labelbreite (≈ 8,2 px je Zeichen bei 14 px halbfett + Farbpunkt).
+        const labelW = p => this.byId[p].name.length * 8.2 + 18;
+        const SIN45 = Math.SQRT1_2;
+        const headH = Math.ceil(Math.max(...colsP.map(labelW)) * SIN45) + 18;
+        const overhang = Math.max(0, Math.ceil(labelW(colsP[colsP.length - 1]) * SIN45) - 56);
         const cellsOut = [{
           text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
-          title: '', swatchStyle: 'display:none',
+          title: '', swatchStyle: 'display:none', innerStyle: flat,
           style: 'font-size:14px;color:#5b6672;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
         }];
-        sel.forEach(q => cellsOut.push({ text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q), style: hdr + ';align-items:flex-end' }));
-        sel.forEach((p, a) => {
-          cellsOut.push({ text: this.byId[p].name, title: this.byId[p].name, swatchStyle: sw(p), style: hdr });
-          sel.forEach((q, b) => {
-            if (b >= a) { cellsOut.push({ text: '', title: '', swatchStyle: 'display:none', style: 'border-radius:6px;background:#f7f8f9' }); return; }
+        colsP.forEach(q => cellsOut.push({
+          text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q),
+          style: 'position:relative;height:' + headH + 'px',
+          innerStyle: 'position:absolute;left:50%;bottom:8px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:14px;font-weight:600;color:#26303a'
+        }));
+        rowsP.forEach(p => {
+          const a = sel.indexOf(p);
+          cellsOut.push({ text: this.byId[p].name, title: this.byId[p].name, swatchStyle: sw(p), style: hdr, innerStyle: flat });
+          colsP.forEach((q, b) => {
+            if (b >= a) { cellsOut.push({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'border-radius:6px;background:#f7f8f9' }); return; }
             const v = pairVal[p + '|' + q], t = pnorm(v);
             cellsOut.push({
               text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
-              swatchStyle: 'display:none',
+              swatchStyle: 'display:none', innerStyle: flat,
               style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
             });
           });
         });
         R.pairCells = cellsOut;
-        R.pairGridStyle = 'display:grid;grid-template-columns:minmax(150px,1.2fr) repeat(' + sel.length + ',minmax(90px,1fr));gap:4px;align-items:stretch';
+        R.pairWrapStyle = 'padding-right:' + overhang + 'px';
+        // Feste Spaltenbreiten: kompakt und linksbündig, statt bei wenigen Prinzipien über die volle Breite zu laufen
+        R.pairGridStyle = 'display:grid;grid-template-columns:200px repeat(' + colsP.length + ',112px);gap:4px;align-items:stretch';
         R.showPairMatrix = true;
       }
     } else if (view === 'minimum') {
