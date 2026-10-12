@@ -141,12 +141,44 @@ Paar erkennbar.
 > - Was begrenzt?: „Der Konsens ist überall nur so groß wie das Prinzip, das
 >   dort am wenigsten vorsieht. Ohne dieses Prinzip wäre an der Stelle mehr
 >   Konsens möglich."
-> - Konfliktflächen · Dissens: „Hier sind sich die gewählten Prinzipien am
->   wenigsten einig: Mindestens eines sieht deutlich mehr Zubau vor, als der
->   Konsens trägt."
-> - Konfliktflächen · Wer denkt anders?: „Hier sehen Sie, welches Prinzip an
->   einer Stelle deutlich mehr Zubau vorsieht, als der Konsens trägt (über
->   20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen."
+> - Konfliktflächen · „Wie stark?" (früher „Dissens"): „Die Karte zeigt, wie
+>   stark die gewählten Prinzipien vom Konsens abweichen: Je dunkler, desto
+>   weiter liegt mindestens eines über dem Konsens."
+> - Konfliktflächen · „Welche Prinzipien?" (früher „Wer denkt anders?"): „Die
+>   Karte zeigt, welches Prinzip wo um mehr als 20 % vom Konsens abweicht. Dort
+>   würde eine andere Auswahl mehr Konsens ermöglichen."
+>   Zu diesem Reiter (Session 2026-10-12, dritte Runde): Die beiden Umschalter
+>   heißen als Paar „Wie stark?" / „Welche Prinzipien?" — ältere Stellen in
+>   diesem Dokument, die „Dissens" / „Wer denkt anders?" nennen, meinen dieselben
+>   Unteransichten. Im Fließtext durchgängig „abweichen / Abweichung";
+>   „Konfliktflächen" bleibt nur der Reitername. Headline je Unteransicht: „Wo
+>   weichen die Prinzipien am stärksten vom Konsens ab?" bzw. „Welche Prinzipien
+>   weichen wo vom Konsens ab?". Legende: „Größte Abweichung vom Konsens je
+>   Landkreis" (Einheit wie bei den anderen Legenden). Offen: „Wie stark?" misst
+>   in GW, „Welche Prinzipien?" mit der relativen 20-%-Schwelle.
+>
+>   **Rechte Spalte bei „Wie stark?" — „Größte Abweichungen" (Session
+>   2026-10-12, rückbaubar).**
+>   - *Vorher:* nur die Box „Zubaukonsens gesamt" (Zahl, Anteil am Ausbauziel,
+>     Balken) und der Klick-Hinweis — nichts zur Abweichung selbst.
+>   - *Jetzt:* Die Zubaukonsens-Box **bleibt unverändert oben**. Darunter neu der
+>     Abschnitt „Größte Abweichungen": (1) ein Satz zur Konzentration, „Die
+>     Hälfte der gesamten Abweichung liegt in [k] von [N] Landkreisen."; (2) die
+>     fünf Landkreise mit der größten Abweichung, je mit Wert und dem Prinzip
+>     (Farbfeld + Name), das dort am weitesten vom Konsens abweicht.
+>   - *Berechnung:* Abweichung je Landkreis = derselbe Wert wie auf der Karte
+>     (größter Abstand eines gewählten Prinzips zum Konsens, in GW bzw. MW).
+>     „Gesamte Abweichung" = Summe dieser Werte über alle Landkreise; k = Anzahl
+>     der größten Werte, die zusammen die Hälfte dieser Summe erreichen.
+>   - *Interaktion:* Hover auf eine Zeile lässt nur diesen Landkreis farbig, alle
+>     anderen werden hellgrau; Klick wählt den Landkreis aus (Zelldetail). In der
+>     Region heißen die Einheiten „Rasterzelle"; Klick nur in der Raster-Ansicht.
+>   - *Zurück zum vorherigen Stand:* in `EEquityMap.dc.html` die Konstante
+>     `KONFLIKT_TOPLIST` auf `false` setzen — dann zeigt die rechte Spalte hier
+>     wieder nur die Zubaukonsens-Box und den Klick-Hinweis; Satz, Liste und
+>     Hover-Hervorhebung entfallen. Sonst ist nichts zurückzubauen.
+>   - *Bekannte Schwäche:* Rangfolge in GW — große Landkreise führen die Liste
+>     eher an (gleicher Größeneffekt wie auf der Karte).
 > - Einzelverteilungen: **keine Caption** (Session 2026-10-12, zweite Runde) —
 >   Headline und Kartentexte sagen es bereits. Weitere Vereinfachungen dieses
 >   Reiters: (1) rechte Spalte ohne Konsenszahl; statt „Summe je Prinzip" mit
@@ -722,6 +754,10 @@ von Schritt 1 ist das feste Budget von Schritt 2.
   visuell sofort erkennbar ist. 5 × 5 km existiert als sichtbare Einheit **nur
   hier**. Scope-Label: „[Landkreis] · 5 × 5 km Raster". Verteilt das für diesen
   Landkreis berechnete Budget über seine Zellen nach den **regionalen Prinzipien**.
+- **Klick-Hinweis der rechten Spalte** nennt die klickbare Einheit (Session
+  2026-10-12): „Klicken Sie auf einen Landkreis / eine Gemeinde / eine
+  Rasterzelle, um die Zahlen für diesen Ort zu sehen." — nicht mehr pauschal
+  „eine Zelle".
 - **Scope-Label nur in der Kartenleiste** (Session 2026-10-12): In der rechten
   Spalte entfallen die Dachzeilen „Deutschland · Landkreise" (Landkreis gewählt),
   „[Landkreis] · Gemeinden" (Gemeinde gewählt) und „Region" (Regionsübersicht) —
