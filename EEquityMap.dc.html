@@ -736,10 +736,10 @@
                   <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
                     <span style="width:11px;height:11px;border-radius:3px;background:{{ b.color }};align-self:center"></span>
                     <span style="color:#26303a;flex:1">{{ b.name }}</span>
-                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">−{{ b.cost }} {{ scopeUnit }}</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c;white-space:nowrap">{{ b.valueText }}</span>
                   </div>
                   <div style="{{ b.trackStyle }}"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
-                  <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">begrenzend in {{ b.count }} Zellen</div>
+                  <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">{{ b.subText }}</div>
                 </div>
               </sc-for>
               <div style="font-size:14px;color:#26303a;line-height:1.5;margin-top:12px;padding:11px 12px;background:#eef3f6;border:1px solid #dbe6ee;border-radius:8px;font-weight:500">{{ counterfactual }}</div>
@@ -1853,7 +1853,11 @@ class Component extends DCLogic {
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
       R.legendCat = true;
-      R.catItems = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color }));
+      // Reihenfolge wie die Liste rechts (größter entgangener Konsens zuerst); Prinzipien, die nirgends
+      // begrenzen, haben keine Farbe auf der Karte und deshalb keinen Legendeneintrag.
+      R.catItems = sel.map(p => ({ p, n: limiting.filter(l => l === p).length, cost: consWithout(p) - consTotal }))
+        .filter(o => o.n > 0).sort((a, b) => b.cost - a.cost)
+        .map(o => ({ name: this.byId[o.p].name, color: this.byId[o.p].color }));
       R.showPlan = false;
     } else if (view === 'konflikt' && S.konfliktMode !== 'anders') {
       // Dissens: max. Distanz zum Konsens, braune sequenzielle Skala (dunkel = große Abweichung)
@@ -2522,7 +2526,7 @@ class Component extends DCLogic {
     } else if (view === 'single') {
       R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmtU(target, isRegion) + ' so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
     } else if (view === 'minimum') {
-      R.kernaussage = 'In jeder Zelle sehen Sie, welches Prinzip den Konsens begrenzt.';
+      R.kernaussage = isRegion ? 'Die Karte zeigt, welches Prinzip den Konsens wo begrenzt.' : 'In jedem Landkreis sehen Sie, welches Prinzip den Konsens begrenzt.';
     } else if (view === 'verteilungen') {
       // Im Galerie-Einstieg trägt der Galerie-Kopf die Headline — hier keine zweite Zeile
       R.kernaussage = galleryAll ? '' : 'So unterschiedlich verteilen die einzelnen Prinzipien den Ausbau.';
@@ -2676,10 +2680,21 @@ class Component extends DCLogic {
         // Bei genau 2 Prinzipien sind beide Kosten identisch (ohne eines bleibt das andere allein) —
         // gleich lange Balken täuschten eine Vergleichbarkeit vor; dann nur Werte + „Ohne X …".
         const blockerBars = sel.length >= 3;
+        // Die Zahl je Zeile ohne Vorzeichen; was sie bedeutet, steht einmal direkt darüber.
         R.blockersCaption = blockerBars
-          ? 'Längerer Balken = begrenzt den Konsens stärker (mehr entgangener Zubau).'
-          : 'Entgangener Zubaukonsens durch jedes Prinzip — bei zwei Prinzipien ist er für beide gleich.';
-        const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%', trackStyle: blockerBars ? 'height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
+          ? 'So viel Zubaukonsens käme hinzu, wenn das jeweilige Prinzip nicht gewählt wäre.'
+          : 'So viel Zubaukonsens käme hinzu, wenn das jeweilige Prinzip nicht gewählt wäre — bei zwei Prinzipien für beide gleich viel.';
+        // Einheit der Karte: Landkreise (Deutschland) bzw. Rasterzellen (Region)
+        const limUnit = n => isRegion ? (n === 1 ? 'Rasterzelle' : 'Rasterzellen') : (n === 1 ? 'Landkreis' : 'Landkreisen');
+        const mkBlockers = () => { R.blockers = bl.map(b => {
+            const costTxt = this.fmtU(Math.max(0, b.cost), isRegion);
+            // Prinzip, das nirgends begrenzt und nichts kostet: schlicht „begrenzt nirgends" statt „0,00" + leerem Balken
+            const never = b.count === 0 && costTxt === this.fmtU(0, isRegion);
+            return { name: b.name, color: b.color, valueText: never ? '' : costTxt,
+              subText: b.count === 0 ? 'begrenzt nirgends' : 'begrenzt in ' + b.count + ' ' + limUnit(b.count),
+              barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%',
+              trackStyle: blockerBars && !never ? 'height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' };
+          }); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
 
         if (view === 'verteilungen') {
           R.anSums = true;

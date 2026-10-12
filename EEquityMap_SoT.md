@@ -285,6 +285,20 @@ bestehenden „Zurück zu Deutschland"-Button. Reine Mock-Interaktion.
 Begrenzung (Erklärzeile ergänzen); Balken codiert nur den GW-Verlust, Zellzahl
 sekundär.
 
+> **Neu gefasst (Session 2026-10-12):** Die Liste (Reiter Konsens und „Was
+> begrenzt?") zeigt je Prinzip den Betrag **ohne Vorzeichen**; die Erklärung
+> steht einmal darüber: „So viel Zubaukonsens käme hinzu, wenn das jeweilige
+> Prinzip nicht gewählt wäre." (bei zwei Prinzipien mit dem Zusatz „… für beide
+> gleich viel"). Unterzeile in der Einheit der Karte: „begrenzt in 89
+> Landkreisen" (Region: „Rasterzellen", Singular beachtet). Ein Prinzip, das
+> nirgends begrenzt und nichts kostet, zeigt nur „begrenzt nirgends" — keine
+> Zahl, kein Balken. Headline des Reiters: „In jedem Landkreis sehen Sie,
+> welches Prinzip den Konsens begrenzt." (Region: „Die Karte zeigt, welches
+> Prinzip den Konsens wo begrenzt."). Kartenlegende „Begrenzendes Prinzip" in
+> der Reihenfolge der Liste, ohne Prinzipien, die nirgends begrenzen.
+> Offen: Fläche auf der Karte ≠ Rang in der Liste (große Landkreise wirken
+> dominanter, als ihr entgangener Konsens ist) — bisher nicht erklärt.
+
 ---
 
 ## F. Referenzen & „Konsens vs. Referenz" (neu / korrigiert) — nur Erweitert
