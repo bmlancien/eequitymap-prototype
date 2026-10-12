@@ -661,14 +661,18 @@
           <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
 
           <div style="{{ ovLeadBoxStyle }}">
-            <div style="font-size:14px;color:#5b6672">{{ ovLeadLabel }}</div>
+            <!-- „i" neben dem Label klappt die Balken-Erklärung („Vom Ausbauziel … liegen … im Konsens") auf -->
+            <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
+              <span>{{ ovLeadLabel }}</span>
+              <span onClick="{{ toggleOvBarInfo }}" style="{{ ovBarInfoBtnStyle }}">i</span>
+            </div>
             <div class="num" style="font-size: 34px; font-weight: 700; color: #2f6690; line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
             <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ ovLeadSub }}</div>
             <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
               <div style="margin-top:11px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
                 <div style="height:100%;width:{{ ovBarFill }};background:#2f6690;border-radius:5px"></div>
               </div>
-              <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">{{ ovBarCaption }}</div>
+              <div style="{{ ovBarCaptionStyle }}">{{ ovBarCaption }}</div>
             </sc-if>
           </div>
 
@@ -1019,6 +1023,7 @@ class Component extends DCLogic {
     showMore: false,
     infoPanel: false,
     infoPrinc: null,
+    ovBarInfo: false,   // Balken-Erklärung in der rechten Spalte aufgeklappt?
     zoom: null,
     freeTarget: false,
     revealP: 1,
@@ -2602,6 +2607,10 @@ class Component extends DCLogic {
         }
       }
       R.ovLeadBoxStyle = 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
+      // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
+      R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer' : 'display:none';
+      R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5b6672;margin-top:8px;line-height:1.45' : 'display:none';
+      R.toggleOvBarInfo = () => this.setState({ ovBarInfo: !this.state.ovBarInfo });
       R.ovClickHint = view !== 'regionGate' && !isEmpty;
     } else if (selectedCell) {
       const i = cells.indexOf(selectedCell), c = selectedCell;

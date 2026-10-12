@@ -252,7 +252,10 @@ Teilmengen-Beziehung muss sichtbar sein, nicht nur rechnerisch stimmen.
 Darstellung — Balken = Ausbauziel (z. B. 215 GW), gefüllter Abschnitt =
 Zubaukonsens gesamt (z. B. 169,29 GW), blasser Rest = Zubau außerhalb des
 Konsens. Caption: „Vom Ausbauziel liegen X GW im Konsens aller gewählten
-Prinzipien." Der vorhandene Prozentwert („78,7 % des Ausbauziels") bleibt.
+Prinzipien." Seit Session 2026-10-12 steht diese Caption hinter einem „i" neben
+dem Label „Zubaukonsens gesamt" (zu, bis angeklickt; gleiches Muster wie die
+Prinzip-Infos links) — ebenso die Regions-Variante „Vom Regionsbudget …". Der
+vorhandene Prozentwert („78,7 % des Ausbauziels") bleibt.
 Gleiche Füll-/Blass-Logik und Caption-Struktur wie auf Zellebene, damit
 erkennbar ist: dieselbe Idee in zwei Maßstäben (Konsens = Ausschnitt einer
 größeren Zubaugröße).
