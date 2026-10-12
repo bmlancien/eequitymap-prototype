@@ -375,11 +375,13 @@
                       <div style="font-size:14px;color:#5b6672;background:#f4f6f7;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
                     </sc-if>
                   </sc-if>
-                  <!-- Szenario gegen eine Referenz: zwei Deckungs-Kennzahlen (Planungsflächen: Ausweisung, Historischer Ausbau: bisheriges Muster) -->
+                  <!-- Szenario gegen eine Referenz: Deckungs-Kennzahlen (Planungsflächen: zwei Richtungen, Historischer Ausbau: nur „liegt im Konsens") -->
                   <sc-if value="{{ showHubCover }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
                       <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">{{ hubCoverA1 }} <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> {{ hubCoverA2 }}</div>
-                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">{{ hubCoverB1 }} <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> {{ hubCoverB2 }}</div>
+                      <sc-if value="{{ showHubCoverB }}" hint-placeholder-val="{{ false }}">
+                        <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
+                      </sc-if>
                     </div>
                     <div style="font-size:14px;color:#9aa4ad;margin-top:6px">Bezogen auf {{ hubCoverScen }}.</div>
                   </sc-if>
@@ -1856,7 +1858,7 @@ class Component extends DCLogic {
     // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
-    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false;
+    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
     R.hubSlots = []; R.hubTables = []; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
@@ -1976,10 +1978,10 @@ class Component extends DCLogic {
             R.hubRefGapNote = 'Die beiden Seiten verteilen unterschiedlich viel: ' + refSide.name + ' ' + refTxt + ' (das ganze Ausbauziel), das Szenario ' + scenTxt + ' (nur den Zubaukonsens). Die ' + this.fmtU(refSum - scenSum, lvlRegion) + ' Unterschied stecken mit in der Karte. Sie zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass ' + refSide.name + ' mehr verteilt.';
           }
         }
-        // Szenario gegen eine Referenz → zwei Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +
+        // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +
         // Konfliktflächen des Szenarios. „Im Konsens" = konfliktfreie Zelle über 35 % des Zellmaximums.
-        // Planungsflächen: gleiche Logik wie die frühere Planungsansicht (Anteil ausgewiesen je Zelle).
-        // Historischer Ausbau: dieselben zwei Richtungen mit der auf das Ziel skalierten Bestandsverteilung.
+        // Planungsflächen: zwei Richtungen, gleiche Logik wie die frühere Planungsansicht (Anteil ausgewiesen
+        // je Zelle). Historischer Ausbau: nur der Anteil der Referenzverteilung, der im Konsens liegt.
         const scenOther = [A, B].find(o => !o.isRef);
         if (refSide && scenOther) {
           const base = scenOther.cellCons, conf = scenOther.cellConflict || base.map(() => false);
@@ -1991,15 +1993,13 @@ class Component extends DCLogic {
             const imKonsens = !conf[i] && base[i] > 0.35 * mx;
             const r = isPlan ? c.ausgAnteil : refVals[i];
             refTot += r;
-            if (imKonsens) { refImKonsens += r; konsTot += base[i]; konsGedeckt += isPlan ? base[i] * r : Math.min(base[i], r); }
+            if (imKonsens) { refImKonsens += r; konsTot += base[i]; if (isPlan) konsGedeckt += base[i] * r; }
           });
-          R.showHubCover = true;
+          R.showHubCover = true; R.showHubCoverB = isPlan;
           R.hubCoverA = refTot ? Math.round(refImKonsens / refTot * 100) : 0;
           R.hubCoverB = konsTot ? Math.round(konsGedeckt / konsTot * 100) : 0;
           R.hubCoverA1 = isPlan ? 'Von der Ausweisung trifft' : 'Vom historischen Ausbau liegen';
           R.hubCoverA2 = isPlan ? 'den Konsens.' : 'im Konsens.';
-          R.hubCoverB1 = isPlan ? 'Vom Konsens sind erst' : 'Vom Konsens wären';
-          R.hubCoverB2 = isPlan ? 'ausgewiesen.' : 'gedeckt, wenn weiter so gebaut würde wie bisher.';
           R.hubCoverScen = scenOther.name;
         }
       }
