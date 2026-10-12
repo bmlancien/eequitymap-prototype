@@ -851,10 +851,10 @@ wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
   Wiederherstellen + × (löschen). Region-Szenarien: zwei Zeilen „Prinzipien DE" +
   „Prinzipien regional"; DE-Szenarien: eine Zeile „Prinzipien".
 
-**Greenfield-Hinweis** bei den Jahres-Marken (2030/2035/2045): „Die dargestellte
-Zeitreihe zeigt berechnete Zielzustände für verschiedene Jahre. Jeder Zustand
-basiert auf einer separaten Greenfield-Berechnung; die Ergebnisse bauen nicht
-schrittweise auf dem Vorjahr auf."
+**Greenfield-Hinweis** bei den Jahres-Marken (2030/2035/2045): „Die Marken 2030,
+2035 und 2045 sind drei getrennte Berechnungen, jede für sich von Grund auf neu
+verteilt. Sie zeigen keinen Ausbaupfad: Das Ergebnis für 2035 baut nicht auf dem
+für 2030 auf."
 
 **Vereinfachung (Session 2026-10-09, nachgezogen):**
 - **Held = A/B-Slots + Differenzkarte** (volle Breite des Hubs).
