@@ -72,13 +72,17 @@
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
         <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
              leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
-        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#8a929a;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:8px 10px;margin-bottom:14px;line-height:1.6">Bundesweit verteilt nach:
-          <sc-if value="{{ natInlineEmpty }}" hint-placeholder-val="{{ false }}">
-            <span>—</span>
-          </sc-if>
-          <sc-for list="{{ natInline }}" as="ni" hint-placeholder-count="2">
-            <span style="display:inline-flex;align-items:center;color:#5b6672;font-weight:500"><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:{{ ni.color }};margin-right:4px"></span>{{ ni.name }}</span>
-          </sc-for>
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#8a929a;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:7px 10px;margin-bottom:14px;line-height:1.4;display:flex;align-items:center;gap:6px;white-space:nowrap">
+          <!-- Zugeklappt eine Zeile: Farbpunkte + Anzahl. Die Namen stehen nur aufgeklappt (Chips darunter) —
+               nicht doppelt. -->
+          <span>Bundesweit:</span>
+          <span style="display:flex;align-items:center;gap:3px;flex:none">
+            <sc-for list="{{ natInline }}" as="ni" hint-placeholder-count="2">
+              <span style="flex:none;width:9px;height:9px;border-radius:3px;background:{{ ni.color }}"></span>
+            </sc-for>
+          </span>
+          <span style="color:#5b6672">{{ natCountText }}</span>
+          <span style="flex:1"></span>
           <span style="color:#aab2b9">{{ natBreadcrumbCaret }}</span>
         </div>
         <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
@@ -96,7 +100,8 @@
         <span style="width:4px;height:16px;border-radius:2px;background:#0b6b5a;flex:none"></span>
         <span style="font-size:15px;font-weight:700;color:#1b2126">{{ princHeading }}</span>
       </div>
-      <div style="font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
+      <!-- Unterzeile nur auf Bundesebene; in der Region steht schon der Zwei-Ebenen-Hinweis, hier nur Abstand -->
+      <div style="{{ princSublineStyle }}">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
@@ -442,10 +447,10 @@
               <div style="position:absolute;top:10px;right:10px;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:calc(100% - 20px)">
                 <div style="background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
                   <!-- Spaltenbreiten fest und auf den fetten (aktiven) Text bemessen — kompakt, ohne dass die Auswahl etwas verschiebt -->
-                  <div style="display:grid;grid-template-columns:140px 122px 90px;max-width:100%;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                  <div style="display:grid;grid-template-columns:90px 140px 122px;max-width:100%;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                    <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
                     <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                     <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
-                    <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
                   </div>
                 </div>
               </div>
@@ -1097,7 +1102,7 @@ class Component extends DCLogic {
     level: 'de',
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
     // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
-    regionViewMode: 'gemeinden-raster',
+    regionViewMode: 'gemeinden',   // Standard wie in Basic: Gemeinden allein sind am besten lesbar
     gemeinde: null,                // AGS der ausgewählten Gemeinde (nur im Modus 'gemeinden')
     selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
     regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
@@ -1783,7 +1788,7 @@ class Component extends DCLogic {
     // Einheit der Legende = das, was die Karte einfärbt: Landkreise (Deutschland), Gemeinden (Region, Ansicht
     // „Gemeinden" bzw. Basic) oder das 5 × 5-km-Raster (Region, Ansichten mit Raster — nur Erweitert).
     const legendUnit = !isRegion ? 'je Landkreis'
-      : ((isExt ? (S.regionViewMode || 'gemeinden-raster') : 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
+      : ((isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
@@ -2256,7 +2261,7 @@ class Component extends DCLogic {
     // Hinweistext, welche Einheit gerade klickbar ist.
     // Basic hat keinen Umschalter und zeigt immer die Gemeinden; der Raster-Umschalter bleibt Erweitert.
     R.showGemToggle = isExt && isRegion;
-    R.regionViewMode = isExt ? (S.regionViewMode || 'gemeinden-raster') : 'gemeinden';
+    R.regionViewMode = isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden';
     R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
     R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
     R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', cell: null });
@@ -2457,6 +2462,7 @@ class Component extends DCLogic {
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
     R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#0b6b5a' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#0b6b5a' : '#8a929a') + ';font-style:italic;cursor:pointer';
     R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
+    R.princSublineStyle = isRegion ? 'height:10px;overflow:hidden;visibility:hidden' : 'font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
     // Definition „Zubaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
     R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer';
@@ -2486,6 +2492,7 @@ class Component extends DCLogic {
     R.natBreadcrumbOpen = !!S.natBreadcrumbOpen;
     R.toggleNatBreadcrumb = () => this.setState({ natBreadcrumbOpen: !S.natBreadcrumbOpen });
     R.natChips = natSelForBreadcrumb.map(id => ({ name: this.byId[id].name, color: this.byId[id].color }));
+    R.natCountText = natSelForBreadcrumb.length === 0 ? '—' : natSelForBreadcrumb.length === 1 ? '1 Prinzip' : natSelForBreadcrumb.length + ' Prinzipien';
 
     // Erst-Hinweis an der regionalen Liste — macht die Opt-in-Natur des zweiten Prinzipiensatzes sichtbar (§M)
     R.regionListHint = isRegion && !S.regionHintSeen;
@@ -2566,7 +2573,8 @@ class Component extends DCLogic {
     } else {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
       R.kernaussage = isRegion
-        ? 'Von ' + this.fmtU(target, isRegion) + ' Regionsbudget liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens der regionalen Prinzipien.'
+        // erklärt, woher das Regionsbudget kommt (Verbindung der zwei Ebenen); die Konsenszahl steht rechts
+        ? 'Regionsbudget für ' + S.region.label + ': ' + this.fmtU(target, isRegion) + ' — sein Anteil ' + (S.selected.filter(avail).length >= 2 ? 'am bundesweiten Konsens.' : 'an der bundesweiten Verteilung.')
         : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
     }
 
@@ -2705,7 +2713,22 @@ class Component extends DCLogic {
           ? 'Vom Regionsbudget (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens der regionalen Prinzipien.'
           : 'Vom Ausbauziel (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
-        const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limiting.filter(l=>l===p).length, cost: consWithout(p) - consTotal }));
+        // Einheit der Zählung = die auf der Karte klickbare Einheit: Landkreise (Deutschland), Gemeinden (Region,
+        // Ansichten mit Gemeinden) oder Rasterzellen (Region, nur Ansicht „Raster"). Begrenzendes Prinzip einer
+        // Gemeinde = das mit dem kleinsten flächengewichteten Wert — dieselbe Regel wie im Gemeinde-Detail.
+        const limByGem = isRegion && R.regionViewMode !== 'raster' && gemList && gemWeights;
+        let gemLimCount = null;
+        if (limByGem) {
+          gemLimCount = {}; sel.forEach(p => gemLimCount[p] = 0);
+          gemList.forEach((g, gi) => {
+            const ws = gemWeights[gi] || [];
+            if (!ws.length) return;
+            const agg = p => ws.reduce((a, w) => a + gwSel[p][w.i] * w.w, 0);
+            const limP = sel.reduce((best, p) => agg(p) < agg(best) - 1e-9 ? p : best, sel[0]);
+            gemLimCount[limP]++;
+          });
+        }
+        const bl = sel.map(p => ({ p, name: this.byId[p].name, color: this.byId[p].color, count: limByGem ? gemLimCount[p] : limiting.filter(l=>l===p).length, cost: consWithout(p) - consTotal }));
         bl.sort((a,b)=>b.cost-a.cost);
         const cmax = Math.max(...bl.map(b=>b.cost), 0.001);
         // Bei genau 2 Prinzipien sind beide Kosten identisch (ohne eines bleibt das andere allein) —
@@ -2716,7 +2739,7 @@ class Component extends DCLogic {
           ? 'So viel Zubaukonsens käme hinzu, wenn das jeweilige Prinzip nicht gewählt wäre.'
           : 'So viel Zubaukonsens käme hinzu, wenn das jeweilige Prinzip nicht gewählt wäre — bei zwei Prinzipien für beide gleich viel.';
         // Einheit der Karte: Landkreise (Deutschland) bzw. Rasterzellen (Region)
-        const limUnit = n => isRegion ? (n === 1 ? 'Rasterzelle' : 'Rasterzellen') : (n === 1 ? 'Landkreis' : 'Landkreisen');
+        const limUnit = n => limByGem ? (n === 1 ? 'Gemeinde' : 'Gemeinden') : isRegion ? (n === 1 ? 'Rasterzelle' : 'Rasterzellen') : (n === 1 ? 'Landkreis' : 'Landkreisen');
         const mkBlockers = () => { R.blockers = bl.map(b => {
             const costTxt = this.fmtU(Math.max(0, b.cost), isRegion);
             // Prinzip, das nirgends begrenzt und nichts kostet: schlicht „begrenzt nirgends" statt „0,00" + leerem Balken

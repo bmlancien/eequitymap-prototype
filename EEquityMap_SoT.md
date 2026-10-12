@@ -923,6 +923,37 @@ die falsche Einheit.
 > Gemeindegrenzen) stehen direkt unter der Karte, über der Farblegende. In der
 > Galerie „Einzelverteilungen" erscheint der Umschalter nicht mehr (er hatte
 > dort keine Wirkung).
+>
+> **Regionsansicht vereinfacht (Session 2026-10-12):**
+> - **Standardansicht in Erweitert = „Gemeinden"** (wie Basic), nicht mehr
+>   „Gemeinden + Raster": Dort lagen Raster, Gemeindegrenzen und Kreisumriss
+>   übereinander, und das abgedunkelte Raster — das eigentliche Ergebnis — war
+>   kaum lesbar. Reihenfolge im Umschalter: Gemeinden · Gemeinden + Raster ·
+>   Raster (5 × 5 km).
+> - **Headline erklärt das Regionsbudget** statt die rechte Spalte zu
+>   wiederholen: „Regionsbudget für [Landkreis]: [X] MW — sein Anteil am
+>   bundesweiten Konsens." (bei nur einem bundesweiten Prinzip: „… an der
+>   bundesweiten Verteilung."). Vorher: „Von [X] MW Regionsbudget liegen [Y] MW
+>   im Konsens der regionalen Prinzipien." — diese Aussage steht weiter in der
+>   rechten Spalte (Zahl, Anteil, Balken, „i").
+> - **Linke Spalte:** Die Unterzeile „Kein Prinzip ist objektiv richtig …"
+>   entfällt in der Regionsansicht (bleibt auf Bundesebene); dort steht bereits
+>   der Zwei-Ebenen-Hinweis. Der Kontext-Kasten der bundesweiten Prinzipien ist
+>   zugeklappt nur **eine Zeile**: „Bundesweit:" + Farbpunkte der Prinzipien +
+>   Anzahl („3 Prinzipien") + Pfeil. Die Namen stehen erst aufgeklappt als Chips
+>   darunter — vorher standen sie zugeklappt und aufgeklappt doppelt. Der
+>   Hinweis „Startet mit denselben Prinzipien wie national. …" bleibt
+>   unverändert sichtbar (wichtig für das Zwei-Ebenen-Verständnis).
+> - **Zähleinheit = klickbare Einheit:** In „Was begrenzt den Konsens?" zählt
+>   die Unterzeile in der Region **Gemeinden** („begrenzt in 64 Gemeinden"),
+>   solange Gemeinden gezeigt werden (Basic; Erweitert in „Gemeinden" und
+>   „Gemeinden + Raster"). Von **Rasterzellen** ist nur in der Ansicht „Raster
+>   (5 × 5 km)" die Rede. Begrenzendes Prinzip einer Gemeinde = das Prinzip mit
+>   dem kleinsten flächengewichteten Wert in der Gemeinde — dieselbe Regel wie
+>   im Gemeinde-Detail. Die GW/MW-Beträge der Liste sind davon unberührt.
+>   **Noch zellbasiert** (offen): „Größte Abweichungen" in der Region
+>   („Rasterzelle …"), „Zellen je abweichender Verteilung" samt
+>   Kombinations-Diagramm, sowie die Legende „Begrenzendes Prinzip".
 
 ---
 
