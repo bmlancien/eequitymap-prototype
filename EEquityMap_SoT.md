@@ -660,7 +660,8 @@ nicht über die volle Breite laufen lassen.
 
 ## I. Offene Fragen — für den Open-Questions-Log
 
-1. **Farbsystem: Grün/Teal vs. Steel Blue.** Der Prototyp nutzt durchgängig
+1. *(Erledigt in Session 2026-10-12 — siehe J2 „Farbsystem"; Konsens-Skala
+   ist neutral grau.)* **Farbsystem: Grün/Teal vs. Steel Blue.** Der Prototyp nutzt durchgängig
    Grün; das Briefing sah Steel Blue vor. Bewusster Rebrand oder Drift?
    Unabhängig davon: die Dreifachbelegung von Grün (Marke + Konsensskala +
    Prinzipfarbe Bevölkerungsfern) auflösen.
@@ -712,6 +713,39 @@ Terminologie (B) und die neuen experimentellen Prinzipien mit vorhandenen
 Backend-Metriken hinterlegt sind bzw. korrekt als „Metrik in Vorbereitung"
 gekennzeichnet bleiben. Der bekannte Grundsatz gilt weiter: eine Datenquelle
 für Score, Häkchen/Begrenzer, Kartenfarbe und Blocker-Auswertung.
+
+---
+
+## J2. Farbsystem (Session 2026-10-12) — löst offene Frage I.1 ab
+
+**Leitregel:** Die Oberfläche bleibt ruhig, Farbe gehört den Daten.
+
+- **Helle Oberfläche.** Kopfzeile und Leiste über der Karte sind weiß mit
+  dünner Linie (vorher dunkle Bänder, die stärker wirkten als die Karten).
+  „← Deutschland" ist ein umrandeter, neutraler Knopf.
+- **Ein neutraler Akzent** (`#1f2a33`, dunkles Schiefer) für aktive Zustände,
+  Knöpfe, Links, Schalter und den aktiven Reiter. **Markengrün nur noch im
+  Logo.** Grün ist sonst eine Datenfarbe (Prinzip Bevölkerungsfern, Seite A der
+  Differenzkarte). Frühere grüne und bläuliche Flächentöne der Oberfläche sind
+  neutral grau.
+- **Farbe = Prinzip.** Die sechs Prinzipfarben bleiben unverändert
+  (farbfehlsichtig-taugliche Reihe). Abgeleitete Karten bekommen keinen
+  eigenen Prinzip-Farbton.
+- **Konsens-Skala neutral** (entschieden, Session 2026-10-12): hellgrau →
+  Schiefer `#34424f`. Neutral = Übereinstimmung, Farbe = Prinzip. Sie steuert
+  Karte, Legende, Paar-Matrix sowie die großen Zahlen und Balken der rechten
+  Spalte. Vorher Stahlblau `#2f6690`, das neben dem Blau von Bevölkerungsnah
+  und der Wind-Markierung lag; die Vorschau zum Umschalten ist wieder entfernt.
+- **Karten auf Weiß.** Kartenflächen und Galerie-Karten haben weißen Grund.
+  Das helle Ende der Skalen ist sichtbar getönt, damit niedrige Werte nicht im
+  Hintergrund verschwinden; die Differenzkarte hat einen neutral-grauen
+  Mittelpunkt.
+- **Drei Textgrautöne:** Text `#1b2126`, sekundär `#5b6672`, zurückgenommen
+  `#6b7680` (vorher rund zehn Stufen; die hellsten waren auf dem grauen
+  Seitengrund schwer lesbar).
+- **Unverändert:** Wind/PV-Farben (blau/gelb) der Technologie-Markierung, die
+  Farben der Differenzkarte (A grünblau, B braun), die braune Skala der
+  Abweichungskarte.
 
 ---
 

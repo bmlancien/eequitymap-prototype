@@ -15,9 +15,9 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:#eceef0;color:#1b2126;-webkit-font-smoothing:antialiased}
-  a{color:#0b6b5a;text-decoration:none}
-  a:hover{color:#08564a}
-  ::selection{background:#c9e7df}
+  a{color:#1f2a33;text-decoration:none}
+  a:hover{color:#111a21}
+  ::selection{background:#dbdde0}
   .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
   input,button{font-family:inherit}
   input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#c7ccd1;outline:none}
@@ -32,8 +32,8 @@
      per CSS-Loop — bewegt sich dadurch von links nach rechts, verlangsamt sich asymptotisch und bleibt
      unter 100 %, bis die Rechnung tatsächlich fertig ist. Die kurze Transition glättet nur zwischen zwei
      Frames, behauptet keine Dauer. */
-  .loadbar{position:relative;width:100%;height:6px;background:#dde5ea;border-radius:3px;overflow:hidden}
-  .loadbar-fill{position:absolute;top:0;left:0;bottom:0;background:#2f6690;border-radius:3px;transition:width .2s linear}
+  .loadbar{position:relative;width:100%;height:6px;background:#e2e5e8;border-radius:3px;overflow:hidden}
+  .loadbar-fill{position:absolute;top:0;left:0;bottom:0;background:#1f2a33;border-radius:3px;transition:width .2s linear}
   .scroll::-webkit-scrollbar{width:9px}
   .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
   .hx{transition:opacity .15s}
@@ -49,17 +49,17 @@
     <text x="600" y="640" font-family="'IBM Plex Sans',sans-serif" font-size="76" font-weight="700" fill="#ffffff" text-anchor="middle">EEquity<tspan fill="#57c4ab">Map</tspan></text>
   </svg>
 </template>
-<div style="display:flex;flex-direction:column;height:100vh;min-height:0;background:#eceef0">
+<div style="display:flex;flex-direction:column;height:100vh;min-height:0;background:#eceef0;--cons:{{ consHex }}">
 
   <!-- HEADER -->
-  <header style="display:flex;align-items:center;gap:16px;height:54px;padding:0 20px;background:#1a2027;color:#fff;flex:none;z-index:20">
+  <header style="display:flex;align-items:center;gap:16px;height:54px;padding:0 20px;background:#fff;color:#1b2126;border-bottom:1px solid #dde1e5;box-sizing:border-box;flex:none;z-index:20">
     <div style="display:flex;align-items:baseline;gap:9px">
-      <span style="font-weight:700;font-size:17px;letter-spacing:-.2px">EEquity<span style="color:#57c4ab">Map</span></span>
-      <span style="font-size:14px;color:#8b98a5;font-weight:500">Wo wäre der Ausbau fair?</span>
+      <span style="font-weight:700;font-size:17px;letter-spacing:-.2px">EEquity<span style="color:#0b6b5a">Map</span></span>
+      <span style="font-size:14px;color:#5b6672;font-weight:500">Wo wäre der Ausbau fair?</span>
     </div>
-    <button onClick="{{ reopenIntro }}" style="background:none;border:1px solid #39434e;color:#c7d0d9;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer">Was ist das?</button>
+    <button onClick="{{ reopenIntro }}" style="background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer">Was ist das?</button>
     <div style="flex:1"></div>
-    <div style="display:flex;background:#11161c;border-radius:7px;padding:3px;gap:2px">
+    <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
       <button onClick="{{ setBasic }}" style="{{ modeBasicStyle }}">Basic</button>
       <button onClick="{{ setErweitert }}" style="{{ modeExtStyle }}">Erweitert</button>
     </div>
@@ -72,7 +72,7 @@
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
         <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
              leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
-        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#8a929a;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:7px 10px;margin-bottom:14px;line-height:1.4;display:flex;align-items:center;gap:6px;white-space:nowrap">
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#6b7680;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:7px 10px;margin-bottom:14px;line-height:1.4;display:flex;align-items:center;gap:6px;white-space:nowrap">
           <!-- Zugeklappt eine Zeile: Farbpunkte + Anzahl. Die Namen stehen nur aufgeklappt (Chips darunter) —
                nicht doppelt. -->
           <span>Bundesweit:</span>
@@ -83,7 +83,7 @@
           </span>
           <span style="color:#5b6672">{{ natCountText }}</span>
           <span style="flex:1"></span>
-          <span style="color:#aab2b9">{{ natBreadcrumbCaret }}</span>
+          <span style="color:#6b7680">{{ natBreadcrumbCaret }}</span>
         </div>
         <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 14px">
@@ -97,16 +97,16 @@
       <!-- Prominent: das aktive Steuerelement (im Gegensatz zum zurückgenommenen Kontext-Kasten oben) —
            Akzentbalken in der Markenfarbe, kräftigere Type. -->
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="width:4px;height:16px;border-radius:2px;background:#0b6b5a;flex:none"></span>
+        <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
         <span style="font-size:15px;font-weight:700;color:#1b2126">{{ princHeading }}</span>
       </div>
       <!-- Unterzeile nur auf Bundesebene; in der Region steht schon der Zwei-Ebenen-Hinweis, hier nur Abstand -->
       <div style="{{ princSublineStyle }}">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
+        <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px">
           <span style="flex:1">Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
-          <span onClick="{{ dismissRegionListHint }}" style="cursor:pointer;color:#6f8aa0;font-size:14px;line-height:1;padding:2px;flex:none">×</span>
+          <span onClick="{{ dismissRegionListHint }}" style="cursor:pointer;color:#6b7680;font-size:14px;line-height:1;padding:2px;flex:none">×</span>
         </div>
       </sc-if>
 
@@ -129,9 +129,9 @@
       </sc-for>
 
       <sc-if value="{{ showCTA }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #cfe4de;border-radius:8px">
-          <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
-          <button onClick="{{ addSecond }}" style="width:100%;background:#0b6b5a;color:#fff;border:none;padding:8px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Zweites Prinzip hinzufügen</button>
+        <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #dbdde0;border-radius:8px">
+          <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
+          <button onClick="{{ addSecond }}" style="width:100%;background:#1f2a33;color:#fff;border:none;padding:8px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Zweites Prinzip hinzufügen</button>
         </div>
       </sc-if>
 
@@ -140,7 +140,7 @@
            Abbrechen, s. dort) — hier links nur der Idle-/Veraltet-Zustand mit dem Start-Button. -->
       <sc-if value="{{ showRegionCompute }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:12px;padding:12px 13px;border-radius:8px;{{ regionComputeBoxStyle }}">
-          <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionComputeTitle }}</div>
+          <div style="font-size:14px;color:#1b2126;font-weight:600">{{ regionComputeTitle }}</div>
           <div style="font-size:14px;color:#5b6672;margin-top:4px;margin-bottom:9px;line-height:1.45">{{ regionComputeSub }}</div>
           <button onClick="{{ startRegionCompute }}" style="{{ regionComputeBtnStyle }}">{{ regionComputeBtnLabel }}</button>
         </div>
@@ -174,14 +174,14 @@
           </sc-for>
         </div>
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
-        <div style="display:flex;justify-content:space-between;font-size:14px;color:#9aa4ad;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
-        <div style="font-size:14px;color:#33413c;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
+        <div style="font-size:14px;color:#1b2126;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
       </div>
 
       <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
         <button onClick="{{ toggleAccount }}" style="{{ accountSwitchStyle }}"><span style="{{ accountKnobStyle }}"></span></button>
-        <span style="font-size:14px;color:#333c44;flex:1">Bestandsanlagen anrechnen</span>
-        <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic">i</span>
+        <span style="font-size:14px;color:#1b2126;flex:1">Bestandsanlagen anrechnen</span>
+        <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6b7680;cursor:pointer;font-style:italic">i</span>
       </div>
       <div style="{{ accountInfoStyle }}">Bereits bestehende Anlagen zählen als getragene Last — Regionen mit viel Bestand erhalten weniger Neuzubau.</div>
 
@@ -190,7 +190,7 @@
            gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
       <div style="{{ saveFooterStyle }}">
         <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
-          <button onClick="{{ openSaveScenario }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #0b6b5a;color:#0b6b5a;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#eef4f2">
+          <button onClick="{{ openSaveScenario }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             Zum Vergleich speichern
           </button>
@@ -201,13 +201,13 @@
     <!-- ============ MIDDLE COLUMN ============ -->
     <main class="scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 18px 12px;overflow-y:auto">
       <!-- Ansichtsleiste -->
-      <div style="display:flex;align-items:center;gap:12px;background:#1f2731;border-radius:9px;padding:8px 12px;flex:none">
+      <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #dde1e5;border-radius:9px;padding:7px 12px;flex:none">
         <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
-          <button onClick="{{ backToDE }}" style="display:flex;align-items:center;gap:5px;background:#57c4ab;color:#0c2a24;border:none;font-size:14px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">← Deutschland</button>
+          <button onClick="{{ backToDE }}" style="display:flex;align-items:center;gap:5px;background:#fff;color:#1b2126;border:1px solid #ccd2d7;font-size:14px;font-weight:600;padding:4px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">← Deutschland</button>
         </sc-if>
-        <span style="font-size:14px;color:#e7ecf0;font-weight:500;white-space:nowrap">{{ ansichtLabel }}</span>
+        <span style="font-size:14px;color:#1b2126;font-weight:600;white-space:nowrap">{{ ansichtLabel }}</span>
         <div style="flex:1"></div>
-        <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;background:#11161c;border:1px solid #333d47;color:#e7ecf0;font-size:14px;padding:6px 10px;border-radius:6px">
+        <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:6px 10px;border-radius:6px">
       </div>
 
       <!-- Kernaussage -->
@@ -233,8 +233,8 @@
       <!-- Single-View: Zurück zur Galerie + Kennzeichnung -->
       <sc-if value="{{ isSingleView }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:12px;margin:0 2px 8px;flex-wrap:wrap;flex:none">
-          <button onClick="{{ backToGallery }}" style="background:#eef2f1;border:1px solid #cfd9d6;border-radius:7px;padding:5px 11px;font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">← Alle Prinzipien vergleichen</button>
-          <span style="font-size:14px;color:#8a929a;font-style:italic">Einzelverteilung eines Prinzips — nicht der Konsens.</span>
+          <button onClick="{{ backToGallery }}" style="background:#eef2f1;border:1px solid #d4d6d9;border-radius:7px;padding:5px 11px;font-size:14px;color:#1f2a33;font-weight:600;cursor:pointer">← Alle Prinzipien vergleichen</button>
+          <span style="font-size:14px;color:#6b7680;font-style:italic">Einzelverteilung eines Prinzips — nicht der Konsens.</span>
         </div>
       </sc-if>
 
@@ -265,7 +265,7 @@
             </sc-if>
             <div style="{{ galleryGridStyle }}">
               <sc-for list="{{ smallMaps }}" as="mp" hint-placeholder-count="4">
-                <div onClick="{{ mp.onClick }}" style="background:#f7f8f9;border:1px solid #e0e4e7;border-radius:10px;padding:12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" style-hover="border-color:#2f6690;box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)">
+                <div onClick="{{ mp.onClick }}" style="background:#fff;border:1px solid #e0e4e7;border-radius:10px;padding:12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" style-hover="border-color:#1f2a33;box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)">
                   <div style="display:flex;align-items:center;gap:7px">
                     <span style="{{ mp.swatch }}"></span>
                     <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1">{{ mp.name }}</span>
@@ -273,15 +273,15 @@
                   </div>
                   <!-- flex:1 → Karte + Wertebereich sitzen am unteren Kartenrand und fluchten in jeder Zeile,
                        egal ob Titel/Beschreibung ein- oder zweizeilig sind -->
-                  <div style="font-size:14px;color:#44505a;margin-top:5px;line-height:1.45;max-width:38ch;flex:1">{{ mp.explain }}</div>
+                  <div style="font-size:14px;color:#5b6672;margin-top:5px;line-height:1.45;max-width:38ch;flex:1">{{ mp.explain }}</div>
                   <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:132px;margin-top:10px;flex:none">
                     <sc-for list="{{ mp.cells }}" as="c" hint-placeholder-count="20">
                       <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
                     </sc-for>
                   </svg>
                   <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin-top:6px">
-                    <span style="font-size:14px;color:#7a848c;white-space:nowrap"><span class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span> {{ galleryRangeUnit }}</span>
-                    <span style="font-size:14px;color:#8d99a3;margin-left:auto;white-space:nowrap">Einzeln ansehen →</span>
+                    <span style="font-size:14px;color:#6b7680;white-space:nowrap"><span class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span> {{ galleryRangeUnit }}</span>
+                    <span style="font-size:14px;color:#6b7680;margin-left:auto;white-space:nowrap">Einzeln ansehen →</span>
                   </div>
                 </div>
               </sc-for>
@@ -303,7 +303,7 @@
               <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
             </div>
             <div style="display:flex;justify-content:flex-end">
-              <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #0b6b5a;color:#0b6b5a;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#eef4f2">
+              <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
                 Vergleich teilen
               </button>
@@ -328,14 +328,14 @@
                       </div>
                       <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
                         <span title="{{ sl.name }}" style="{{ sl.nameStyle }}">{{ sl.name }}</span>
-                        <span style="flex:none;color:#7a848c;font-size:17px;line-height:1">{{ sl.caret }}</span>
+                        <span style="flex:none;color:#6b7680;font-size:17px;line-height:1">{{ sl.caret }}</span>
                       </div>
                       <div title="{{ sl.diff }}" style="{{ sl.diffStyle }}">{{ sl.diff }}</div>
                     </div>
                     <div style="{{ sl.menuStyle }}">
                       <sc-for list="{{ sl.groups }}" as="g" hint-placeholder-count="2">
                         <div style="padding:4px 0">
-                          <div style="font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#9aa4ad;padding:6px 12px 4px">{{ g.label }}</div>
+                          <div style="font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#6b7680;padding:6px 12px 4px">{{ g.label }}</div>
                           <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
                             <div>
                               <div style="{{ it.rowStyle }}">
@@ -373,7 +373,7 @@
                     </sc-if>
                   </div>
                   <sc-if value="{{ scenDiffGemNote }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:14px;color:#8a929a;margin-top:4px">{{ scenDiffGemNote }}</div>
+                    <div style="font-size:14px;color:#6b7680;margin-top:4px">{{ scenDiffGemNote }}</div>
                   </sc-if>
                   <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
@@ -385,17 +385,17 @@
                       </sc-for>
                       <!-- Umriss des Landkreises ÜBER dem Raster (Regionsvergleich) — sonst verdecken ihn die Zellen
                            und die Karte ist nicht als Landkreis erkennbar -->
-                      <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"></path>
+                      <path d="{{ scenDiffOutline }}" fill="none" stroke="#5b6672" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"></path>
                       <!-- Auswahl: dunkle Kontur über allen Zellen (sonst verdecken Nachbarn die halbe Linie) -->
                       <path d="{{ scenDiffSelD }}" fill="none" stroke="#12181d" stroke-width="2.6" stroke-linejoin="round" pointer-events="none"></path>
                     </svg>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
                       <span style="font-size:14px;color:#5b6672">mehr in A</span>
-                      <span class="num" style="font-size:14px;color:#7a848c">bis {{ scenDiffMax }}</span>
+                      <span class="num" style="font-size:14px;color:#6b7680">bis {{ scenDiffMax }}</span>
                       <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
-                      <span class="num" style="font-size:14px;color:#7a848c">bis {{ scenDiffMax }}</span>
+                      <span class="num" style="font-size:14px;color:#6b7680">bis {{ scenDiffMax }}</span>
                       <span style="font-size:14px;color:#5b6672">mehr in B</span>
-                      <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
+                      <span style="font-size:14px;color:#6b7680">· Mitte = gleich</span>
                     </div>
                     <sc-if value="{{ hubRefGapNote }}" hint-placeholder-val="{{ false }}">
                       <div style="font-size:14px;color:#5b6672;background:#f4f6f7;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
@@ -404,9 +404,9 @@
                   <!-- Szenario gegen eine Referenz: Deckungs-Kennzahlen (Planungsflächen: zwei Richtungen, Historischer Ausbau: nur „liegt im Konsens") -->
                   <sc-if value="{{ showHubCover }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
-                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">{{ hubCoverA1 }} <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> {{ hubCoverA2 }}</div>
+                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#5b6672;line-height:1.5">{{ hubCoverA1 }} <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> {{ hubCoverA2 }}</div>
                       <sc-if value="{{ showHubCoverB }}" hint-placeholder-val="{{ false }}">
-                        <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
+                        <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#5b6672;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
                       </sc-if>
                     </div>
                   </sc-if>
@@ -439,9 +439,9 @@
                             <div style="display:flex;align-items:center;gap:8px">
                               <span style="{{ csc.pairTagStyle }}">{{ csc.pairTag }}</span>
                               <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
-                              <span onClick="{{ csc.onRemove }}" title="Szenario löschen" style="cursor:pointer;color:#9aa4ad;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
+                              <span onClick="{{ csc.onRemove }}" title="Szenario löschen" style="cursor:pointer;color:#6b7680;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
                             </div>
-                            <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#0b6b5a;font-weight:600;cursor:pointer">Wiederherstellen</span>
+                            <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#1f2a33;font-weight:600;cursor:pointer">Wiederherstellen</span>
                           </div>
                           <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
                             <div style="{{ cell.style }}">{{ cell.value }}</div>
@@ -458,7 +458,7 @@
 
         <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }}">
+          <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }}">
             <!-- Ansichts-Umschalter (Regionsansicht, nur Erweitert — Testfeature s. SoT §M): in der Karte, Ecke
                  oben rechts. Feste, gleich breite Spalten, damit die fette Auswahl nichts verschiebt. Die Karte
                  bekommt dafür oben Platz (mapBoxPadTop), damit der Umschalter sie nicht verdeckt; die Hinweise
@@ -491,7 +491,7 @@
                 </sc-for>
               </defs>
               <!-- Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht; leer in der DE-Ansicht) -->
-              <path d="{{ regionOutlineD }}" fill="none" stroke="#2f6690" stroke-width="1.6" pointer-events="none"></path>
+              <path d="{{ regionOutlineD }}" fill="none" stroke="#5b6672" stroke-width="1.6" pointer-events="none"></path>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
                 <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" fill-opacity="{{ c.fo }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" pointer-events="{{ c.pe }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
               </sc-for>
@@ -516,7 +516,7 @@
             <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
               <div style="{{ cellPopoverBoxStyle }}">
                 <span style="{{ cellPopoverTailStyle }}"></span>
-                <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;height:100%;background:#eaf3ef;border:1px solid #b9d9cd;color:#0b6b5a;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#dcece5;border-color:#a7cebe">
+                <button onClick="{{ evaluateRegionPopover }}" style="position:relative;width:100%;height:100%;background:#eef0f3;border:1px solid #ccced1;color:#1f2a33;font-size:13px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,60,45,.14);text-align:left;line-height:1.4" style-hover="background:#e4e6e9;border-color:#bfc1c4">
                   <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word">{{ cellPopoverLine1 }}</span>
                   <span style="display:block">{{ cellPopoverLine2 }}</span>
                 </button>
@@ -531,8 +531,8 @@
               <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
                 <div style="max-width:280px">
                   <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
-                    <div style="font-size:14px;color:#26303a;font-weight:600">{{ regionGateTitle }}</div>
-                    <div style="font-size:14px;color:#7a848c;margin-top:5px;line-height:1.5">{{ regionGateSub }}</div>
+                    <div style="font-size:14px;color:#1b2126;font-weight:600">{{ regionGateTitle }}</div>
+                    <div style="font-size:14px;color:#6b7680;margin-top:5px;line-height:1.5">{{ regionGateSub }}</div>
                   </sc-if>
                 </div>
               </div>
@@ -552,7 +552,7 @@
       <div style="flex:none;margin-top:10px">
         <!-- Hinweise zum Ansichts-Umschalter in der Kartenecke (Regionsansicht, Erweitert) -->
         <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:14px;color:#8a929a;line-height:1.4;margin:0 0 6px">
+          <div style="font-size:14px;color:#6b7680;line-height:1.4;margin:0 0 6px">
             <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
               <div>{{ gemClickHint }}</div>
             </sc-if>
@@ -569,9 +569,9 @@
           <!-- sequential legend -->
           <sc-if value="{{ legendSeq }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMin }}</span>
+              <span style="font-size:14px;color:#6b7680" class="num">{{ legendMin }}</span>
               <div style="width:150px;height:11px;border-radius:3px;background:{{ legendGrad }}"></div>
-              <span style="font-size:14px;color:#7a848c" class="num">{{ legendMax }} {{ scopeUnit }}</span>
+              <span style="font-size:14px;color:#6b7680" class="num">{{ legendMax }} {{ scopeUnit }}</span>
               <span style="font-size:14px;color:#5b6672;margin-left:2px">{{ legendTitle }}</span>
             </div>
           </sc-if>
@@ -580,7 +580,7 @@
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
               <span style="font-size:14px;color:#5b6672">Begrenzendes Prinzip:</span>
               <sc-for list="{{ catItems }}" as="ci" hint-placeholder-count="2">
-                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:12px;height:12px;border-radius:3px;background:{{ ci.color }}"></span>{{ ci.name }}</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:12px;height:12px;border-radius:3px;background:{{ ci.color }}"></span>{{ ci.name }}</span>
               </sc-for>
             </div>
           </sc-if>
@@ -590,7 +590,7 @@
               <span style="font-size:14px;color:#5b6672;line-height:1.45">{{ schnittColorCaption }}</span>
               <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
                 <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
-                  <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
+                  <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
                 </sc-for>
               </div>
             </div>
@@ -608,7 +608,7 @@
 
         <!-- Konsens-Disclaimer (Dauerhinweis): unter der Farblegende, vor weiteren Auswertungen -->
         <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:14px;color:#9aa4ad;margin:6px 0 0;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+          <div style="font-size:14px;color:#6b7680;margin:6px 0 0;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </sc-if>
 
         <!-- Kombinations-Aufschlüsselung (Konfliktflächen · „Wer denkt anders?", nur Erweitert, ab 3 Prinzipien):
@@ -618,7 +618,7 @@
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
             <div style="display:flex;align-items:baseline;gap:12px">
               <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Welche Prinzipien weichen gemeinsam ab?</div>
-              <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
+              <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#1f2a33;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
             </div>
             <div style="{{ upsetBodyStyle }}">
               <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Jede Spalte ist eine Kombination von Prinzipien, die an derselben Stelle mehr als 20 % vom Konsens abweichen. Balken = Anzahl der {{ upsetUnit }}, farbige Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</div>
@@ -651,8 +651,8 @@
         </sc-if>
 
         <div style="display:flex;gap:10px;margin-top:9px">
-          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Daten herunterladen</button>
-          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#26303a;cursor:pointer">Methodik ansehen</button>
+          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#1b2126;cursor:pointer">Daten herunterladen</button>
+          <button style="background:#fff;border:1px solid #ccd2d7;border-radius:7px;padding:6px 12px;font-size:14px;color:#1b2126;cursor:pointer">Methodik ansehen</button>
         </div>
       </div>
     </main>
@@ -669,14 +669,14 @@
             <div style="display:flex;flex-direction:column;gap:12px">
               <div style="display:flex;align-items:flex-start;gap:8px">
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">Auf der Karte ausgewählt</div>
+                  <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">Auf der Karte ausgewählt</div>
                   <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px;line-height:1.25">{{ hubCellName }}</div>
                 </div>
-                <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#9aa4ad;font-size:20px;line-height:1;padding:2px;flex:none">×</span>
+                <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#6b7680;font-size:20px;line-height:1;padding:2px;flex:none">×</span>
               </div>
               <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                 <div style="font-size:14px;color:#5b6672">Differenz A − B</div>
-                <div class="num" style="font-size:24px;font-weight:700;color:#2f6690;margin-top:2px">{{ hubCellDiff }}</div>
+                <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
                 <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ hubCellDiffWord }}</div>
               </div>
               <sc-for list="{{ hubCellCards }}" as="cc" hint-placeholder-count="2">
@@ -687,7 +687,7 @@
                   </div>
                   <div title="{{ cc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ cc.name }}</div>
                   <div style="margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px">
-                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ cc.k }}</span><span class="num" style="color:#26303a;font-weight:600;white-space:nowrap">{{ cc.v }}</span></div>
+                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ cc.k }}</span><span class="num" style="color:#1b2126;font-weight:600;white-space:nowrap">{{ cc.v }}</span></div>
                   </div>
                 </div>
               </sc-for>
@@ -699,14 +699,14 @@
             <div style="display:flex;flex-direction:column;gap:12px">
               <div>
                 <sc-if value="{{ hubScopeLabel }}" hint-placeholder-val="{{ true }}">
-                  <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ hubScopeLabel }}</div>
+                  <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ hubScopeLabel }}</div>
                 </sc-if>
                 <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
               </div>
               <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                   <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
-                  <div class="num" style="font-size:24px;font-weight:700;color:#2f6690;margin-top:2px">{{ hubSumDiff }}</div>
+                  <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubSumDiff }}</div>
                   <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ hubSumDiffWord }}</div>
                 </div>
               </sc-if>
@@ -724,7 +724,7 @@
                       <div style="{{ hr.listStyle }}">
                         <div style="color:#5b6672;margin-bottom:3px">{{ hr.k }}</div>
                         <sc-for list="{{ hr.items }}" as="pi" hint-placeholder-count="2">
-                          <div style="display:flex;align-items:center;gap:7px;padding:2px 0;color:#26303a"><span style="flex:none;width:11px;height:11px;border-radius:3px;background:{{ pi.color }}"></span>{{ pi.name }}</div>
+                          <div style="display:flex;align-items:center;gap:7px;padding:2px 0;color:#1b2126"><span style="flex:none;width:11px;height:11px;border-radius:3px;background:{{ pi.color }}"></span>{{ pi.name }}</div>
                         </sc-for>
                       </div>
                     </sc-for>
@@ -740,7 +740,7 @@
       <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
         <div>
           <sc-if value="{{ ovScopeLabel }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ ovScopeLabel }}</div>
+            <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ ovScopeLabel }}</div>
           </sc-if>
           <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
 
@@ -750,11 +750,11 @@
               <span>{{ ovLeadLabel }}</span>
               <span onClick="{{ toggleOvBarInfo }}" style="{{ ovBarInfoBtnStyle }}">i</span>
             </div>
-            <div class="num" style="font-size: 34px; font-weight: 700; color: #2f6690; line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
+            <div class="num" style="font-size: 34px; font-weight: 700; color: var(--cons); line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
             <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ ovLeadSub }}</div>
             <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:11px;height:14px;border-radius:5px;background:#dbe4ec;overflow:hidden">
-                <div style="height:100%;width:{{ ovBarFill }};background:#2f6690;border-radius:5px"></div>
+              <div style="margin-top:11px;height:14px;border-radius:5px;background:#e3e7ea;overflow:hidden">
+                <div style="height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:5px"></div>
               </div>
               <div style="{{ ovBarCaptionStyle }}">{{ ovBarCaption }}</div>
             </sc-if>
@@ -764,14 +764,14 @@
           <sc-if value="{{ anDissTop }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Größte Abweichungen</div>
-              <div style="font-size:14px;color:#7a848c;margin-bottom:8px;line-height:1.45">{{ dissSentence }}</div>
+              <div style="font-size:14px;color:#6b7680;margin-bottom:8px;line-height:1.45">{{ dissSentence }}</div>
               <sc-for list="{{ dissTop }}" as="dr" hint-placeholder-count="5">
                 <div onClick="{{ dr.onClick }}" onMouseEnter="{{ dr.onEnter }}" onMouseLeave="{{ dr.onLeave }}" style="{{ dr.style }}">
                   <div style="display:flex;align-items:baseline;gap:8px;font-size:14px">
-                    <span style="color:#26303a;flex:1;line-height:1.3">{{ dr.name }}</span>
-                    <span class="num" style="font-weight:600;color:#33413c;white-space:nowrap">{{ dr.v }}</span>
+                    <span style="color:#1b2126;flex:1;line-height:1.3">{{ dr.name }}</span>
+                    <span class="num" style="font-weight:600;color:#1b2126;white-space:nowrap">{{ dr.v }}</span>
                   </div>
-                  <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:#7a848c;margin-top:3px">
+                  <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:#6b7680;margin-top:3px">
                     <span style="width:11px;height:11px;border-radius:3px;flex:none;background:{{ dr.pColor }}"></span>{{ dr.pName }}
                   </div>
                 </div>
@@ -783,19 +783,19 @@
           <sc-if value="{{ anBlockers }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Was begrenzt den Konsens?</div>
-              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">{{ blockersCaption }}</div>
+              <div style="font-size:14px;color:#6b7680;margin-bottom:11px;line-height:1.45">{{ blockersCaption }}</div>
               <sc-for list="{{ blockers }}" as="b" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
                     <span style="width:11px;height:11px;border-radius:3px;background:{{ b.color }};align-self:center"></span>
-                    <span style="color:#26303a;flex:1">{{ b.name }}</span>
-                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c;white-space:nowrap">{{ b.valueText }}</span>
+                    <span style="color:#1b2126;flex:1">{{ b.name }}</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#1b2126;white-space:nowrap">{{ b.valueText }}</span>
                   </div>
                   <div style="{{ b.trackStyle }}"><div style="height:100%;width:{{ b.barW }};background:{{ b.color }};border-radius:4px"></div></div>
-                  <div style="font-size:14px;color:#9aa4ad;margin:2px 0 0 18px">{{ b.subText }}</div>
+                  <div style="font-size:14px;color:#6b7680;margin:2px 0 0 18px">{{ b.subText }}</div>
                 </div>
               </sc-for>
-              <div style="font-size:14px;color:#26303a;line-height:1.5;margin-top:12px;padding:11px 12px;background:#eef3f6;border:1px solid #dbe6ee;border-radius:8px;font-weight:500">{{ counterfactual }}</div>
+              <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-top:12px;padding:11px 12px;background:#f2f4f5;border:1px solid #e2e5e8;border-radius:8px;font-weight:500">{{ counterfactual }}</div>
             </div>
           </sc-if>
 
@@ -807,14 +807,14 @@
               <div style="{{ sumSameStyle }}">{{ sumSameText }}</div>
               <div style="{{ sumHeadStyle }}">
                 <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Summe je Prinzip</div>
-                <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips.</div>
+                <div style="font-size:14px;color:#6b7680;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips.</div>
               </div>
               <sc-for list="{{ sumRows }}" as="s" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:4px">
                     <span style="width:11px;height:11px;border-radius:3px;background:{{ s.color }}"></span>
-                    <span style="color:#26303a;flex:1">{{ s.name }}</span>
-                    <span class="num" style="font-size:14px;font-weight:600;color:#33413c">{{ s.gw }} {{ scopeUnit }}</span>
+                    <span style="color:#1b2126;flex:1">{{ s.name }}</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:#1b2126">{{ s.gw }} {{ scopeUnit }}</span>
                   </div>
                   <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px"><div style="height:100%;width:{{ s.w }};background:{{ s.color }};border-radius:4px"></div></div>
                 </div>
@@ -835,19 +835,19 @@
                         <span style="width:13px;height:13px;border-radius:3px;flex:none;background:{{ dt.color }}"></span>
                       </sc-for>
                     </div>
-                    <span class="num" style="font-size:14px;color:#33413c;font-weight:600">{{ cm.count }}</span>
+                    <span class="num" style="font-size:14px;color:#1b2126;font-weight:600">{{ cm.count }}</span>
                   </div>
                   <div style="font-size:14px;color:#5b6672;line-height:1.35;margin-top:4px">{{ cm.label }}</div>
                 </div>
               </sc-for>
               <sc-if value="{{ comboMore }}" hint-placeholder-val="{{ false }}">
-                <button onClick="{{ toggleCombos }}" style="margin-top:8px;background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ comboMoreLabel }}</button>
+                <button onClick="{{ toggleCombos }}" style="margin-top:8px;background:none;border:none;color:#1f2a33;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ comboMoreLabel }}</button>
               </sc-if>
             </div>
           </sc-if>
 
           <sc-if value="{{ ovClickHint }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:14px;color:#8a929a;margin-top:16px;line-height:1.5">{{ ovClickHintText }}</div>
+            <div style="font-size:14px;color:#6b7680;margin-top:16px;line-height:1.5">{{ ovClickHintText }}</div>
           </sc-if>
         </div>
       </sc-if>
@@ -858,11 +858,11 @@
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
             <div>
               <sc-if value="{{ cellScope }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
+                <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ cellScope }}</div>
               </sc-if>
               <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
             </div>
-            <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
+            <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#6b7680;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
           </div>
 
           <sc-if value="{{ cellShowConflictHint }}" hint-placeholder-val="{{ false }}">
@@ -879,31 +879,31 @@
               <span>{{ cellHeroLabel }}</span>
               <span onClick="{{ toggleConsInfo }}" style="{{ cellHeroInfoBtnStyle }}">i</span>
             </div>
-            <div class="num" style="font-size:34px;font-weight:700;color:#2f6690;line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
+            <div class="num" style="font-size:34px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
             <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Regionsprofil -->
             <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
+              <div style="font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
             <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
             <!-- Kontextzeile nur bei Bestandsanrechnung: Bestand + Hauptzahl = installierte Leistung -->
             <sc-if value="{{ cellContextLine }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">{{ cellContextLine }}</div>
+              <div style="font-size:14px;color:#6b7680;margin-top:7px;line-height:1.45">{{ cellContextLine }}</div>
             </sc-if>
           </div>
 
           <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
             <sc-if value="{{ cellShowGoal }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
-                <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none">i</span></span>
-                <span class="num" style="color:#26303a;font-weight:500">{{ cellGoalShare }}</span>
+                <span style="color:#5b6672;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6b7680;cursor:pointer;font-style:italic;flex:none">i</span></span>
+                <span class="num" style="color:#1b2126;font-weight:500">{{ cellGoalShare }}</span>
               </div>
               <div style="{{ goalInfoStyle }}">{{ goalInfoText }}</div>
             </sc-if>
             <sc-if value="{{ cellEinordnung }}" hint-placeholder-val="{{ true }}">
               <div style="font-size:14px">
-                <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5b6672">Einordnung</span><span style="color:#26303a;font-weight:500;text-align:right">{{ cellEinordnung }}</span></div>
-                <div style="color:#8a929a;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
+                <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5b6672">Einordnung</span><span style="color:#1b2126;font-weight:500;text-align:right">{{ cellEinordnung }}</span></div>
+                <div style="color:#6b7680;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
               </div>
             </sc-if>
           </div>
@@ -915,9 +915,9 @@
                 <div style="margin-bottom:9px">
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:3px">
                     <span style="width:10px;height:10px;border-radius:3px;background:{{ br.color }}"></span>
-                    <span style="color:#26303a;flex:1">{{ br.name }}</span>
+                    <span style="color:#1b2126;flex:1">{{ br.name }}</span>
                     <span style="{{ br.tagStyle }}">{{ br.tag }}</span>
-                    <span class="num" style="color:#33413c">{{ br.gw }} {{ scopeUnit }}</span>
+                    <span class="num" style="color:#1b2126">{{ br.gw }} {{ scopeUnit }}</span>
                   </div>
                   <div style="height:9px;background:#edf0f1;border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ br.w }};background:{{ br.color }};border-radius:4px;opacity:{{ br.op }}"></div></div>
                 </div>
@@ -932,13 +932,13 @@
             <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px">Regionsprofil</div>
             <div style="display:flex;flex-direction:column;gap:7px">
               <sc-if value="{{ cellShowDavon }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#26303a">{{ cellBestand }} {{ scopeUnit }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellNewLabel }}</span><span class="num" style="color:#26303a">{{ cellNew }} {{ scopeUnit }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">davon Bestand</span><span class="num" style="color:#1b2126">{{ cellBestand }} {{ scopeUnit }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellNewLabel }}</span><span class="num" style="color:#1b2126">{{ cellNew }} {{ scopeUnit }}</span></div>
               </sc-if>
               <sc-if value="{{ cellHasConsensus }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="display:flex;align-items:center;gap:7px;color:#5b6672">Zubaukonsens <span onClick="{{ toggleConsInfo }}" style="{{ consInfoBtnStyle }}">i</span></span><span class="num" style="color:#2f6690;font-weight:600">{{ cellConsensus }} {{ scopeUnit }}</span></div>
-                <div style="height:8px;border-radius:4px;background:#dbe4ec;overflow:hidden">
-                  <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:4px"></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="display:flex;align-items:center;gap:7px;color:#5b6672">Zubaukonsens <span onClick="{{ toggleConsInfo }}" style="{{ consInfoBtnStyle }}">i</span></span><span class="num" style="color:var(--cons);font-weight:600">{{ cellConsensus }} {{ scopeUnit }}</span></div>
+                <div style="height:8px;border-radius:4px;background:#e3e7ea;overflow:hidden">
+                  <div style="height:100%;width:{{ cellConsFill }};background:var(--cons);border-radius:4px"></div>
                 </div>
                 <div style="{{ consInfoStyle }}">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.</div>
               </sc-if>
@@ -956,7 +956,7 @@
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
       <div class="scroll" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:16px;padding:32px 36px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
         <div style="font-size:24px;font-weight:700;color:#1b2126;letter-spacing:-.3px">Wo wäre der Ausbau fair?</div>
-        <p style="font-size:14px;line-height:1.65;color:#44505a;margin:14px 0 18px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
+        <p style="font-size:14px;line-height:1.65;color:#5b6672;margin:14px 0 18px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
         <!-- Ursache: verschiedene Menschen priorisieren Verschiedenes — rein dekorativ, trägt keine Aussage, die der Text nicht auch nennt -->
         <div style="margin:0 0 20px">
           <img src="illustration-prinzipien.png" alt="" style="width:100%;max-width:260px;height:auto;display:block;margin:0 auto">
@@ -965,19 +965,19 @@
         <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
           <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
-            <div style="background:#f7f8f9;border:1px solid #e4e7ea;border-radius:10px;padding:8px">
+            <div style="background:#fff;border:1px solid #e4e7ea;border-radius:10px;padding:8px">
               <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:72px">
                 <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
                   <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
                 </sc-for>
               </svg>
-              <div style="font-size:14px;color:#44505a;line-height:1.35;margin-top:6px">{{ im.label }}</div>
+              <div style="font-size:14px;color:#5b6672;line-height:1.35;margin-top:6px">{{ im.label }}</div>
             </div>
           </sc-for>
         </div>
-        <p style="font-size:14px;line-height:1.6;color:#44505a;margin:0 0 22px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
-        <button onClick="{{ closeIntro }}" style="background:#0b6b5a;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Verteilungen ansehen →</button>
-        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#0b6b5a;cursor:pointer;font-weight:500">Mehr dazu</span></div>
+        <p style="font-size:14px;line-height:1.6;color:#5b6672;margin:0 0 22px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
+        <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Verteilungen ansehen →</button>
+        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1f2a33;cursor:pointer;font-weight:500">Mehr dazu</span></div>
       </div>
     </div>
   </sc-if>
@@ -988,9 +988,9 @@
       <div onClick="{{ stop }}" style="width:440px;height:100%;background:#fff;padding:30px 30px 40px;overflow-y:auto;box-shadow:2px 0 30px rgba(0,0,0,.2)" class="scroll">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
           <span style="font-weight:700;font-size:18px">Was ist EEquityMap?</span>
-          <button onClick="{{ toggleInfoPanel }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
+          <button onClick="{{ toggleInfoPanel }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
-        <div style="font-size:14px;line-height:1.65;color:#333c44">
+        <div style="font-size:14px;line-height:1.65;color:#1b2126">
           <p style="margin:0 0 16px">Der Ausbau erneuerbarer Energien muss irgendwo stattfinden. Die Frage ist nicht nur, wo er technisch möglich ist, sondern wo er als <b>fair</b> gilt — und darüber gehen die Meinungen auseinander.</p>
           <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Gerechtigkeitsprinzip</div>
           <p style="margin:0 0 16px">Ein Gerechtigkeitsprinzip ist eine Regel, nach der sich der Ausbau verteilen ließe — etwa nah am Verbrauch, fern der Bevölkerung oder nach dem besten Ertrag. Jede Vorstellung führt zu einer anderen Landkarte.</p>
@@ -998,7 +998,7 @@
           <p style="margin:0 0 16px">Wählen Sie mehrere Prinzipien, zeigt die Karte den Zubau, den <b>alle</b> mittragen — je Fläche der jeweils niedrigste Vorschlag. So wird sichtbar, wie viel Ausbau von allen betrachteten Vorstellungen gemeinsam getragen würde.</p>
           <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Beispiel</div>
           <p style="margin:0 0 16px">In einer verbrauchsstarken Region empfiehlt das Prinzip <b>Verbrauchsnah</b> viel Ausbau, das Prinzip <b>Bevölkerungsnah</b> wenig — hier sind sich die Prinzipien uneinig. In einer Region, die beide hoch bewerten, entsteht Konsens.</p>
-          <div style="background:#f0f5f4;border-radius:10px;padding:14px 15px;font-size:14px;color:#33413c;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+          <div style="background:#f0f5f4;border-radius:10px;padding:14px 15px;font-size:14px;color:#1b2126;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </div>
       </div>
     </div>
@@ -1012,7 +1012,7 @@
           <span style="width:14px;height:14px;border-radius:4px;background:{{ zoomColor }}"></span>
           <span style="font-size:16px;font-weight:600">{{ zoomName }}</span>
           <div style="flex:1"></div>
-          <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
+          <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <!-- Durchblättern ohne Schließen: Pfeile links/rechts (auch Pfeiltasten), Karte bleibt an derselben
              Stelle und in derselben Größe — so fällt auf, was sich zwischen den Prinzipien ändert. -->
@@ -1025,7 +1025,7 @@
           </svg>
           <button onClick="{{ zoomNext }}" title="Nächstes Prinzip (→)" aria-label="Nächstes Prinzip" style="{{ zoomNavStyle }}">›</button>
         </div>
-        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau {{ zoomUnit }} · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
+        <div class="num" style="font-size:14px;color:#6b7680;margin-top:6px">Empfohlener Zubau {{ zoomUnit }} · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
         <!-- Welches Prinzip ist offen? Anklicken springt direkt dorthin. -->
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
           <sc-for list="{{ zoomTabs }}" as="zt" hint-placeholder-count="3">
@@ -1046,7 +1046,7 @@
           <input readonly value="{{ shareLink }}" onFocus="{{ selectShareInput }}" style="flex:1;min-width:0;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;font-family:'IBM Plex Mono',monospace">
           <button onClick="{{ copyShareLink }}" style="{{ shareCopyBtnStyle }}">{{ shareCopyLabel }}</button>
         </div>
-        <div style="font-size:14px;color:#8a929a;line-height:1.5;margin-bottom:18px">Prototyp: Platzhalter-Link — der Vergleich wird noch nicht gespeichert.</div>
+        <div style="font-size:14px;color:#6b7680;line-height:1.5;margin-bottom:18px">Prototyp: Platzhalter-Link — der Vergleich wird noch nicht gespeichert.</div>
         <div style="display:flex;justify-content:flex-end">
           <button onClick="{{ closeShare }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Schließen</button>
         </div>
@@ -1061,10 +1061,10 @@
         <div style="font-size:17px;font-weight:700;color:#1b2126;margin-bottom:14px">Szenario speichern</div>
         <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Name</div>
         <input value="{{ scenarioNameDraft }}" onInput="{{ onScenarioNameInput }}" style="width:100%;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;margin-bottom:14px">
-        <div style="font-size:14px;color:#8a929a;line-height:1.5;margin-bottom:18px">Gespeicherte Szenarien gelten nur für diese Sitzung. Neuladen verwirft sie.</div>
+        <div style="font-size:14px;color:#6b7680;line-height:1.5;margin-bottom:18px">Gespeicherte Szenarien gelten nur für diese Sitzung. Neuladen verwirft sie.</div>
         <div style="display:flex;gap:9px;justify-content:flex-end">
           <button onClick="{{ cancelSaveScenario }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Abbrechen</button>
-          <button onClick="{{ confirmSaveScenario }}" style="background:#0b6b5a;color:#fff;border:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer">Speichern</button>
+          <button onClick="{{ confirmSaveScenario }}" style="background:#1f2a33;color:#fff;border:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer">Speichern</button>
         </div>
       </div>
     </div>
@@ -1080,8 +1080,8 @@
   <sc-if value="{{ undoToastVisible }}" hint-placeholder-val="{{ false }}">
     <div style="{{ undoToastStyle }}">
       <span>Szenario gelöscht</span>
-      <span style="color:#7fb8ac">·</span>
-      <span onClick="{{ undoDelete }}" style="color:#9fe0cf;font-weight:600;cursor:pointer">Rückgängig</span>
+      <span style="color:#a4a6a9">·</span>
+      <span onClick="{{ undoDelete }}" style="color:#c9cbce;font-weight:600;cursor:pointer">Rückgängig</span>
     </div>
   </sc-if>
 
@@ -1093,9 +1093,9 @@
   <sc-if value="{{ regionComputingScrim }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;background:rgba(238,241,242,.82);z-index:54;display:flex;align-items:center;justify-content:center;padding:20px">
       <div style="max-width:300px;width:100%;background:#fff;border:1px solid #e2e8e6;border-radius:12px;padding:22px 24px;box-shadow:0 14px 36px rgba(0,0,0,.18);text-align:center">
-        <div style="font-size:15px;color:#26303a;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
+        <div style="font-size:15px;color:#1b2126;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
         <sc-if value="{{ regionComputingReassure }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:14px;color:#7a848c;margin-top:5px">{{ regionComputingReassure }}</div>
+          <div style="font-size:14px;color:#6b7680;margin-top:5px">{{ regionComputingReassure }}</div>
         </sc-if>
         <div class="loadbar" style="margin-top:16px"><div class="loadbar-fill" style="{{ trickleBarStyle }}"></div></div>
         <button onClick="{{ cancelRegionCompute }}" style="margin-top:16px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer">Abbrechen</button>
@@ -1209,7 +1209,7 @@ class Component extends DCLogic {
       { id: 'flaeche_gesamt', name: 'Gleicher Anteil an Gesamtfläche', color: '#CC79A7', basic: true, available: true, info: 'Jede Region trägt denselben Anteil je Fläche. Große Regionen erhalten mehr, unabhängig von Ertrag oder Verbrauch.', explain: 'Gleicher Anteil an Gesamtfläche verteilt den Ausbau proportional zur Fläche.' },
       { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche.' }
     ];
-    this.CONS = '#2f6690';      // Konsens-Skala (Steel Blue) — getrennt von Prinzip- und Markenfarbe
+    this.CONS = '#34424f';      // Konsens-Skala: neutral (Farbe = Prinzip, Neutral = Übereinstimmung), s. SoT J2
     this.CONFLICT = '#c2185b';  // Konfliktflächen — eigene, von Prinzipfarben klar unterscheidbare Kodierung
     // Die zwei festen Referenzen im Vergleichs-Hub („Szenarien vergleichen") — immer vorhanden, als A/B wählbar.
     this.hubRefs = [
@@ -1593,9 +1593,11 @@ class Component extends DCLogic {
   fmtU(n, region) { return this.fmtN(n, region) + ' ' + this.unitFor(region); }
   hx(h) { h = h.replace('#', ''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
   mix(a, b, t) { const A = this.hx(a), B = this.hx(b); t = Math.max(0, Math.min(1, t)); return 'rgb(' + A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',') + ')'; }
-  seq(t, hex) { return this.mix('#eef1f0', hex, 0.10 + 0.85 * t); }
-  brown(t) { return this.mix('#f3efe6', '#6b3f0e', 0.08 + 0.9 * t); }
-  div(t) { return t >= 0 ? this.mix('#f3f2ec', '#0f6b5c', t) : this.mix('#f3f2ec', '#8a5a12', -t); }
+  // helles Ende sichtbar getönt (grau-neutraler Grund), damit niedrige Werte auf weißem Kartengrund nicht verschwinden
+  seq(t, hex) { return this.mix('#e4e8eb', hex, 0.12 + 0.85 * t); }
+  brown(t) { return this.mix('#ebe6dc', '#6b3f0e', 0.10 + 0.88 * t); }
+  // divergierend: zwei Farbtöne + neutral-grauer Mittelpunkt, der auf weißem Kartengrund sichtbar bleibt
+  div(t) { return t >= 0 ? this.mix('#e6e8ea', '#0f6b5c', t) : this.mix('#e6e8ea', '#8a5a12', -t); }
   // Deckung Planung/Konsens: warm = Planung über Konsens, kühl = Konsens über Planung, Mitte hell
 
   // Zerlegt einen mit ringToPath (buildKrs/regionCellsFor) erzeugten Pfad ("Mx,yLx,yLx,y…Z" je Ring,
@@ -1787,10 +1789,10 @@ class Component extends DCLogic {
     R.regionComputeBtnLabel = hasRegionResult ? 'Neu berechnen' : 'Berechnung starten';
     R.regionComputeBoxStyle = hasRegionResult
       ? 'background:#fbf3e8;border:1px solid #ead9bf'
-      : 'background:#f0f5f4;border:1px solid #cfe4de';
+      : 'background:#f0f5f4;border:1px solid #dbdde0';
     R.regionComputeBtnStyle = hasRegionResult
       ? 'width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer'
-      : 'width:100%;background:#0b6b5a;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
+      : 'width:100%;background:#1f2a33;color:#fff;border:none;padding:9px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer';
 
     const singlePid = sel[0] || this.principles[0].id;
 
@@ -1882,7 +1884,7 @@ class Component extends DCLogic {
         const vals = Object.values(pairVal);
         const pmx = Math.max(...vals), pmn = Math.min(...vals), pr = pmx - pmn;
         const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
-        const hdr = 'font-size:14px;color:#26303a;font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
+        const hdr = 'font-size:14px;color:#1b2126;font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
         const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color;
         const flat = 'display:contents';
         // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
@@ -1906,7 +1908,7 @@ class Component extends DCLogic {
         colsP.forEach(q => cellsOut.push({
           text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q),
           style: 'position:relative;height:' + headH + 'px',
-          innerStyle: 'position:absolute;left:50%;bottom:' + (twoLine(q) ? 16 : 8) + 'px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;width:max-content;max-width:' + HEAD_MAXW + 'px;line-height:1.2;font-size:14px;font-weight:600;color:#26303a'
+          innerStyle: 'position:absolute;left:50%;bottom:' + (twoLine(q) ? 16 : 8) + 'px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;width:max-content;max-width:' + HEAD_MAXW + 'px;line-height:1.2;font-size:14px;font-weight:600;color:#1b2126'
         }));
         rowsP.forEach(p => {
           const a = sel.indexOf(p);
@@ -1998,11 +2000,11 @@ class Component extends DCLogic {
         // Erste Spalte: Prinzipnamen als Zeilenbeschriftung der Punktmatrix (statt einer zweiten Farblegende)
         items.push({ title: '', count: '', barStyle: 'display:none', countStyle: 'display:none', dotStyle: 'display:none', label: '', labelStyle: 'display:none', wrapStyle: 'height:96px' });
         sel.forEach(p => items.push({ title: this.byId[p].name, count: '', barStyle: 'display:none', countStyle: 'display:none', dotStyle: 'display:none',
-          label: this.byId[p].name, labelStyle: 'font-size:14px;color:#44505a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
+          label: this.byId[p].name, labelStyle: 'font-size:14px;color:#5b6672;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
           wrapStyle: 'display:flex;align-items:center;height:21px;max-width:260px;padding-right:6px' }));
         const pushCol = (title, n, dots) => {
-          items.push({ label: '', labelStyle: 'display:none', title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#2f6690;border-radius:3px 3px 0 0',
-            wrapStyle: 'display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:96px', dotStyle: 'display:none', countStyle: 'font-size:14px;color:#33413c;font-weight:600' });
+          items.push({ label: '', labelStyle: 'display:none', title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#4f5b66;border-radius:3px 3px 0 0',
+            wrapStyle: 'display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:96px', dotStyle: 'display:none', countStyle: 'font-size:14px;color:#1b2126;font-weight:600' });
           dots.forEach(d => items.push({ label: '', labelStyle: 'display:none', title, count: '', barStyle: 'display:none', countStyle: 'display:none',
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
         };
@@ -2069,24 +2071,24 @@ class Component extends DCLogic {
           return {
             name: o.name,
             tag: inOther ? ('bereits in ' + (k === 0 ? 'B' : 'A')) : (isHere ? 'gewählt' : ''),
-            tagStyle: (inOther || isHere) ? 'flex:none;font-size:12px;color:' + (isHere ? '#0b6b5a' : '#8a929a') + ';margin-left:auto;padding-left:8px' : 'display:none',
+            tagStyle: (inOther || isHere) ? 'flex:none;font-size:12px;color:' + (isHere ? '#1f2a33' : '#6b7680') + ';margin-left:auto;padding-left:8px' : 'display:none',
             // Referenzen abgesetzt: gestrichelter Rahmen am Kennzeichen, Szenarien voll
-            markStyle: 'flex:none;width:10px;height:10px;border-radius:3px;' + (o.isRef ? 'border:1.5px dashed #7a848c;background:#f4f5f6' : 'background:' + (o.isRegion ? '#0b6b5a' : '#2f6690')),
-            rowStyle: 'display:flex;align-items:center;gap:6px;padding:0 8px 0 0;background:' + (isHere ? '#eef4f2' : 'transparent'),
+            markStyle: 'flex:none;width:10px;height:10px;border-radius:3px;' + (o.isRef ? 'border:1.5px dashed #7a848c;background:#f4f5f6' : 'background:' + (o.isRegion ? '#8a94a0' : '#1f2a33')),
+            rowStyle: 'display:flex;align-items:center;gap:6px;padding:0 8px 0 0;background:' + (isHere ? '#f1f3f4' : 'transparent'),
             pickStyle: 'flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 4px 7px 12px;font-size:14px;'
-              + (inOther ? 'color:#aab2b9;cursor:not-allowed' : 'color:#26303a;cursor:pointer'),
+              + (inOther ? 'color:#6b7680;cursor:not-allowed' : 'color:#1b2126;cursor:pointer'),
             onPick: inOther ? (() => {}) : (() => { const np = pair.slice(); np[k] = o.id; setPair(np); }),
-            infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#7a848c;cursor:pointer;font-style:italic;flex:none' : 'display:none',
+            infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#6b7680;cursor:pointer;font-style:italic;flex:none' : 'display:none',
             onInfo: o.isRef ? (() => this.setState({ hubRefInfo: this.state.hubRefInfo === o.id ? null : o.id })) : (() => {}),
             info: infoOpen ? o.info : '',
-            infoStyle: infoOpen ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:2px 12px 6px;line-height:1.45' : 'display:none'
+            infoStyle: infoOpen ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:2px 12px 6px;line-height:1.45' : 'display:none'
           };
         };
         const gs = [{ label: 'Referenzen (immer vorhanden)', items: refObjs.map(item), emptyText: '', emptyStyle: 'display:none' }];
         levelGroups.forEach(g => gs.push({ label: g.label, items: g.list.map(item), emptyText: '', emptyStyle: 'display:none' }));
         if (!hubScen.length) gs.push({ label: 'Gespeicherte Szenarien', items: [],
           emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. Links mit „Zum Vergleich speichern" anlegen.',
-          emptyStyle: 'font-size:14px;color:#8a929a;line-height:1.45;padding:2px 12px 6px' });
+          emptyStyle: 'font-size:14px;color:#6b7680;line-height:1.45;padding:2px 12px 6px' });
         return gs;
       };
       R.hubMenuBackdrop = openMenu !== null ? 'position:fixed;inset:0;z-index:29' : 'display:none';
@@ -2119,12 +2121,12 @@ class Component extends DCLogic {
           diff: diffLine, diffStyle: diffLine ? 'font-size:14px;color:#5b6672;line-height:1.35;margin-top:3px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical' : 'display:none',
           badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), role: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt',
           name: o ? o.name + (o.isRef ? ' (Referenz)' : '') : '— bitte wählen',
-          nameStyle: 'flex:1;min-width:0;font-size:' + (o ? '16px;font-weight:600;color:#1b2126' : '15px;font-weight:400;color:#8a929a') + ';line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
+          nameStyle: 'flex:1;min-width:0;font-size:' + (o ? '16px;font-weight:600;color:#1b2126' : '15px;font-weight:400;color:#6b7680') + ';line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
           caret: isOpen ? '▴' : '▾',
           wrapStyle: 'position:relative;flex:1;min-width:260px;' + (isOpen ? 'z-index:31' : ''),
-          style: 'background:#fff;border:' + (isOpen ? '2px solid #0b6b5a' : '1px solid #c9d0d5') + ';border-radius:10px;padding:' + (isOpen ? '9px 12px' : '10px 13px') + ';cursor:pointer',
+          style: 'background:#fff;border:' + (isOpen ? '2px solid #1f2a33' : '1px solid #c9d0d5') + ';border-radius:10px;padding:' + (isOpen ? '9px 12px' : '10px 13px') + ';cursor:pointer',
           onToggle: () => this.setState({ hubMenu: isOpen ? null : k }),
-          clearStyle: o ? 'cursor:pointer;color:#9aa4ad;font-size:16px;line-height:1;padding:2px;flex:none' : 'display:none',
+          clearStyle: o ? 'cursor:pointer;color:#6b7680;font-size:16px;line-height:1;padding:2px;flex:none' : 'display:none',
           onClear: e => { if (e && e.stopPropagation) e.stopPropagation(); const np = pair.slice(); np[k] = null; setPair(np); },
           menuStyle: isOpen ? 'position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:32;background:#fff;border:1px solid #d2d7db;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.16);max-height:360px;overflow-y:auto;padding:4px 0' : 'display:none',
           groups: isOpen ? menuGroups(k) : []
@@ -2256,13 +2258,13 @@ class Component extends DCLogic {
       // Prinzipien als Liste (ein Prinzip je Zeile, mit Farbfeld); ohne Auswahl eine normale Zeile mit „—"
       const prinzRow = (k, ids) => (ids && ids.length)
         ? { k, items: ids.map(id => ({ name: this.byId[id] ? this.byId[id].name : id, color: this.byId[id] ? this.byId[id].color : '#c4c9cd' })) }
-        : { k, v: '—', vStyle: 'color:#26303a;text-align:right' };
+        : { k, v: '—', vStyle: 'color:#1b2126;text-align:right' };
       const HUB_ROW = 'display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0';
       const hubRowNorm = r => r.items
         ? Object.assign({ v: '', vStyle: '', rowStyle: 'display:none', listStyle: 'font-size:14px;padding:5px 0 4px' }, r)
         : Object.assign({ items: [], rowStyle: HUB_ROW, listStyle: 'display:none' }, r);
-      const numCss = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;font-weight:600;text-align:right";
-      const txtCss = 'color:#26303a;text-align:right';
+      const numCss = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;font-weight:600;text-align:right";
+      const txtCss = 'color:#1b2126;text-align:right';
       R.hubSumCards = [0, 1].map(k => {
         const o = pair[k] ? objById[pair[k]] : null;
         const card = { badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), rows: [],
@@ -2289,7 +2291,7 @@ class Component extends DCLogic {
 
       // Tabellen je Ebene — Region-Szenarien mit zwei Prinzipien-Zeilen (DE + regional), DE mit einer
       const CMP_ROW_H = 40;
-      const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;" : 'color:#26303a;');
+      const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;" : 'color:#1b2126;');
       const names = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
       R.hubTables = levelGroups.map(g => {
         const rowDefs = (g.isRegion
@@ -2529,7 +2531,7 @@ class Component extends DCLogic {
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, fallback); else fallback();
     };
     R.shareCopyLabel = S.shareCopied ? 'Kopiert ✓' : 'Link kopieren';
-    R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#0b6b5a');
+    R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#1f2a33');
     // Auto-Name kurz halten: ab zwei Prinzipien nur die Anzahl (die Namen stehen in der rechten Spalte und in
     // den Tabellen), Landkreis ohne das Wort „Landkreis". Gleiche Namen bekommen eine laufende Nummer — zwei
     // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsanrechnung unterscheiden.
@@ -2585,30 +2587,32 @@ class Component extends DCLogic {
     R.scenarioToastVisible = !!(S.scenarioToastShow || S.scenarioToastMounted);
     R.undoToastVisible = !!(S.undoDelete && (S.undoShow || S.undoMounted));
     R.undoDelete = () => this.undoDeleteScenario();
-    R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#122f28;color:#dff2ec;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);'
+    R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#1f2a33;color:#eaecef;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);'
       + (S.undoShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards;pointer-events:none');
-    R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#122f28;color:#dff2ec;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:380px;text-align:center;pointer-events:none;'
+    R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#1f2a33;color:#eaecef;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:380px;text-align:center;pointer-events:none;'
       + (S.scenarioToastShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards');
 
     // ---------- STRINGS / STATE ----------
     R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
     R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
+    // Konsens-Farbe für die großen Zahlen/Balken der rechten Spalte (CSS-Variable --cons)
+    R.consHex = this.CONS;
     R.isErweitert = isExt;
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
-    R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#0b6b5a' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#0b6b5a' : '#8a929a') + ';font-style:italic;cursor:pointer';
-    R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
+    R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
+    R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
     R.princSublineStyle = isRegion ? 'height:10px;overflow:hidden;visibility:hidden' : 'font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
     // Definition „Zubaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
-    R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer';
-    R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;line-height:1.45' : 'display:none';
+    R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
+    R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;line-height:1.45' : 'display:none';
     R.cellHeroInfoBtnStyle = 'display:none';
     R.toggleConsInfo = () => this.setState({ consInfo: !this.state.consInfo });
     R.techWindStyle = this.segTech('wind', S.tech === 'wind');
     R.techPVStyle = this.segTech('pv', S.tech === 'pv');
     const techCol = this.techColors[S.tech === 'pv' ? 'pv' : 'wind'];
     R.techChipLabel = S.tech === 'pv' ? 'Freiflächen-PV' : 'Wind';
-    R.techChipStyle = 'flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#44505a;white-space:nowrap;border-radius:999px;padding:2px 10px 2px 8px;margin:0 2px 5px 8px;background:' + techCol.bg + ';border:1px solid ' + techCol.line;
+    R.techChipStyle = 'flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#5b6672;white-space:nowrap;border-radius:999px;padding:2px 10px 2px 8px;margin:0 2px 5px 8px;background:' + techCol.bg + ';border:1px solid ' + techCol.line;
     R.techChipDotStyle = 'width:9px;height:9px;border-radius:50%;flex:none;background:' + techCol.line;
     R.targetGW = S.targetGW;
 
@@ -2646,12 +2650,12 @@ class Component extends DCLogic {
       const canClick = p.available;
       return {
         name: p.name,
-        rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #2f6690;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#e6eef4' : '#eef4f2') : 'transparent') + ';color:' + (canClick ? '#26303a' : '#aab2b9') + ';border:1px solid ' + (on ? '#cbe0d9' : 'transparent'),
+        rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #1f2a33;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#eef0f2' : '#f1f3f4') : 'transparent') + ';color:' + (canClick ? '#1b2126' : '#aab2b9') + ';border:1px solid ' + (on ? '#d7d9dc' : 'transparent'),
         swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + (canClick ? (p.color || '#c4c9cd') : '#d5d9dc') + ';background:' + (on ? p.color : 'transparent'),
         tag: canClick ? '' : '(Metrik in Vorbereitung)',
-        tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#aab2b9;font-style:italic;margin-top:2px',
+        tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#6b7680;font-style:italic;margin-top:2px',
         info: p.info || '',
-        infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#8a929a;font-style:italic;cursor:pointer' : 'display:none',
+        infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1px solid #c8ced3;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6b7680;font-style:italic;cursor:pointer' : 'display:none',
         infoStyle: (S.infoPrinc === p.id ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;padding:6px 10px 4px 32px',
         onToggle: canClick ? () => this.toggleP(p.id) : () => {},
         onInfo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ infoPrinc: S.infoPrinc === p.id ? null : p.id }); }
@@ -2661,7 +2665,7 @@ class Component extends DCLogic {
     // Einmaliger Hinweis nach dem CTA-Einstieg: erklärt die Vorauswahl und was Ändern bewirkt
     // Mount-Flag bleibt während der Ausblende-Transition true, damit das Fade sichtbar wird
     R.trioHint = !!(S.trioHint || S.trioHintMounted);
-    R.trioHintStyle = 'font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px;'
+    R.trioHintStyle = 'font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px;'
       + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
     R.showCTA = uiSel.length === 1;
     R.hintOppo = S.hintOppo;
@@ -2671,7 +2675,7 @@ class Component extends DCLogic {
       onClick: () => { this.setState({ targetKey: k, targetGW: this.targets[k], freeTarget: false }); this.startReveal(); },
       style: this.chip(S.targetKey === k && !S.freeTarget)
     }));
-    R.targetMarks = this.marks.map(m => ({ label: ' ' + m.y, title: m.gw + ' GW', style: 'position:absolute;left:' + ((m.gw - 60) / 200 * 100).toFixed(1) + '%;transform:translateX(-50%);font-size:14px;color:#8a929a;white-space:nowrap' }));
+    R.targetMarks = this.marks.map(m => ({ label: ' ' + m.y, title: m.gw + ' GW', style: 'position:absolute;left:' + ((m.gw - 60) / 200 * 100).toFixed(1) + '%;transform:translateX(-50%);font-size:14px;color:#6b7680;white-space:nowrap' }));
     R.onSlider = e => { this.setState({ targetGW: +e.target.value, targetKey: null, freeTarget: true }); this.startReveal(); };
     R.sliderResult = stufe >= 2 ? ('Bei ' + this.fmtU(target, isRegion) + ' liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens.') : ('Bei ' + this.fmtU(target, isRegion) + ' verteilt ' + this.byId[singlePid].name + ' den gesamten Zubau.');
 
@@ -2896,7 +2900,7 @@ class Component extends DCLogic {
           const sumSame = sumTxt.every(t => t === sumTxt[0]);
           R.sumRows = sumSame ? [] : sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
           R.sumHeadStyle = sumSame ? 'display:none' : '';
-          R.sumSameStyle = sumSame ? 'font-size:14px;color:#33413c;line-height:1.5;padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px' : 'display:none';
+          R.sumSameStyle = sumSame ? 'font-size:14px;color:#1b2126;line-height:1.5;padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px' : 'display:none';
           R.sumSameText = sumTxt[0] === this.fmtU(target, isRegion)
             ? 'Jedes Prinzip verteilt ' + (isRegion ? 'das ganze Regionsbudget' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
             : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
@@ -2927,7 +2931,7 @@ class Component extends DCLogic {
               return {
                 name: isRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label, v: this.fmtU(dissens[i], isRegion),
                 pName: this.byId[top].name, pColor: this.byId[top].color,
-                style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:' + (canPick ? 'pointer' : 'default') + ';background:' + (on ? '#eef3f6' : 'transparent'),
+                style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:' + (canPick ? 'pointer' : 'default') + ';background:' + (on ? '#f2f4f5' : 'transparent'),
                 onClick: canPick ? (() => { this.setState({ hoverDiss: null }); this.selectCell(c.id); }) : (() => {}),
                 onEnter: () => { if (this.state.hoverDiss !== c.id) this.setState({ hoverDiss: c.id }); },
                 onLeave: () => { if (this.state.hoverDiss === c.id) this.setState({ hoverDiss: null }); }
@@ -2945,7 +2949,7 @@ class Component extends DCLogic {
               ? { dots: o.rec.map(p => ({ color: this.byId[p].color })), label: o.rec.map(p => this.byId[p].name).join(' + '), count: o.n }
               : { dots: [{ color: '#e4e8eb' }], label: 'keine Abweichung > 20 %', count: o.n };
             return Object.assign(row, {
-              style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:default;background:' + (on ? '#eef3f6' : 'transparent'),
+              style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:default;background:' + (on ? '#f2f4f5' : 'transparent'),
               onEnter: () => { if (this.state.hoverCombo !== key) this.setState({ hoverCombo: key }); },
               onLeave: () => { if (this.state.hoverCombo === key) this.setState({ hoverCombo: null }); }
             });
@@ -2966,7 +2970,7 @@ class Component extends DCLogic {
       }
       R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
-      R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer' : 'display:none';
+      R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5b6672;margin-top:8px;line-height:1.45' : 'display:none';
       R.toggleOvBarInfo = () => this.setState({ ovBarInfo: !this.state.ovBarInfo });
       // Galerie: die kleinen Karten sind nicht zellweise klickbar → kein „Klicken Sie auf eine Zelle"
@@ -3028,9 +3032,9 @@ class Component extends DCLogic {
           R.cellPopoverBoxStyle = 'position:absolute;left:' + (MAP_PAD + px).toFixed(1) + 'px;top:' + (MAP_PAD + py).toFixed(1) + 'px;width:' + popW + 'px;height:' + popH + 'px';
           R.cellPopoverLine1 = nameText;
           R.cellPopoverLine2 = 'im Detail auswerten →';
-          R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eaf3ef;transform:rotate(45deg);' + (growRight
-            ? 'left:-5px;border-left:1px solid #b9d9cd;border-bottom:1px solid #b9d9cd'
-            : 'right:-5px;border-right:1px solid #b9d9cd;border-top:1px solid #b9d9cd');
+          R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#eef0f3;transform:rotate(45deg);' + (growRight
+            ? 'left:-5px;border-left:1px solid #ccced1;border-bottom:1px solid #ccced1'
+            : 'right:-5px;border-right:1px solid #ccced1;border-top:1px solid #ccced1');
           R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
         } else R.showCellPopover = false;
       } else R.showCellPopover = false;
@@ -3043,7 +3047,7 @@ class Component extends DCLogic {
         const mx = Math.max(...sel.map(p => gwSel[p][i]));
         R.cellBars = sel.map(p => {
           const isLim = limiting[i] === p;
-          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSel[p][i], isRegion), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSel[p][i], isRegion), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1f2a33;background:#e9ecef;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
       }
       R.cellPrincipleName = this.byId[singlePid].name;
@@ -3122,7 +3126,7 @@ class Component extends DCLogic {
         const limP = sel.reduce((best, p) => gwSelAgg[p] < gwSelAgg[best] - 1e-9 ? p : best, sel[0]);
         R.cellBars = sel.map(p => {
           const isLim = p === limP;
-          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#2f6690;background:#e4edf3;padding:1px 6px;border-radius:4px' : 'display:none' };
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1f2a33;background:#e9ecef;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
 
         const neu = gNeu;
@@ -3178,7 +3182,7 @@ class Component extends DCLogic {
       this._zoomOrder = sel.slice();
       const zStep = dir => () => { const o = this._zoomOrder, k = o.indexOf(this.state.zoom); if (k >= 0) this.setState({ zoom: o[(k + dir + o.length) % o.length] }); };
       R.zoomPrev = zStep(-1); R.zoomNext = zStep(1);
-      R.zoomNavStyle = sel.length > 1 ? 'flex:none;width:36px;height:56px;border:1px solid #d7dce0;border-radius:9px;background:#fff;color:#44505a;font-size:26px;line-height:1;cursor:pointer' : 'display:none';
+      R.zoomNavStyle = sel.length > 1 ? 'flex:none;width:36px;height:56px;border:1px solid #d7dce0;border-radius:9px;background:#fff;color:#5b6672;font-size:26px;line-height:1;cursor:pointer' : 'display:none';
       R.zoomTabs = sel.map(q => ({ name: this.byId[q].name, color: this.byId[q].color, onClick: () => this.setState({ zoom: q }),
         style: 'display:flex;align-items:center;gap:6px;font-size:14px;padding:4px 10px;border-radius:999px;cursor:pointer;border:1px solid ' + (q === p ? '#44505a' : '#dfe3e6') + ';background:' + (q === p ? '#f1f3f4' : '#fff') + ';color:' + (q === p ? '#1b2126' : '#5b6672') + ';font-weight:' + (q === p ? '600' : '500') }));
     } else R.zoom = false;
@@ -3202,13 +3206,13 @@ class Component extends DCLogic {
   }
 
   // style helpers
-  segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:600;padding:5px 13px;cursor:pointer;background:' + (on ? '#57c4ab' : 'transparent') + ';color:' + (on ? '#0c2a24' : '#8b98a5'); }
+  segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:' + (on ? '600' : '500') + ';padding:5px 13px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
   // Technologie-Schalter: aktive Hälfte in der Technologiefarbe (blau = Wind, gelb = PV) statt neutral weiß
   segTech(tech, on) { const c = this.techColors[tech]; return this.segLight(on) + (on ? ';background:' + c.seg + ';box-shadow:inset 0 0 0 1px ' + c.line : ''); }
-  segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#7a848c') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
-  chip(on) { return 'flex:1;border:1px solid ' + (on ? '#0b6b5a' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#0b6b5a' : '#fff') + ';color:' + (on ? '#fff' : '#4b555d'); }
-  tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#0b6b5a' : '#7a848c') + ';border-bottom:2px solid ' + (on ? '#0b6b5a' : 'transparent') + ';margin-bottom:-1px'; }
-  switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#0b6b5a' : '#c7ccd1'); }
+  segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
+  chip(on) { return 'flex:1;border:1px solid ' + (on ? '#1f2a33' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#1f2a33' : '#fff') + ';color:' + (on ? '#fff' : '#5b6672'); }
+  tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#1f2a33' : '#6b7680') + ';border-bottom:2px solid ' + (on ? '#1f2a33' : 'transparent') + ';margin-bottom:-1px'; }
+  switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#1f2a33' : '#c7ccd1'); }
   knobStyle(on) { return 'position:absolute;top:2px;left:' + (on ? '17px' : '2px') + ';width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s'; }
 
   toggleP(id) {
