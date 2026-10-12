@@ -931,9 +931,12 @@ die falsche Einheit.
 >   kaum lesbar. Reihenfolge im Umschalter: Gemeinden · Gemeinden + Raster ·
 >   Raster (5 × 5 km).
 > - **Headline erklärt das Regionsbudget** statt die rechte Spalte zu
->   wiederholen: „Regionsbudget für [Landkreis]: [X] MW — sein Anteil am
->   bundesweiten Konsens." (bei nur einem bundesweiten Prinzip: „… an der
->   bundesweiten Verteilung."). Vorher: „Von [X] MW Regionsbudget liegen [Y] MW
+>   wiederholen: „Regionsbudget: [X] MW — der Anteil dieses Landkreises am
+>   bundesweiten Konsens." (kreisfreie Stadt: „dieser Stadt"; bei nur einem
+>   bundesweiten Prinzip: „… an der bundesweiten Verteilung."). Ohne den Namen:
+>   Der steht in der Kartenleiste und als Titel der rechten Spalte. Die
+>   Kartenleiste zeigt in der Region nur noch den Namen („Landkreis Uelzen"),
+>   nicht mehr „· Gemeinden + Raster" o. Ä. — das zeigt der Umschalter. Vorher: „Von [X] MW Regionsbudget liegen [Y] MW
 >   im Konsens der regionalen Prinzipien." — diese Aussage steht weiter in der
 >   rechten Spalte (Zahl, Anteil, Balken, „i").
 > - **Linke Spalte:** Die Unterzeile „Kein Prinzip ist objektiv richtig …"

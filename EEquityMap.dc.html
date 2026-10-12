@@ -2545,7 +2545,8 @@ class Component extends DCLogic {
     R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
 
     // Ansichtsleiste — die zwei Geometrien ersetzen den früheren Granularitäts-Schalter (s. §L/§M)
-    R.ansichtLabel = isRegion ? (S.region.label + ({ raster: ' · 5 × 5 km Raster', gemeinden: ' · Gemeinden', 'gemeinden-raster': ' · Gemeinden + Raster' }[R.regionViewMode] || '')) : 'Deutschland · Landkreise';
+    // Regionsansicht: nur der Name — die gewählte Ansicht zeigt der Umschalter in der Kartenecke
+    R.ansichtLabel = isRegion ? S.region.label : 'Deutschland · Landkreise';
     // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
     R.scopeUnit = this.unitFor(isRegion);
     R.zeroPrefix = isRegion ? '0' : '0,00'; // Nulluntergrenze in Bereichsangaben („0 – X MW" statt „0,00 – X GW")
@@ -2574,7 +2575,8 @@ class Component extends DCLogic {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
       R.kernaussage = isRegion
         // erklärt, woher das Regionsbudget kommt (Verbindung der zwei Ebenen); die Konsenszahl steht rechts
-        ? 'Regionsbudget für ' + S.region.label + ': ' + this.fmtU(target, isRegion) + ' — sein Anteil ' + (S.selected.filter(avail).length >= 2 ? 'am bundesweiten Konsens.' : 'an der bundesweiten Verteilung.')
+        // ohne den Namen (steht in der Kartenleiste und als Titel der rechten Spalte)
+        ? 'Regionsbudget: ' + this.fmtU(target, isRegion) + ' — der Anteil ' + (/^Stadt /.test(S.region.label) ? 'dieser Stadt ' : 'dieses Landkreises ') + (S.selected.filter(avail).length >= 2 ? 'am bundesweiten Konsens.' : 'an der bundesweiten Verteilung.')
         : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
     }
 
