@@ -53,13 +53,14 @@
 
   <!-- HEADER -->
   <header style="display:flex;align-items:center;gap:16px;height:54px;padding:0 20px;background:#fff;color:#1b2126;border-bottom:1px solid #dde1e5;box-sizing:border-box;flex:none;z-index:20">
-    <div style="display:flex;align-items:baseline;gap:9px">
-      <span style="font-weight:700;font-size:17px;letter-spacing:-.2px">EEquity<span style="color:#0b6b5a">Map</span></span>
-      <span style="font-size:14px;color:#5b6672;font-weight:500">Wo wäre der Ausbau fair?</span>
-    </div>
-    <button onClick="{{ reopenIntro }}" style="background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer">Was ist das?</button>
-    <!-- Methodik: gleiche Art wie „Was ist das?" (erklärt das Werkzeug) → direkt daneben; öffnet das Methodik-Fenster. -->
-    <button onClick="{{ openMethod }}" style="background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer">Methodik</button>
+    <!-- Logo (Bilddatei eequitymap-logo.png, 3-fach für scharfe Darstellung); ohne Untertitel -->
+    <img src="eequitymap-logo.png" alt="EEquityMap" style="height:46px;width:auto;display:block;flex:none">
+    <!-- Erklär-Einträge als schlichte Textlinks (kein Rahmen) — der einzige Knopf im Kopf ist die Aktion „Daten herunterladen" -->
+    <nav style="display:flex;align-items:center;gap:2px;margin-left:6px">
+      <button onClick="{{ reopenIntro }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Was ist das?</button>
+      <button onClick="{{ openMethod }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Methodik</button>
+      <button onClick="{{ openAbout }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Über das Projekt</button>
+    </nav>
     <div style="flex:1"></div>
     <!-- Daten herunterladen: Aktion, rechts vor dem Modus-Umschalter. Prototyp: ohne Funktion. -->
     <button style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">
@@ -956,6 +957,15 @@
     </aside>
   </div>
 
+  <!-- Fußzeile: immer sichtbar, rechtsbündig Kontakt · Impressum · Datenschutz (Impressum und Datenschutz
+       sind eigene Seiten mit eigener Adresse; „Über das Projekt" steht nur im Kopf), s. SoT §Q. -->
+  <footer style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:32px;padding:4px 20px;background:#fff;border-top:1px solid #dde1e5;box-sizing:border-box;flex:none;font-size:14px;color:#5b6672">
+    <div style="flex:1"></div>
+    <span onClick="{{ openAboutContact }}" style="color:#1b2126;cursor:pointer">Kontakt</span>
+    <a href="impressum.html" style="color:#1b2126;text-underline-offset:2px">Impressum</a>
+    <a href="datenschutz.html" style="color:#1b2126;text-underline-offset:2px">Datenschutz</a>
+  </footer>
+
   <!-- Intro-Overlay: Prämisse -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
@@ -988,6 +998,24 @@
   </sc-if>
 
   <!-- "Was ist das?" panel -->
+  <!-- Über das Projekt: Partner, Förderung, Kontakt, Zitieren, Stand — Gliederung mit Platzhaltern (s. SoT §Q) -->
+  <sc-if value="{{ aboutOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAbout }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:32px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 26px 14px;border-bottom:1px solid #e6e9eb;flex:none">
+          <div>
+            <div style="font-weight:700;font-size:18px;color:#1b2126">Über das Projekt</div>
+            <div style="font-size:14px;color:#5b6672;margin-top:2px">Wer hinter EEquityMap steht und wie Sie uns erreichen</div>
+          </div>
+          <button onClick="{{ closeAbout }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
+        </div>
+        <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#1b2126">
+          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726"><b>Entwurf.</b> Diese Seite zeigt die vorgesehene Gliederung. Die markierten Platzhalter müssen vor einer Veröffentlichung ersetzt werden.</div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Das Projekt</div><p style="margin:0 0 10px">EEquityMap macht sichtbar, wie unterschiedlich sich der Ausbau erneuerbarer Energien verteilt, je nachdem, welche Vorstellung von Fairness man anlegt — und wo diese Vorstellungen übereinstimmen.</p><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: zwei bis drei Sätze: Anlass, Ziel und Zielgruppe des Projekts, Laufzeit]</span></p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Partner</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px"><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Projektleitung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Modellierung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Gestaltung und Umsetzung]</span></div></div></div></div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Förderung</div><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Fördergeber, Programm, Förderkennzeichen; ggf. Logo mit vorgeschriebenem Zusatz]</span></p><div id="kontakt"></div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Kontakt</div><p style="margin:0 0 4px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Ansprechperson]</span>, <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Organisation]</span></p><p style="margin:0 0 10px">E-Mail: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: adresse@beispiel.de]</span></p><p style="margin:0 0 10px;color:#5b6672">Fragen zur Methodik, zu den Daten oder zur Nutzung der Karten richten Sie bitte an diese Adresse.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Zitieren und weiterverwenden</div><p style="margin:0 0 6px">Zitiervorschlag: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Autor:innen (Jahr): EEquityMap. Herausgeber. URL]</span></p><p style="margin:0 0 10px">Lizenz für Daten und Karten: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: z. B. CC BY 4.0]</span> · Quellcode: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Lizenz und Link zum Repository]</span></p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Stand</div><p style="margin:0">Version <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Versionsnummer]</span> · Datenstand <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Monat Jahr]</span></p>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- Methodik: wie das Werkzeug rechnet (Kopf → „Methodik"). Inhalt beschreibt die Rechenregeln der App;
        Datenquellen werden bewusst nicht behauptet, solange der Prototyp mit Platzhalterwerten arbeitet. -->
   <sc-if value="{{ methodOpen }}" hint-placeholder-val="{{ false }}">
@@ -1249,7 +1277,7 @@ class Component extends DCLogic {
     this._zoomOrder = [];
     document.addEventListener('keydown', e => {
       const z = this.state && this.state.zoom, o = this._zoomOrder;
-      if (e.key === 'Escape' && this.state && this.state.methodOpen) { this.setState({ methodOpen: false }); return; }
+      if (e.key === 'Escape' && this.state && (this.state.methodOpen || this.state.aboutOpen)) { this.setState({ methodOpen: false, aboutOpen: false }); return; }
       if (!z) return;
       if (e.key === 'Escape') { this.setState({ zoom: null }); return; }
       const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -3189,6 +3217,12 @@ class Component extends DCLogic {
     R.infoPanel = S.infoPanel;
     R.toggleInfoPanel = () => this.setState({ infoPanel: !S.infoPanel, intro: false });
     R.methodOpen = !!S.methodOpen;
+    R.aboutOpen = !!S.aboutOpen;
+    R.openAbout = () => this.setState({ aboutOpen: true, methodOpen: false, intro: false, infoPanel: false });
+    // „Kontakt" in der Fußzeile: dasselbe Fenster, direkt zum Abschnitt Kontakt gescrollt
+    R.openAboutContact = () => { this.setState({ aboutOpen: true, methodOpen: false, intro: false, infoPanel: false });
+      setTimeout(() => { const el = document.getElementById('kontakt'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' }); }, 60); };
+    R.closeAbout = () => this.setState({ aboutOpen: false });
     R.openMethod = () => this.setState({ methodOpen: true, intro: false, infoPanel: false });
     R.closeMethod = () => this.setState({ methodOpen: false });
     R.stop = e => { if (e && e.stopPropagation) e.stopPropagation(); };

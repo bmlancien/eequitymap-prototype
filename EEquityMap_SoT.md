@@ -1330,3 +1330,54 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
 - Die Zeile „Gespeicherte Szenarien (N) · Vergleichen → · Nur für diese Sitzung."
   entfällt; Einstieg ist allein der Reiter. Der Session-only-Hinweis steht weiter
   im Speichern-Dialog.
+
+---
+
+## Q. Projekt- und Rechtsseiten (Session 2026-10-12) — Gliederung mit Platzhaltern
+
+**Wo was steht**
+- **Fußzeile** (neu, immer sichtbar, eine schmale Zeile am unteren Rand):
+  rechtsbündig „Kontakt", „Impressum", „Datenschutz" — sonst nichts. Impressum
+  und Datenschutz müssen von jeder Ansicht aus leicht erreichbar sein — deshalb
+  die Fußzeile. Bewusst **nicht** in der Fußzeile: „Über das Projekt" (steht nur
+  im Kopf) und die Zeile „Ein Projekt von … · gefördert durch …" (Partner und
+  Förderung stehen im Fenster „Über das Projekt"). Das Fenster „Über das
+  Projekt" hat umgekehrt keine Zeile „Rechtliches: Impressum · Datenschutz".
+- **Logo:** Bilddatei `eequitymap-logo.png` (Deutschlandkarte mit Windrad,
+  Solarmodul und Personen + Schriftzug „EEquityMap") links im Kopf, 46 px hoch,
+  ebenso auf Impressum und Datenschutz. Der frühere Text-Schriftzug und der
+  Untertitel „Wo wäre der Ausbau fair?" im Kopf entfallen. Die Datei ist aus
+  einem Bildschirmfoto mit weißem Grund erzeugt — für die Veröffentlichung
+  durch die Originaldatei (SVG oder PNG mit Transparenz) ersetzen.
+- **Kopf:** „Was ist das?", „Methodik" und „Über das Projekt" stehen als
+  schlichte Textlinks ohne Rahmen nebeneinander (Hover: leichter grauer Grund).
+  Der einzige umrandete Knopf im Kopf ist die Aktion „Daten herunterladen";
+  Basic/Erweitert bleibt der Umschalter. Vorher sahen alle fünf Einträge wie
+  Knöpfe aus.
+- **„Über das Projekt"** ist ein Fenster wie die Methodik (Esc, ×, Klick
+  daneben schließt). Abschnitte: Das Projekt · Partner (Logo, Name, Rolle) ·
+  Förderung · Kontakt · Zitieren und weiterverwenden (Zitiervorschlag, Lizenzen)
+  · Stand (Version, Datenstand). „Kontakt" in der Fußzeile öffnet dasselbe
+  Fenster beim Abschnitt Kontakt. Kein Kontaktformular (E-Mail genügt und
+  vermeidet zusätzliche Datenschutzpflichten).
+- **Impressum** und **Datenschutz** sind eigene Seiten mit eigener Adresse
+  (`impressum.html`, `datenschutz.html`), damit sie direkt verlinkbar sind und
+  ohne das Werkzeug laden. Sie binden bewusst keine externen Schriften oder
+  Skripte ein.
+
+**Alles noch Platzhalter.** Fehlende Angaben sind sichtbar markiert
+(„[Platzhalter: …]", gelb gestrichelt); jede der drei Stellen trägt oben einen
+Entwurfs-Hinweis. Vor einer Veröffentlichung nötig:
+- Partner mit Namen, Rollen und Logos; Fördergeber mit Programm und Kennzeichen.
+- Anbieter mit Anschrift, Vertretung, Kontakt, inhaltlich Verantwortliche.
+- Ansprechperson und E-Mail; Zitiervorschlag; Lizenzen; Version/Datenstand.
+- Datenschutz: Hosting-Anbieter, Rechtsgrundlagen, Speicherdauern, Rechte,
+  Aufsichtsbehörde. Texte von der rechtlich verantwortlichen Stelle prüfen
+  lassen.
+- Falls eine öffentliche Stelle Anbieter ist: zusätzlich „Barrierefreiheit"
+  (Erklärung) in die Fußzeile.
+
+**Offen, technisch:** Das Werkzeug lädt Schriftarten von Google Fonts und React
+von unpkg.com. Beides überträgt die IP-Adresse der Besucher an Dritte. Vor
+Veröffentlichung lokal einbinden; der Datenschutz-Entwurf beschreibt den
+jetzigen Stand und markiert die Stelle.
