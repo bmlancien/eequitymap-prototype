@@ -147,8 +147,18 @@ Paar erkennbar.
 > - Konfliktflächen · Wer denkt anders?: „Hier sehen Sie, welches Prinzip an
 >   einer Stelle deutlich mehr Zubau vorsieht, als der Konsens trägt (über
 >   20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen."
-> - Einzelverteilungen: „Jede Karte zeigt ein Prinzip für sich, ohne Abgleich
->   mit den anderen." (ohne Auswahl zusätzlich: „Wählen Sie links ein Prinzip.")
+> - Einzelverteilungen: **keine Caption** (Session 2026-10-12, zweite Runde) —
+>   Headline und Kartentexte sagen es bereits. Weitere Vereinfachungen dieses
+>   Reiters: (1) rechte Spalte ohne Konsenszahl; statt „Summe je Prinzip" mit
+>   gleich langen Balken ein Satz „Jedes Prinzip verteilt das ganze Ausbauziel
+>   ([X]), nur räumlich anders." (Balken nur, falls sich die Summen tatsächlich
+>   unterscheiden); kein Hinweis „Klicken Sie auf eine Zelle …". (2) Kartentext
+>   ohne wiederholten Prinzipnamen („Dorthin, wo viel Strom verbraucht wird.").
+>   (3) Wertebereich mit Bezug: „0,00 – 0,59 GW je Landkreis" bzw. „… je
+>   5 × 5-km-Zelle". (4) Karten fluchten je Zeile (Karte + Wertebereich am
+>   unteren Kartenrand). (5) Kein Konsens-Hinweis unter den Karten. Offen: Jede
+>   Karte hat ihre eigene Skala, Dunkelheit ist zwischen den Karten nicht
+>   vergleichbar.
 >   Die Kartengalerie hat keinen eigenen Scrollbereich (Session 2026-10-12):
 >   Alle Karten stehen in voller Höhe, gescrollt wird nur die Hauptspalte.
 > - Einzelansicht eines Prinzips: dessen Erklärsatz ohne Legenden-Nachsatz, z. B.
@@ -981,7 +991,8 @@ Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
 - **Rechte Spalte im Hub:** A/B-Zusammenfassung (Kernzahlen je Seite + Differenz
   gesamt), nie die Links-Konfiguration. Ohne Auswahl: „Noch nicht gewählt".
 - **Konsens-Disclaimer** im Hub ausgeblendet; seit Session 2026-10-12 auch in
-  Konfliktflächen · „Wer denkt anders?" (übrige Reiter unverändert).
+  Konfliktflächen · „Wer denkt anders?" und in Einzelverteilungen (dort wird
+  kein Konsens gezeigt); übrige Reiter unverändert.
 - **Löschen:** kein Dialog; Undo-Toast „Szenario gelöscht · Rückgängig" (≈ 6 s),
   stellt Szenario an seiner Position inkl. A/B-Zuordnung wieder her.
 - **Wind/PV:** Der Hub-Umschalter und der Umschalter links sind gekoppelt

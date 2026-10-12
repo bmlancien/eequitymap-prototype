@@ -264,15 +264,17 @@
                     <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1">{{ mp.name }}</span>
                     <span style="{{ mp.tagStyle }}">{{ mp.tag }}</span>
                   </div>
-                  <div style="font-size:14px;color:#44505a;margin-top:5px;line-height:1.45;max-width:38ch">{{ mp.explain }}</div>
-                  <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:132px;margin-top:10px">
+                  <!-- flex:1 → Karte + Wertebereich sitzen am unteren Kartenrand und fluchten in jeder Zeile,
+                       egal ob Titel/Beschreibung ein- oder zweizeilig sind -->
+                  <div style="font-size:14px;color:#44505a;margin-top:5px;line-height:1.45;max-width:38ch;flex:1">{{ mp.explain }}</div>
+                  <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:132px;margin-top:10px;flex:none">
                     <sc-for list="{{ mp.cells }}" as="c" hint-placeholder-count="20">
                       <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
                     </sc-for>
                   </svg>
-                  <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
-                    <span style="font-size:14px;color:#7a848c;flex:1" class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span>
-                    <span style="font-size:14px;color:#8d99a3">Einzeln ansehen →</span>
+                  <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin-top:6px">
+                    <span style="font-size:14px;color:#7a848c;white-space:nowrap"><span class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span> {{ galleryRangeUnit }}</span>
+                    <span style="font-size:14px;color:#8d99a3;margin-left:auto;white-space:nowrap">Einzeln ansehen →</span>
                   </div>
                 </div>
               </sc-for>
@@ -747,8 +749,13 @@
           <!-- verteilungen: Summe je Prinzip -->
           <sc-if value="{{ anSums }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
-              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Summe je Prinzip</div>
-              <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips über alle Zellen.</div>
+              <!-- Alle Prinzipien verteilen dieselbe Menge → ein Satz statt gleich langer Balken; Balken nur,
+                   wenn sich die Summen tatsächlich unterscheiden. -->
+              <div style="{{ sumSameStyle }}">{{ sumSameText }}</div>
+              <div style="{{ sumHeadStyle }}">
+                <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Summe je Prinzip</div>
+                <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips über alle Zellen.</div>
+              </div>
               <sc-for list="{{ sumRows }}" as="s" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:4px">
@@ -2187,7 +2194,8 @@ class Component extends DCLogic {
         const mx = Math.max(...pv);
         return {
           name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
-          explain: this.byId[p].name + ': ' + (shortExplain[p] || 'so verteilt sich der Ausbau'),
+          // Name steht schon im Kartentitel — hier nur die Beschreibung, mit großem Anfangsbuchstaben
+          explain: (e => e.charAt(0).toUpperCase() + e.slice(1) + '.')(shortExplain[p] || 'so verteilt sich der Ausbau'),
           swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
           max: this.fmtN(mx, isRegion),
           cells: cells.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
@@ -2197,6 +2205,8 @@ class Component extends DCLogic {
       });
       R.showPlan = !galleryAll;
       R.galleryAll = galleryAll;
+      // Wertebereich unter jeder kleinen Karte: sagt, worauf sich die Spanne bezieht
+      R.galleryRangeUnit = isRegion ? 'je 5 × 5-km-Zelle' : 'je Landkreis';
       // Einstieg: Headline + Legende + Galerie + CTA sind ein zusammenhängender Block oben;
       // die Galerie wächst nicht in die leere Restfläche, der CTA bleibt an den Karten.
       // Kein eigener Scrollbereich: alle Karten in voller Höhe, gescrollt wird nur die Hauptspalte.
@@ -2313,12 +2323,12 @@ class Component extends DCLogic {
         ? 'Hier sehen Sie, welches Prinzip an einer Stelle deutlich mehr Zubau vorsieht, als der Konsens trägt (über 20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen.'
         : 'Hier sind sich die gewählten Prinzipien am wenigsten einig: Mindestens eines sieht deutlich mehr Zubau vor, als der Konsens trägt.',
       minimum: 'Der Konsens ist überall nur so groß wie das Prinzip, das dort am wenigsten vorsieht. Ohne dieses Prinzip wäre an der Stelle mehr Konsens möglich.',
-      verteilungen: 'Jede Karte zeigt ein Prinzip für sich, ohne Abgleich mit den anderen.' + (isEmpty ? ' Wählen Sie links ein Prinzip.' : ''),
+      verteilungen: '', // Headline + Kartentexte sagen es bereits
       szenarien: '' // steht im Hub selbst, über der A/B-Auswahl
     })[view] || '';
     R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
-    // nicht im Hub und nicht in Konfliktflächen · „Wer denkt anders?"
-    R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && !(view === 'konflikt' && S.konfliktMode === 'anders') && stufe >= 2;
+    // nicht im Hub, nicht in Konfliktflächen · „Wer denkt anders?" und nicht in Einzelverteilungen (kein Konsens gezeigt)
+    R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && view !== 'verteilungen' && !(view === 'konflikt' && S.konfliktMode === 'anders') && stufe >= 2;
     R.currentView = view;
     R.isSingleView = view === 'single';
     R.showBackToGallery = view === 'single';
@@ -2634,6 +2644,7 @@ class Component extends DCLogic {
       R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCombos = false;
+      let hideLead = false;
       R.ovLeadUnit = this.unitFor(isRegion); R.ovBarShow = false; R.ovEmpty = false;
 
       if (view === 'regionGate') {
@@ -2671,12 +2682,19 @@ class Component extends DCLogic {
         const mkBlockers = () => { R.blockers = bl.map(b => ({ name: b.name, color: b.color, count: b.count, cost: this.fmtN(Math.max(0,b.cost), isRegion), barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%', trackStyle: blockerBars ? 'height:9px;background:#edf0f1;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' })); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
 
         if (view === 'verteilungen') {
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           R.anSums = true;
           const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
           const smax = Math.max(...sums.map(s=>s.v), 0.001);
-          R.sumRows = sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
+          const sumTxt = sums.map(s => this.fmtU(s.v, isRegion));
+          const sumSame = sumTxt.every(t => t === sumTxt[0]);
+          R.sumRows = sumSame ? [] : sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
+          R.sumHeadStyle = sumSame ? 'display:none' : '';
+          R.sumSameStyle = sumSame ? 'font-size:14px;color:#33413c;line-height:1.5;padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px' : 'display:none';
+          R.sumSameText = sumTxt[0] === this.fmtU(target, isRegion)
+            ? 'Jedes Prinzip verteilt ' + (isRegion ? 'das ganze Regionsbudget' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
+            : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
+          // 2) Dieser Reiter zeigt die Prinzipien einzeln — keine Konsenszahl in der rechten Spalte
+          hideLead = true;
         } else if (view === 'konflikt') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
@@ -2711,12 +2729,13 @@ class Component extends DCLogic {
           R.anBlockers = true; mkBlockers();
         }
       }
-      R.ovLeadBoxStyle = 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
+      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
       R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5b6672;margin-top:8px;line-height:1.45' : 'display:none';
       R.toggleOvBarInfo = () => this.setState({ ovBarInfo: !this.state.ovBarInfo });
-      R.ovClickHint = view !== 'regionGate' && !isEmpty;
+      // Galerie: die kleinen Karten sind nicht zellweise klickbar → kein „Klicken Sie auf eine Zelle"
+      R.ovClickHint = view !== 'regionGate' && view !== 'verteilungen' && !isEmpty;
     } else if (selectedCell) {
       const i = cells.indexOf(selectedCell), c = selectedCell;
       R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : '';
