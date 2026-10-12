@@ -152,8 +152,10 @@ Paar erkennbar.
 > - Einzelansicht eines Prinzips: dessen Erklärsatz ohne Legenden-Nachsatz, z. B.
 >   „Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird."
 > - Szenarien vergleichen: „Wählen Sie zwei Szenarien oder Referenzen als A und
->   B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht; die Tabellen stellen
->   die gespeicherten Szenarien je Ebene gegenüber."
+>   B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht." (Der Tabellen-Satz
+>   steht in der Tabellen-Box.)
+>   Steht als einzige Caption **nicht** unter der Tab-Reihe, sondern im Hub
+>   direkt über den A/B-Boxen.
 >
 > Die folgende Liste ist der frühere Stand (Legenden-Formulierungen) und gilt
 > nicht mehr.
@@ -906,12 +908,16 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   (Deutschland) bzw. Rasterzelle (Region) ist klickbar. Die Auswahl ist auf der
   Karte als dunkle Kontur sichtbar; rechts erscheint **anstelle** von „A und B
   im Überblick" (nie beides zugleich, wie Übersicht/Zelldetail in den anderen
-  Reitern) eine Karte mit dunklem Rahmen: Name, Wert in A, Wert in B, Differenz A − B und
-  „mehr in A" / „mehr in B". Erneuter Klick oder × hebt die Auswahl auf; sie
+  Reitern) dieselbe Gliederung wie im Überblick, nur für diese Zelle: Dachzeile
+  „Auf der Karte ausgewählt" + Name als Titel, Box „Differenz A − B" mit
+  „mehr in A" / „mehr in B", darunter je eine Karte für A und B mit einem Wert
+  (Szenario: „Zubaukonsens", Referenz: „Verteilt").  Erneuter Klick oder × hebt die Auswahl auf; sie
   bleibt beim Wechsel von A/B auf derselben Ebene stehen. Bewusst **kein**
   Popover „… im Detail auswerten →" wie in den anderen Reitern: Der Wechsel in
   die Regionsauswertung würde die linke Konfiguration ändern, nicht A und B.
   Gemeinden sind hier nicht wählbar (die Karte zeigt das Raster).
+  Die Karte trägt keine Unterzeile mehr („Deutschland · je Landkreis · …
+  anklicken …" entfernt); Klickbarkeit zeigt nur der Zeiger-Cursor.
 - **Differenzen ohne Vorzeichen** (Session 2026-10-12): Im Hub steht keine
   Differenz mit „+" oder „−". Die Richtung ist ausgeschrieben: Betrag + „mehr in
   A" / „mehr in B" / „gleich viel in A und B" — in der Karte zur gewählten
@@ -1013,6 +1019,13 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   2026-10-12 auch im Hub (zuvor dort ausgeblendet).
 - „Vergleich teilen" steht rechtsbündig unter der Tab-Linie, direkt über der
   Wind-/PV-Hub-Box. Die Tab-Reihe enthält nur noch die Reiter.
+- **Hub-Aufbau (Session 2026-10-12):** In der Zeile über der Hub-Box steht der
+  Wind-/PV-Umschalter mittig (er gilt für Box und Tabellen), „Vergleich teilen"
+  rechts. Die farbige Box „Vergleich A − B" enthält Erklärzeile, A/B-Boxen und
+  Differenzkarte. Die Tabellen je Ebene stehen **unter** der Box in einer
+  eigenen Box gleicher Technologiefarbe („Gespeicherte Szenarien", mit der
+  Erklärzeile „Die Tabellen stellen die gespeicherten Szenarien je Ebene
+  gegenüber."); ohne gespeicherte Szenarien entfällt diese Box.
 - Die Zeile „Gespeicherte Szenarien (N) · Vergleichen → · Nur für diese Sitzung."
   entfällt; Einstieg ist allein der Reiter. Der Session-only-Hinweis steht weiter
   im Speichern-Dialog.
