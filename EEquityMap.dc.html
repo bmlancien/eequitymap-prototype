@@ -625,10 +625,7 @@
            Konsenszahl neben A und B). Ohne Auswahl nur ein kurzer Hinweis. -->
       <sc-if value="{{ showHubSummary }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div>
-            <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">Szenarien vergleichen</div>
-            <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
-          </div>
+          <div style="font-size:20px;font-weight:600;color:#1b2126">A und B im Überblick</div>
           <sc-for list="{{ hubSumCards }}" as="hc" hint-placeholder-count="2">
             <div style="{{ hc.boxStyle }}">
               <div style="display:flex;align-items:center;gap:8px">

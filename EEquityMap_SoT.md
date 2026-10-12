@@ -674,7 +674,8 @@ von Schritt 1 ist das feste Budget von Schritt 2.
 - **Scope-Label nur in der Kartenleiste** (Session 2026-10-12): In der rechten
   Spalte entfallen die Dachzeilen „Deutschland · Landkreise" (Landkreis gewählt),
   „[Landkreis] · Gemeinden" (Gemeinde gewählt) und „Region" (Regionsübersicht) —
-  sie wiederholten nur die Kartenleiste. Es bleiben „Übersicht" (Deutschland
+  sie wiederholten nur die Kartenleiste. Ebenso entfällt im Hub die Dachzeile
+  „Szenarien vergleichen" über „A und B im Überblick". Es bleiben „Übersicht" (Deutschland
   gesamt) und „[Landkreis] · 5 × 5 km Raster" (Rasterzelle gewählt).
 
 **Einstieg:** Klick auf eine Zelle (DE-Ansicht) → **Popover an der Zelle
