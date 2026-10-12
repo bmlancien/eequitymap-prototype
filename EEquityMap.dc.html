@@ -433,7 +433,23 @@
 
         <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px">
+          <div style="flex:1;min-height:340px;position:relative;background:#f7f8f9;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }}">
+            <!-- Ansichts-Umschalter (Regionsansicht, nur Erweitert — Testfeature s. SoT §M): in der Karte, Ecke
+                 oben rechts. Feste, gleich breite Spalten, damit die fette Auswahl nichts verschiebt. Die Karte
+                 bekommt dafür oben Platz (mapBoxPadTop), damit der Umschalter sie nicht verdeckt; die Hinweise
+                 dazu stehen direkt unter der Karte (s. „UNDER CARD"), nicht in ihr. -->
+            <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:10px;right:10px;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:calc(100% - 20px)">
+                <div style="background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+                  <!-- Spaltenbreiten fest und auf den fetten (aktiven) Text bemessen — kompakt, ohne dass die Auswahl etwas verschiebt -->
+                  <div style="display:grid;grid-template-columns:140px 122px 90px;max-width:100%;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                    <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
+                    <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
+                    <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
             <!-- Klick auf den Kartenhintergrund hebt die Zellauswahl auf. Der Handler sitzt am <svg> selbst,
                  nicht an einem inneren Rect in Viewbox-Maßen: preserveAspectRatio zentriert die Karte mit
                  Leerraum links/rechts (bzw. oben/unten), den ein exaktes Viewbox-Rect nicht mit abdeckt — am
@@ -509,6 +525,20 @@
 
       <!-- UNDER CARD -->
       <div style="flex:none;margin-top:10px">
+        <!-- Hinweise zum Ansichts-Umschalter in der Kartenecke (Regionsansicht, Erweitert) -->
+        <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#8a929a;line-height:1.4;margin:0 0 6px">
+            <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
+              <div>{{ gemClickHint }}</div>
+            </sc-if>
+            <sc-if value="{{ gemLoading }}" hint-placeholder-val="{{ false }}">
+              <div>Gemeindegrenzen werden geladen …</div>
+            </sc-if>
+            <sc-if value="{{ gemLoadError }}" hint-placeholder-val="{{ false }}">
+              <div style="color:#a85a17">Gemeindegrenzen konnten nicht geladen werden.</div>
+            </sc-if>
+          </div>
+        </sc-if>
         <!-- Legend + plan toggle -->
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;min-height:34px">
           <!-- sequential legend -->
@@ -592,34 +622,6 @@
                 <div title="{{ pc.title }}" style="{{ pc.style }}"><div style="{{ pc.innerStyle }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div></div>
               </sc-for>
             </div></div>
-          </div>
-        </sc-if>
-
-        <!-- Ansichts-Zeile (Regionsansicht, Erweitert) -->
-        <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #e2e5e8">
-            <!-- Gemeinde-Ansichts-Umschalter: nur Erweitert + Regionsansicht, Testfeature s. SoT §M -->
-            <sc-if value="{{ showGemToggle }}" hint-placeholder-val="{{ false }}">
-              <!-- Eigene volle Zeile + feste Breite/gleich breite Spalten: die Auswahl (fetter Text, wechselnder
-                   Hinweis darunter) darf die Position im umbrechenden Toolbar-Flex nicht verschieben. -->
-              <div style="flex:0 0 100%;margin-top:2px">
-                <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Ansicht</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);width:480px;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;box-sizing:border-box">
-                  <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
-                  <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
-                  <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
-                </div>
-                <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:14px;color:#8a929a;margin-top:6px">{{ gemClickHint }}</div>
-                </sc-if>
-                <sc-if value="{{ gemLoading }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:14px;color:#8a929a;margin-top:6px">Gemeindegrenzen werden geladen …</div>
-                </sc-if>
-                <sc-if value="{{ gemLoadError }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:14px;color:#a85a17;margin-top:6px">Gemeindegrenzen konnten nicht geladen werden.</div>
-                </sc-if>
-              </div>
-            </sc-if>
           </div>
         </sc-if>
 
@@ -2258,9 +2260,9 @@ class Component extends DCLogic {
     R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
     R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
     R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', cell: null });
-    R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster') + ';white-space:nowrap';
-    R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden') + ';white-space:nowrap';
-    R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster') + ';white-space:nowrap';
+    R.rasterViewBtnStyle = this.segLight(R.regionViewMode === 'raster') + ';white-space:nowrap;padding:4px 6px;font-size:13px';
+    R.gemViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden') + ';white-space:nowrap;padding:4px 6px;font-size:13px';
+    R.gemRasterViewBtnStyle = this.segLight(R.regionViewMode === 'gemeinden-raster') + ';white-space:nowrap;padding:4px 6px;font-size:13px';
     R.gemClickHint = R.regionViewMode === 'gemeinden'
       ? 'Gemeinden anklicken für Details.'
       : (R.regionViewMode === 'gemeinden-raster' ? 'Gemeinden anklicken für Details — das Raster im Hintergrund dient nur der Orientierung.' : '');
@@ -2609,6 +2611,8 @@ class Component extends DCLogic {
     // Vergleichsauswahl und „Konfliktflächen ausblenden" entfallen — Vergleiche nur noch im Hub,
     // weitere Prinzipien nur links. Übrig bleibt der Ansichts-Umschalter der Regionsansicht.
     R.showToolRow = !!R.showGemToggle && view !== 'szenarien';
+    // Platz für den Ansichts-Umschalter in der Kartenecke (sonst normaler Innenabstand)
+    R.mapBoxPadTop = R.showToolRow ? '50px' : '8px';
     R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
       label: p === 'bestand' ? 'Bestand' : p === 'zubau' ? 'Zubau' : 'Gesamt',
       onClick: () => this.setState({ plan: p }),

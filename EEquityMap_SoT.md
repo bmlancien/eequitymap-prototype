@@ -913,6 +913,17 @@ die falsche Einheit.
   besonders „Gemeinden + Raster" (zwei Grenzsysteme übereinander) ist ein
   offener Punkt fürs Testing.
 
+> **Position geändert (Session 2026-10-12):** Der Ansichts-Umschalter steht nicht
+> mehr unter der Karte, sondern **in der Karte, Ecke oben rechts** (kompakte
+> weiße Leiste mit den drei Optionen, ohne das Label „Ansicht"). Schrift im
+> Umschalter 13 px — **bewusste Ausnahme** von der 14-px-Untergrenze in K, auf
+> ausdrücklichen Wunsch, damit die Leiste in der Kartenecke klein bleibt. Die Kartenfläche bekommt dafür oben einen
+> Streifen Platz, damit der Umschalter die Karte nicht verdeckt. Die zugehörigen
+> Hinweise („Gemeinden anklicken für Details …", Lade-/Fehlermeldung der
+> Gemeindegrenzen) stehen direkt unter der Karte, über der Farblegende. In der
+> Galerie „Einzelverteilungen" erscheint der Umschalter nicht mehr (er hatte
+> dort keine Wirkung).
+
 ---
 
 ## N. Szenarien speichern & vergleichen (neu)
