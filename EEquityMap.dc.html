@@ -328,6 +328,7 @@
                         <span title="{{ sl.name }}" style="{{ sl.nameStyle }}">{{ sl.name }}</span>
                         <span style="flex:none;color:#7a848c;font-size:17px;line-height:1">{{ sl.caret }}</span>
                       </div>
+                      <div title="{{ sl.diff }}" style="{{ sl.diffStyle }}">{{ sl.diff }}</div>
                     </div>
                     <div style="{{ sl.menuStyle }}">
                       <sc-for list="{{ sl.groups }}" as="g" hint-placeholder-count="2">
@@ -355,16 +356,18 @@
               </div>
 
                 <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
-                  <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B</div>
+                  <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B<span style="font-weight:500;color:#5b6672">{{ scenDiffLevel }}</span></div>
                   <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
                   </sc-if>
                   <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
                     <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
-                      <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.6"></path>
                       <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
                         <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1" style="cursor:pointer" onClick="{{ dc.onClick }}"></path>
                       </sc-for>
+                      <!-- Umriss des Landkreises ÜBER dem Raster (Regionsvergleich) — sonst verdecken ihn die Zellen
+                           und die Karte ist nicht als Landkreis erkennbar -->
+                      <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"></path>
                       <!-- Auswahl: dunkle Kontur über allen Zellen (sonst verdecken Nachbarn die halbe Linie) -->
                       <path d="{{ scenDiffSelD }}" fill="none" stroke="#12181d" stroke-width="2.6" stroke-linejoin="round" pointer-events="none"></path>
                     </svg>
@@ -1983,7 +1986,7 @@ class Component extends DCLogic {
     // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
-    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
+    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
     R.hubSlots = []; R.hubTables = []; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
@@ -2043,9 +2046,32 @@ class Component extends DCLogic {
       };
       R.hubMenuBackdrop = openMenu !== null ? 'position:fixed;inset:0;z-index:29' : 'display:none';
       R.closeHubMenu = () => this.setState({ hubMenu: null });
+      // Was unterscheidet A und B? Je Box eine Zeile mit den eigenen Werten NUR der Einstellungen, die sich
+      // zwischen den beiden Szenarien unterscheiden (Prinzipien bundesweit/regional, Ausbauziel, Bestand).
+      const diffLineFor = k => {
+        const me = pair[k] ? objById[pair[k]] : null, other = pair[1 - k] ? objById[pair[1 - k]] : null;
+        if (!me || !other || me.isRef || other.isRef) return '';
+        const setTxt = (ids, otherIds) => {
+          ids = ids || []; otherIds = otherIds || [];
+          if (ids.length !== otherIds.length) return ids.length === 0 ? '—' : ids.length === 1 ? this.byId[ids[0]].name : ids.length + ' Prinzipien';
+          return ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') || '—';
+        };
+        const same = (a, b) => (a || []).slice().sort().join(',') === (b || []).slice().sort().join(',');
+        const parts = [];
+        if (me.isRegion !== other.isRegion || me.regionKrsId !== other.regionKrsId) parts.push('Ebene: ' + (me.isRegion ? me.regionLabel : 'Deutschland'));
+        if (me.isRegion && other.isRegion) {
+          if (!same(me.nationalSel, other.nationalSel)) parts.push('Bundesweit: ' + setTxt(me.nationalSel, other.nationalSel));
+          if (!same(me.regionalSel, other.regionalSel)) parts.push('Regional: ' + setTxt(me.regionalSel, other.regionalSel));
+        } else if (!same(me.regionalSel, other.regionalSel)) parts.push('Prinzipien: ' + setTxt(me.regionalSel, other.regionalSel));
+        if (this.fmt(me.targetGW) !== this.fmt(other.targetGW)) parts.push('Ausbauziel: ' + this.fmt(me.targetGW) + ' GW');
+        if (!!me.account !== !!other.account) parts.push(me.account ? 'Bestand angerechnet' : 'Bestand nicht angerechnet');
+        return parts.length ? parts.join(' · ') : 'Gleiche Einstellungen wie ' + (k === 0 ? 'B' : 'A');
+      };
       R.hubSlots = [0, 1].map(k => {
         const o = pair[k] ? objById[pair[k]] : null, isOpen = openMenu === k;
+        const diffLine = diffLineFor(k);
         return {
+          diff: diffLine, diffStyle: diffLine ? 'font-size:14px;color:#5b6672;line-height:1.35;margin-top:3px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical' : 'display:none',
           badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), role: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt',
           name: o ? o.name + (o.isRef ? ' (Referenz)' : '') : '— bitte wählen',
           nameStyle: 'flex:1;min-width:0;font-size:' + (o ? '16px;font-weight:600;color:#1b2126' : '15px;font-weight:400;color:#8a929a') + ';line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
@@ -2074,8 +2100,10 @@ class Component extends DCLogic {
         lvlOk = lvlOk && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId) && A.cellCons.length === B.cellCons.length;
       }
       if (scenSide.length) { const s0 = scenSide[0]; lvlRegion = s0.isRegion; lvlKrs = s0.regionKrsId; lvlLabel = s0.isRegion ? s0.regionLabel : 'Deutschland'; lvlTarget = s0.target; }
-      // Dachzeile der rechten Spalte: nur auf Deutschland-Ebene
-      R.hubScopeLabel = lvlRegion ? '' : 'Deutschland';
+      // Dachzeile der rechten Spalte: Ebene des Vergleichs („Deutschland" bzw. der Landkreis)
+      R.hubScopeLabel = lvlLabel;
+      // Regionsvergleich: Landkreis im Kartentitel nennen (die Karte zeigt dann sein 5 × 5-km-Raster)
+      R.scenDiffLevel = lvlRegion ? ' · ' + lvlLabel : '';
       if (!A || !B) {
         R.scenDiffHint = 'Für die Differenzkarte A und B wählen.';
       } else if (!lvlOk) {
@@ -2121,7 +2149,7 @@ class Component extends DCLogic {
           const refTxt = this.fmtU(refSum, lvlRegion), scenTxt = this.fmtU(scenSum, lvlRegion);
           // ohne sichtbare Lücke (Konsens = Ziel) gibt es nichts zu erklären
           if (refSum > scenSum && refTxt !== scenTxt) {
-            R.hubRefGapNote = 'Die beiden Seiten verteilen unterschiedlich viel: ' + refSide.name + ' ' + refTxt + ' (das ganze Ausbauziel), das Szenario ' + scenTxt + ' (nur den Zubaukonsens). Die ' + this.fmtU(refSum - scenSum, lvlRegion) + ' Unterschied stecken mit in der Karte. Sie zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass ' + refSide.name + ' mehr verteilt.';
+            R.hubRefGapNote = 'Die beiden Seiten verteilen unterschiedlich viel: ' + refSide.name + ' ' + refTxt + (lvlRegion ? ' (das ganze Regionsbudget)' : ' (das ganze Ausbauziel)') + ', das Szenario ' + scenTxt + ' (nur den Zubaukonsens). Die ' + this.fmtU(refSum - scenSum, lvlRegion) + ' Unterschied stecken mit in der Karte. Sie zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass ' + refSide.name + ' mehr verteilt.';
           }
         }
         // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +
@@ -2402,13 +2430,20 @@ class Component extends DCLogic {
     };
     R.shareCopyLabel = S.shareCopied ? 'Kopiert ✓' : 'Link kopieren';
     R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#0b6b5a');
+    // Auto-Name kurz halten: ab zwei Prinzipien nur die Anzahl (die Namen stehen in der rechten Spalte und in
+    // den Tabellen), Landkreis ohne das Wort „Landkreis". Gleiche Namen bekommen eine laufende Nummer — zwei
+    // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsanrechnung unterscheiden.
     const scenarioAutoName = () => {
-      const names = sel.map(p => this.byId[p].name).join(' + ') || 'Kein Prinzip';
-      const scopeName = isRegion && S.region ? S.region.label : 'Deutschland';
+      const names = sel.length === 0 ? 'Kein Prinzip' : sel.length === 1 ? this.byId[sel[0]].name : sel.length + ' Prinzipien';
+      const scopeName = isRegion && S.region ? S.region.label.replace(/^Landkreis /, '') : 'Deutschland';
       const period = (S.targetKey && !S.freeTarget && this.targetLabels[S.targetKey])
         ? S.targetKey.replace('z', '')
         : this.fmt(S.targetGW) + ' GW';
-      return names + ' · ' + scopeName + ' · ' + period;
+      const base = names + ' · ' + scopeName + ' · ' + period;
+      const taken = new Set((this.state.scenarios || []).map(sc => sc.name));
+      if (!taken.has(base)) return base;
+      let n = 2; while (taken.has(base + ' (' + n + ')')) n++;
+      return base + ' (' + n + ')';
     };
     R.openSaveScenario = scenarioReady ? (() => this.setState({ scenarioSaveOpen: true, scenarioNameDraft: scenarioAutoName() })) : (() => {});
     R.scenarioSaveOpen = !!S.scenarioSaveOpen;

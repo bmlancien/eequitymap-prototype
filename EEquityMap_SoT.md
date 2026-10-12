@@ -763,8 +763,8 @@ von Schritt 1 ist das feste Budget von Schritt 2.
   „[Landkreis] · Gemeinden" (Gemeinde gewählt) und „Region" (Regionsübersicht) —
   sie wiederholten nur die Kartenleiste. Ebenso entfällt im Hub die Dachzeile
   „Szenarien vergleichen" über „A und B im Überblick"; dort steht stattdessen
-  auf Deutschland-Ebene die Dachzeile „Deutschland" (bei einem
-  Regionsvergleich keine). Es bleiben „Übersicht" (Deutschland
+  die Ebene des Vergleichs als Dachzeile: „Deutschland" bzw. der Landkreis. Es
+  bleiben „Übersicht" (Deutschland
   gesamt) und „[Landkreis] · 5 × 5 km Raster" (Rasterzelle gewählt).
 
 **Einstieg:** Klick auf eine Zelle (DE-Ansicht) → **Popover an der Zelle
@@ -1048,6 +1048,33 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   Gemeinden sind hier nicht wählbar (die Karte zeigt das Raster).
   Die Karte trägt keine Unterzeile mehr („Deutschland · je Landkreis · …
   anklicken …" entfernt); Klickbarkeit zeigt nur der Zeiger-Cursor.
+- **Regionsvergleich erkennbar machen** (Session 2026-10-12): Stehen in A/B
+  Regionsszenarien, zeigt die Differenzkarte das 5 × 5-km-Raster dieses
+  Landkreises statt der Landkreise Deutschlands. Damit das nicht wie ein Fehler
+  wirkt: (1) Kartentitel „Differenzkarte: A − B · [Landkreis]"; (2) Dachzeile
+  der rechten Spalte nennt die Ebene — „Deutschland" bzw. den Landkreis;
+  (3) der Umriss des Landkreises liegt über dem Raster. Offen: Gemeinden statt
+  Raster in dieser Karte (Szenarien speichern Werte je Rasterzelle).
+- **A und B unterscheidbar machen** (Session 2026-10-12):
+  - *Auto-Name kurz:* ein Prinzip → dessen Name; ab zwei Prinzipien nur die
+    Anzahl („3 Prinzipien"); dann Ebene („Deutschland" bzw. der Landkreis ohne
+    das Wort „Landkreis") und Zieljahr bzw. GW. Beispiel: „6 Prinzipien ·
+    Eichsfeld · 2035". Vorher stand die volle Prinzipienliste im Namen und
+    wurde in den A/B-Boxen abgeschnitten. Der Name bleibt im Speichern-Dialog
+    editierbar.
+  - *Eindeutig:* Ist der Auto-Name schon vergeben, bekommt er eine laufende
+    Nummer („… (2)"). Nötig, weil sich zwei Szenarien nur in den bundesweiten
+    Prinzipien oder der Bestandsanrechnung unterscheiden können — beides steht
+    nicht im Namen.
+  - *Unterschiedszeile in den A/B-Boxen:* Stehen in A und B zwei Szenarien,
+    zeigt jede Box unter dem Namen die eigenen Werte nur der Einstellungen,
+    die sich unterscheiden: „Bundesweit: …", „Regional: …" (Deutschland:
+    „Prinzipien: …"), „Ausbauziel: … GW", „Bestand angerechnet / nicht
+    angerechnet". Prinzipien-Mengen als Anzahl, wenn die Anzahl verschieden
+    ist, sonst mit Namen. Ohne Unterschied: „Gleiche Einstellungen wie B/A".
+    Gegen eine Referenz keine Zeile.
+  - Die Karten der rechten Spalte tragen dadurch den kurzen Namen als Titel;
+    die Prinzipien stehen nur noch einmal, in den Zeilen darunter.
 - **Differenzen ohne Vorzeichen** (Session 2026-10-12): Im Hub steht keine
   Differenz mit „+" oder „−". Die Richtung ist ausgeschrieben: Betrag + „mehr in
   A" / „mehr in B" / „gleich viel in A und B" — in der Karte zur gewählten
@@ -1104,7 +1131,8 @@ Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
   Hubs — die Karten-Farbskalen sollen unverfälscht bleiben.
 - **Referenz-Hinweis:** Steht ein Szenario gegen eine Referenz, mit den
   tatsächlichen Summen der beiden Seiten: „Die beiden Seiten verteilen
-  unterschiedlich viel: [Referenz] [X] (das ganze Ausbauziel), das Szenario [Y]
+  unterschiedlich viel: [Referenz] [X] (das ganze Ausbauziel; im Regionsvergleich
+  „das ganze Regionsbudget"), das Szenario [Y]
   (nur den Zubaukonsens). Die [X − Y] Unterschied stecken mit in der Karte. Sie
   zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass [Referenz]
   mehr verteilt." Entfällt, wenn beide Summen gleich angezeigt würden (Konsens =
