@@ -534,6 +534,21 @@ nicht über die volle Breite laufen lassen.
    Beispiel-Trio setzt Ökonomisch optimiert voraus). Ebenso festschreiben, welche
    Prinzipien primär, welche experimentell und welche „Metrik in Vorbereitung"
    sind — analog zur Terminologie-Sperre (B).
+9. **Differenzkarte Szenario vs. Referenz mischt zwei Effekte** (Session
+   2026-10-12, s. O „Referenz-Hinweis"). Die Referenz verteilt das ganze
+   Ausbauziel, das Szenario nur den Zubaukonsens; jede Zelle zeigt A − B und
+   damit zugleich „hier wird anders verteilt" und „die Referenz hat insgesamt
+   mehr zu verteilen". Der Hinweis nennt die Lücke in GW, auf der Karte ist sie
+   aber nicht ablesbar — beim Blick auf die Karte bleibt er unverständlich.
+   Zwei Wege, nichts davon umgesetzt:
+   - *Gleiche Mengen vergleichen:* Referenz auf die Summe des Szenarios
+     skalieren. Die Karte zeigt dann nur die räumliche Abweichung, der Hinweis
+     schrumpft auf eine Zeile („Zum Vergleich ist [Referenz] auf die [Y] des
+     Szenarios skaliert."). Ändert die Berechnung (bisher „Logik unverändert");
+     „Differenz gesamt" in der rechten Spalte wird 0.
+   - *Berechnung lassen, Hinweis an das Kartenbild binden:* z. B. „Deshalb ist
+     die Karte überwiegend braun (mehr in B)." Erklärt die sichtbare Schlagseite,
+     die Karte bleibt eine Mischung.
 
 ---
 
@@ -847,6 +862,16 @@ wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
   Konsens" / „Vom Konsens sind erst Y % ausgewiesen" (Logik wie bisher, aus
   gespeichertem Zubaukonsens + Konfliktflächen des Szenarios). Die frühere
   Deckungskarte entfällt.
+- **Konsens vs. Historischer Ausbau** (Session 2026-10-12): Steht ein Szenario
+  gegen „Historischer Ausbau", erscheinen an derselben Stelle die zwei
+  entsprechenden Kennzahlen „Vom historischen Ausbau liegen X % im Konsens" /
+  „Vom Konsens wären Y % gedeckt, wenn weiter so gebaut würde wie bisher".
+  „Im Konsens" wie bei Planungsflächen (konfliktfreie Zelle über 35 % des
+  Zellmaximums). X = Anteil der Referenzverteilung in Konsens-Zellen; Y = je
+  Konsens-Zelle das Minimum aus Zubaukonsens und Referenzwert, summiert, geteilt
+  durch den Zubaukonsens dieser Zellen. Die Referenz ist dabei wie in der
+  Differenzkarte auf das Ausbauziel skaliert, nicht der reale Bestand — daher
+  der Konjunktiv in der zweiten Kennzahl.
 - **Tabellen je Ebene** (Deutschland · GW, je Landkreis · MW); Spaltenkopf mit
   Wiederherstellen + × (löschen). Region-Szenarien: zwei Zeilen „Prinzipien DE" +
   „Prinzipien regional"; DE-Szenarien: eine Zeile „Prinzipien".
