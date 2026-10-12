@@ -675,7 +675,9 @@ von Schritt 1 ist das feste Budget von Schritt 2.
   Spalte entfallen die Dachzeilen „Deutschland · Landkreise" (Landkreis gewählt),
   „[Landkreis] · Gemeinden" (Gemeinde gewählt) und „Region" (Regionsübersicht) —
   sie wiederholten nur die Kartenleiste. Ebenso entfällt im Hub die Dachzeile
-  „Szenarien vergleichen" über „A und B im Überblick". Es bleiben „Übersicht" (Deutschland
+  „Szenarien vergleichen" über „A und B im Überblick"; dort steht stattdessen
+  auf Deutschland-Ebene die Dachzeile „Deutschland" (bei einem
+  Regionsvergleich keine). Es bleiben „Übersicht" (Deutschland
   gesamt) und „[Landkreis] · 5 × 5 km Raster" (Rasterzelle gewählt).
 
 **Einstieg:** Klick auf eine Zelle (DE-Ansicht) → **Popover an der Zelle
@@ -900,6 +902,21 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
 - **Differenzkarte A − B** nur auf gemeinsamer Ebene: zwei Szenarien derselben
   Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios (Region → 5 × 5 km,
   MW); zwei Referenzen = Deutschland.
+- **Zelle auf der Differenzkarte anklicken** (Session 2026-10-12): Landkreis
+  (Deutschland) bzw. Rasterzelle (Region) ist klickbar. Die Auswahl ist auf der
+  Karte als dunkle Kontur sichtbar; rechts erscheint **anstelle** von „A und B
+  im Überblick" (nie beides zugleich, wie Übersicht/Zelldetail in den anderen
+  Reitern) eine Karte mit dunklem Rahmen: Name, Wert in A, Wert in B, Differenz A − B und
+  „mehr in A" / „mehr in B". Erneuter Klick oder × hebt die Auswahl auf; sie
+  bleibt beim Wechsel von A/B auf derselben Ebene stehen. Bewusst **kein**
+  Popover „… im Detail auswerten →" wie in den anderen Reitern: Der Wechsel in
+  die Regionsauswertung würde die linke Konfiguration ändern, nicht A und B.
+  Gemeinden sind hier nicht wählbar (die Karte zeigt das Raster).
+- **Differenzen ohne Vorzeichen** (Session 2026-10-12): Im Hub steht keine
+  Differenz mit „+" oder „−". Die Richtung ist ausgeschrieben: Betrag + „mehr in
+  A" / „mehr in B" / „gleich viel in A und B" — in der Karte zur gewählten
+  Zelle und bei „Differenz A − B gesamt". Die Legende der Differenzkarte nennt
+  an beiden Enden „bis [Maximum]" statt „+[Maximum]".
 - **Konsens vs. Planung:** Steht ein Szenario gegen „Planungsflächen", erscheinen
   unter der Differenzkarte die zwei Kennzahlen „Von der Ausweisung trifft X % den
   Konsens" / „Vom Konsens sind erst Y % ausgewiesen" (Logik wie bisher, aus

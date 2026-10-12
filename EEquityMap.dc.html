@@ -350,18 +350,20 @@
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
                   </sc-if>
                   <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:14px;color:#9aa4ad;margin-top:2px">{{ scenDiffScope }}</div>
+                    <div style="font-size:14px;color:#9aa4ad;margin-top:2px">{{ scenDiffScope }} · {{ scenDiffClickHint }}</div>
                     <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
                       <path d="{{ scenDiffOutline }}" fill="none" stroke="#2f6690" stroke-width="1.6"></path>
                       <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
-                        <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1"></path>
+                        <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1" style="cursor:pointer" onClick="{{ dc.onClick }}"></path>
                       </sc-for>
+                      <!-- Auswahl: dunkle Kontur über allen Zellen (sonst verdecken Nachbarn die halbe Linie) -->
+                      <path d="{{ scenDiffSelD }}" fill="none" stroke="#12181d" stroke-width="2.6" stroke-linejoin="round" pointer-events="none"></path>
                     </svg>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
                       <span style="font-size:14px;color:#5b6672">mehr in A</span>
-                      <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                      <span class="num" style="font-size:14px;color:#7a848c">bis {{ scenDiffMax }}</span>
                       <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
-                      <span class="num" style="font-size:14px;color:#7a848c">+{{ scenDiffMax }}</span>
+                      <span class="num" style="font-size:14px;color:#7a848c">bis {{ scenDiffMax }}</span>
                       <span style="font-size:14px;color:#5b6672">mehr in B</span>
                       <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
                     </div>
@@ -625,25 +627,64 @@
            Konsenszahl neben A und B). Ohne Auswahl nur ein kurzer Hinweis. -->
       <sc-if value="{{ showHubSummary }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div style="font-size:20px;font-weight:600;color:#1b2126">A und B im Überblick</div>
-          <sc-for list="{{ hubSumCards }}" as="hc" hint-placeholder-count="2">
-            <div style="{{ hc.boxStyle }}">
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="{{ hc.badgeStyle }}">{{ hc.badge }}</span>
-                <span style="font-size:14px;color:#5b6672">{{ hc.kind }}</span>
+          <!-- Auf der Differenzkarte angeklickter Landkreis / Rasterzelle: Werte von A und B + Differenz.
+               Dunkler Rahmen wie die Kontur auf der Karte. -->
+          <sc-if value="{{ hubCellShow }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:12px 13px;border-radius:10px;border:2px solid #12181d;background:#fff">
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:14px;color:#5b6672">Auf der Karte ausgewählt</div>
+                  <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:2px;line-height:1.3">{{ hubCellName }}</div>
+                </div>
+                <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#9aa4ad;font-size:18px;line-height:1;padding:2px;flex:none">×</span>
               </div>
-              <div title="{{ hc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
-              <div style="{{ hc.rowsStyle }}">
-                <sc-for list="{{ hc.rows }}" as="hr" hint-placeholder-count="4">
-                  <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
+              <div style="margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px">
+                <sc-for list="{{ hubCellRows }}" as="cr" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:14px;padding:4px 0">
+                    <span style="{{ cr.badgeStyle }}">{{ cr.badge }}</span>
+                    <span title="{{ cr.name }}" style="flex:1;min-width:0;color:#5b6672;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cr.name }}</span>
+                    <span class="num" style="color:#26303a;font-weight:600;white-space:nowrap">{{ cr.v }}</span>
+                  </div>
                 </sc-for>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:14px;padding:7px 0 0;margin-top:4px;border-top:1px solid #eef1f2">
+                  <span style="color:#5b6672">Differenz A − B</span>
+                  <span class="num" style="font-size:17px;font-weight:700;color:#2f6690;white-space:nowrap">{{ hubCellDiff }}</span>
+                </div>
+                <div style="font-size:14px;color:#8a929a;margin-top:2px;text-align:right">{{ hubCellDiffWord }}</div>
               </div>
             </div>
-          </sc-for>
-          <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
-            <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
-              <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
-              <div class="num" style="font-size:24px;font-weight:700;color:#2f6690;margin-top:2px">{{ hubSumDiff }}</div>
+          </sc-if>
+          <!-- Entweder die gewählte Zelle ODER der Überblick über A und B — nie beides zugleich
+               (wie in den anderen Reitern: Übersicht bzw. Zelldetail). -->
+          <sc-if value="{{ hubOverviewShow }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <sc-if value="{{ hubScopeLabel }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ hubScopeLabel }}</div>
+                </sc-if>
+                <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
+              </div>
+              <sc-for list="{{ hubSumCards }}" as="hc" hint-placeholder-count="2">
+                <div style="{{ hc.boxStyle }}">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="{{ hc.badgeStyle }}">{{ hc.badge }}</span>
+                    <span style="font-size:14px;color:#5b6672">{{ hc.kind }}</span>
+                  </div>
+                  <div title="{{ hc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
+                  <div style="{{ hc.rowsStyle }}">
+                    <sc-for list="{{ hc.rows }}" as="hr" hint-placeholder-count="4">
+                      <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+                  <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
+                  <div class="num" style="font-size:24px;font-weight:700;color:#2f6690;margin-top:2px">{{ hubSumDiff }}</div>
+                  <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ hubSumDiffWord }}</div>
+                </div>
+              </sc-if>
             </div>
           </sc-if>
         </div>
@@ -1032,6 +1073,7 @@ class Component extends DCLogic {
     shareOpen: false,
     shareCopied: false,
     hubMenu: null,      // offenes A/B-Dropdown im Hub (0 = A, 1 = B)
+    hubCell: null,      // auf der Differenzkarte gewählte Zelle: { lvl: 'de' | 'r:<krsId>', i }
     undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
     undoShow: false,
     undoMounted: false,
@@ -1860,7 +1902,7 @@ class Component extends DCLogic {
     // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
-    R.showScenDiffMap = false; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
+    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
     R.hubSlots = []; R.hubTables = []; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
@@ -1951,6 +1993,8 @@ class Component extends DCLogic {
         lvlOk = lvlOk && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId) && A.cellCons.length === B.cellCons.length;
       }
       if (scenSide.length) { const s0 = scenSide[0]; lvlRegion = s0.isRegion; lvlKrs = s0.regionKrsId; lvlLabel = s0.isRegion ? s0.regionLabel : 'Deutschland'; lvlTarget = s0.target; }
+      // Dachzeile der rechten Spalte: nur auf Deutschland-Ebene
+      R.hubScopeLabel = lvlRegion ? '' : 'Deutschland';
       if (!A || !B) {
         R.scenDiffHint = 'Für die Differenzkarte A und B wählen.';
       } else if (!lvlOk) {
@@ -1964,12 +2008,32 @@ class Component extends DCLogic {
         R.showScenDiffMap = true;
         R.scenDiffVb = lvl.vb;
         R.scenDiffOutline = lvl.outlineD || '';
-        R.scenDiffCells = lvl.cells.map((c, i) => ({ d: c.d, fill: this.div(d[i] / mxa) }));
+        // Zelle anklicken → Werte von A und B rechts; erneuter Klick hebt die Auswahl auf. Die Auswahl gilt je
+        // Ebene (Deutschland bzw. ein Landkreis) und bleibt beim Wechsel von A/B auf derselben Ebene stehen.
+        const lvlKey = lvlRegion ? 'r:' + lvlKrs : 'de';
+        const selI = S.hubCell && S.hubCell.lvl === lvlKey && S.hubCell.i < lvl.cells.length ? S.hubCell.i : -1;
+        R.scenDiffCells = lvl.cells.map((c, i) => ({ d: c.d, fill: this.div(d[i] / mxa),
+          onClick: () => this.setState({ hubCell: selI === i ? null : { lvl: lvlKey, i }, hubMenu: null }) }));
+        R.scenDiffClickHint = (lvlRegion ? 'Rasterzelle' : 'Landkreis') + ' anklicken für die Werte von A und B';
+        R.clearHubCell = () => this.setState({ hubCell: null });
+        if (selI >= 0) {
+          const c = lvl.cells[selI], dv = d[selI];
+          R.scenDiffSelD = c.d;
+          R.hubCellShow = true; R.hubOverviewShow = false;
+          R.hubCellName = lvlRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label;
+          R.hubCellRows = [A, B].map((o, k) => ({ badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), name: o.name, v: this.fmtU(k === 0 ? va[selI] : vb[selI], lvlRegion) }));
+          R.hubCellDiff = this.fmtU(Math.abs(dv), lvlRegion);
+          R.hubCellDiffWord = dv > 0 ? 'mehr in A' : 'mehr in B';
+          if (R.hubCellDiff === this.fmtU(0, lvlRegion)) R.hubCellDiffWord = 'gleich viel in A und B';
+        }
         R.scenDiffGrad = 'linear-gradient(90deg,' + this.div(1) + ',' + this.div(0) + ',' + this.div(-1) + ')';
         R.scenDiffMax = this.fmtU(mxa, lvlRegion);
         R.scenDiffScope = lvlLabel + (lvlRegion ? ' · je 5 × 5-km-Zelle' : ' · je Landkreis');
         const sumA = va.reduce((x, y) => x + y, 0), sumB = vb.reduce((x, y) => x + y, 0);
-        R.hubSumDiff = (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        // Differenzen ohne Vorzeichen — die Richtung steht ausgeschrieben daneben („mehr in A" / „mehr in B")
+        const diffWord = (dv, txt) => txt === this.fmtU(0, lvlRegion) ? 'gleich viel in A und B' : (dv > 0 ? 'mehr in A' : 'mehr in B');
+        R.hubSumDiff = this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        R.hubSumDiffWord = diffWord(sumA - sumB, R.hubSumDiff);
         // Referenz verteilt das volle Ziel, das Szenario nur den Konsens darunter — nur Hinweis, Logik bleibt
         const refSide = [A, B].find(o => o.isRef);
         if (refSide && scenSide.length === 1) {
