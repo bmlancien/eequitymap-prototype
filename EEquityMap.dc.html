@@ -505,37 +505,8 @@
         </sc-if>
       </div>
 
-      <!-- UpSet-Aufschlüsselung unter der Übereinstimmungen-Karte (nur Erweitert) -->
-      <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:none;margin-top:10px;border-top:1px solid #e2e5e8;padding-top:9px">
-          <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">{{ upsetCaret }}</button>
-          <div style="{{ upsetBodyStyle }}">
-            <div style="font-size:14px;color:#5b6672;margin:8px 0 2px;line-height:1.4">{{ schnittNote }}</div>
-            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 8px">
-              <sc-for list="{{ upsetPrincipleNames }}" as="pn" hint-placeholder-count="2">
-                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#5b6672"><span style="width:11px;height:11px;border-radius:50%;background:{{ pn.color }}"></span>{{ pn.name }}</span>
-              </sc-for>
-              <span style="font-size:14px;color:#9aa4ad">Zellen je Kombination — absteigend. Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</span>
-            </div>
-            <div style="{{ upsetGridStyle }}">
-              <sc-for list="{{ upsetItems }}" as="u" hint-placeholder-count="6">
-                <div title="{{ u.title }}" style="{{ u.wrapStyle }}">
-                  <span class="num" style="{{ u.countStyle }}">{{ u.count }}</span>
-                  <div style="{{ u.barStyle }}"></div>
-                  <span style="{{ u.dotStyle }}"></span>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-        </div>
-      </sc-if>
-
       <!-- UNDER CARD -->
       <div style="flex:none;margin-top:10px">
-        <!-- Konsens-Disclaimer (Dauerhinweis), direkt unter der Karte über der Farblegende -->
-        <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:14px;color:#9aa4ad;margin:0 0 6px;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
-        </sc-if>
         <!-- Legend + plan toggle -->
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;min-height:34px">
           <!-- sequential legend -->
@@ -559,15 +530,11 @@
           <!-- Konfliktflächen „Wer denkt anders?"-Legende -->
           <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:6px">
-              <span style="font-size:14px;color:#8a929a">{{ schnittColorCaption }}</span>
+              <span style="font-size:14px;color:#5b6672;line-height:1.45">{{ schnittColorCaption }}</span>
               <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
-                <span style="font-size:14px;color:#5b6672">eingefärbt von:</span>
                 <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
                   <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#333c44"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
                 </sc-for>
-                <sc-if value="{{ schnittNoteBelow }}" hint-placeholder-val="{{ false }}">
-                  <span style="font-size:14px;color:#8a929a">{{ schnittNote }}</span>
-                </sc-if>
               </div>
             </div>
           </sc-if>
@@ -581,6 +548,36 @@
             </div>
           </sc-if>
         </div>
+
+        <!-- Konsens-Disclaimer (Dauerhinweis): unter der Farblegende, vor weiteren Auswertungen -->
+        <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#9aa4ad;margin:6px 0 0;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+        </sc-if>
+
+        <!-- Kombinations-Aufschlüsselung (Konfliktflächen · „Wer denkt anders?", nur Erweitert, ab 3 Prinzipien):
+             eigener Abschnitt NACH Karte + Legende. Zeilen sind mit den Prinzipnamen beschriftet, deshalb
+             keine zweite Farblegende. -->
+        <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
+            <div style="display:flex;align-items:baseline;gap:12px">
+              <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Welche Prinzipien weichen gemeinsam ab?</div>
+              <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
+            </div>
+            <div style="{{ upsetBodyStyle }}">
+              <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Jede Spalte ist eine Kombination von Prinzipien, die an derselben Stelle mehr als 20 % vom Konsens abweichen. Balken = Anzahl der Zellen, farbige Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</div>
+              <div style="{{ upsetGridStyle }}">
+                <sc-for list="{{ upsetItems }}" as="u" hint-placeholder-count="6">
+                  <div title="{{ u.title }}" style="{{ u.wrapStyle }}">
+                    <span class="num" style="{{ u.countStyle }}">{{ u.count }}</span>
+                    <div style="{{ u.barStyle }}"></div>
+                    <span style="{{ u.dotStyle }}"></span>
+                    <span style="{{ u.labelStyle }}">{{ u.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
 
         <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab 2 Prinzipien): Zubaukonsens je
              Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
@@ -768,13 +765,19 @@
           <!-- Konfliktflächen: Zellen je abweichender Verteilung -->
           <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
-              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:7px">Zellen je abweichender Verteilung</div>
-              <div style="font-size:14px;color:#33413c;line-height:1.5;margin-bottom:11px;padding:10px 11px;background:#eef3f6;border-radius:8px">{{ comboSummary }}</div>
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:4px">Zellen je abweichender Verteilung (&gt; 20 %)</div>
+              <!-- Je Kombination: oben die Farbfelder der beteiligten Prinzipien + Zellzahl, darunter die Namen -->
               <sc-for list="{{ comboRows }}" as="cm" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:9px;font-size:14px;padding:6px 0;border-bottom:1px solid #eef1f2">
-                  <span style="width:18px;height:13px;border-radius:3px;flex:none;{{ cm.css }}"></span>
-                  <span style="color:#26303a;flex:1;line-height:1.3">{{ cm.label }}</span>
-                  <span class="num" style="color:#33413c;font-weight:600">{{ cm.count }}</span>
+                <div style="padding:8px 0;border-bottom:1px solid #eef1f2">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="display:flex;align-items:center;gap:4px;flex:1">
+                      <sc-for list="{{ cm.dots }}" as="dt" hint-placeholder-count="2">
+                        <span style="width:13px;height:13px;border-radius:3px;flex:none;background:{{ dt.color }}"></span>
+                      </sc-for>
+                    </div>
+                    <span class="num" style="font-size:14px;color:#33413c;font-weight:600">{{ cm.count }}</span>
+                  </div>
+                  <div style="font-size:14px;color:#5b6672;line-height:1.35;margin-top:4px">{{ cm.label }}</div>
                 </div>
               </sc-for>
               <sc-if value="{{ comboMore }}" hint-placeholder-val="{{ false }}">
@@ -1872,8 +1875,7 @@ class Component extends DCLogic {
       // Legende: nur Einzelfarben je Prinzip (Kombinationen bleiben auf der Karte, nicht in der Legende)
       R.legendSchnitt = true;
       R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color })).concat([{ label: 'keine Abweichung > 20 %', css: 'background:#e4e8eb' }]);
-      R.schnittNote = 'Gestreifte Flächen: mehrere Verteilungen weichen hier stark ab.';
-      R.schnittColorCaption = 'Farbe = die Verteilung, die hier mehr als 20 % vom Konsens abweicht.';
+      R.schnittColorCaption = 'Farbe = die Verteilung, die hier mehr als 20 % vom Konsens abweicht. Gestreift = mehrere Verteilungen weichen hier ab.';
       // UpSet-Aufschlüsselung (nur Erweitert)
       // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
       if (isExt && stufe >= 3) {
@@ -1893,10 +1895,15 @@ class Component extends DCLogic {
         const nmax = Math.max.apply(null, rows.map(r=>r.n).concat([1]));
         // Spaltenweise flache Liste (ein sc-for, kein Nesting): je Kombination 1 Balken + n Punkte
         const items = [];
+        // Erste Spalte: Prinzipnamen als Zeilenbeschriftung der Punktmatrix (statt einer zweiten Farblegende)
+        items.push({ title: '', count: '', barStyle: 'display:none', countStyle: 'display:none', dotStyle: 'display:none', label: '', labelStyle: 'display:none', wrapStyle: 'height:96px' });
+        sel.forEach(p => items.push({ title: this.byId[p].name, count: '', barStyle: 'display:none', countStyle: 'display:none', dotStyle: 'display:none',
+          label: this.byId[p].name, labelStyle: 'font-size:14px;color:#44505a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
+          wrapStyle: 'display:flex;align-items:center;height:21px;max-width:260px;padding-right:6px' }));
         const pushCol = (title, n, dots) => {
-          items.push({ title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#2f6690;border-radius:3px 3px 0 0',
+          items.push({ label: '', labelStyle: 'display:none', title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#2f6690;border-radius:3px 3px 0 0',
             wrapStyle: 'display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:96px', dotStyle: 'display:none', countStyle: 'font-size:14px;color:#33413c;font-weight:600' });
-          dots.forEach(d => items.push({ title, count: '', barStyle: 'display:none', countStyle: 'display:none',
+          dots.forEach(d => items.push({ label: '', labelStyle: 'display:none', title, count: '', barStyle: 'display:none', countStyle: 'display:none',
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
         };
         rows.forEach(r => pushCol(
@@ -1909,12 +1916,11 @@ class Component extends DCLogic {
         R.upsetItems = items;
         R.upsetRestNote = restRows.length ? 'Letzte Spalte: + ' + restRows.length + ' weitere Kombinationen zusammengefasst.' : '';
         // volle Containerbreite, Punktmatrix direkt unter den Balken und mit ihnen ausgerichtet
-        R.upsetGridStyle = 'display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-rows:96px repeat(' + sel.length + ',21px);gap:6px 10px;width:100%;padding-bottom:4px';
-        R.upsetPrincipleNames = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color }));
+        R.upsetGridStyle = 'display:grid;grid-auto-flow:column;grid-template-columns:max-content;grid-auto-columns:minmax(0,1fr);grid-template-rows:96px repeat(' + sel.length + ',21px);gap:6px 10px;width:100%;padding-bottom:4px';
         R.showUpset = true;
         R.upsetOpen = S.upsetOpen !== false;
         R.toggleUpset = () => this.setState({ upsetOpen: !(S.upsetOpen !== false) });
-        R.upsetCaret = R.upsetOpen ? 'Aufschlüsselung ausblenden' : 'Aufschlüsselung anzeigen';
+        R.upsetCaret = R.upsetOpen ? 'Ausblenden' : 'Anzeigen';
         R.upsetBodyStyle = R.upsetOpen ? 'display:block' : 'display:none';
       }
       R.showPlan = false;
@@ -2303,7 +2309,8 @@ class Component extends DCLogic {
       szenarien: '' // steht im Hub selbst, über der A/B-Auswahl
     })[view] || '';
     R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
-    R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && stufe >= 2;
+    // nicht im Hub und nicht in Konfliktflächen · „Wer denkt anders?"
+    R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && !(view === 'konflikt' && S.konfliktMode === 'anders') && stufe >= 2;
     R.currentView = view;
     R.isSingleView = view === 'single';
     R.showBackToGallery = view === 'single';
@@ -2546,9 +2553,6 @@ class Component extends DCLogic {
     // legend flags default
     R.showUpset = R.showUpset || false;
     R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false;
-    // Erklärzeile „Gestreifte Flächen …" steht über dem UpSet-Diagramm, sobald dieses sichtbar ist —
-    // in der unteren Legende dann nicht zusätzlich wiederholen.
-    R.schnittNoteBelow = R.legendSchnitt && !R.showUpset;
     // Bestand/Zubau/Gesamt nur bei aktivem Bestands-Toggle
     R.showPlan = (R.showPlan || false) && S.account;
     // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
@@ -2672,18 +2676,10 @@ class Component extends DCLogic {
           R.anCombos = S.konfliktMode === 'anders';
           const cnt = {};
           scopeIdx.forEach(i => { const rec = devBy(i); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
-          const rows = Object.values(cnt).map(o => {
-            let css, label;
-            if (!o.rec.length) { css = 'background:#e4e8eb'; label = 'keine Abweichung > 20 %'; }
-            else if (o.rec.length === 1) { css = 'background:' + this.byId[o.rec[0]].color; label = this.byId[o.rec[0]].name; }
-            else { const stops = o.rec.map((p,ix)=> this.byId[p].color + ' ' + (ix*6) + 'px ' + ((ix+1)*6) + 'px').join(','); css = 'background:repeating-linear-gradient(45deg,' + stops + ')'; label = o.rec.map(p=>this.byId[p].name).join(' + '); }
-            return { css, label, count: o.n, order: o.rec.length ? o.rec.length : 99 };
-          });
-          // Zusammenfassung zuerst — die eigentliche Antwort; Liste ist Referenz
-          const nOne = Object.values(cnt).filter(o => o.rec.length === 1).reduce((a,o)=>a+o.n, 0);
-          const nMulti = Object.values(cnt).filter(o => o.rec.length >= 2).reduce((a,o)=>a+o.n, 0);
-          const nNone = (cnt['__none'] || { n: 0 }).n;
-          R.comboSummary = nOne + ' Zellen: genau eine Verteilung weicht > 20 % vom Konsens ab · ' + nMulti + ' Zellen: mehrere · ' + nNone + ' Zellen: keine.';
+          // Je Kombination ein Farbfeld pro beteiligtem Prinzip (statt eines gestreiften Kästchens) + die Namen
+          const rows = Object.values(cnt).map(o => o.rec.length
+            ? { dots: o.rec.map(p => ({ color: this.byId[p].color })), label: o.rec.map(p => this.byId[p].name).join(' + '), count: o.n }
+            : { dots: [{ color: '#e4e8eb' }], label: 'keine Abweichung > 20 %', count: o.n });
           // 0-Zellen-Kombinationen nie zeigen; Top 6 sichtbar, Rest aufklappbar
           const visible = rows.filter(r => r.count > 0).sort((a,b)=>b.count-a.count);
           const LIM = 6;

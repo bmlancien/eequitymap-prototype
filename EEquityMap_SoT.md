@@ -472,8 +472,26 @@ nicht über die volle Breite laufen lassen.
   vorausgesetzt).
 - Unterzeile der Prinzipienliste: „Kein Prinzip ist objektiv richtig …".
 - Dauerhinweis „Konsens = robust, nicht automatisch genehmigungsfähig." bleibt
-  immer sichtbar. Ort seit Session 2026-10-12: unter der Karte, direkt über der
-  Farblegende (zuvor unter der Tab-Reihe, wo er wie die Tab-Caption wirkte).
+  immer sichtbar. Ort seit Session 2026-10-12: unter der Karte, direkt **unter**
+  der Farblegende (zuvor unter der Tab-Reihe, wo er wie die Tab-Caption wirkte).
+- **Reihenfolge unter der Karte** (alle Reiter, Session 2026-10-12): Farblegende
+  → Konsens-Hinweis → weitere Auswertungen (Paar-Matrix bzw.
+  Kombinations-Aufschlüsselung) → Buttons. Die Legende gehört zur Karte und
+  steht deshalb immer direkt unter ihr.
+- **Konfliktflächen · „Wer denkt anders?"** (Session 2026-10-12, aufgeräumt):
+  Legende in einer Zeile („Farbe = die Verteilung, die hier mehr als 20 % vom
+  Konsens abweicht. Gestreift = mehrere Verteilungen weichen hier ab.") + die
+  Farbfelder, ohne „eingefärbt von:". Die Kombinations-Aufschlüsselung
+  (Erweitert, ab 3 Prinzipien) ist ein eigener Abschnitt **nach** Legende und
+  Hinweis, mit Titel „Welche Prinzipien weichen gemeinsam ab?" und Erklärzeile;
+  die Punktzeilen sind links mit den Prinzipnamen beschriftet, die zweite
+  Punkt-Legende entfällt. Der Konsens-Hinweis („Konsens heißt: …") wird in
+  dieser Ansicht nicht gezeigt.
+  Rechte Spalte: Titel „Zellen je abweichender Verteilung (> 20 %)"; die
+  frühere Zusammenfassungsbox („… genau eine Verteilung weicht … ab · … mehrere ·
+  … keine", s. Tabelle in E) entfällt. Je Kombination eine Reihe Farbfelder der
+  beteiligten Prinzipien + Zellzahl, darunter die Namen — kein gestreiftes
+  Kästchen mehr. Top 6, Rest hinter „Weitere anzeigen".
 - Einzelansichten sind dauerhaft als solche markiert („Einzelverteilung eines
   Prinzips — nicht der Konsens"), damit kein Einzelprinzip- oder Einzelzell-Blick
   mit der Aussage des Werkzeugs verwechselt wird.
@@ -959,7 +977,8 @@ Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
   → abgelöst durch den **Slot-Picker** (s. u.).
 - **Rechte Spalte im Hub:** A/B-Zusammenfassung (Kernzahlen je Seite + Differenz
   gesamt), nie die Links-Konfiguration. Ohne Auswahl: „Noch nicht gewählt".
-- **Konsens-Disclaimer** im Hub ausgeblendet (übrige Reiter unverändert).
+- **Konsens-Disclaimer** im Hub ausgeblendet; seit Session 2026-10-12 auch in
+  Konfliktflächen · „Wer denkt anders?" (übrige Reiter unverändert).
 - **Löschen:** kein Dialog; Undo-Toast „Szenario gelöscht · Rückgängig" (≈ 6 s),
   stellt Szenario an seiner Position inkl. A/B-Zuordnung wieder her.
 - **Wind/PV:** Der Hub-Umschalter und der Umschalter links sind gekoppelt
