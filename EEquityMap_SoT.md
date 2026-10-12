@@ -1298,6 +1298,28 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   2026-10-12 auch im Hub (zuvor dort ausgeblendet).
 - „Vergleich teilen" steht rechtsbündig unter der Tab-Linie, direkt über der
   Wind-/PV-Hub-Box. Die Tab-Reihe enthält nur noch die Reiter.
+- **„Methodik" und „Daten herunterladen" stehen im Kopf** (Session 2026-10-12),
+  nicht mehr am Ende der mittleren Spalte, wo ihre Position mit jedem Reiter
+  wanderte. „Methodik" direkt neben „Was ist das?" (beide erklären das
+  Werkzeug), „Daten herunterladen" rechts vor Basic/Erweitert (Aktion, mit
+  Symbol). **Bewusst kein Dropdown** für die drei: „Was ist das?" ist der
+  Einstieg für neue Besucher und soll sichtbar bleiben; bei nur drei Einträgen
+  kostet ein Menü einen Klick, ohne Platz zu sparen. „Daten herunterladen" ist
+  im Prototyp noch ohne Funktion; offen ist, ob der Download die aktuelle Karte
+  oder den ganzen Datensatz liefert.
+- **Methodik-Fenster** (Session 2026-10-12): „Methodik" öffnet ein zentriertes,
+  scrollbares Fenster (Esc, × oder Klick daneben schließt). Acht Abschnitte:
+  (1) Die Frage, (2) Wie ein Prinzip den Ausbau verteilt, (3) Zubaukonsens,
+  (4) Was den Konsens begrenzt und wo Prinzipien abweichen, (5) Zwei Ebenen:
+  Deutschland und Landkreis, (6) Rahmen, (7) Referenzen und Szenarien,
+  (8) Grenzen. **Der Text beschreibt nur die Rechenregeln, wie die App sie
+  umsetzt** (Minimum-Regel, 20-%-Schwelle, Regionsbudget, flächengewichtete
+  Gemeindewerte, getrennte Zielberechnungen …). **Datenquellen und Formeln der
+  Prinzipien stehen bewusst nicht darin:** Der Prototyp rechnet mit
+  Platzhalterwerten; ein gelber Hinweis „Stand: Prototyp" am Anfang sagt das
+  ausdrücklich. Vor einer Veröffentlichung mit echten Daten ergänzen:
+  Datenquellen und Stand je Prinzip, die genaue Definition jedes Prinzips,
+  Herkunft der Ausbauziele, Ansprechperson — und den Prototyp-Hinweis entfernen.
 - **Hub-Aufbau (Session 2026-10-12):** In der Zeile über der Hub-Box steht der
   Wind-/PV-Umschalter mittig (er gilt für Box und Tabellen), „Vergleich teilen"
   rechts. Die farbige Box „Vergleich A − B" enthält Erklärzeile, A/B-Boxen und
