@@ -838,7 +838,8 @@ Planung) ist entfernt. Referenzen sind auswählbare Vergleichsobjekte im Reiter
 Szenarien vergleichen. „Szenarien vergleichen" ist **immer sichtbar** (auch bei
 0/1 Szenarien, Basic und Erweitert). Entfernt: „Mit einer anderen Verteilung
 vergleichen", Switch „Konfliktflächen ausblenden". Weitere Prinzipien nur links
-wählbar. „Zum Vergleich speichern" ist im Hub ausgeblendet.
+wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
+2026-10-12; zuvor dort ausgeblendet).
 
 **Hub-Aufbau:**
 - **Kopf:** Wind/PV-Umschalter — eigener Filter des Hubs (startet mit der
@@ -939,7 +940,8 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   Prinzipien (volle Breite, umrandet wie „Vergleich teilen"), nicht mehr in der
   Tab-Reihe. Sichtbar nur, wenn es etwas zu speichern gibt UND die aktuelle
   Konfiguration noch nicht gespeichert ist (gleiche Ebene, Prinzipien DE +
-  regional, Technologie, Ausbauziel, Bestandsanrechnung); im Hub ausgeblendet.
+  regional, Technologie, Ausbauziel, Bestandsanrechnung). Gilt seit Session
+  2026-10-12 auch im Hub (zuvor dort ausgeblendet).
 - „Vergleich teilen" steht rechtsbündig unter der Tab-Linie, direkt über der
   Wind-/PV-Hub-Box. Die Tab-Reihe enthält nur noch die Reiter.
 - Die Zeile „Gespeicherte Szenarien (N) · Vergleichen → · Nur für diese Sitzung."

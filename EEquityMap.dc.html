@@ -142,7 +142,7 @@
       </sc-if>
 
       <!-- „Zum Vergleich speichern": unter den Prinzipien, volle Breite — sichtbar, sobald es etwas zu
-           speichern gibt (nicht im Hub „Szenarien vergleichen", s. §O). -->
+           speichern gibt (auch im Hub „Szenarien vergleichen", s. §O). -->
       <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ openSaveScenario }}" style="margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #0b6b5a;color:#0b6b5a;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#eef4f2">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
@@ -1912,7 +1912,7 @@ class Component extends DCLogic {
         const gs = [{ label: 'Referenzen (immer vorhanden)', items: refObjs.map(item), emptyText: '', emptyStyle: 'display:none' }];
         levelGroups.forEach(g => gs.push({ label: g.label, items: g.list.map(item), emptyText: '', emptyStyle: 'display:none' }));
         if (!hubScen.length) gs.push({ label: 'Gespeicherte Szenarien', items: [],
-          emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. In einem anderen Reiter mit „Zum Vergleich speichern" anlegen.',
+          emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. Links mit „Zum Vergleich speichern" anlegen.',
           emptyStyle: 'font-size:14px;color:#8a929a;line-height:1.45;padding:2px 12px 6px' });
         return gs;
       };
@@ -2239,7 +2239,7 @@ class Component extends DCLogic {
     const currentSig = scenarioSig({ isRegion, regionKrsId: isRegion && S.region ? S.region.krsId : null,
       nationalSel: S.selected.filter(avail), regionalSel: sel, tech: S.tech, targetGW: S.targetGW, account: S.account });
     const alreadySaved = (S.scenarios || []).some(sc => scenarioSig(sc) === currentSig);
-    R.showSaveScenario = scenarioReady && !alreadySaved && view !== 'szenarien';
+    R.showSaveScenario = scenarioReady && !alreadySaved;
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
