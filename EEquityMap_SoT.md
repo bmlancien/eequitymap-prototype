@@ -90,7 +90,12 @@ durchziehen.
 
 Tab-Reihe (Zubaukonsens als Default). Namen final:
 
-1. **Zubaukonsens** — Karte des Minimums je Zelle
+1. **Zubaukonsens** — Karte des Minimums je Zelle.
+   Legendentitel nennt die eingefärbte Einheit (Session 2026-10-12):
+   „Zubaukonsens je Landkreis" (Deutschland), „… je Gemeinde" (Region, Ansicht
+   „Gemeinden" bzw. Basic), „… je 5 × 5-km-Zelle" (Region, Ansichten mit Raster).
+   Gleiches gilt für die Legende bei nur einem gewählten Prinzip: „Empfohlener
+   Zubau je Landkreis / je Gemeinde / je 5 × 5-km-Zelle".
 2. **Was begrenzt?** (früher „Minimumkarte") — je Zelle das blockierende Prinzip
    (kategorial nach Prinzipfarbe). Erfüllt die frühere Sticky-Note „ein Prinzip
    pro Hexagon".

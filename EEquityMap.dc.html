@@ -1678,6 +1678,10 @@ class Component extends DCLogic {
       return { d: cells[i].d, fill, fo: cellFillOp, stroke, sw, dash, op, onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.selectCell(cells[i].id); } };
     };
 
+    // Einheit der Legende = das, was die Karte einfärbt: Landkreise (Deutschland), Gemeinden (Region, Ansicht
+    // „Gemeinden" bzw. Basic) oder das 5 × 5-km-Raster (Region, Ansichten mit Raster — nur Erweitert).
+    const legendUnit = !isRegion ? 'je Landkreis'
+      : ((isExt ? (S.regionViewMode || 'gemeinden-raster') : 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
@@ -1696,7 +1700,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(vals[i]), this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
-      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau';
+      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau ' + legendUnit;
       R.showPlan = true;
     } else if (view === 'konsens') {
       // Min–Max nur über die sichtbaren Zellen (Konfliktflächen bei aktivem Ausblenden nicht mitrechnen —
@@ -1709,7 +1713,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(consCells[i]), this.CONS), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
-      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens je Zelle';
+      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens ' + legendUnit;
       R.showPlan = false;
       // Paarweise Prinzipien-Matrix (nur Erweitert): Zubaukonsens je Paar = Minimum-Regel über genau diese
       // zwei Prinzipien, Summe über alle Zellen. Dreieck ohne Diagonale; Konsens-Blauskala über den
