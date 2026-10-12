@@ -768,7 +768,7 @@
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:4px">Zellen je abweichender Verteilung (&gt; 20 %)</div>
               <!-- Je Kombination: oben die Farbfelder der beteiligten Prinzipien + Zellzahl, darunter die Namen -->
               <sc-for list="{{ comboRows }}" as="cm" hint-placeholder-count="3">
-                <div style="padding:8px 0;border-bottom:1px solid #eef1f2">
+                <div onMouseEnter="{{ cm.onEnter }}" onMouseLeave="{{ cm.onLeave }}" style="{{ cm.style }}">
                   <div style="display:flex;align-items:center;gap:8px">
                     <div style="display:flex;align-items:center;gap:4px;flex:1">
                       <sc-for list="{{ cm.dots }}" as="dt" hint-placeholder-count="2">
@@ -1095,6 +1095,7 @@ class Component extends DCLogic {
     shareOpen: false,
     shareCopied: false,
     hubMenu: null,      // offenes A/B-Dropdown im Hub (0 = A, 1 = B)
+    hoverCombo: null,   // Konfliktflächen · „Wer denkt anders?": in der Liste rechts überfahrene Kombination
     hubCell: null,      // auf der Differenzkarte gewählte Zelle: { lvl: 'de' | 'r:<krsId>', i }
     undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
     undoShow: false,
@@ -1861,10 +1862,17 @@ class Component extends DCLogic {
       R.showPlan = false;
     } else if (view === 'konflikt') {
       // „Wer denkt anders?": Farbe der Verteilung(en), die hier > 20 % vom Konsens abweichen; mehrere = schraffiert
+      // Hover auf eine Zeile der Liste rechts („Zellen je abweichender Verteilung"): nur die Zellen dieser
+      // Kombination behalten ihre Farbe, alle anderen werden hellgrau. Ohne passende Zelle (veralteter
+      // Hover-Zustand) bleibt die Karte unverändert.
+      const comboKey = rec => rec.length ? rec.join('|') : '__none';
+      const hk = S.hoverCombo && cells.some((c,i) => comboKey(devBy(i)) === S.hoverCombo) ? S.hoverCombo : null;
       const combos = {}, fill = [];
       cells.forEach((c,i) => {
         const rec = devBy(i);
-        if (rec.length === 0) { fill[i] = '#e4e8eb'; return; }
+        if (hk && comboKey(rec) !== hk) { fill[i] = '#f1f3f4'; return; }
+        // „keine Abweichung" ist selbst grau — hervorgehoben deshalb dunkler, damit sie sich vom Rest abhebt
+        if (rec.length === 0) { fill[i] = hk ? '#9aa4ad' : '#e4e8eb'; return; }
         if (rec.length === 1) { fill[i] = this.byId[rec[0]].color; return; }
         const key = 'sm_' + rec.join('_');
         if (!combos[key]) { const cols = rec.map(p => this.byId[p].color), bw = 7; combos[key] = { id: key, w: cols.length*bw, bands: cols.map((col,ix)=>({ x: ix*bw, w: bw, color: col })) }; }
@@ -2677,9 +2685,18 @@ class Component extends DCLogic {
           const cnt = {};
           scopeIdx.forEach(i => { const rec = devBy(i); const key = rec.length ? rec.join(' + ') : '__none'; if (!cnt[key]) cnt[key] = { rec, n: 0 }; cnt[key].n++; });
           // Je Kombination ein Farbfeld pro beteiligtem Prinzip (statt eines gestreiften Kästchens) + die Namen
-          const rows = Object.values(cnt).map(o => o.rec.length
-            ? { dots: o.rec.map(p => ({ color: this.byId[p].color })), label: o.rec.map(p => this.byId[p].name).join(' + '), count: o.n }
-            : { dots: [{ color: '#e4e8eb' }], label: 'keine Abweichung > 20 %', count: o.n });
+          // Hover hebt die Zellen dieser Kombination auf der Karte hervor (s. Kartenlogik „Wer denkt anders?").
+          const rows = Object.values(cnt).map(o => {
+            const key = o.rec.length ? o.rec.join('|') : '__none', on = S.hoverCombo === key;
+            const row = o.rec.length
+              ? { dots: o.rec.map(p => ({ color: this.byId[p].color })), label: o.rec.map(p => this.byId[p].name).join(' + '), count: o.n }
+              : { dots: [{ color: '#e4e8eb' }], label: 'keine Abweichung > 20 %', count: o.n };
+            return Object.assign(row, {
+              style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:default;background:' + (on ? '#eef3f6' : 'transparent'),
+              onEnter: () => { if (this.state.hoverCombo !== key) this.setState({ hoverCombo: key }); },
+              onLeave: () => { if (this.state.hoverCombo === key) this.setState({ hoverCombo: null }); }
+            });
+          });
           // 0-Zellen-Kombinationen nie zeigen; Top 6 sichtbar, Rest aufklappbar
           const visible = rows.filter(r => r.count > 0).sort((a,b)=>b.count-a.count);
           const LIM = 6;

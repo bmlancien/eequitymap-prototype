@@ -491,7 +491,10 @@ nicht über die volle Breite laufen lassen.
   frühere Zusammenfassungsbox („… genau eine Verteilung weicht … ab · … mehrere ·
   … keine", s. Tabelle in E) entfällt. Je Kombination eine Reihe Farbfelder der
   beteiligten Prinzipien + Zellzahl, darunter die Namen — kein gestreiftes
-  Kästchen mehr. Top 6, Rest hinter „Weitere anzeigen".
+  Kästchen mehr. Top 6, Rest hinter „Weitere anzeigen". **Hover** auf eine
+  Zeile hebt auf der Karte die Zellen dieser Kombination hervor; alle anderen
+  werden hellgrau, bis die Maus die Zeile verlässt. Bei „keine Abweichung"
+  werden die betroffenen Zellen dunkler grau gezeigt, damit sie sich abheben.
 - Einzelansichten sind dauerhaft als solche markiert („Einzelverteilung eines
   Prinzips — nicht der Konsens"), damit kein Einzelprinzip- oder Einzelzell-Blick
   mit der Aussage des Werkzeugs verwechselt wird.
