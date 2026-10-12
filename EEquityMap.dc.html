@@ -657,7 +657,9 @@
       <!-- OVERVIEW (no cell selected) -->
       <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
         <div>
-          <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ ovScopeLabel }}</div>
+          <sc-if value="{{ ovScopeLabel }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ ovScopeLabel }}</div>
+          </sc-if>
           <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
 
           <div style="{{ ovLeadBoxStyle }}">
@@ -739,7 +741,9 @@
         <div>
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
             <div>
-              <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
+              <sc-if value="{{ cellScope }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#9aa4ad;letter-spacing:.3px">{{ cellScope }}</div>
+              </sc-if>
               <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
             </div>
             <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#7a848c;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
@@ -2520,7 +2524,7 @@ class Component extends DCLogic {
     R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
 
     if (!selectedCell && !selectedGemeinde) {
-      R.ovScopeLabel = isRegion ? 'Region' : 'Übersicht';
+      R.ovScopeLabel = isRegion ? '' : 'Übersicht';
       R.ovTitle = isRegion ? S.region.label : 'Deutschland gesamt';
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCombos = false;
@@ -2540,7 +2544,7 @@ class Component extends DCLogic {
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
         R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmtN(st, isRegion);
-        R.ovLeadSub = 'Sie können ein zweites Prinzip hinzufügen, um den Zubaukonsens zu sehen.';
+        R.ovLeadSub = '';
       } else {
         const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
         // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
@@ -2604,7 +2608,7 @@ class Component extends DCLogic {
       R.ovClickHint = view !== 'regionGate' && !isEmpty;
     } else if (selectedCell) {
       const i = cells.indexOf(selectedCell), c = selectedCell;
-      R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : 'Deutschland · Landkreise';
+      R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : '';
       R.cellKindLabel = isRegion ? 'Rasterzelle' : c.kind;
       R.cellConsensusScopeLabel = isRegion ? 'Zubaukonsens dieser Zelle in der Region' : 'Budget dieser Region';
 
@@ -2724,7 +2728,7 @@ class Component extends DCLogic {
       const covWeight = weights.reduce((a, w) => a + w.w, 0);
       const gAgg = arr => weights.reduce((a, w) => a + arr[w.i] * w.w, 0);
 
-      R.cellScope = S.region.label + ' · Gemeinden';
+      R.cellScope = '';
       R.cellKindLabel = g.bez || 'Gemeinde';
       R.cellLabel = g.name;
       R.cellConsensusScopeLabel = 'Zubaukonsens dieser Gemeinde in der Region';

@@ -641,6 +641,11 @@ von Schritt 1 ist das feste Budget von Schritt 2.
   visuell sofort erkennbar ist. 5 × 5 km existiert als sichtbare Einheit **nur
   hier**. Scope-Label: „[Landkreis] · 5 × 5 km Raster". Verteilt das für diesen
   Landkreis berechnete Budget über seine Zellen nach den **regionalen Prinzipien**.
+- **Scope-Label nur in der Kartenleiste** (Session 2026-10-12): In der rechten
+  Spalte entfallen die Dachzeilen „Deutschland · Landkreise" (Landkreis gewählt),
+  „[Landkreis] · Gemeinden" (Gemeinde gewählt) und „Region" (Regionsübersicht) —
+  sie wiederholten nur die Kartenleiste. Es bleiben „Übersicht" (Deutschland
+  gesamt) und „[Landkreis] · 5 × 5 km Raster" (Rasterzelle gewählt).
 
 **Einstieg:** Klick auf eine Zelle (DE-Ansicht) → **Popover an der Zelle
 verankert** mit der Aktion **„[Landkreis] im Detail auswerten →"** (Regionsname
