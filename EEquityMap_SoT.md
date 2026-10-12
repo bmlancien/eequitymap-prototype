@@ -990,6 +990,11 @@ Erweitert; DE- und Regionsmodus; erst ab 2 Prinzipien):
   (n gewählt → (n−1) × (n−1): Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1).
 - Spaltenköpfe 45° gedreht, mit Farbpunkt; Kopfhöhe nach dem längsten Namen,
   damit nichts überlappt oder abgeschnitten wird. Feste Spaltenbreiten (kompakt).
+  Seit Session 2026-10-12: lange Namen brechen im Kopf auf zwei Zeilen um (max.
+  150 px), damit ein einzelner langer Name nicht viel Leerraum über der Tabelle
+  erzeugt; Zeilenkopf 180 px, Wertspalten 88 px (vorher 200/112), sodass die
+  Matrix auch mit sechs Prinzipien ohne Abschneiden in die Spalte passt; etwas
+  mehr Abstand zu den Buttons darunter.
 - Zellwert = Zubaukonsens des Paars: Minimum-Regel über genau diese zwei
   Prinzipien, Summe über alle Zellen — GW (DE) bzw. MW (Region).
 - Eckzelle: „Zubaukonsens in GW (Ziel: …)" bzw. „Zubaukonsens in MW

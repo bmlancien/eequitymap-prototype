@@ -585,7 +585,7 @@
         <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab 2 Prinzipien): Zubaukonsens je
              Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
         <sc-if value="{{ showPairMatrix }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e2e5e8">
+          <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
             <div style="font-size:15px;font-weight:600;color:#1b2126">Zubaukonsens je Prinzipienpaar</div>
             <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Zubaukonsens.</div>
             <div style="{{ pairWrapStyle }}"><div style="{{ pairGridStyle }}">
@@ -1795,12 +1795,16 @@ class Component extends DCLogic {
         // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
         // Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1. Werte bleiben dieselben Paare an denselben Plätzen.
         const rowsP = sel.slice(1), colsP = sel.slice(0, -1);
-        // Spaltenköpfe 45° gedreht (Farbpunkt bleibt vorn); Kopfhöhe und rechter Überstand aus der
-        // geschätzten Labelbreite (≈ 8,2 px je Zeichen bei 14 px halbfett + Farbpunkt).
-        const labelW = p => this.byId[p].name.length * 8.2 + 18;
+        // Spaltenköpfe 45° gedreht (Farbpunkt bleibt vorn). Lange Namen brechen auf zwei Zeilen um (HEAD_MAXW),
+        // sonst treibt ein einzelner langer Name die Kopfhöhe für alle Spalten hoch. Kopfhöhe und rechter
+        // Überstand aus der geschätzten Labelbreite (≈ 7,6 px je Zeichen bei 14 px halbfett + Farbpunkt).
+        const PAIR_ROW_W = 180, PAIR_COL_W = 88, HEAD_MAXW = 150;
+        const labelW = p => Math.min(HEAD_MAXW, this.byId[p].name.length * 7.6 + 18);
+        const twoLine = p => this.byId[p].name.length * 7.6 + 18 > HEAD_MAXW;
         const SIN45 = Math.SQRT1_2;
-        const headH = Math.ceil(Math.max(...colsP.map(labelW)) * SIN45) + 18;
-        const overhang = Math.max(0, Math.ceil(labelW(colsP[colsP.length - 1]) * SIN45) - 56);
+        const headH = Math.ceil(Math.max(...colsP.map(p => labelW(p) * SIN45 + (twoLine(p) ? 30 : 16))));
+        const lastP = colsP[colsP.length - 1];
+        const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
         const cellsOut = [{
           text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
           title: '', swatchStyle: 'display:none', innerStyle: flat,
@@ -1809,7 +1813,7 @@ class Component extends DCLogic {
         colsP.forEach(q => cellsOut.push({
           text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q),
           style: 'position:relative;height:' + headH + 'px',
-          innerStyle: 'position:absolute;left:50%;bottom:8px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:14px;font-weight:600;color:#26303a'
+          innerStyle: 'position:absolute;left:50%;bottom:' + (twoLine(q) ? 16 : 8) + 'px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;width:max-content;max-width:' + HEAD_MAXW + 'px;line-height:1.2;font-size:14px;font-weight:600;color:#26303a'
         }));
         rowsP.forEach(p => {
           const a = sel.indexOf(p);
@@ -1827,7 +1831,7 @@ class Component extends DCLogic {
         R.pairCells = cellsOut;
         R.pairWrapStyle = 'padding-right:' + overhang + 'px';
         // Feste Spaltenbreiten: kompakt und linksbündig, statt bei wenigen Prinzipien über die volle Breite zu laufen
-        R.pairGridStyle = 'display:grid;grid-template-columns:200px repeat(' + colsP.length + ',112px);gap:4px;align-items:stretch';
+        R.pairGridStyle = 'display:grid;grid-template-columns:' + PAIR_ROW_W + 'px repeat(' + colsP.length + ',' + PAIR_COL_W + 'px);gap:4px;align-items:stretch';
         R.showPairMatrix = true;
       }
     } else if (view === 'minimum') {
