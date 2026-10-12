@@ -191,6 +191,14 @@ Paar erkennbar.
 >   unteren Kartenrand). (5) Kein Konsens-Hinweis unter den Karten. Offen: Jede
 >   Karte hat ihre eigene Skala, Dunkelheit ist zwischen den Karten nicht
 >   vergleichbar.
+>   **Vergrößerte Karte durchblättern** (Session 2026-10-12): Im Fenster hinter
+>   „Einzeln ansehen" stehen links und rechts der Karte Pfeile; sie (und die
+>   Pfeiltasten ←/→) wechseln zum vorherigen/nächsten gewählten Prinzip, ohne
+>   das Fenster zu schließen — Karte an derselben Stelle, in derselben Größe.
+>   Unter der Karte eine Reihe mit den gewählten Prinzipien (Farbfeld + Name),
+>   das offene hervorgehoben, anklickbar zum direkten Wechsel. Esc schließt.
+>   Reihenfolge wie in der Galerie; am Ende geht es vorn weiter. **Nicht
+>   umgesetzt** (bewusst): ein Knopf „Region nur nach diesem Prinzip verteilen".
 >   Die Kartengalerie hat keinen eigenen Scrollbereich (Session 2026-10-12):
 >   Alle Karten stehen in voller Höhe, gescrollt wird nur die Hauptspalte.
 > - Einzelansicht eines Prinzips: dessen Erklärsatz ohne Legenden-Nachsatz, z. B.
@@ -947,6 +955,15 @@ die falsche Einheit.
 >   darunter — vorher standen sie zugeklappt und aufgeklappt doppelt. Der
 >   Hinweis „Startet mit denselben Prinzipien wie national. …" bleibt
 >   unverändert sichtbar (wichtig für das Zwei-Ebenen-Verständnis).
+> - **Einzelverteilungen in der Region zeigen Gemeinden** (Session 2026-10-12):
+>   Die kleinen Karten der Galerie und die Vergrößerung („Einzeln ansehen")
+>   zeigen in der Region Gemeinden statt des Rasters, mit derselben Einstellung
+>   wie die große Karte (`regionViewMode`; Basic immer Gemeinden). Nur in der
+>   Ansicht „Raster (5 × 5 km)" bleibt das Raster; „Gemeinden + Raster" zeigt in
+>   den kleinen Karten ebenfalls Gemeinden. Gemeinde-Wert = flächengewichtete
+>   Summe der Zellwerte; der Wertebereich darunter nennt die Einheit („je
+>   Gemeinde" bzw. „je 5 × 5-km-Zelle"). Die Galerie hat keinen eigenen
+>   Umschalter.
 > - **Zähleinheit = klickbare Einheit:** In „Was begrenzt den Konsens?" zählt
 >   die Unterzeile in der Region **Gemeinden** („begrenzt in 64 Gemeinden"),
 >   solange Gemeinden gezeigt werden (Basic; Erweitert in „Gemeinden" und

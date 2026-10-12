@@ -1011,12 +1011,24 @@
           <div style="flex:1"></div>
           <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#7a848c">×</button>
         </div>
-        <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:min(60vh,520px)">
-          <sc-for list="{{ zoomCells }}" as="c" hint-placeholder-count="60">
-            <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1.2"></path>
+        <!-- Durchblättern ohne Schließen: Pfeile links/rechts (auch Pfeiltasten), Karte bleibt an derselben
+             Stelle und in derselben Größe — so fällt auf, was sich zwischen den Prinzipien ändert. -->
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onClick="{{ zoomPrev }}" title="Vorheriges Prinzip (←)" aria-label="Vorheriges Prinzip" style="{{ zoomNavStyle }}">‹</button>
+          <svg viewBox="{{ vb }}" preserveAspectRatio="xMidYMid meet" style="flex:1;min-width:0;height:min(60vh,520px)">
+            <sc-for list="{{ zoomCells }}" as="c" hint-placeholder-count="60">
+              <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1.2"></path>
+            </sc-for>
+          </svg>
+          <button onClick="{{ zoomNext }}" title="Nächstes Prinzip (→)" aria-label="Nächstes Prinzip" style="{{ zoomNavStyle }}">›</button>
+        </div>
+        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau {{ zoomUnit }} · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
+        <!-- Welches Prinzip ist offen? Anklicken springt direkt dorthin. -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+          <sc-for list="{{ zoomTabs }}" as="zt" hint-placeholder-count="3">
+            <button onClick="{{ zt.onClick }}" style="{{ zt.style }}"><span style="width:10px;height:10px;border-radius:3px;flex:none;background:{{ zt.color }}"></span>{{ zt.name }}</button>
           </sc-for>
-        </svg>
-        <div class="num" style="font-size:14px;color:#8a929a;margin-top:6px">Empfohlener Zubau je Zelle · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
+        </div>
       </div>
     </div>
   </sc-if>
@@ -1206,6 +1218,18 @@ class Component extends DCLogic {
     this.buildKrs();
     this._regionCache = {};
     this._scenarioSeq = 0;
+    // Vergrößerte Einzelverteilung: Pfeiltasten blättern, Esc schließt (nur solange sie offen ist)
+    this._zoomOrder = [];
+    document.addEventListener('keydown', e => {
+      const z = this.state && this.state.zoom, o = this._zoomOrder;
+      if (!z) return;
+      if (e.key === 'Escape') { this.setState({ zoom: null }); return; }
+      const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      const k = o.indexOf(z);
+      if (!dir || k < 0 || o.length < 2) return;
+      e.preventDefault();
+      this.setState({ zoom: o[(k + dir + o.length) % o.length] });
+    });
     // Gemeinde-Ebene: pro Landkreis nachgeladene Geodaten (gemeinden/<krsId>.json, s. SoT §M) + die
     // daraus einmalig berechneten, rein geometrischen Zelle→Gemeinde-Überlappungsgewichte (flächengewichtet).
     this._gemCache = {};
@@ -2297,9 +2321,23 @@ class Component extends DCLogic {
     if (R.isVerteilungen) {
       const galleryIds = galleryAll ? this.principles.filter(p => (isExt || p.basic) && p.available).map(p => p.id) : sel;
       const shortExplain = { verbrauchsnah: 'dorthin, wo viel Strom verbraucht wird', bevoelkerungsnah: 'dorthin, wo mehr Menschen wohnen', bevoelkerungsfern: 'in dünn besiedelte Regionen', oekonomisch: 'dorthin, wo er am günstigsten ist', flaeche_gesamt: 'proportional zur Gesamtfläche', flaeche_potenzial: 'nach verfügbarer Potenzialfläche' };
+      // Regionsansicht: wie die große Karte Gemeinden statt Raster — gleiche Einstellung (regionViewMode; Basic
+      // immer Gemeinden). Nur in der Ansicht „Raster" bleibt das 5 × 5-km-Raster; „Gemeinden + Raster" zeigt in
+      // den kleinen Karten ebenfalls Gemeinden (Raster + Grenzen wären in der Größe nicht lesbar).
+      const galMode = isRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+      let galGem = null, galGemW = null;
+      if (isRegion && galMode !== 'raster') {
+        this.ensureGemeinden(S.region.krsId);
+        galGem = this._gemCache[S.region.krsId] || null;
+        if (galGem) galGemW = this.gemWeightsFor(S.region.krsId);
+      }
+      const galByGem = !!(galGem && galGemW);
       R.smallMaps = galleryIds.map(p => {
         const g = gwArr(p);
-        const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + g[i] : g[i]);
+        const pvCells = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + g[i] : g[i]);
+        // Gemeinde-Wert = flächengewichtete Summe der Zellwerte (wie in der Regionsansicht)
+        const pv = galByGem ? galGem.map((gm, gi) => (galGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
+        const shapes = galByGem ? galGem : cells;
         const mx = Math.max(...pv);
         return {
           name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
@@ -2307,7 +2345,7 @@ class Component extends DCLogic {
           explain: (e => e.charAt(0).toUpperCase() + e.slice(1) + '.')(shortExplain[p] || 'so verteilt sich der Ausbau'),
           swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
           max: this.fmtN(mx, isRegion),
-          cells: cells.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
+          cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
           onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
         };
@@ -2315,7 +2353,7 @@ class Component extends DCLogic {
       R.showPlan = !galleryAll;
       R.galleryAll = galleryAll;
       // Wertebereich unter jeder kleinen Karte: sagt, worauf sich die Spanne bezieht
-      R.galleryRangeUnit = isRegion ? 'je 5 × 5-km-Zelle' : 'je Landkreis';
+      R.galleryRangeUnit = !isRegion ? 'je Landkreis' : (galByGem ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
       // Einstieg: Headline + Legende + Galerie + CTA sind ein zusammenhängender Block oben;
       // die Galerie wächst nicht in die leere Restfläche, der CTA bleibt an den Karten.
       // Kein eigener Scrollbereich: alle Karten in voller Höhe, gescrollt wird nur die Hauptspalte.
@@ -2699,7 +2737,8 @@ class Component extends DCLogic {
     // Vergleichsauswahl nur im Vergleich-Reiter (Differenzansicht)
     // Vergleichsauswahl und „Konfliktflächen ausblenden" entfallen — Vergleiche nur noch im Hub,
     // weitere Prinzipien nur links. Übrig bleibt der Ansichts-Umschalter der Regionsansicht.
-    R.showToolRow = !!R.showGemToggle && view !== 'szenarien';
+    // nur wo die große Karte steht — nicht im Hub und nicht in der Galerie „Einzelverteilungen"
+    R.showToolRow = !!R.showGemToggle && view !== 'szenarien' && view !== 'verteilungen';
     // Platz für den Ansichts-Umschalter in der Kartenecke (sonst normaler Innenabstand)
     R.mapBoxPadTop = R.showToolRow ? '50px' : '8px';
     R.planBtns = ['bestand', 'zubau', 'gesamt'].map(p => ({
@@ -3110,10 +3149,24 @@ class Component extends DCLogic {
     // zoom overlay
     if (S.zoom && sel.includes(S.zoom)) {
       const p = S.zoom;
-      const pv = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
+      const pvCells = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
+      // wie die Galerie: in der Region Gemeinden statt Raster, außer in der Ansicht „Raster"
+      const zMode = isRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+      const zGem = isRegion && zMode !== 'raster' ? (this._gemCache[S.region.krsId] || null) : null;
+      const zGemW = zGem ? this.gemWeightsFor(S.region.krsId) : null;
+      const zByGem = !!(zGem && zGemW);
+      const pv = zByGem ? zGem.map((gm, gi) => (zGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
       const mx = Math.max(...pv);
       R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtN(mx, isRegion);
-      R.zoomCells = cells.map((c,i) => ({ d: c.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) }));
+      R.zoomUnit = !isRegion ? 'je Landkreis' : (zByGem ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
+      R.zoomCells = (zByGem ? zGem : cells).map((c,i) => ({ d: c.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) }));
+      // Blättern: Reihenfolge wie in der Galerie (sel); am Ende geht es vorn weiter
+      this._zoomOrder = sel.slice();
+      const zStep = dir => () => { const o = this._zoomOrder, k = o.indexOf(this.state.zoom); if (k >= 0) this.setState({ zoom: o[(k + dir + o.length) % o.length] }); };
+      R.zoomPrev = zStep(-1); R.zoomNext = zStep(1);
+      R.zoomNavStyle = sel.length > 1 ? 'flex:none;width:36px;height:56px;border:1px solid #d7dce0;border-radius:9px;background:#fff;color:#44505a;font-size:26px;line-height:1;cursor:pointer' : 'display:none';
+      R.zoomTabs = sel.map(q => ({ name: this.byId[q].name, color: this.byId[q].color, onClick: () => this.setState({ zoom: q }),
+        style: 'display:flex;align-items:center;gap:6px;font-size:14px;padding:4px 10px;border-radius:999px;cursor:pointer;border:1px solid ' + (q === p ? '#44505a' : '#dfe3e6') + ';background:' + (q === p ? '#f1f3f4' : '#fff') + ';color:' + (q === p ? '#1b2126' : '#5b6672') + ';font-weight:' + (q === p ? '600' : '500') }));
     } else R.zoom = false;
     R.closeZoom = () => this.setState({ zoom: null });
 
