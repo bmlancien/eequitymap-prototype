@@ -149,6 +149,8 @@ Paar erkennbar.
 >   20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen."
 > - Einzelverteilungen: „Jede Karte zeigt ein Prinzip für sich, ohne Abgleich
 >   mit den anderen." (ohne Auswahl zusätzlich: „Wählen Sie links ein Prinzip.")
+>   Die Kartengalerie hat keinen eigenen Scrollbereich (Session 2026-10-12):
+>   Alle Karten stehen in voller Höhe, gescrollt wird nur die Hauptspalte.
 > - Einzelansicht eines Prinzips: dessen Erklärsatz ohne Legenden-Nachsatz, z. B.
 >   „Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird."
 > - Szenarien vergleichen: „Wählen Sie zwei Szenarien oder Referenzen als A und

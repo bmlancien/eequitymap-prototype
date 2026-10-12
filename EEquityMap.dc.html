@@ -1648,9 +1648,9 @@ class Component extends DCLogic {
     R.hasOverlay = false;
     R.isVerteilungen = view === 'verteilungen';
     R.isSzenarien = view === 'szenarien';
-    // Szenarien-Reiter: Tabelle + Differenzkarte wachsen mit ihrem Inhalt (Spalte scrollt), statt in die
-    // feste Kartenhöhe gequetscht zu werden.
-    R.mapAreaStyle = R.isSzenarien ? 'flex:none;display:flex;flex-direction:column' : 'flex:1;min-height:360px;display:flex;flex-direction:column';
+    // Szenarien-Reiter und Einzelverteilungen: der Inhalt wächst mit (die Hauptspalte scrollt), statt in die
+    // feste Kartenhöhe gequetscht zu werden — kein zweiter, innerer Scrollbereich.
+    R.mapAreaStyle = (R.isSzenarien || R.isVerteilungen) ? 'flex:none;display:flex;flex-direction:column' : 'flex:1;min-height:360px;display:flex;flex-direction:column';
     R.isSingleMap = view === 'regionGate' ? true : (!R.isVerteilungen && !isEmpty && !R.isSzenarien);
     R.isEmpty = isEmpty;
 
@@ -2180,12 +2180,9 @@ class Component extends DCLogic {
       R.galleryAll = galleryAll;
       // Einstieg: Headline + Legende + Galerie + CTA sind ein zusammenhängender Block oben;
       // die Galerie wächst nicht in die leere Restfläche, der CTA bleibt an den Karten.
-      R.galleryColStyle = galleryAll
-        ? 'flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;overflow-y:auto'
-        : 'flex:1;min-height:0;display:flex;flex-direction:column';
-      R.galleryGridStyle = galleryAll
-        ? 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;align-content:start;flex:none'
-        : 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;flex:1;min-height:0;align-content:start;overflow-y:auto';
+      // Kein eigener Scrollbereich: alle Karten in voller Höhe, gescrollt wird nur die Hauptspalte.
+      R.galleryColStyle = 'flex:none;display:flex;flex-direction:column;justify-content:flex-start';
+      R.galleryGridStyle = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;align-content:start;flex:none';
       R.galleryHeadline = 'Jedes Gerechtigkeitsprinzip verteilt den Ausbau anders. Hier sehen Sie, wie — und wo sie sich einig sind.';
     }
     R.galleryAll = R.galleryAll || false;
