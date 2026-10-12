@@ -407,7 +407,6 @@
                         <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#44505a;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
                       </sc-if>
                     </div>
-                    <div style="font-size:14px;color:#9aa4ad;margin-top:6px">Bezogen auf {{ hubCoverScen }}.</div>
                   </sc-if>
                 </div>
             </div>
@@ -2220,7 +2219,6 @@ class Component extends DCLogic {
           R.hubCoverB = konsTot ? Math.round(konsGedeckt / konsTot * 100) : 0;
           R.hubCoverA1 = isPlan ? 'Von der Ausweisung trifft' : 'Vom historischen Ausbau liegen';
           R.hubCoverA2 = isPlan ? 'den Konsens.' : 'im Konsens.';
-          R.hubCoverScen = scenOther.name;
         }
       }
 
