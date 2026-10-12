@@ -83,6 +83,33 @@ durchziehen.
 
 ---
 
+### Wortwahl-Regeln nach dem Text-Audit (Session 2026-10-12)
+
+- **Einheit beim Namen nennen, nie pauschal „Zelle".** Deutschland:
+  „Landkreis(e)". Region: „Gemeinde(n)", solange Gemeinden gezeigt werden;
+  „Rasterzelle(n)" nur, wo tatsächlich das 5 × 5-km-Raster gemeint ist oder
+  gezählt wird. Angepasst: Titel „Landkreise je abweichendem Prinzip (> 20 %)"
+  (Region: „Rasterzellen …"), Text und Tooltips des Kombinations-Diagramms,
+  Info „Wie viel dieser Landkreis zum Ausbauziel beiträgt …", Unterzeile „Summe
+  je Prinzip", Referenz-Info „Planungsflächen", Prinzip-Erklärsätze.
+- **„Prinzip", nicht „Verteilung",** wenn ein Gerechtigkeitsprinzip gemeint
+  ist (Legende und Liste unter „Welche Prinzipien?"). „Verteilung" bleibt für
+  das Ergebnis (wie sich der Ausbau verteilt).
+- **„bundesweit", nicht „national",** in allen sichtbaren Texten.
+- **Noch offen** (brauchen eine Entscheidung, keine reine Wortwahl): in der
+  Region zählen „Rasterzellen je abweichendem Prinzip", das Kombinations-
+  Diagramm und „Größte Abweichungen" weiter Rasterzellen, auch wenn Gemeinden
+  gezeigt werden; „Region" steht teils für „Landkreis";
+  „Basic" neben „Erweitert". („SZENARIO" in der linken Spalte ist erledigt:
+  heißt jetzt „RAHMEN", s. O „Button-Positionen".)
+- **Erledigt nach dem Audit:** MW-Werte haben immer genau **eine
+  Nachkommastelle** („1,0 MW"; GW weiter zwei). Die Zeile „Priorität /
+  Reihenfolge" samt Hinweis „Die Zubaureihenfolge wird noch nicht berechnet."
+  ist aus dem Detail entfernt, bis es eine berechnete Reihenfolge gibt (zuvor
+  ein Jahr mit dem Zusatz „(nicht berechnet)").
+
+---
+
 ## C. Ansichten / Tabs — finaler Stand
 
 > **Teilweise abgelöst durch O (2026-10-09):** Reiter-Reihenfolge, Wegfall von
@@ -1216,9 +1243,14 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   (ersetzt die weggefallene Objektliste).
 
 **Button-Positionen (Session 2026-10-09):**
-- „Zum Vergleich speichern" steht in der linken Spalte direkt unter den
-  Prinzipien (volle Breite, umrandet wie „Vergleich teilen"), nicht mehr in der
-  Tab-Reihe. Sichtbar nur, wenn es etwas zu speichern gibt UND die aktuelle
+- „Zum Vergleich speichern" steht seit Session 2026-10-12 **am unteren Rand
+  der linken Spalte, angeheftet** (bleibt beim Scrollen der Spalte sichtbar),
+  nach allem, was es speichert: Prinzipien und der Block „RAHMEN". Zuvor direkt
+  unter den Prinzipien, über „SZENARIO" — das wirkte, als speichere es nur die
+  Prinzipien. Volle Breite, umrandet wie „Vergleich teilen"; nicht in der
+  Tab-Reihe. Der Block mit Technologie, Ausbauziel und Bestandsanlagen heißt
+  jetzt **„RAHMEN"** statt „SZENARIO", weil ein gespeichertes Szenario auch die
+  Prinzipien umfasst. Sichtbar nur, wenn es etwas zu speichern gibt UND die aktuelle
   Konfiguration noch nicht gespeichert ist (gleiche Ebene, Prinzipien DE +
   regional, Technologie, Ausbauziel, Bestandsanrechnung). Gilt seit Session
   2026-10-12 auch im Hub (zuvor dort ausgeblendet).

@@ -68,7 +68,7 @@
   <div style="display:flex;flex:1;min-height:0">
 
     <!-- ============ LEFT COLUMN ============ -->
-    <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 40px">
+    <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 0">
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
         <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
              leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
@@ -105,7 +105,7 @@
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#33413c;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#eef3f6;border:1px solid #cdddea;border-radius:8px">
-          <span style="flex:1">Startet mit denselben Prinzipien wie national. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
+          <span style="flex:1">Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
           <span onClick="{{ dismissRegionListHint }}" style="cursor:pointer;color:#6f8aa0;font-size:14px;line-height:1;padding:2px;flex:none">×</span>
         </div>
       </sc-if>
@@ -146,17 +146,8 @@
         </div>
       </sc-if>
 
-      <!-- „Zum Vergleich speichern": unter den Prinzipien, volle Breite — sichtbar, sobald es etwas zu
-           speichern gibt (auch im Hub „Szenarien vergleichen", s. §O). -->
-      <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ openSaveScenario }}" style="margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #0b6b5a;color:#0b6b5a;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#eef4f2">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          Zum Vergleich speichern
-        </button>
-      </sc-if>
-
-      <!-- SZENARIO -->
-      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126;margin:26px 0 12px">SZENARIO</div>
+      <!-- RAHMEN (früher „SZENARIO" — ein gespeichertes Szenario umfasst Prinzipien UND diesen Block) -->
+      <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126;margin:26px 0 12px">RAHMEN</div>
 
       <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Technologie</div>
       <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin-bottom:6px">
@@ -194,6 +185,17 @@
       </div>
       <div style="{{ accountInfoStyle }}">Bereits bestehende Anlagen zählen als getragene Last — Regionen mit viel Bestand erhalten weniger Neuzubau.</div>
 
+      <!-- „Zum Vergleich speichern": am unteren Rand der Spalte angeheftet — NACH allem, was gespeichert wird
+           (Prinzipien + Rahmen). Sichtbar, sobald es etwas zu speichern gibt und die Konfiguration noch nicht
+           gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
+      <div style="{{ saveFooterStyle }}">
+        <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ openSaveScenario }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #0b6b5a;color:#0b6b5a;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#eef4f2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            Zum Vergleich speichern
+          </button>
+        </sc-if>
+      </div>
     </aside>
 
     <!-- ============ MIDDLE COLUMN ============ -->
@@ -619,7 +621,7 @@
               <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#2f6690;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
             </div>
             <div style="{{ upsetBodyStyle }}">
-              <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Jede Spalte ist eine Kombination von Prinzipien, die an derselben Stelle mehr als 20 % vom Konsens abweichen. Balken = Anzahl der Zellen, farbige Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</div>
+              <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Jede Spalte ist eine Kombination von Prinzipien, die an derselben Stelle mehr als 20 % vom Konsens abweichen. Balken = Anzahl der {{ upsetUnit }}, farbige Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</div>
               <div style="{{ upsetGridStyle }}">
                 <sc-for list="{{ upsetItems }}" as="u" hint-placeholder-count="6">
                   <div title="{{ u.title }}" style="{{ u.wrapStyle }}">
@@ -798,7 +800,7 @@
               <div style="{{ sumSameStyle }}">{{ sumSameText }}</div>
               <div style="{{ sumHeadStyle }}">
                 <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Summe je Prinzip</div>
-                <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips über alle Zellen.</div>
+                <div style="font-size:14px;color:#7a848c;margin-bottom:11px;line-height:1.45">Gesamter empfohlener Zubau jedes Prinzips.</div>
               </div>
               <sc-for list="{{ sumRows }}" as="s" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
@@ -816,7 +818,7 @@
           <!-- Konfliktflächen: Zellen je abweichender Verteilung -->
           <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
-              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:4px">Zellen je abweichender Verteilung (&gt; 20 %)</div>
+              <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:4px">{{ comboTitle }}</div>
               <!-- Je Kombination: oben die Farbfelder der beteiligten Prinzipien + Zellzahl, darunter die Namen -->
               <sc-for list="{{ comboRows }}" as="cm" hint-placeholder-count="3">
                 <div onMouseEnter="{{ cm.onEnter }}" onMouseLeave="{{ cm.onLeave }}" style="{{ cm.style }}">
@@ -937,12 +939,6 @@
           </div>
           </sc-if>
 
-          <sc-if value="{{ isErweitert }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:16px;padding-top:13px;border-top:1px solid #e6e9eb;display:flex;flex-direction:column;gap:9px">
-              <div style="display:flex;justify-content:space-between;font-size:14px;color:#b3bcc3"><span>Priorität / Reihenfolge</span><span>{{ cellPriority }}</span></div>
-              <div style="font-size:14px;color:#b3bcc3;line-height:1.4">Die Zubaureihenfolge wird noch nicht berechnet.</div>
-            </div>
-          </sc-if>
         </div>
       </sc-if>
     </aside>
@@ -1199,19 +1195,19 @@ class Component extends DCLogic {
     this.targetLabels = { z2030: 'Ziel 2030', z2035: 'Ziel 2035', z2045: 'Ziel 2045' };
     this.marks = [{ y: '2030', gw: 115 }, { y: '2035', gw: 160 }, { y: '2045', gw: 215 }];
     this.principles = [
-      { id: 'verbrauchsnah', name: 'Verbrauchsnah', color: '#D55E00', basic: true, available: true, info: 'Der Zubau folgt dem Stromverbrauch. Regionen mit hoher Nachfrage erhalten mehr Zubau, um Netztransporte zu verringern.', explain: 'Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird — dunkle Zellen bekommen mehr.' },
-      { id: 'bevoelkerungsnah', name: 'Bevölkerungsnah', color: '#0072B2', basic: true, available: true, info: 'Der Zubau folgt der Bevölkerungsdichte. Wer den Strom nutzt, trägt die Anlagen auch in der eigenen Nähe.', explain: 'Bevölkerungsnah verteilt den Ausbau dorthin, wo mehr Menschen wohnen — dunkle Zellen bekommen mehr.' },
-      { id: 'bevoelkerungsfern', name: 'Bevölkerungsfern', color: '#009E73', basic: true, available: true, info: 'Der Zubau meidet dicht besiedelte Räume. Anlagen entstehen bevorzugt dort, wo wenige Menschen betroffen sind.', explain: 'Bevölkerungsfern verteilt den Ausbau in dünn besiedelte Regionen — dunkle Zellen bekommen mehr.' },
-      { id: 'oekonomisch', name: 'Ökonomisch optimiert', color: '#E69F00', basic: true, available: true, info: 'Der Zubau folgt dem besten Ertrag. Windhöffige Lagen im Norden werden zuerst genutzt.', explain: 'Ökonomisch optimiert verteilt den Ausbau dorthin, wo er am günstigsten ist — dunkle Zellen bekommen mehr.' },
-      { id: 'flaeche_gesamt', name: 'Gleicher Anteil an Gesamtfläche', color: '#CC79A7', basic: true, available: true, info: 'Jede Region trägt denselben Anteil je Fläche. Große Regionen erhalten mehr, unabhängig von Ertrag oder Verbrauch.', explain: 'Gleicher Anteil an Gesamtfläche verteilt den Ausbau proportional zur Fläche — größere Zellen bekommen mehr.' },
-      { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche — dunkle Zellen bekommen mehr.' }
+      { id: 'verbrauchsnah', name: 'Verbrauchsnah', color: '#D55E00', basic: true, available: true, info: 'Der Zubau folgt dem Stromverbrauch. Regionen mit hoher Nachfrage erhalten mehr Zubau, um Netztransporte zu verringern.', explain: 'Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird.' },
+      { id: 'bevoelkerungsnah', name: 'Bevölkerungsnah', color: '#0072B2', basic: true, available: true, info: 'Der Zubau folgt der Bevölkerungsdichte. Wer den Strom nutzt, trägt die Anlagen auch in der eigenen Nähe.', explain: 'Bevölkerungsnah verteilt den Ausbau dorthin, wo mehr Menschen wohnen.' },
+      { id: 'bevoelkerungsfern', name: 'Bevölkerungsfern', color: '#009E73', basic: true, available: true, info: 'Der Zubau meidet dicht besiedelte Räume. Anlagen entstehen bevorzugt dort, wo wenige Menschen betroffen sind.', explain: 'Bevölkerungsfern verteilt den Ausbau in dünn besiedelte Regionen.' },
+      { id: 'oekonomisch', name: 'Ökonomisch optimiert', color: '#E69F00', basic: true, available: true, info: 'Der Zubau folgt dem besten Ertrag. Windhöffige Lagen im Norden werden zuerst genutzt.', explain: 'Ökonomisch optimiert verteilt den Ausbau dorthin, wo er am günstigsten ist.' },
+      { id: 'flaeche_gesamt', name: 'Gleicher Anteil an Gesamtfläche', color: '#CC79A7', basic: true, available: true, info: 'Jede Region trägt denselben Anteil je Fläche. Große Regionen erhalten mehr, unabhängig von Ertrag oder Verbrauch.', explain: 'Gleicher Anteil an Gesamtfläche verteilt den Ausbau proportional zur Fläche.' },
+      { id: 'flaeche_potenzial', name: 'Gleicher Anteil an Potenzialfläche', color: '#56B4E9', basic: true, available: true, info: 'Der Zubau verteilt sich nach der verfügbaren Potenzialfläche. Regionen mit mehr geeigneter Fläche tragen mehr.', explain: 'Gleicher Anteil an Potenzialfläche verteilt den Ausbau nach geeigneter Fläche.' }
     ];
     this.CONS = '#2f6690';      // Konsens-Skala (Steel Blue) — getrennt von Prinzip- und Markenfarbe
     this.CONFLICT = '#c2185b';  // Konfliktflächen — eigene, von Prinzipfarben klar unterscheidbare Kodierung
     // Die zwei festen Referenzen im Vergleichs-Hub („Szenarien vergleichen") — immer vorhanden, als A/B wählbar.
     this.hubRefs = [
       { id: 'ref_historisch', name: 'Historischer Ausbau', info: 'So wurde bisher real gebaut — die heutige Verteilung des Bestands, auf dasselbe Ausbauziel skaliert.', field: c => Math.max(0.05, 0.6*c.y + 0.4*c.x + 0.15*c.noise) },
-      { id: 'ref_planung', name: 'Planungsflächen', info: 'Offiziell ausgewiesene Flächen — der Zubau verteilt nach dem ausgewiesenen Flächenanteil je Zelle, auf dasselbe Ausbauziel skaliert.', field: c => c.ausgAnteil }
+      { id: 'ref_planung', name: 'Planungsflächen', info: 'Offiziell ausgewiesene Flächen — der Zubau verteilt nach dem ausgewiesenen Flächenanteil, auf dasselbe Ausbauziel skaliert.', field: c => c.ausgAnteil }
     ];
     this.byId = {};
     this.principles.forEach(p => this.byId[p.id] = p);
@@ -1583,7 +1579,8 @@ class Component extends DCLogic {
   // Regionsansicht rechnet in MW statt GW (Zellwerte sind sonst durchgängig „0,00 GW") — fest nach
   // Modus, nicht adaptiv je Wert. MW folgt einer eigenen, gröberen Rundung (ganze Zahl oder eine
   // Nachkommastelle, kein erzwungenes „,0") statt der GW-Zwei-Nachkommastellen-Regel.
-  fmtMW(n) { const mw = Math.round(n * 1000 * 10) / 10, r = Math.round(mw); return Math.abs(mw - r) < 1e-9 ? String(r) : mw.toFixed(1).replace('.', ','); }
+  // MW immer mit genau einer Nachkommastelle („1,0 MW", nicht „1 MW" neben „0,7 MW")
+  fmtMW(n) { return (Math.round(n * 1000 * 10) / 10).toFixed(1).replace('.', ','); }
   fmtN(n, region) { return region ? this.fmtMW(n) : this.fmt(n); }
   unitFor(region) { return region ? 'MW' : 'GW'; }
   fmtU(n, region) { return this.fmtN(n, region) + ' ' + this.unitFor(region); }
@@ -1969,10 +1966,12 @@ class Component extends DCLogic {
       // Legende: nur Einzelfarben je Prinzip (Kombinationen bleiben auf der Karte, nicht in der Legende)
       R.legendSchnitt = true;
       R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color })).concat([{ label: 'keine Abweichung > 20 %', css: 'background:#e4e8eb' }]);
-      R.schnittColorCaption = 'Farbe = die Verteilung, die hier mehr als 20 % vom Konsens abweicht. Gestreift = mehrere Verteilungen weichen hier ab.';
+      R.schnittColorCaption = 'Farbe = das Prinzip, das hier mehr als 20 % vom Konsens abweicht. Gestreift = mehrere Prinzipien weichen hier ab.';
       // UpSet-Aufschlüsselung (nur Erweitert)
       // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
       if (isExt && stufe >= 3) {
+        const upUnit = isRegion ? 'Rasterzellen' : 'Landkreise';
+        R.upsetUnit = upUnit;
         const combo = {};
         cells.forEach((c,i) => {
           const rec = devBy(i); if (!rec.length) return;
@@ -2001,11 +2000,11 @@ class Component extends DCLogic {
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
         };
         rows.forEach(r => pushCol(
-          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' Zellen · ' + this.fmtU(r.gw, isRegion) + ' Zubaukonsens',
+          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' ' + upUnit + ' · ' + this.fmtU(r.gw, isRegion) + ' Zubaukonsens',
           r.n,
           sel.map(p => 'width:13px;height:13px;border-radius:50%;background:' + (r.rec.indexOf(p) >= 0 ? this.byId[p].color : '#dfe4e7'))
         ));
-        if (restRows.length) pushCol('+ ' + restRows.length + ' weitere Kombinationen · ' + restN + ' Zellen', restN,
+        if (restRows.length) pushCol('+ ' + restRows.length + ' weitere Kombinationen · ' + restN + ' ' + upUnit, restN,
           sel.map(() => 'width:13px;height:13px;border-radius:50%;background:repeating-linear-gradient(45deg,#c3ccd3 0 3px,#e8ecef 3px 6px)'));
         R.upsetItems = items;
         R.upsetRestNote = restRows.length ? 'Letzte Spalte: + ' + restRows.length + ' weitere Kombinationen zusammengefasst.' : '';
@@ -2494,6 +2493,10 @@ class Component extends DCLogic {
       nationalSel: S.selected.filter(avail), regionalSel: sel, tech: S.tech, targetGW: S.targetGW, account: S.account });
     const alreadySaved = (S.scenarios || []).some(sc => scenarioSig(sc) === currentSig);
     R.showSaveScenario = scenarioReady && !alreadySaved;
+    // angeheftete Fußzeile der linken Spalte (negative Ränder: volle Spaltenbreite, über dem scrollenden Inhalt)
+    R.saveFooterStyle = R.showSaveScenario
+      ? 'position:sticky;bottom:0;z-index:3;background:#fff;margin:22px -16px 0;padding:12px 16px 14px;border-top:1px solid #e2e5e8;box-shadow:0 -6px 12px rgba(255,255,255,.9)'
+      : 'height:40px';
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
@@ -2618,7 +2621,7 @@ class Component extends DCLogic {
     // Mode-Transition-Text lebt jetzt im Ladezustand statt als eigenes dauerhaftes Band (§M) — dadurch
     // an den Lade-Moment gebunden (Auto-Berechnung beim Betreten, „Neu berechnen"), nicht als garantierte
     // Einmal-Ankündigung; ok, weil die Scope-Leiste den Landkreis ohnehin dauerhaft nennt.
-    R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die nationale Verteilung bleibt oben als Kontext.') : '';
+    R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die bundesweite Verteilung bleibt oben als Kontext.') : '';
     // Dauer ist unbekannt (kein Prozent-/Countdown, s.o.) — nach kurzer Zeit eine Beruhigungszeile,
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
     R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 5000) ? 'Das kann einen Moment dauern …' : '';
@@ -2666,7 +2669,7 @@ class Component extends DCLogic {
     R.ansichtLabel = isRegion ? S.region.label : 'Deutschland · Landkreise';
     // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
     R.scopeUnit = this.unitFor(isRegion);
-    R.zeroPrefix = isRegion ? '0' : '0,00'; // Nulluntergrenze in Bereichsangaben („0 – X MW" statt „0,00 – X GW")
+    R.zeroPrefix = isRegion ? '0,0' : '0,00'; // Nulluntergrenze in Bereichsangaben, Nachkommastellen wie die Werte (MW eine, GW zwei)
     R.region = !!S.region;
     R.search = S.search;
 
@@ -2889,6 +2892,8 @@ class Component extends DCLogic {
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
           // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
           R.anCombos = S.konfliktMode === 'anders';
+          // gezählt werden Landkreise (Deutschland) bzw. Rasterzellen (Region) — so benennen, nie pauschal „Zellen"
+          R.comboTitle = (isRegion ? 'Rasterzellen' : 'Landkreise') + ' je abweichendem Prinzip (> 20 %)';
           // „Wie stark?": Wo liegt die Abweichung? Satz zur Konzentration + die fünf größten Werte, je mit dem
           // Prinzip, das dort am weitesten vom Konsens abweicht. Abweichung = dissens[i] (wie die Karte).
           if (KONFLIKT_TOPLIST && S.konfliktMode !== 'anders' && dissens) {
@@ -3052,14 +3057,12 @@ class Component extends DCLogic {
         R.dismissConflictHint = () => this.setState({ seenConflictHint: true });
       } else R.cellShowConflictHint = false;
       // erweitert
-      const rankArr = (stufe >= 2 ? consCells : gwSel[singlePid]).map((v,idx)=>({v,idx})).sort((a,b)=>b.v-a.v);
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
       R.goalInfoText = isRegion
-        ? 'Wie viel diese Zelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
-        : 'Wie viel diese Zelle zum Ausbauziel beiträgt — ihr Zubaukonsens geteilt durch das gesamte Ausbauziel.';
+        ? 'Wie viel diese Rasterzelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
+        : (c.kind === 'Stadt' ? 'Wie viel diese Stadt zum Ausbauziel beiträgt — ihr' : 'Wie viel dieser Landkreis zum Ausbauziel beiträgt — sein') + ' Zubaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
-      R.cellPriority = '≈ ' + (2030 + Math.round((rankArr.findIndex(r=>r.idx===i)/N)*15)) + ' (nicht berechnet)';
 
       R.cellConsBox = 'padding:14px;background:#f5f7f7;border-radius:10px;border:1px solid #e2e8e6';
       R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
@@ -3110,11 +3113,8 @@ class Component extends DCLogic {
         const neu = gNeu;
         R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
 
-        const gemAggAll = gemList.map((gg, gi) => { const ws = gemWeights[gi] || []; return ws.reduce((a, w) => a + consCells[w.i] * w.w, 0); });
-        const rankArrG = gemAggAll.map((v, idx) => ({ v, idx })).sort((a, b) => b.v - a.v);
         R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr aggregierter Zubaukonsens geteilt durch das gesamte Regionsbudget.';
-        R.cellPriority = '≈ ' + (2030 + Math.round((rankArrG.findIndex(r => r.idx === selectedGemeindeIdx) / gemList.length) * 15)) + ' (nicht berechnet)';
+        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.';
 
       } else if (stufe === 1) {
         const gRec = gAgg(gwSel[singlePid]);
@@ -3125,7 +3125,6 @@ class Component extends DCLogic {
         R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
         R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
         R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt.';
-        R.cellPriority = '≈ (nicht berechnet)';
       }
     }
 
