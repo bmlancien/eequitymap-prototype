@@ -867,10 +867,13 @@ für 2030 auf."
   stellt Szenario an seiner Position inkl. A/B-Zuordnung wieder her.
 - **Wind/PV:** Hub folgt links, bis der Hub-Umschalter betätigt wird; danach
   Kennzeichnung „Abweichend von links (…)" mit „Wie links" zum Zurücksetzen.
-- **Referenz-Hinweis:** Steht ein Szenario gegen eine Referenz: „Hinweis:
-  [Referenz] verteilt das volle Ausbauziel, das Szenario nur den Konsens
-  darunter — ein Teil der Differenz ist diese Lücke, nicht nur die räumliche
-  Verteilung." (Logik unverändert.)
+- **Referenz-Hinweis:** Steht ein Szenario gegen eine Referenz, mit den
+  tatsächlichen Summen der beiden Seiten: „Die beiden Seiten verteilen
+  unterschiedlich viel: [Referenz] [X] (das ganze Ausbauziel), das Szenario [Y]
+  (nur den Zubaukonsens). Die [X − Y] Unterschied stecken mit in der Karte. Sie
+  zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass [Referenz]
+  mehr verteilt." Entfällt, wenn beide Summen gleich angezeigt würden (Konsens =
+  Ziel). (Logik unverändert.)
 - **Einstieg:** Haupteinstieg ist der Reiter; die Zeile „Gespeicherte Szenarien (N)
   · Vergleichen →" ist nur Shortcut und im Hub ausgeblendet. Leere GW-/MW-Tabellen
   werden nicht gerendert.

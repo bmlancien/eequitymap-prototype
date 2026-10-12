@@ -371,7 +371,6 @@
                       <span style="font-size:14px;color:#5b6672">mehr in B</span>
                       <span style="font-size:14px;color:#9aa4ad">· Mitte = gleich</span>
                     </div>
-                    <div style="font-size:14px;color:#33413c;margin-top:8px">{{ scenDiffSummary }}</div>
                     <sc-if value="{{ hubRefGapNote }}" hint-placeholder-val="{{ false }}">
                       <div style="font-size:14px;color:#5b6672;background:#f4f6f7;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
                     </sc-if>
@@ -1966,13 +1965,16 @@ class Component extends DCLogic {
         R.scenDiffMax = this.fmtU(mxa, lvlRegion);
         R.scenDiffScope = lvlLabel + (lvlRegion ? ' · je 5 × 5-km-Zelle' : ' · je Landkreis');
         const sumA = va.reduce((x, y) => x + y, 0), sumB = vb.reduce((x, y) => x + y, 0);
-        const what = o => o.isRef ? o.name : 'Zubaukonsens';
-        R.scenDiffSummary = 'Gesamt: A (' + what(A) + ') ' + this.fmtU(sumA, lvlRegion) + ' · B (' + what(B) + ') ' + this.fmtU(sumB, lvlRegion) + ' · Differenz A − B ' + (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
         R.hubSumDiff = (sumA - sumB >= 0 ? '+' : '−') + this.fmtU(Math.abs(sumA - sumB), lvlRegion);
         // Referenz verteilt das volle Ziel, das Szenario nur den Konsens darunter — nur Hinweis, Logik bleibt
         const refSide = [A, B].find(o => o.isRef);
         if (refSide && scenSide.length === 1) {
-          R.hubRefGapNote = 'Hinweis: ' + refSide.name + ' verteilt das volle Ausbauziel, das Szenario nur den Konsens darunter — ein Teil der Differenz ist diese Lücke, nicht nur die räumliche Verteilung.';
+          const refSum = refSide === A ? sumA : sumB, scenSum = refSide === A ? sumB : sumA;
+          const refTxt = this.fmtU(refSum, lvlRegion), scenTxt = this.fmtU(scenSum, lvlRegion);
+          // ohne sichtbare Lücke (Konsens = Ziel) gibt es nichts zu erklären
+          if (refSum > scenSum && refTxt !== scenTxt) {
+            R.hubRefGapNote = 'Die beiden Seiten verteilen unterschiedlich viel: ' + refSide.name + ' ' + refTxt + ' (das ganze Ausbauziel), das Szenario ' + scenTxt + ' (nur den Zubaukonsens). Die ' + this.fmtU(refSum - scenSum, lvlRegion) + ' Unterschied stecken mit in der Karte. Sie zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass ' + refSide.name + ' mehr verteilt.';
+          }
         }
         // Konsens vs. Planung: Szenario gegen „Planungsflächen" → die zwei Deckungs-Kennzahlen (gleiche Logik
         // wie die frühere Planungsansicht, aus dem gespeicherten Zubaukonsens + Konfliktflächen des Szenarios)
