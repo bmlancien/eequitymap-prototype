@@ -133,6 +133,31 @@ Paar erkennbar.
 
 **Kein UpSet-Diagramm** (verworfen, s. H).
 
+> **Neu gefasst (Session 2026-10-12):** Die Caption unter der Tab-Reihe sagt in
+> ganzen Sätzen, was der Reiter zeigt — **keine Farblegende in Worten** („Dunkel
+> = …", „Farbe = …"); die Farblegende steht unter der Karte. Aktuelle Texte:
+> - Konsens: „Die Karte zeigt, wo alle gewählten Prinzipien denselben Zubau
+>   mittragen."
+> - Was begrenzt?: „Der Konsens ist überall nur so groß wie das Prinzip, das
+>   dort am wenigsten vorsieht. Ohne dieses Prinzip wäre an der Stelle mehr
+>   Konsens möglich."
+> - Konfliktflächen · Dissens: „Hier sind sich die gewählten Prinzipien am
+>   wenigsten einig: Mindestens eines sieht deutlich mehr Zubau vor, als der
+>   Konsens trägt."
+> - Konfliktflächen · Wer denkt anders?: „Hier sehen Sie, welches Prinzip an
+>   einer Stelle deutlich mehr Zubau vorsieht, als der Konsens trägt (über
+>   20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen."
+> - Einzelverteilungen: „Jede Karte zeigt ein Prinzip für sich, ohne Abgleich
+>   mit den anderen." (ohne Auswahl zusätzlich: „Wählen Sie links ein Prinzip.")
+> - Einzelansicht eines Prinzips: dessen Erklärsatz ohne Legenden-Nachsatz, z. B.
+>   „Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird."
+> - Szenarien vergleichen: „Wählen Sie zwei Szenarien oder Referenzen als A und
+>   B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht; die Tabellen stellen
+>   die gespeicherten Szenarien je Ebene gegenüber."
+>
+> Die folgende Liste ist der frühere Stand (Legenden-Formulierungen) und gilt
+> nicht mehr.
+
 **Dauerhafte Caption je Tab** (unter der Tab-Reihe, kein Tooltip, ≥ 14 px):
 - Zubaukonsens: „Dunkel = viel Zubau, den alle gewählten Prinzipien mittragen."
 - Was begrenzt?: „Farbe = das Prinzip, das hier den Konsens begrenzt."
@@ -429,7 +454,8 @@ nicht über die volle Breite laufen lassen.
   beim ersten Klick auf eine Konfliktzelle (wirkt am stärksten, wenn sie gerade
   zutrifft).
 - **Dauerhafte Erklärzeile je Tab** direkt unter der Tab-Reihe (kein Tooltip),
-  die sagt, was die Farbe bedeutet.
+  die sagt, was der Reiter zeigt (seit Session 2026-10-12 nicht mehr, was die
+  Farbe bedeutet — s. C).
 - Headline über der Karte ändert sich mit jedem Tab.
 - „So-what"-Zeile in der Deutschland-Übersicht: „Je höher dieser Anteil, desto
   robuster lässt sich das Ziel über die Prinzipien hinweg erreichen."
@@ -437,7 +463,8 @@ nicht über die volle Breite laufen lassen.
   vorausgesetzt).
 - Unterzeile der Prinzipienliste: „Kein Prinzip ist objektiv richtig …".
 - Dauerhinweis „Konsens = robust, nicht automatisch genehmigungsfähig." bleibt
-  immer sichtbar.
+  immer sichtbar. Ort seit Session 2026-10-12: unter der Karte, direkt über der
+  Farblegende (zuvor unter der Tab-Reihe, wo er wie die Tab-Caption wirkte).
 - Einzelansichten sind dauerhaft als solche markiert („Einzelverteilung eines
   Prinzips — nicht der Konsens"), damit kein Einzelprinzip- oder Einzelzell-Blick
   mit der Aussage des Werkzeugs verwechselt wird.

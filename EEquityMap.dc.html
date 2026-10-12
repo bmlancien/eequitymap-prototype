@@ -231,8 +231,8 @@
         </div>
       </sc-if>
 
-      <!-- Dauerhafte graue Erklärzeile je Tab/Karte direkt unter der Tab-Reihe (nicht flow-/bannerabhängig)
-           + Konsens-Disclaimer, der früher am Seitenende stand. -->
+      <!-- Dauerhafte Erklärzeile je Tab direkt unter der Tab-Reihe (nicht flow-/bannerabhängig): sagt, was der
+           Reiter zeigt — keine Farblegende in Worten, die steht unter der Karte. -->
       <div style="flex:none;margin:0 2px 10px">
         <sc-if value="{{ showKonfliktToggle }}" hint-placeholder-val="{{ false }}">
           <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin:8px 0 4px">
@@ -240,8 +240,8 @@
             <button onClick="{{ setKonfliktAnders }}" style="{{ konfliktAndersStyle }}">Wer denkt anders?</button>
           </div>
         </sc-if>
-        <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:14px;color:#9aa4ad;line-height:1.45;margin-top:2px">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+        <sc-if value="{{ explainLine }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#5b6672;line-height:1.45;margin-top:2px;text-wrap:pretty">{{ explainLine }}</div>
         </sc-if>
       </div>
 
@@ -520,11 +520,9 @@
 
       <!-- UNDER CARD -->
       <div style="flex:none;margin-top:10px">
-        <!-- Kartenlegende in Worten (z. B. „Dunkel = viel Zubau …"), direkt unter der Karte -->
-        <sc-if value="{{ explainLine }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:14px;color:#5b6672;margin:0 0 6px;line-height:1.4;display:flex;align-items:center;gap:8px">
-            <span style="width:6px;height:6px;border-radius:50%;background:#57c4ab;flex:none"></span>{{ explainLine }}
-          </div>
+        <!-- Konsens-Disclaimer (Dauerhinweis), direkt unter der Karte über der Farblegende -->
+        <sc-if value="{{ showKonsensDisclaimer }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#9aa4ad;margin:0 0 6px;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </sc-if>
         <!-- Legend + plan toggle -->
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;min-height:34px">
@@ -2202,21 +2200,20 @@ class Component extends DCLogic {
     }
     if (R.mainCells) R.mainCells = R.mainCells.map(c => c.pe ? c : Object.assign({}, c, { pe: 'auto' }));
 
-    // Was zeigt diese Ansicht? — dauerhaft unter der Tab-Reihe.
+    // Was zeigt dieser Reiter? — dauerhaft unter der Tab-Reihe. Ganze Sätze zur Bedeutung der Ansicht, bewusst
+    // keine Farblegende in Worten („Dunkel = …", „Farbe = …"): die Legende steht unter der Karte.
     R.tabExplain = ({
       regionGate: '',
-      single: (this.byId[singlePid].explain || 'Dunkel = viel empfohlener Zubau nach diesem Prinzip.'),
-      konsens: 'Dunkel = viel Zubau, den alle gewählten Prinzipien mittragen.',
+      // Prinzip-Erklärtext ohne den Legenden-Nachsatz („— dunkle Zellen bekommen mehr.")
+      single: this.byId[singlePid].explain ? this.byId[singlePid].explain.split(' — ')[0].replace(/\.?$/, '.') : 'Die Karte zeigt die Verteilung nach diesem einen Prinzip.',
+      konsens: 'Die Karte zeigt, wo alle gewählten Prinzipien denselben Zubau mittragen.',
       konflikt: S.konfliktMode === 'anders'
-        ? 'Farbe = die Verteilung, die hier stark vom Konsens abweicht (> 20 %). Zeigt, welche Verteilungen mehr Konsens ermöglichen würden.'
-        : 'Dunkel = große Abweichung vom Konsens. Zeigt, wo — und durch welche Verteilungen — mehr Konsens möglich wäre.',
-      minimum: 'Farbe = das Prinzip, das hier den Konsens begrenzt.',
-      verteilungen: isEmpty ? 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau. Wählen Sie links ein Prinzip.' : 'Je eine Karte pro Prinzip — so unterschiedlich verteilt jedes den Ausbau.',
-      positiv: 'Wo Ausweisung und Konsens zusammengehen und wo nicht. Mitte = deckt sich.',
-      differenz: 'Vergleich: der Konsens gegenüber der gewählten Verteilung. Grün = mehr Konsens, Braun = mehr bei der Vergleichsverteilung.',
-      szenarien: 'Karte: Differenz A − B — Szenario oder Referenz, auf derselben Ebene. Tabellen: gespeicherte Szenarien je Ebene.'
+        ? 'Hier sehen Sie, welches Prinzip an einer Stelle deutlich mehr Zubau vorsieht, als der Konsens trägt (über 20 %). Dort würde eine andere Auswahl mehr Konsens ermöglichen.'
+        : 'Hier sind sich die gewählten Prinzipien am wenigsten einig: Mindestens eines sieht deutlich mehr Zubau vor, als der Konsens trägt.',
+      minimum: 'Der Konsens ist überall nur so groß wie das Prinzip, das dort am wenigsten vorsieht. Ohne dieses Prinzip wäre an der Stelle mehr Konsens möglich.',
+      verteilungen: 'Jede Karte zeigt ein Prinzip für sich, ohne Abgleich mit den anderen.' + (isEmpty ? ' Wählen Sie links ein Prinzip.' : ''),
+      szenarien: 'Wählen Sie zwei Szenarien oder Referenzen als A und B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht; die Tabellen stellen die gespeicherten Szenarien je Ebene gegenüber.'
     })[view] || '';
-    // Kurze Erklärzeile je Ansicht steht unter der Karte (direkt über der Farb-Legende), nicht unter den Reitern.
     R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
     R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && stufe >= 2;
     R.currentView = view;
