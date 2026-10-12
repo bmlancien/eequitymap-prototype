@@ -301,23 +301,24 @@
              Wechseln = Slot erneut anklicken. Darunter Differenzkarte, dann die Tabellen je Ebene als
              Gesamtübersicht aller gespeicherten Szenarien. -->
         <sc-if value="{{ isSzenarien }}" hint-placeholder-val="{{ false }}">
-          <!-- Über der Hub-Box: Wind-/PV-Umschalter mittig (gilt für Box UND Tabellen darunter),
-               „Vergleich teilen" rechtsbündig. -->
+          <!-- Über der Hub-Box: Wind-/PV-Umschalter mittig (gilt für Box UND Tabellen darunter).
+               „Vergleich teilen" steht in der Box „Vergleich A − B", oben rechts. -->
           <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:8px">
             <div></div>
             <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
               <button onClick="{{ setHubWind }}" style="{{ hubWindStyle }}">Wind</button>
               <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
             </div>
-            <div style="display:flex;justify-content:flex-end">
+            <div></div>
+          </div>
+          <div style="{{ hubStyle }}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Vergleich A − B</div>
               <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
                 Vergleich teilen
               </button>
             </div>
-          </div>
-          <div style="{{ hubStyle }}">
-            <div style="font-size:15px;font-weight:600;color:#1b2126">Vergleich A − B</div>
 
             <div style="display:flex;flex-direction:column;gap:10px">
               <!-- Erklärzeile des Reiters: über der A/B-Auswahl im Hub (nicht unter der Tab-Reihe) -->
@@ -348,6 +349,12 @@
                               <div style="{{ it.rowStyle }}">
                                 <span onClick="{{ it.onPick }}" style="{{ it.pickStyle }}">
                                   <span style="{{ it.markStyle }}"></span>
+                                  <!-- Szenarien: ein Farbpunkt je Prinzip — unterscheidet gleich lautende Namen („4 Prinzipien …") -->
+                                  <span style="{{ it.dotsStyle }}">
+                                    <sc-for list="{{ it.dots }}" as="dd" hint-placeholder-count="2">
+                                      <span style="flex:none;width:9px;height:9px;border-radius:3px;background:{{ dd.color }}"></span>
+                                    </sc-for>
+                                  </span>
                                   <span title="{{ it.name }}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.name }}</span>
                                   <span style="{{ it.tagStyle }}">{{ it.tag }}</span>
                                 </span>
@@ -427,37 +434,49 @@
           <sc-if value="{{ showHubTables }}" hint-placeholder-val="{{ false }}">
             <div style="{{ hubTablesStyle }}">
               <div style="font-size:15px;font-weight:600;color:#1b2126">Gespeicherte Szenarien</div>
-              <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Die Tabellen stellen die gespeicherten Szenarien je Ebene gegenüber.</div>
-              <sc-for list="{{ hubTables }}" as="tbl" hint-placeholder-count="1">
-                <div>
-                  <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ tbl.title }}</div>
-                  <div class="scroll" style="flex:none;overflow-x:auto;border:1px solid #e2e5e8;border-radius:10px;background:#fff">
-                    <div style="display:flex;min-width:max-content">
-                      <div style="position:sticky;left:0;z-index:2;flex:none;width:190px;background:#fff;border-right:1px solid #e2e5e8">
-                        <div style="height:78px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;background:#f7f8f9;border-bottom:1px solid #e2e5e8">Kennzahl</div>
-                        <sc-for list="{{ tbl.rowLabels }}" as="rl" hint-placeholder-count="6">
-                          <div style="{{ rl.style }}">{{ rl.label }}</div>
+              <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Regionen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
+              <!-- Zwei Gruppen: Deutschland (GW) und Regionen (MW) — getrennte Tabellen, gleiche Spalten und Sortierung -->
+              <sc-for list="{{ hubRowGroups }}" as="hg" hint-placeholder-count="1">
+              <div>
+              <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ hg.title }}</div>
+              <div style="border:1px solid #e2e5e8;border-radius:10px;background:#fff;overflow:hidden">
+                <div style="{{ hubHeadStyle }}">
+                  <sc-for list="{{ hubHeadCells }}" as="hh" hint-placeholder-count="7">
+                    <span onClick="{{ hh.onClick }}" style="{{ hh.style }}">{{ hh.label }}</span>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ hg.rows }}" as="hr" hint-placeholder-count="3">
+                  <div style="{{ hr.rowStyle }}">
+                    <!-- Zelle immer vorhanden (auch ohne A/B), sonst verrutschen die Spalten -->
+                    <span style="display:flex;align-items:center;justify-content:center"><span style="{{ hr.pairTagStyle }}">{{ hr.pairTag }}</span></span>
+                    <div style="min-width:0">
+                      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+                        <span style="display:flex;align-items:center;gap:2px;flex:none">
+                          <sc-for list="{{ hr.dots }}" as="dd" hint-placeholder-count="2">
+                            <span style="flex:none;width:10px;height:10px;border-radius:3px;background:{{ dd.color }}"></span>
+                          </sc-for>
+                        </span>
+                        <span title="{{ hr.name }}" style="font-weight:600;color:#1b2126;line-height:1.3">{{ hr.name }}</span>
+                      </div>
+                      <div style="{{ hr.subStyle }}">
+                        <span>{{ hr.level }}</span><span>{{ hr.natLabel }}</span>
+                        <sc-for list="{{ hr.natDots }}" as="nd" hint-placeholder-count="0">
+                          <span style="flex:none;width:8px;height:8px;border-radius:2px;background:{{ nd.color }}"></span>
                         </sc-for>
                       </div>
-                      <!-- Spaltenkopf = Verwaltung je Szenario: „Wiederherstellen" (lädt Config + Karte) und × (löschen) -->
-                      <sc-for list="{{ tbl.cols }}" as="csc" hint-placeholder-count="2">
-                        <div style="flex:none;width:220px;border-right:1px solid #eef1f2">
-                          <div style="height:78px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;background:#f7f8f9;border-bottom:1px solid #e2e5e8">
-                            <div style="display:flex;align-items:center;gap:8px">
-                              <span style="{{ csc.pairTagStyle }}">{{ csc.pairTag }}</span>
-                              <span title="{{ csc.name }}" style="font-size:14px;font-weight:600;color:#1b2126;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ csc.name }}</span>
-                              <span onClick="{{ csc.onRemove }}" title="Szenario löschen" style="cursor:pointer;color:#6b7680;font-size:15px;line-height:1;padding:2px;flex:none">×</span>
-                            </div>
-                            <span onClick="{{ csc.onRestore }}" style="font-size:14px;color:#1f2a33;font-weight:600;cursor:pointer">Wiederherstellen</span>
-                          </div>
-                          <sc-for list="{{ csc.cells }}" as="cell" hint-placeholder-count="6">
-                            <div style="{{ cell.style }}">{{ cell.value }}</div>
-                          </sc-for>
-                        </div>
-                      </sc-for>
                     </div>
+                    <span style="{{ hr.numStyle }}">{{ hr.target }}</span>
+                    <span style="{{ hr.numStyle }}">{{ hr.cons }}</span>
+                    <span style="{{ hr.numStyle }}">{{ hr.pct }}</span>
+                    <span style="color:#1b2126;line-height:1.3">{{ hr.lim }}</span>
+                    <span style="display:flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap">
+                      <span onClick="{{ hr.onRestore }}" title="Diese Konfiguration links wiederherstellen" style="color:#1f2a33;font-weight:600;cursor:pointer">Laden</span>
+                      <span onClick="{{ hr.onRemove }}" title="Szenario löschen" style="cursor:pointer;color:#6b7680;font-size:16px;line-height:1;padding:2px">×</span>
+                    </span>
                   </div>
-                </div>
+                </sc-for>
+              </div>
+              </div>
               </sc-for>
             </div>
           </sc-if>
@@ -1218,6 +1237,7 @@ class Component extends DCLogic {
     hubMenu: null,      // offenes A/B-Dropdown im Hub (0 = A, 1 = B)
     hoverDiss: null,    // Konfliktflächen · „Wie stark?": in „Größte Abweichungen" überfahrene Zelle (id)
     hoverCombo: null,   // Konfliktflächen · „Wer denkt anders?": in der Liste rechts überfahrene Kombination
+    hubSort: null,      // Sortierung der Szenarien-Tabelle im Hub: { k: Spalte, d: 1 | -1 } oder null (Speicherreihenfolge)
     hubCell: null,      // auf der Differenzkarte gewählte Zelle: { lvl: 'de' | 'r:<krsId>', i }
     undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
     undoShow: false,
@@ -2086,7 +2106,7 @@ class Component extends DCLogic {
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
     R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.showHubGemToggle = false; R.scenDiffGemNote = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
-    R.hubSlots = []; R.hubTables = []; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
+    R.hubSlots = []; R.hubTables = []; R.hubRows = []; R.hubRowGroups = []; R.hubHeadCells = []; R.hubHeadStyle = ''; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
       const hubTech = S.tech;
@@ -2102,7 +2122,8 @@ class Component extends DCLogic {
       }
       pair = [0, 1].map(k => (pair[k] && objById[pair[k]]) ? pair[k] : null);
       const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubTech]: np }), hubMenu: null });
-      const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#0f6b5c' : '#8a5a12') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
+      // A/B-Kennzeichen neutral (dunkles bzw. mittleres Grau) — nicht in den Farben der Differenzkarte
+      const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#34424f' : '#8a94a0') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
 
       // Objekte gruppiert wie bisher: Referenzen · Deutschland · je Landkreis (Reihenfolge des ersten Speicherns)
       const deScen = hubScen.filter(sc => !sc.isRegion);
@@ -2114,6 +2135,8 @@ class Component extends DCLogic {
 
       // A und B sind selbst Auswahl-Picker: Klick auf den Slot öffnet das Dropdown, Auswahl füllt genau diesen
       // Slot; Wechseln = Slot erneut anklicken. Ein Objekt im anderen Slot ist deaktiviert und markiert.
+      // Farbpunkte der Prinzipien eines Szenarios (Dropdowns und Tabelle)
+      const dotsOf = ids => (ids || []).map(id => ({ color: this.byId[id] ? this.byId[id].color : '#c4c9cd' }));
       const openMenu = S.hubMenu === 0 || S.hubMenu === 1 ? S.hubMenu : null;
       const menuGroups = k => {
         const other = pair[1 - k];
@@ -2125,7 +2148,9 @@ class Component extends DCLogic {
             tag: inOther ? ('bereits in ' + (k === 0 ? 'B' : 'A')) : (isHere ? 'gewählt' : ''),
             tagStyle: (inOther || isHere) ? 'flex:none;font-size:12px;color:' + (isHere ? '#1f2a33' : '#6b7680') + ';margin-left:auto;padding-left:8px' : 'display:none',
             // Referenzen abgesetzt: gestrichelter Rahmen am Kennzeichen, Szenarien voll
-            markStyle: 'flex:none;width:10px;height:10px;border-radius:3px;' + (o.isRef ? 'border:1.5px dashed #7a848c;background:#f4f5f6' : 'background:' + (o.isRegion ? '#8a94a0' : '#1f2a33')),
+            markStyle: o.isRef ? 'flex:none;width:10px;height:10px;border-radius:3px;border:1.5px dashed #7a848c;background:#f4f5f6' : 'display:none',
+            dots: o.isRef ? [] : dotsOf(o.regionalSel),
+            dotsStyle: o.isRef ? 'display:none' : 'flex:none;display:flex;align-items:center;gap:2px;width:64px',
             rowStyle: 'display:flex;align-items:center;gap:6px;padding:0 8px 0 0;background:' + (isHere ? '#f1f3f4' : 'transparent'),
             pickStyle: 'flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 4px 7px 12px;font-size:14px;'
               + (inOther ? 'color:#6b7680;cursor:not-allowed' : 'color:#1b2126;cursor:pointer'),
@@ -2341,36 +2366,51 @@ class Component extends DCLogic {
       });
       R.hubSumCards.forEach(c => { c.rows = (c.rows || []).map(hubRowNorm); });
 
-      // Tabellen je Ebene — Region-Szenarien mit zwei Prinzipien-Zeilen (DE + regional), DE mit einer
-      const CMP_ROW_H = 40;
-      const cmpRowStyle = (numeric, isLast) => 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isLast ? '' : 'border-bottom:1px solid #eef1f2;') + (numeric ? "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;" : 'color:#1b2126;');
-      const names = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
-      R.hubTables = levelGroups.map(g => {
-        const rowDefs = (g.isRegion
-          ? [{ label: 'Prinzipien bundesweit', numeric: false, get: sc => names(sc.nationalSel) }, { label: 'Prinzipien regional', numeric: false, get: sc => names(sc.regionalSel) }]
-          : [{ label: 'Prinzipien', numeric: false, get: sc => names(sc.regionalSel) }]
-        ).concat([
-          { label: 'Ausbauziel', numeric: true, get: sc => this.fmtU(sc.target, sc.isRegion) },
-          { label: 'Zubaukonsens', numeric: true, get: sc => this.fmtU(sc.consensusTotal, sc.isRegion) },
-          { label: '% im Konsens', numeric: true, get: sc => sc.target ? this.pct(sc.consensusTotal / sc.target) : '—' },
-          { label: 'Begrenzendes Prinzip', numeric: false, get: sc => sc.limitingName || '—' }
-        ]);
+      // Tabelle „Gespeicherte Szenarien": EINE Zeile je Szenario, eine Kennzahl je Spalte (vorher eine Spalte je
+      // Szenario — das lief ab ~5 Szenarien seitlich aus dem Bild). Alle Ebenen in einer Tabelle; die Ebene steht
+      // unter dem Namen. Spaltenkopf anklicken sortiert (zweiter Klick dreht um, dritter stellt die
+      // Speicherreihenfolge wieder her). Werte intern in GW, deshalb über Ebenen hinweg vergleichbar.
+      const HUB_COLS = '22px minmax(0,1fr) 88px 98px 78px minmax(0,118px) 58px';
+      const sortDefs = [
+        { k: 'name', label: 'Szenario', align: 'left', val: sc => sc.name.toLowerCase() },
+        { k: 'target', label: 'Ausbauziel', align: 'right', val: sc => sc.target },
+        { k: 'cons', label: 'Zubaukonsens', align: 'right', val: sc => sc.consensusTotal },
+        { k: 'pct', label: '% Konsens', align: 'right', val: sc => sc.target ? sc.consensusTotal / sc.target : 0 },
+        { k: 'lim', label: 'Begrenzend', align: 'left', val: sc => (sc.limitingName || '').toLowerCase() }
+      ];
+      const hs = S.hubSort && sortDefs.some(d => d.k === S.hubSort.k) ? S.hubSort : null;
+      R.hubHeadStyle = 'display:grid;grid-template-columns:' + HUB_COLS + ';gap:10px;align-items:end;padding:8px 12px;border-bottom:1px solid #e2e5e8;background:#f7f8f9;font-size:14px;color:#5b6672;font-weight:600';
+      R.hubHeadCells = [{ label: '', style: '', onClick: () => {} }].concat(sortDefs.map(d => ({
+        label: d.label + (hs && hs.k === d.k ? (hs.d > 0 ? ' ▲' : ' ▼') : ''),
+        style: 'cursor:pointer;white-space:nowrap;text-align:' + d.align + ';color:' + (hs && hs.k === d.k ? '#1b2126' : '#5b6672'),
+        onClick: () => this.setState({ hubSort: !hs || hs.k !== d.k ? { k: d.k, d: 1 } : (hs.d > 0 ? { k: d.k, d: -1 } : null) })
+      }))).concat([{ label: '', style: '', onClick: () => {} }]);
+      let sortedScen = hubScen.slice();
+      if (hs) { const def = sortDefs.find(d => d.k === hs.k); sortedScen.sort((x, y) => { const a = def.val(x), b = def.val(y); return (a < b ? -1 : a > b ? 1 : 0) * hs.d; }); }
+      const numCell = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;text-align:right;white-space:nowrap";
+      const mkRows = list => list.map((sc, ix) => {
+        const pi = pair.indexOf(sc.id);
         return {
-          title: g.label + (g.isRegion ? ' · MW' : ' · GW'),
-          rowLabels: rowDefs.map((rd, i) => ({
-            label: rd.label,
-            style: 'height:' + CMP_ROW_H + 'px;box-sizing:border-box;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#5b6672;font-weight:600;white-space:nowrap;' + (i === rowDefs.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;')
-          })),
-          cols: g.list.map(sc => ({
-            name: sc.name,
-            onRemove: () => this.deleteScenario(sc.id),
-            onRestore: () => this.restoreScenario(sc),
-            pairTag: pair.indexOf(sc.id) === 0 ? 'A' : pair.indexOf(sc.id) === 1 ? 'B' : '',
-            pairTagStyle: pair.indexOf(sc.id) >= 0 ? badgeCss(pair.indexOf(sc.id)) : 'display:none',
-            cells: rowDefs.map((rd, i) => ({ value: rd.get(sc), style: cmpRowStyle(rd.numeric, i === rowDefs.length - 1) }))
-          }))
+          rowStyle: 'display:grid;grid-template-columns:' + HUB_COLS + ';gap:10px;align-items:center;padding:9px 12px;font-size:14px;' + (ix === list.length - 1 ? '' : 'border-bottom:1px solid #eef1f2;') + 'background:' + (pi >= 0 ? '#f7f8f9' : '#fff'),
+          pairTag: pi === 0 ? 'A' : pi === 1 ? 'B' : '', pairTagStyle: pi >= 0 ? badgeCss(pi) : 'display:none',
+          name: sc.name, dots: dotsOf(sc.regionalSel),
+          // zweite Zeile: Ebene; bei Regionsszenarien zusätzlich die bundesweiten Prinzipien als Punkte
+          level: sc.isRegion ? sc.regionLabel : '',
+          natLabel: sc.isRegion ? '· bundesweit' : '', natDots: sc.isRegion ? dotsOf(sc.nationalSel) : [],
+          subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6b7680;margin-top:2px;line-height:1.3' : 'display:none',
+          target: this.fmtU(sc.target, sc.isRegion), cons: this.fmtU(sc.consensusTotal, sc.isRegion),
+          pct: sc.target ? this.pct(sc.consensusTotal / sc.target) : '—', lim: sc.limitingName || '—', numStyle: numCell,
+          onRemove: () => this.deleteScenario(sc.id), onRestore: () => this.restoreScenario(sc)
         };
       });
+      // Deutschland (GW) und Regionen (MW) getrennt: unterschiedliche Größenordnung, nicht direkt vergleichbar.
+      // Alle Landkreise stehen zusammen in „Regionen"; der Landkreis steht in der zweiten Zeile des Namens.
+      R.hubRowGroups = [
+        { title: 'Deutschland · GW', rows: mkRows(sortedScen.filter(sc => !sc.isRegion)) },
+        { title: 'Regionen · MW', rows: mkRows(sortedScen.filter(sc => sc.isRegion)) }
+      ].filter(g => g.rows.length);
+      R.hubRows = sortedScen;
+      R.hubTables = R.hubRows;   // showHubTables prüft nur, ob es Zeilen gibt
 
       // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
       // Hub-Umschalter und Umschalter links sind gekoppelt: beide setzen dieselbe Technologie (kein Abweichen)

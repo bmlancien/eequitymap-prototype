@@ -746,6 +746,10 @@ für Score, Häkchen/Begrenzer, Kartenfarbe und Blocker-Auswertung.
 - **Unverändert:** Wind/PV-Farben (blau/gelb) der Technologie-Markierung, die
   Farben der Differenzkarte (A grünblau, B braun), die braune Skala der
   Abweichungskarte.
+- **A/B-Kennzeichen neutral:** Die runden Marken „A" und „B" sind dunkelgrau
+  (`#34424f`) bzw. mittelgrau (`#8a94a0`), nicht mehr grünblau/braun. Welche
+  Kartenfarbe zu welcher Seite gehört, sagt die Legende („mehr in A" / „mehr
+  in B") an den Enden des Farbverlaufs.
 
 ---
 
@@ -1179,6 +1183,30 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   - *Beschriftung:* „Prinzipien bundesweit" statt „Prinzipien DE" — in den
     Karten A/B und in den Tabellen (Regel „bundesweit", s. B). Ältere Stellen
     in diesem Dokument, die „Prinzipien DE" nennen, meinen dieselbe Zeile.
+- **Viele Szenarien: Tabelle gedreht, Prinzipien als Farbpunkte** (Session
+  2026-10-12). Mit elf gespeicherten Szenarien war die alte Tabelle (eine
+  Spalte je Szenario, 220 px) rund 2600 px breit, und jeder Landkreis bekam
+  eine eigene Tabelle.
+  - *Eine Zeile je Szenario, zwei Tabellen.* Spalten: A/B-Kennzeichen ·
+    Szenario · Ausbauziel · Zubaukonsens · % Konsens · Begrenzend · „Laden" und
+    ×. Kein seitliches Scrollen mehr. Getrennt in **„Deutschland · GW"** und
+    **„Regionen · MW"** (unterschiedliche Größenordnung); alle Landkreise
+    stehen zusammen in „Regionen", nicht mehr je Landkreis eine Tabelle. Eine
+    Gruppe ohne Szenarien erscheint nicht. Die früheren Zeilen „Prinzipien
+    bundesweit / regional" sind durch die Farbpunkte **abgelöst**.
+  - *Farbpunkte:* Über dem Namen steht je gewähltem Prinzip ein Farbpunkt — so
+    lassen sich gleich lautende Namen („4 Prinzipien · Deutschland · 2035")
+    unterscheiden. Regionsszenarien zeigen in einer zweiten Zeile den Landkreis
+    und die bundesweiten Prinzipien als kleinere Punkte.
+  - *Sortieren:* Klick auf einen Spaltenkopf sortiert aufsteigend, der zweite
+    absteigend, der dritte stellt die Speicherreihenfolge wieder her. Werte
+    werden intern in GW verglichen, also auch über Ebenen hinweg.
+  - *„Laden"* ersetzt das Wort „Wiederherstellen" (gleiche Funktion: lädt die
+    Konfiguration links), × löscht.
+  - *A/B-Dropdowns:* Jeder Szenario-Eintrag trägt dieselben Farbpunkte vor dem
+    Namen; Referenzen behalten ihr gestricheltes Kennzeichen.
+  - *Noch offen:* Umbenennen nach dem Speichern; Suchfeld im Dropdown ab etwa
+    zehn Einträgen; Szenarien gehen beim Neuladen verloren.
 - **Differenzen ohne Vorzeichen** (Session 2026-10-12): Im Hub steht keine
   Differenz mit „+" oder „−". Die Richtung ist ausgeschrieben: Betrag + „mehr in
   A" / „mehr in B" / „gleich viel in A und B" — in der Karte zur gewählten
@@ -1321,8 +1349,9 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   Datenquellen und Stand je Prinzip, die genaue Definition jedes Prinzips,
   Herkunft der Ausbauziele, Ansprechperson — und den Prototyp-Hinweis entfernen.
 - **Hub-Aufbau (Session 2026-10-12):** In der Zeile über der Hub-Box steht der
-  Wind-/PV-Umschalter mittig (er gilt für Box und Tabellen), „Vergleich teilen"
-  rechts. Die farbige Box „Vergleich A − B" enthält Erklärzeile, A/B-Boxen und
+  Wind-/PV-Umschalter mittig (er gilt für Box und Tabellen). „Vergleich teilen"
+  steht **in** der Box „Vergleich A − B", oben rechts neben dem Titel (zuvor
+  rechts in der Zeile darüber) — es teilt genau diesen Vergleich. Die farbige Box „Vergleich A − B" enthält Erklärzeile, A/B-Boxen und
   Differenzkarte. Die Tabellen je Ebene stehen **unter** der Box in einer
   eigenen Box gleicher Technologiefarbe („Gespeicherte Szenarien", mit der
   Erklärzeile „Die Tabellen stellen die gespeicherten Szenarien je Ebene
