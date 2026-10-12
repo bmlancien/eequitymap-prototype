@@ -244,7 +244,9 @@ fehlender Fakt, keine Hervorhebung.
 Prinzip-Aufschlüsselung getrennt) und teilen sich **einen** Balken: der volle
 Balken = Neuzubau, der gefüllte/kräftige Abschnitt = Zubaukonsens, der blasse
 Rest = nicht von allen Prinzipien mitgetragener Anteil. Caption: „Zubaukonsens =
-der Anteil des Neuzubaus, den alle gewählten Prinzipien mittragen." Der blasse
+der Anteil des Neuzubaus, den alle gewählten Prinzipien mittragen." (Seit Session
+2026-10-12 hinter einem „i" neben dem Label „Zubaukonsens" im Zelldetail — zu,
+bis angeklickt.) Der blasse
 Rest darf NICHT wie Konflikt aussehen (keine Rosa-Codierung). Bei einem einzelnen
 Prinzip sind beide Werte identisch — dann keine Verschachtelung, nur ein Wert.
 Grund: die zwei Zahlen (1,60 vs. 1,70 im Beispiel) sind korrekt und

@@ -811,11 +811,15 @@
 
           <!-- Hauptzahl: Zubau bzw. Zubaukonsens (ZUBAU_AS_HERO); sonst Ausbau gesamt (= Bestand + Neuzubau) -->
           <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
-            <div style="font-size:14px;color:#5b6672">{{ cellHeroLabel }}</div>
+            <!-- „i" neben „Zubaukonsens" klappt die Definition auf (nur ab zwei Prinzipien) -->
+            <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
+              <span>{{ cellHeroLabel }}</span>
+              <span onClick="{{ toggleConsInfo }}" style="{{ cellHeroInfoBtnStyle }}">i</span>
+            </div>
             <div class="num" style="font-size:34px;font-weight:700;color:#2f6690;line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
             <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Regionsprofil -->
             <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#8a929a;margin-top:5px;line-height:1.45">{{ cellHeroCaption }}</div>
+              <div style="font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
             <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
@@ -869,11 +873,11 @@
                 <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">{{ cellNewLabel }}</span><span class="num" style="color:#26303a">{{ cellNew }} {{ scopeUnit }}</span></div>
               </sc-if>
               <sc-if value="{{ cellHasConsensus }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5b6672">Zubaukonsens</span><span class="num" style="color:#2f6690;font-weight:600">{{ cellConsensus }} {{ scopeUnit }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px"><span style="display:flex;align-items:center;gap:7px;color:#5b6672">Zubaukonsens <span onClick="{{ toggleConsInfo }}" style="{{ consInfoBtnStyle }}">i</span></span><span class="num" style="color:#2f6690;font-weight:600">{{ cellConsensus }} {{ scopeUnit }}</span></div>
                 <div style="height:8px;border-radius:4px;background:#dbe4ec;overflow:hidden">
                   <div style="height:100%;width:{{ cellConsFill }};background:#2f6690;border-radius:4px"></div>
                 </div>
-                <div style="font-size:14px;color:#8a929a;line-height:1.45">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.</div>
+                <div style="{{ consInfoStyle }}">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.</div>
               </sc-if>
             </div>
           </div>
@@ -1074,6 +1078,7 @@ class Component extends DCLogic {
     showMore: false,
     infoPanel: false,
     infoPrinc: null,
+    consInfo: false,    // Definition „Zubaukonsens" im Zelldetail aufgeklappt?
     targetInfo: false,  // Greenfield-Hinweis neben „Ausbauziel" aufgeklappt?
     ovBarInfo: false,   // Balken-Erklärung in der rechten Spalte aufgeklappt?
     zoom: null,
@@ -2396,6 +2401,11 @@ class Component extends DCLogic {
     R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#0b6b5a' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#0b6b5a' : '#8a929a') + ';font-style:italic;cursor:pointer';
     R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
+    // Definition „Zubaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
+    R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#2f6690' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#2f6690' : '#8a929a') + ';font-style:italic;cursor:pointer';
+    R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;line-height:1.45' : 'display:none';
+    R.cellHeroInfoBtnStyle = 'display:none';
+    R.toggleConsInfo = () => this.setState({ consInfo: !this.state.consInfo });
     R.techWindStyle = this.segTech('wind', S.tech === 'wind');
     R.techPVStyle = this.segTech('pv', S.tech === 'pv');
     const techCol = this.techColors[S.tech === 'pv' ? 'pv' : 'wind'];
@@ -2598,7 +2608,8 @@ class Component extends DCLogic {
       const v = heroNum(stufe >= 2 ? cons : zubau), b = heroNum(bestand);
       R.cellHeroLabel = stufe >= 2 ? 'Zubaukonsens' : 'Zubau';
       R.cellHeroValue = heroStr(v);
-      R.cellHeroCaption = stufe >= 2 ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.' : '';
+      R.cellHeroCaption = stufe >= 2 && S.consInfo ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.' : '';
+      R.cellHeroInfoBtnStyle = stufe >= 2 ? R.consInfoBtnStyle : 'display:none';
       R.cellContextLine = S.account ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' ' + this.unitFor(isRegion) + ' installierte Leistung' : '';
     };
     // „% des deutschen Zubaus": Zubau dieser Einheit am nationalen Ausbauziel (Werte intern in GW)
