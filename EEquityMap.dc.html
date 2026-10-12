@@ -158,11 +158,13 @@
         <button onClick="{{ setWind }}" style="{{ techWindStyle }}">Wind</button>
         <button onClick="{{ setPV }}" style="{{ techPVStyle }}">Freiflächen-PV</button>
       </div>
-      <sc-if value="{{ isPV }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:14px;color:#8a6d2a;background:#fbf6ec;border:1px solid #ecdcbd;padding:7px 9px;border-radius:6px;margin-bottom:14px;line-height:1.45">Bei PV unterscheiden sich die Gerechtigkeitsprinzipien nur geringfügig.</div>
-      </sc-if>
 
-      <div style="font-size:14px;color:#5b6672;margin:8px 0 6px">Ausbauziel</div>
+      <!-- „i" neben „Ausbauziel" klappt den Greenfield-Hinweis zu den Jahres-Marken (2030/2035/2045) auf -->
+      <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672;margin:8px 0 6px">
+        <span>Ausbauziel</span>
+        <span onClick="{{ toggleTargetInfo }}" style="{{ targetInfoBtnStyle }}">i</span>
+      </div>
+      <div style="{{ targetInfoStyle }}">Die Marken 2030, 2035 und 2045 sind drei getrennte Berechnungen, jede für sich von Grund auf neu verteilt. Sie zeigen keinen Ausbaupfad: Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</div>
       <div style="display:flex;gap:6px;margin-bottom:8px">
         <sc-for list="{{ targetBtns }}" as="t" hint-placeholder-count="3">
           <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
@@ -178,8 +180,6 @@
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#9aa4ad;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
         <div style="font-size:14px;color:#33413c;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
-        <!-- Greenfield-Hinweis zu den Jahres-Marken (2030/2035/2045) -->
-        <div style="font-size:14px;color:#8a929a;margin-top:7px;line-height:1.45">Die Marken 2030, 2035 und 2045 sind drei getrennte Berechnungen, jede für sich von Grund auf neu verteilt. Sie zeigen keinen Ausbaupfad: Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</div>
       </div>
 
       <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
@@ -1074,6 +1074,7 @@ class Component extends DCLogic {
     showMore: false,
     infoPanel: false,
     infoPrinc: null,
+    targetInfo: false,  // Greenfield-Hinweis neben „Ausbauziel" aufgeklappt?
     ovBarInfo: false,   // Balken-Erklärung in der rechten Spalte aufgeklappt?
     zoom: null,
     freeTarget: false,
@@ -2390,7 +2391,10 @@ class Component extends DCLogic {
     R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
     R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
     R.isErweitert = isExt;
-    R.isPV = S.tech === 'pv';
+    // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
+    R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#0b6b5a' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#0b6b5a' : '#8a929a') + ';font-style:italic;cursor:pointer';
+    R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#44505a;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
+    R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
     R.techWindStyle = this.segTech('wind', S.tech === 'wind');
     R.techPVStyle = this.segTech('pv', S.tech === 'pv');
     const techCol = this.techColors[S.tech === 'pv' ? 'pv' : 'wind'];

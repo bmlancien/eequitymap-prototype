@@ -939,10 +939,15 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   Wiederherstellen + × (löschen). Region-Szenarien: zwei Zeilen „Prinzipien DE" +
   „Prinzipien regional"; DE-Szenarien: eine Zeile „Prinzipien".
 
-**Greenfield-Hinweis** bei den Jahres-Marken (2030/2035/2045): „Die Marken 2030,
+**Greenfield-Hinweis** zu den Jahres-Marken (2030/2035/2045) — seit Session
+2026-10-12 hinter einem „i" neben dem Label „Ausbauziel" in der linken Spalte
+(zu, bis angeklickt), nicht mehr dauerhaft unter dem Regler: „Die Marken 2030,
 2035 und 2045 sind drei getrennte Berechnungen, jede für sich von Grund auf neu
 verteilt. Sie zeigen keinen Ausbaupfad: Das Ergebnis für 2035 baut nicht auf dem
 für 2030 auf."
+
+Entfernt (Session 2026-10-12): der gelbe Hinweis „Bei PV unterscheiden sich die
+Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
 
 **Vereinfachung (Session 2026-10-09, nachgezogen):**
 - **Held = A/B-Slots + Differenzkarte** (volle Breite des Hubs).
