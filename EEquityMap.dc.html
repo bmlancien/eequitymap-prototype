@@ -245,13 +245,6 @@
         </sc-if>
       </div>
 
-      <sc-if value="{{ hintTwo }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:10px;align-items:flex-start;background:#122f28;color:#dff2ec;border-radius:8px;padding:11px 13px;margin-bottom:10px;animation:fadeUp .35s;flex:none">
-          <span style="font-size:14px;line-height:1.5;flex:1">Zwei Prinzipien gewählt — die Karte zeigt jetzt, wo beide übereinstimmen.</span>
-          <span onClick="{{ dismissHintTwo }}" style="cursor:pointer;color:#7fb8ac;font-size:15px;line-height:1;padding:2px">×</span>
-        </div>
-      </sc-if>
-
       <!-- MAP AREA -->
       <div style="{{ mapAreaStyle }}">
         <!-- Verteilungen / Galerie (Difference-first) -->
@@ -1019,7 +1012,6 @@ class Component extends DCLogic {
     natBreadcrumbOpen: false,
     regionHintSeen: false,                          // Erst-Hinweis an der regionalen Liste (Opt-in sichtbar machen)
     search: '',
-    hintTwo: false, seenTwo: false,
     hintOppo: false, seenOppo: false,
     intro: true,
     showMore: false,
@@ -2202,7 +2194,7 @@ class Component extends DCLogic {
     }
     if (R.mainCells) R.mainCells = R.mainCells.map(c => c.pe ? c : Object.assign({}, c, { pe: 'auto' }));
 
-    // Was zeigt diese Ansicht? — dauerhaft unter der Tab-Reihe, unabhängig vom Einmal-Banner (hintTwo).
+    // Was zeigt diese Ansicht? — dauerhaft unter der Tab-Reihe.
     R.tabExplain = ({
       regionGate: '',
       single: (this.byId[singlePid].explain || 'Dunkel = viel empfohlener Zubau nach diesem Prinzip.'),
@@ -2449,8 +2441,6 @@ class Component extends DCLogic {
 
     // DE-Ansicht-Onboarding — gehört nicht in die Regionsansicht (§M), auch wenn der Zustand
     // noch aus der nationalen Auswahl übrig ist.
-    R.hintTwo = S.hintTwo && !isRegion && view === 'konsens';
-    R.dismissHintTwo = () => this.setState({ hintTwo: false });
 
     // legend flags default
     R.showUpset = R.showUpset || false;
@@ -2853,7 +2843,6 @@ class Component extends DCLogic {
       return;
     }
     let sel = S.selected.slice();
-    const was = sel.filter(x => this.byId[x] && this.byId[x].available).length;
     if (sel.includes(id)) sel = sel.filter(x => x !== id); else sel.push(id);
     const now = sel.filter(x => this.byId[x] && this.byId[x].available).length;
     // Zurück auf null nur beim Erststart (noch nicht committed); danach letztes Häkchen nicht abwählbar
@@ -2862,9 +2851,8 @@ class Component extends DCLogic {
     // Element bleibt für die Dauer der Transition gemountet, danach entfernen.
     const patch = this.dismissTrioHint({ selected: sel, cell: null, gemeinde: null });
     if (now >= 1) patch.committed = true;
-    if (was === 1 && now === 2 && !S.seenTwo) { patch.hintTwo = true; patch.seenTwo = true; }
     if (sel.includes('bevoelkerungsnah') && sel.includes('bevoelkerungsfern') && !S.seenOppo) { patch.hintOppo = true; patch.seenOppo = true; }
-    if (now < 2) { patch.tab = 'konsens'; patch.hintTwo = false; }
+    if (now < 2) patch.tab = 'konsens';
     if (now < 3 && S.tab === 'verteilungen') { /* keep */ }
     if (now >= 3 && S.tab === 'verteilungen') patch.tab = 'konsens';
     this.setState(patch);

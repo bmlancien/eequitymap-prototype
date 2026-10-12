@@ -581,7 +581,7 @@ die Bänder und drücken die Karte nach unten. Drei Werkzeuge, drei Fälle:
   Ort, nicht dupliziert.
 - **Momentane Bestätigung** (z. B. „Gespeichert …") → **Toast** (erscheint, fadet
   nach einigen Sekunden), kein dauerhaftes Band.
-- **Einmalige Lehre** (z. B. „Zwei Prinzipien gewählt …", Mode-Transition) →
+- **Einmalige Lehre** (z. B. Mode-Transition) →
   schließbares Band, sparsam, verschwindet nach erstem Lesen und kommt nicht
   zurück.
 Zwei Meldungen, die dasselbe sagen, werden zusammengeführt (nie das gleiche
@@ -738,8 +738,9 @@ dieser Zelle in der Region"), damit kein Verwechslungs-/Binär-Rückfall entsteh
   dass Zeit vergeht (Backend-Stufen wechselnd, sonst nach kurzer Zeit „Das kann
   einen Moment dauern…"). Text „[Landkreis] wird ausgewertet …", plus **„Abbrechen"**. Im Mock die Verzögerung nur als Delay nachbilden, ohne
   bekannte Dauer zu behaupten.
-- **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner; der
-  DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" gehört NICHT hierher. „Noch nicht
+- **Banner in der Regionsansicht:** nur der einmalige Mode-Transition-Banner. (Der
+  frühere DE-Ansicht-Hinweis „Zwei Prinzipien gewählt …" ist seit Session
+  2026-10-12 ganz entfernt.) „Noch nicht
   berechnet" nur an einer Stelle (erscheint durch die Auto-Berechnung ohnehin nur
   kurz als „wird berechnet …").
 
