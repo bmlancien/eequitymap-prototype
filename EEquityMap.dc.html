@@ -719,7 +719,14 @@
                   <div title="{{ hc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
                   <div style="{{ hc.rowsStyle }}">
                     <sc-for list="{{ hc.rows }}" as="hr" hint-placeholder-count="4">
-                      <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
+                      <div style="{{ hr.rowStyle }}"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
+                      <!-- Prinzipien: Überschrift + ein Prinzip je Zeile mit Farbfeld (statt „A + B + C" als Fließtext) -->
+                      <div style="{{ hr.listStyle }}">
+                        <div style="color:#5b6672;margin-bottom:3px">{{ hr.k }}</div>
+                        <sc-for list="{{ hr.items }}" as="pi" hint-placeholder-count="2">
+                          <div style="display:flex;align-items:center;gap:7px;padding:2px 0;color:#26303a"><span style="flex:none;width:11px;height:11px;border-radius:3px;background:{{ pi.color }}"></span>{{ pi.name }}</div>
+                        </sc-for>
+                      </div>
                     </sc-for>
                   </div>
                 </div>
@@ -2246,7 +2253,14 @@ class Component extends DCLogic {
       }
 
       // Rechte Spalte: Kernzahlen von A und B gegenübergestellt (statt der Links-Konfiguration)
-      const prinz = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
+      // Prinzipien als Liste (ein Prinzip je Zeile, mit Farbfeld); ohne Auswahl eine normale Zeile mit „—"
+      const prinzRow = (k, ids) => (ids && ids.length)
+        ? { k, items: ids.map(id => ({ name: this.byId[id] ? this.byId[id].name : id, color: this.byId[id] ? this.byId[id].color : '#c4c9cd' })) }
+        : { k, v: '—', vStyle: 'color:#26303a;text-align:right' };
+      const HUB_ROW = 'display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0';
+      const hubRowNorm = r => r.items
+        ? Object.assign({ v: '', vStyle: '', rowStyle: 'display:none', listStyle: 'font-size:14px;padding:5px 0 4px' }, r)
+        : Object.assign({ items: [], rowStyle: HUB_ROW, listStyle: 'display:none' }, r);
       const numCss = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#26303a;font-weight:600;text-align:right";
       const txtCss = 'color:#26303a;text-align:right';
       R.hubSumCards = [0, 1].map(k => {
@@ -2263,14 +2277,15 @@ class Component extends DCLogic {
           ] });
         }
         const rows = [{ k: 'Ebene', v: o.isRegion ? o.regionLabel : 'Deutschland', vStyle: txtCss }];
-        if (o.isRegion) { rows.push({ k: 'Prinzipien DE', v: prinz(o.nationalSel), vStyle: txtCss }); rows.push({ k: 'Prinzipien regional', v: prinz(o.regionalSel), vStyle: txtCss }); }
-        else rows.push({ k: 'Prinzipien', v: prinz(o.regionalSel), vStyle: txtCss });
+        if (o.isRegion) { rows.push(prinzRow('Prinzipien bundesweit', o.nationalSel)); rows.push(prinzRow('Prinzipien regional', o.regionalSel)); }
+        else rows.push(prinzRow('Prinzipien', o.regionalSel));
         rows.push({ k: 'Ausbauziel', v: this.fmtU(o.target, o.isRegion), vStyle: numCss });
         rows.push({ k: 'Zubaukonsens', v: this.fmtU(o.consensusTotal, o.isRegion), vStyle: numCss });
         rows.push({ k: '% im Konsens', v: o.target ? this.pct(o.consensusTotal / o.target) : '—', vStyle: numCss });
         rows.push({ k: 'Begrenzend', v: o.limitingName || '—', vStyle: txtCss });
         return Object.assign(card, { kind: 'Szenario', name: o.name, rows });
       });
+      R.hubSumCards.forEach(c => { c.rows = (c.rows || []).map(hubRowNorm); });
 
       // Tabellen je Ebene — Region-Szenarien mit zwei Prinzipien-Zeilen (DE + regional), DE mit einer
       const CMP_ROW_H = 40;
@@ -2278,7 +2293,7 @@ class Component extends DCLogic {
       const names = ids => (ids && ids.length) ? ids.map(id => this.byId[id] ? this.byId[id].name : id).join(' + ') : '—';
       R.hubTables = levelGroups.map(g => {
         const rowDefs = (g.isRegion
-          ? [{ label: 'Prinzipien DE', numeric: false, get: sc => names(sc.nationalSel) }, { label: 'Prinzipien regional', numeric: false, get: sc => names(sc.regionalSel) }]
+          ? [{ label: 'Prinzipien bundesweit', numeric: false, get: sc => names(sc.nationalSel) }, { label: 'Prinzipien regional', numeric: false, get: sc => names(sc.regionalSel) }]
           : [{ label: 'Prinzipien', numeric: false, get: sc => names(sc.regionalSel) }]
         ).concat([
           { label: 'Ausbauziel', numeric: true, get: sc => this.fmtU(sc.target, sc.isRegion) },

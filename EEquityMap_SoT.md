@@ -1137,6 +1137,14 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
     Gegen eine Referenz keine Zeile.
   - Die Karten der rechten Spalte tragen dadurch den kurzen Namen als Titel;
     die Prinzipien stehen nur noch einmal, in den Zeilen darunter.
+  - *Prinzipien als Liste* (rechte Spalte, Karten A/B): unter der Zeile
+    „Prinzipien" (Region: „Prinzipien bundesweit" und „Prinzipien regional") steht je
+    Prinzip eine eigene Zeile mit Farbfeld und Name — nicht mehr „A + B + C" als
+    rechtsbündiger Fließtext. Die Tabellen „Gespeicherte Szenarien" bleiben
+    einzeilig.
+  - *Beschriftung:* „Prinzipien bundesweit" statt „Prinzipien DE" — in den
+    Karten A/B und in den Tabellen (Regel „bundesweit", s. B). Ältere Stellen
+    in diesem Dokument, die „Prinzipien DE" nennen, meinen dieselbe Zeile.
 - **Differenzen ohne Vorzeichen** (Session 2026-10-12): Im Hub steht keine
   Differenz mit „+" oder „−". Die Richtung ist ausgeschrieben: Betrag + „mehr in
   A" / „mehr in B" / „gleich viel in A und B" — in der Karte zur gewählten
