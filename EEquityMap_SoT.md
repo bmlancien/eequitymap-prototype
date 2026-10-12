@@ -888,8 +888,18 @@ für 2030 auf."
 - **Konsens-Disclaimer** im Hub ausgeblendet (übrige Reiter unverändert).
 - **Löschen:** kein Dialog; Undo-Toast „Szenario gelöscht · Rückgängig" (≈ 6 s),
   stellt Szenario an seiner Position inkl. A/B-Zuordnung wieder her.
-- **Wind/PV:** Hub folgt links, bis der Hub-Umschalter betätigt wird; danach
-  Kennzeichnung „Abweichend von links (…)" mit „Wie links" zum Zurücksetzen.
+- **Wind/PV:** Der Hub-Umschalter und der Umschalter links sind gekoppelt
+  (Session 2026-10-12): Beide setzen dieselbe Technologie, der Hub kann nicht
+  von links abweichen. Umschalten im Hub rechnet also auch die linke
+  Konfiguration für die andere Technologie; Prinzipien, Ausbauziel,
+  Bestandsanrechnung und Region bleiben erhalten. Entfallen: Kennzeichnung
+  „Abweichend von links (…)" und „Wie links".
+- **Technologie überall erkennbar** (Session 2026-10-12): Die Farben der Hub-Box
+  (blau = Wind, gelb = Freiflächen-PV) gelten in kleiner Dosis auf allen
+  Reitern: ein Technologie-Chip rechts in der Tab-Reihe (Farbpunkt + Name, also
+  nicht nur über Farbe) und die aktive Hälfte beider Wind/PV-Schalter in der
+  Technologiefarbe statt neutral weiß. Keine getönte Hauptfläche außerhalb des
+  Hubs — die Karten-Farbskalen sollen unverfälscht bleiben.
 - **Referenz-Hinweis:** Steht ein Szenario gegen eine Referenz, mit den
   tatsächlichen Summen der beiden Seiten: „Die beiden Seiten verteilen
   unterschiedlich viel: [Referenz] [X] (das ganze Ausbauziel), das Szenario [Y]

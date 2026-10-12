@@ -217,6 +217,9 @@
               <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
             </sc-for>
           </sc-if>
+          <!-- Technologie-Chip: auf jedem Reiter sichtbar, Farbe wie die Hub-Box (blau = Wind, gelb = PV) -->
+          <div style="flex:1"></div>
+          <span style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
         </div>
       </sc-if>
 
@@ -300,8 +303,6 @@
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
               <div style="font-size:15px;font-weight:600;color:#1b2126">Vergleich A − B</div>
               <div style="flex:1"></div>
-              <span style="{{ hubTechNoteStyle }}">{{ hubTechNote }} <span onClick="{{ resetHubTech }}" style="color:#0b6b5a;font-weight:600;cursor:pointer;margin-left:4px">Wie links</span></span>
-              <span style="font-size:14px;color:#5b6672">Technologie</span>
               <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
                 <button onClick="{{ setHubWind }}" style="{{ hubWindStyle }}">Wind</button>
                 <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
@@ -1030,7 +1031,6 @@ class Component extends DCLogic {
     // Szenarien speichern & vergleichen (§N) — session-only, im Speicher, keine Persistenz.
     scenarios: [],
     scenarioSaveOpen: false,
-    hubTech: null,      // Technologie-Filter im Vergleichs-Hub (null = wie links)
     hubPairs: null,     // A/B je Technologie: { wind: [idA, idB], pv: [...] }
     hubRefInfo: null,
     shareOpen: false,
@@ -1064,6 +1064,8 @@ class Component extends DCLogic {
 
   constructor(props) {
     super(props);
+    // Technologiefarben: Hub-Box, Technologie-Chip in der Tab-Reihe und aktive Hälfte der Wind/PV-Schalter
+    this.techColors = { wind: { bg: '#eef4f9', line: '#6f9fc6', seg: '#dce9f4' }, pv: { bg: '#fdf8e8', line: '#e3c35a', seg: '#faecbb' } };
     this.targets = { z2030: 115, z2035: 160, z2045: 215 };
     this.targetLabels = { z2030: 'Ziel 2030', z2035: 'Ziel 2035', z2045: 'Ziel 2045' };
     this.marks = [{ y: '2030', gw: 115 }, { y: '2035', gw: 160 }, { y: '2045', gw: 215 }];
@@ -1862,7 +1864,7 @@ class Component extends DCLogic {
     R.hubSlots = []; R.hubTables = []; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
-      const hubTech = S.hubTech || S.tech;
+      const hubTech = S.tech;
       const hubScen = scenariosAll.filter(sc => sc.tech === hubTech);
       const refObjs = this.hubRefs.map(r => ({ id: r.id, name: r.name, info: r.info, isRef: true }));
       const objById = {}; hubScen.forEach(sc => objById[sc.id] = sc); refObjs.forEach(r => objById[r.id] = r);
@@ -2063,18 +2065,13 @@ class Component extends DCLogic {
       });
 
       // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
-      // Hub folgt der Technologie links, bis der Hub-Umschalter bewusst betätigt wird; danach sichtbar markiert
-      R.setHubWind = () => this.setState({ hubTech: 'wind', hubMenu: null });
-      R.setHubPV = () => this.setState({ hubTech: 'pv', hubMenu: null });
-      R.resetHubTech = () => this.setState({ hubTech: null, hubMenu: null });
-      const techName = t => t === 'pv' ? 'Freiflächen-PV' : 'Wind';
-      const techDiverges = !!S.hubTech && S.hubTech !== S.tech;
-      R.hubTechNote = techDiverges ? 'Abweichend von links (' + techName(S.tech) + ')' : '';
-      R.hubTechNoteStyle = techDiverges ? 'font-size:14px;color:#8a5a12;background:#fbf3e8;border:1px solid #ead9bf;border-radius:6px;padding:3px 9px' : 'display:none';
-      R.hubWindStyle = this.segLight(hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
-      R.hubPVStyle = this.segLight(hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
+      // Hub-Umschalter und Umschalter links sind gekoppelt: beide setzen dieselbe Technologie (kein Abweichen)
+      R.setHubWind = () => this.setState({ tech: 'wind', hubMenu: null });
+      R.setHubPV = () => this.setState({ tech: 'pv', hubMenu: null });
+      R.hubWindStyle = this.segTech('wind', hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
+      R.hubPVStyle = this.segTech('pv', hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
       R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
-        + (hubTech === 'pv' ? 'background:#fdf8e8;border:2px solid #e3c35a' : 'background:#eef4f9;border:2px solid #6f9fc6');
+        + 'background:' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].bg + ';border:2px solid ' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].line;
     }
 
     // Verteilungen / Galerie small multiples
@@ -2316,8 +2313,12 @@ class Component extends DCLogic {
     R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
     R.isErweitert = isExt;
     R.isPV = S.tech === 'pv';
-    R.techWindStyle = this.segLight(S.tech === 'wind');
-    R.techPVStyle = this.segLight(S.tech === 'pv');
+    R.techWindStyle = this.segTech('wind', S.tech === 'wind');
+    R.techPVStyle = this.segTech('pv', S.tech === 'pv');
+    const techCol = this.techColors[S.tech === 'pv' ? 'pv' : 'wind'];
+    R.techChipLabel = S.tech === 'pv' ? 'Freiflächen-PV' : 'Wind';
+    R.techChipStyle = 'flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#44505a;white-space:nowrap;border-radius:999px;padding:2px 10px 2px 8px;margin:0 2px 5px 8px;background:' + techCol.bg + ';border:1px solid ' + techCol.line;
+    R.techChipDotStyle = 'width:9px;height:9px;border-radius:50%;flex:none;background:' + techCol.line;
     R.targetGW = S.targetGW;
 
     // Zwei benannte Prinzipiensätze (§M): links steht immer genau EINE editierbare Liste;
@@ -2829,6 +2830,8 @@ class Component extends DCLogic {
 
   // style helpers
   segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:600;padding:5px 13px;cursor:pointer;background:' + (on ? '#57c4ab' : 'transparent') + ';color:' + (on ? '#0c2a24' : '#8b98a5'); }
+  // Technologie-Schalter: aktive Hälfte in der Technologiefarbe (blau = Wind, gelb = PV) statt neutral weiß
+  segTech(tech, on) { const c = this.techColors[tech]; return this.segLight(on) + (on ? ';background:' + c.seg + ';box-shadow:inset 0 0 0 1px ' + c.line : ''); }
   segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#7a848c') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
   chip(on) { return 'flex:1;border:1px solid ' + (on ? '#0b6b5a' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#0b6b5a' : '#fff') + ';color:' + (on ? '#fff' : '#4b555d'); }
   tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#0b6b5a' : '#7a848c') + ';border-bottom:2px solid ' + (on ? '#0b6b5a' : 'transparent') + ';margin-bottom:-1px'; }
