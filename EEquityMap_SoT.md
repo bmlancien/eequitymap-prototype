@@ -1377,7 +1377,19 @@ Entwurfs-Hinweis. Vor einer Veröffentlichung nötig:
 - Falls eine öffentliche Stelle Anbieter ist: zusätzlich „Barrierefreiheit"
   (Erklärung) in die Fußzeile.
 
-**Offen, technisch:** Das Werkzeug lädt Schriftarten von Google Fonts und React
-von unpkg.com. Beides überträgt die IP-Adresse der Besucher an Dritte. Vor
-Veröffentlichung lokal einbinden; der Datenschutz-Entwurf beschreibt den
-jetzigen Stand und markiert die Stelle.
+**Erledigt, technisch (Session 2026-10-12): nichts wird mehr von Dritten geladen.**
+- **Schriften** liegen in `fonts/` (IBM Plex Sans als eine variable Datei für
+  400–700, IBM Plex Mono 400/500/600; Teilmengen latin und latin-ext) mit
+  `fonts/fonts.css` und der Lizenz `fonts/OFL.txt` (SIL Open Font License).
+- **React, ReactDOM und Babel** liegen unverändert in `vendor/` (react@18.3.1,
+  react-dom@18.3.1, @babel/standalone@7.29.0). In `support.js` zeigen nur die
+  drei Adressen auf `./vendor/…`; die Prüfsummen dort gelten weiter und stimmen
+  mit den heruntergeladenen Dateien überein. Babel wird im normalen Betrieb
+  nicht angefordert, bleibt aber als Rückfall der Laufzeit vorhanden.
+- Geprüft im Browser: Alle Anfragen gehen an den eigenen Server. Impressum und
+  Datenschutz nutzen dieselben lokalen Schriften; der Datenschutz-Entwurf sagt
+  jetzt, dass keine Inhalte von Dritten geladen werden.
+- **`EEquityMap.html` entfernt:** die ältere, gebündelte Einzeldatei (Stand
+  27.08., seit dem ersten Commit unverändert) wurde gelöscht. Sie war nirgends
+  eingebunden, zeigte einen veralteten Stand und verwies noch auf Google Fonts
+  und unpkg. Ausgeliefert wird allein `EEquityMap.dc.html`.

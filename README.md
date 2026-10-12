@@ -26,9 +26,14 @@ truth on design decisions, open questions, and terminology.
 
 ## Contents
 
-- `EEquityMap.html`, `EEquityMap.dc.html` — self-contained prototype builds
-  (open directly in a browser, no build step required)
-- `support.js` — supporting application logic
+- `EEquityMap.dc.html` — the prototype (no build step required)
+- `support.js` — runtime that renders the prototype
+- `vendor/` — React, ReactDOM and Babel, served locally (nothing is loaded
+  from third-party servers)
+- `fonts/` — IBM Plex Sans and IBM Plex Mono with their licence
+- `gemeinden/`, `landkreise.topo.json` — map geometry
+- `impressum.html`, `datenschutz.html` — legal pages (drafts with placeholders)
+- `eequitymap-logo.png` — logo used in the header
 - `EEquityMap_SoT.md` — source-of-truth notes on design decisions and
   open issues
 - `screenshots/` — UI screenshots from prototype sessions
@@ -36,9 +41,17 @@ truth on design decisions, open questions, and terminology.
 
 ## Running it
 
-These are static, bundled HTML files with no dependencies or build tooling.
-Open `EEquityMap.dc.html` (or `EEquityMap.html`) directly in a modern
-browser.
+The prototype is a set of static files with no build tooling. Serve the
+folder with any static file server and open `EEquityMap.dc.html` in a modern
+browser, for example:
+
+```
+python3 -m http.server 8000
+```
+
+then visit `http://localhost:8000/EEquityMap.dc.html`. Opening the file
+straight from disk does not work reliably, because the map data is loaded
+with `fetch`.
 
 ## License
 
