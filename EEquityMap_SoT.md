@@ -1053,8 +1053,26 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   Landkreises statt der Landkreise Deutschlands. Damit das nicht wie ein Fehler
   wirkt: (1) Kartentitel „Differenzkarte: A − B · [Landkreis]"; (2) Dachzeile
   der rechten Spalte nennt die Ebene — „Deutschland" bzw. den Landkreis;
-  (3) der Umriss des Landkreises liegt über dem Raster. Offen: Gemeinden statt
-  Raster in dieser Karte (Szenarien speichern Werte je Rasterzelle).
+  (3) der Umriss des Landkreises liegt über dem Raster (nur in der reinen
+  Raster-Ansicht; mit Gemeinden ergibt sich die Form aus ihnen).
+- **Gemeinden in der Differenzkarte** (Session 2026-10-12): Ein
+  Regionsvergleich zeigt dieselben drei Ansichten wie die Regionsansicht —
+  **Gemeinden** (Standard), **Gemeinden + Raster**, **Raster (5 × 5 km)** — und
+  nutzt **dieselbe Einstellung** (`regionViewMode`): Umschalten hier schaltet
+  auch die Regionsansicht um und umgekehrt. Umschalter rechts neben dem
+  Kartentitel, nur in Erweitert; Basic zeigt immer Gemeinden ohne Umschalter.
+  Auf Deutschland-Ebene gibt es nichts umzuschalten (Landkreise).
+  - *Werte:* Szenarien speichern weiter je Rasterzelle. Der Wert einer
+    Gemeinde ist die flächengewichtete Summe der Zellwerte (gleiche Gewichte
+    wie in der Regionsansicht), für A, B und Referenzen; Differenz = A − B.
+  - *Farbe:* „Gemeinden" färbt die Gemeinden nach ihrer Differenz, mit eigener
+    Skala; „Gemeinden + Raster" färbt das Raster, die Gemeinden liegen als
+    Grenzen darüber; „Raster" wie bisher.
+  - *Klick:* In beiden Gemeinde-Ansichten ist die Gemeinde die klickbare
+    Einheit (rechte Spalte: „Gemeinde …", Wert A, Wert B, Differenz), in
+    „Raster" die Rasterzelle.
+  - Solange die Gemeindegrenzen laden oder nicht ladbar sind, zeigt die Karte
+    das Raster mit einem Hinweis unter dem Titel.
 - **A und B unterscheidbar machen** (Session 2026-10-12):
   - *Auto-Name kurz:* ein Prinzip → dessen Name; ab zwei Prinzipien nur die
     Anzahl („3 Prinzipien"); dann Ebene („Deutschland" bzw. der Landkreis ohne

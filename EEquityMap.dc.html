@@ -356,14 +356,30 @@
               </div>
 
                 <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
-                  <div style="font-size:15px;font-weight:600;color:#1b2126">Differenzkarte: A − B<span style="font-weight:500;color:#5b6672">{{ scenDiffLevel }}</span></div>
+                  <!-- Titel links; rechts (Regionsvergleich, nur Erweitert) derselbe Ansichts-Umschalter wie in der
+                       Regionsansicht — beide teilen sich die Einstellung regionViewMode. -->
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1;min-width:200px">Differenzkarte: A − B<span style="font-weight:500;color:#5b6672">{{ scenDiffLevel }}</span></div>
+                    <sc-if value="{{ showHubGemToggle }}" hint-placeholder-val="{{ false }}">
+                      <div style="background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;flex:none">
+                        <div style="display:grid;grid-template-columns:90px 140px 122px;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                          <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
+                          <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
+                          <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ scenDiffGemNote }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:14px;color:#8a929a;margin-top:4px">{{ scenDiffGemNote }}</div>
+                  </sc-if>
                   <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
                   </sc-if>
                   <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
                     <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
                       <sc-for list="{{ scenDiffCells }}" as="dc" hint-placeholder-count="20">
-                        <path d="{{ dc.d }}" fill="{{ dc.fill }}" stroke="#fff" stroke-width="1" style="cursor:pointer" onClick="{{ dc.onClick }}"></path>
+                        <path d="{{ dc.d }}" fill="{{ dc.fill }}" fill-opacity="{{ dc.fo }}" stroke="{{ dc.stroke }}" stroke-width="{{ dc.sw }}" pointer-events="{{ dc.pe }}" style="cursor:pointer" onClick="{{ dc.onClick }}"></path>
                       </sc-for>
                       <!-- Umriss des Landkreises ÜBER dem Raster (Regionsvergleich) — sonst verdecken ihn die Zellen
                            und die Karte ist nicht als Landkreis erkennbar -->
@@ -1986,7 +2002,7 @@ class Component extends DCLogic {
     // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
-    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
+    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.showHubGemToggle = false; R.scenDiffGemNote = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
     R.hubSlots = []; R.hubTables = []; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
@@ -2113,24 +2129,54 @@ class Component extends DCLogic {
         const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget) : o.cellCons;
         const va = valsOf(A), vb = valsOf(B);
         const d = va.map((v, i) => v - vb[i]);
-        const mxa = Math.max(...d.map(Math.abs)) || 1;
         R.showScenDiffMap = true;
         R.scenDiffVb = lvl.vb;
         R.scenDiffOutline = lvl.outlineD || '';
-        // Zelle anklicken → Werte von A und B rechts; erneuter Klick hebt die Auswahl auf. Die Auswahl gilt je
-        // Ebene (Deutschland bzw. ein Landkreis) und bleibt beim Wechsel von A/B auf derselben Ebene stehen.
-        const lvlKey = lvlRegion ? 'r:' + lvlKrs : 'de';
-        const selI = S.hubCell && S.hubCell.lvl === lvlKey && S.hubCell.i < lvl.cells.length ? S.hubCell.i : -1;
-        R.scenDiffCells = lvl.cells.map((c, i) => ({ d: c.d, fill: this.div(d[i] / mxa),
-          onClick: () => this.setState({ hubCell: selI === i ? null : { lvl: lvlKey, i }, hubMenu: null }) }));
+        // Einheit der Karte. Deutschland: Landkreise. Region: wie in der Regionsansicht und mit DERSELBEN
+        // Einstellung (regionViewMode; Basic immer Gemeinden) — Gemeinden, Gemeinden + Raster oder Raster.
+        // Gemeinde-Werte = flächengewichtete Summe der gespeicherten Zellwerte (gemWeightsFor), wie dort.
+        const hubMode = lvlRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+        let hubGem = null, hubGemW = null;
+        if (lvlRegion && hubMode !== 'raster') {
+          this.ensureGemeinden(lvlKrs);
+          hubGem = this._gemCache[lvlKrs] || null;
+          if (hubGem) hubGemW = this.gemWeightsFor(lvlKrs);
+        }
+        const byGem = !!(hubGem && hubGemW);   // Gemeinden sind die klickbare Einheit (beide Gemeinde-Ansichten)
+        // Mit Gemeinden ergibt sich die Form des Landkreises aus ihnen — der grobe Umriss nur über dem reinen Raster
+        if (byGem) R.scenDiffOutline = '';
+        R.showHubGemToggle = lvlRegion && isExt;
+        R.scenDiffGemNote = lvlRegion && hubMode !== 'raster' && !byGem
+          ? (this._gemError[lvlKrs] ? 'Gemeindegrenzen konnten nicht geladen werden — die Karte zeigt das Raster.' : 'Gemeindegrenzen werden geladen …') : '';
+        const gAgg = (arr, gi) => (hubGemW[gi] || []).reduce((a, w) => a + arr[w.i] * w.w, 0);
+        const ga = byGem ? hubGem.map((g, gi) => gAgg(va, gi)) : null, gb = byGem ? hubGem.map((g, gi) => gAgg(vb, gi)) : null;
+        const gd = byGem ? ga.map((v, gi) => v - gb[gi]) : null;
+        // Farbskala nach dem, was eingefärbt ist: Gemeinden nur in der Ansicht „Gemeinden", sonst die Zellen
+        const colorGem = byGem && hubMode === 'gemeinden';
+        const mxa = Math.max(...(colorGem ? gd : d).map(Math.abs)) || 1;
+        // Anklicken → Werte von A und B rechts; erneuter Klick hebt die Auswahl auf. Die Auswahl gilt je Ebene
+        // und Einheit (Deutschland / Landkreis-Raster / Landkreis-Gemeinden) und bleibt beim Wechsel von A/B stehen.
+        const lvlKey = lvlRegion ? 'r:' + lvlKrs + (byGem ? ':g' : '') : 'de';
+        const unitN = byGem ? hubGem.length : lvl.cells.length;
+        const selI = S.hubCell && S.hubCell.lvl === lvlKey && S.hubCell.i < unitN ? S.hubCell.i : -1;
+        const pick = i => () => this.setState({ hubCell: selI === i ? null : { lvl: lvlKey, i }, hubMenu: null });
+        const shapes = [];
+        if (!colorGem) lvl.cells.forEach((c, i) => shapes.push({ d: c.d, fill: this.div(d[i] / mxa), fo: '1', stroke: '#fff', sw: '1',
+          pe: byGem ? 'none' : 'auto', onClick: byGem ? (() => {}) : pick(i) }));
+        if (byGem) hubGem.forEach((g, gi) => shapes.push(colorGem
+          ? { d: g.d, fill: this.div(gd[gi] / mxa), fo: '1', stroke: '#fff', sw: '1', pe: 'auto', onClick: pick(gi) }
+          // Gemeinden + Raster: Raster trägt die Farbe, Gemeinden liegen als klickbare Grenzen darüber
+          : { d: g.d, fill: '#ffffff', fo: '0', stroke: '#3d4852', sw: '0.9', pe: 'auto', onClick: pick(gi) }));
+        R.scenDiffCells = shapes;
         R.clearHubCell = () => this.setState({ hubCell: null });
         if (selI >= 0) {
-          const c = lvl.cells[selI], dv = d[selI];
-          R.scenDiffSelD = c.d;
+          const dv = byGem ? gd[selI] : d[selI], av = byGem ? ga[selI] : va[selI], bv = byGem ? gb[selI] : vb[selI];
+          R.scenDiffSelD = byGem ? hubGem[selI].d : lvl.cells[selI].d;
           R.hubCellShow = true; R.hubOverviewShow = false;
-          R.hubCellName = lvlRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label;
+          R.hubCellName = byGem ? (hubGem[selI].bez || 'Gemeinde') + ' ' + hubGem[selI].name
+            : lvlRegion ? 'Rasterzelle ' + lvl.cells[selI].label : lvl.cells[selI].kind + ' ' + lvl.cells[selI].label;
           R.hubCellCards = [A, B].map((o, k) => ({ badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), kind: o.isRef ? 'Referenz' : 'Szenario', name: o.name,
-            k: o.isRef ? 'Verteilt' : 'Zubaukonsens', v: this.fmtU(k === 0 ? va[selI] : vb[selI], lvlRegion) }));
+            k: o.isRef ? 'Verteilt' : 'Zubaukonsens', v: this.fmtU(k === 0 ? av : bv, lvlRegion) }));
           R.hubCellDiff = this.fmtU(Math.abs(dv), lvlRegion);
           R.hubCellDiffWord = dv > 0 ? 'mehr in A' : 'mehr in B';
           if (R.hubCellDiff === this.fmtU(0, lvlRegion)) R.hubCellDiffWord = 'gleich viel in A und B';
