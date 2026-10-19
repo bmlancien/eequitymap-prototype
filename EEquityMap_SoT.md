@@ -19,6 +19,8 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 
 ## A. Kernentscheidungen — bestätigt / präzisiert
 
+> **Geändert durch R (Session 2026-10-19):** „Neuzubau" heißt jetzt „Zubau", „Ausbau gesamt" heißt „Ausbau"; Zubau = max(Ausbau − Bestand, 0). Die Teilmengen-Regel gilt weiter (R.1).
+
 - **Konsens-Score = Minimum-Regel.** `Zubaukonsens(Zelle) = min(MW über alle
   gewählten Prinzipien)`. Bestätigt (min statt mean; mean verworfen, s. H).
 - **Kein Schwellen-Slider.** Konsens wird als kontinuierliche GW-Größe
@@ -111,6 +113,8 @@ durchziehen.
 ---
 
 ## C. Ansichten / Tabs — finaler Stand
+
+> **Geändert durch R (Session 2026-10-19):** Der Reiter „Konfliktflächen" heißt „Dissens" (R.10). Die Reiter sind jetzt Unter-Reiter der Bereichs-Tabs „Deutschland" und „Regional"; neu ist der Bereich „Bestand & Potenziale" (R.3, R.13).
 
 > **Teilweise abgelöst durch O (2026-10-09):** Reiter-Reihenfolge, Wegfall von
 > „Konsens vs. Planung" / „Konsens vs. Referenz" als eigene Ansichten.
@@ -295,6 +299,8 @@ ausgegrauten Elemente in Basic.
 
 ## E. Rechte Spalte — Hybrid-Verhalten (neu)
 
+> **Geändert durch R (Session 2026-10-19):** „Neuzubau" → „Zubau", „Ausbau gesamt" → „Ausbau" (R.1). Im Tab „Regional" zeigt die rechte Spalte oben die Herleitungskette (R.6).
+
 > **Abgelöst durch O:** Zeilen „Konsens vs. Planung" und „Konsens vs. Referenz" sowie
 > die Differenz-Zeile im Zelldetail entfallen mit diesen Ansichten.
 
@@ -438,6 +444,8 @@ seiner Bausteine übertreffen) und damit informationslos. Daher:
 ---
 
 ## G. Verständlichkeit / Erststart (geändert)
+
+> **Geändert durch R (Session 2026-10-19):** Neue Infobox-Texte für Einstieg, Bestand und Begriffe (R.12); einmaliger Kartenhinweis zur Detailauswertung (R.4); Speicher-Hinweise (R.9).
 
 **Kein Onboarding-Modal mehr** (entfernt, s. H). Die Konzepterklärung, die früher
 das Modal trug, liegt jetzt auf dem Erststart-Zustand der Hauptansicht und im
@@ -655,6 +663,13 @@ nicht über die volle Breite laufen lassen.
   difference-first-Galerie: alle Verteilungen zuerst nebeneinander, dann Drill-in,
   dann Konsens. Unterschied ist sichtbar, Übereinstimmung ist abstrakt — deshalb
   Unterschied zuerst.)
+- **„Kein Pan/Zoom" (M) für den Reiter „Bestand & Potenziale"** — aufgehoben
+  (R.13). Die Gerechtigkeitskarten bleiben statisch.
+- **Knopf „← Deutschland"** — ersetzt durch die Bereichs-Tabs (R.3).
+- **Regionsbudget = Anteil am bundesweiten Konsens** — verworfen. Das
+  Regionsbudget ist die bundesweite Verteilung (R.5).
+- **A/B ohne gespeicherte Szenarien mit zwei Referenzen vorbelegt** — verworfen.
+  A/B bleiben leer, die Referenzen sind wählbar (R.8).
 
 ---
 
@@ -703,6 +718,11 @@ nicht über die volle Breite laufen lassen.
    - *Berechnung lassen, Hinweis an das Kartenbild binden:* z. B. „Deshalb ist
      die Karte überwiegend braun (mehr in B)." Erklärt die sichtbare Schlagseite,
      die Karte bleibt eine Mischung.
+10. **Bestandsberücksichtigung standardmäßig an oder aus?** (R.1) Aktuell aus
+    (Greenfield). Mit Öko-Institut / EmPowerPlan klären.
+11. **Zoomschwelle Landkreis → Gemeinde** im Reiter „Bestand & Potenziale"
+    (R.13).
+12. **Alle in R mit [Annahme] markierten Punkte bestätigen.**
 
 ---
 
@@ -717,6 +737,8 @@ für Score, Häkchen/Begrenzer, Kartenfarbe und Blocker-Auswertung.
 ---
 
 ## J2. Farbsystem (Session 2026-10-12) — löst offene Frage I.1 ab
+
+> **Geändert durch R (Session 2026-10-19):** Bewusste Ausnahme: ein grüner Punkt am Reiter „Szenarien vergleichen", wenn dort Szenarien der aktuellen Ebene liegen (R.9). Die Bereichs-Tabs bleiben farblos (R.3).
 
 **Leitregel:** Die Oberfläche bleibt ruhig, Farbe gehört den Daten.
 
@@ -782,6 +804,8 @@ Zwei Meldungen, die dasselbe sagen, werden zusammengeführt (nie das gleiche
 
 ## L. Rasterauflösung / Ebenen (geändert)
 
+> **Geändert durch R (Session 2026-10-19):** Ausnahme: die Budget-Zeilen der Regions-Headline stehen in GW mit zwei Nachkommastellen; Karte, Legende, rechte Spalte und Zelldetail bleiben in der Region bei MW (R.5).
+
 Zwei Ebenen mit zwei Einheiten (s. M):
 - **National (DE-Ansicht):** Einheit = **Landkreis**. Scope-Label „Deutschland ·
   Landkreise". Keine 5-×-5-km-Zellen auf dieser Ebene.
@@ -808,6 +832,8 @@ Skala als ganze Zahl / eine Nachkommastelle, kein erzwungenes „,00".
 ---
 
 ## M. Regionale Auswertung & Zwei-Ebenen-Kriterien (neu, Research-Anforderung)
+
+> **Geändert durch R (Session 2026-10-19):** „← Deutschland" entfällt zugunsten der Bereichs-Tabs (R.3). Einstieg über einen hervorgehobenen Knopf „im Detail auswerten" (R.4). Das Regionsbudget ist die bundesweite **Verteilung**, nicht der Anteil am bundesweiten Konsens; es ist als Regionalziel einstellbar, und die Headline ist neu (R.5). Neu: Herleitungskette (R.6) und „veraltet"-Zustand (R.7). „Kein Pan/Zoom" gilt weiter für die Gerechtigkeitskarten, aber nicht für „Bestand & Potenziale" (R.13).
 
 **Mentales Modell in einem Satz:** Die nationalen Prinzipien entscheiden, **wie
 viel jede Region bekommt**; die regionalen Prinzipien entscheiden, **wo innerhalb
@@ -1088,6 +1114,8 @@ ist derselbe Trick wie bei „Konsens vs. …" — nur der Unterschied variiert.
 
 ## O. Vergleichs-Hub „Szenarien vergleichen" (Reversal, Session 2026-10-09)
 
+> **Geändert durch R (Session 2026-10-19):** Getrennt je Ebene, in beiden Bereichs-Tabs. A/B bleiben ohne gespeicherte Szenarien leer, statt mit den zwei Referenzen vorbelegt zu werden. Der Referenz-Hinweis wird durch einen Mengen-Hinweis ersetzt. Planungsflächen gibt es nur bei Wind (R.8).
+
 **Reversal (bewusst):** Der Reiter „Vergleich" (Konsens vs. Referenz / Konsens vs.
 Planung) ist entfernt. Referenzen sind auswählbare Vergleichsobjekte im Reiter
 „Szenarien vergleichen", der damit der **einzige Vergleichs-Hub** ist.
@@ -1275,6 +1303,8 @@ Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
 
 ## P. Paarweise Prinzipien-Matrix & „Vergleich teilen" (Session 2026-10-09)
 
+> **Geändert durch R (Session 2026-10-19):** Die Matrix zeigt immer alle wählbaren Prinzipien und ist ab einem gewählten Prinzip sichtbar; nicht gewählte Paare erscheinen als leere graue Zellen (R.11).
+
 **Paarweise Matrix** (Reiter „Konsens", direkt unter Karte + Legende; nur
 Erweitert; DE- und Regionsmodus; erst ab 2 Prinzipien):
 - Zeilen/Spalten = aktuell gewählte Prinzipien, Dreieck unterhalb der Diagonale,
@@ -1422,3 +1452,321 @@ Entwurfs-Hinweis. Vor einer Veröffentlichung nötig:
   27.08., seit dem ersten Commit unverändert) wurde gelöscht. Sie war nirgends
   eingebunden, zeigte einen veralteten Stand und verwies noch auf Google Fonts
   und unpkg. Ausgeliefert wird allein `EEquityMap.dc.html`.
+
+---
+
+## R. Bereichs-Tabs, Regionalziel, Begriffe (Session 2026-10-19)
+
+**Herkunft:** Änderungswünsche aus dem Projektteam (Folien „Neue Tabs" u. a.),
+in dieser Session geklärt. Stellen, die eine Annahme von Claude sind und noch
+bestätigt werden müssen, sind mit **[Annahme]** markiert (s. I.12).
+
+**Löst ab bzw. ändert:** M (Karten-Abstraktion, Regions-Headline, Einstieg,
+Zurück-Navigation), O (A/B-Defaults, Hub-Inhalt, Referenz-Hinweis),
+P (Paar-Matrix), J2 (Ausnahme grüner Punkt), L (GW in zwei Regionszeilen),
+A/E (Begriff „Neuzubau"), C/G (Reitername „Konfliktflächen"). Die betroffenen
+Abschnitte tragen oben einen Verweis hierher; Reject-Log (H) und offene Fragen
+(I.10–I.12) sind ergänzt.
+
+**Umsetzung in fünf Schritten (je ein Prompt für Claude Code):**
+1. Begriffe, Infoboxen, kleine Korrekturen (R.1, R.2, R.9–R.12, Fehler aus R.7)
+2. Bereichs-Tabs: Gerüst + Detailauswertung (R.3, R.4)
+3. Regionsmodus: Regionalziel, Herleitung, „veraltet" (R.5–R.7)
+4. Szenarien vergleichen je Ebene (R.8)
+5. Reiter „Bestand & Potenziale" (R.13)
+
+### R.1 Begriffe: Ausbau, Bestand, Zubau (verbindlich, im ganzen Werkzeug)
+
+- **Ausbau** = die installierte Leistung, die eine Verteilung insgesamt
+  vorsieht. Das **Ausbauziel** ist ein Ausbau-Wert (inkl. Bestand, wenn dieser
+  berücksichtigt wird).
+- **Bestand** = heute installierte Leistung.
+- **Zubau** = zusätzlich nötige Leistung: `Zubau = max(Ausbau − Bestand, 0)`.
+- Ohne Bestandsberücksichtigung (Greenfield) gilt Zubau = Ausbau.
+- **Bestand wird nie zurückgebaut.** Liegt der Bestand über dem verteilten
+  Ausbau, bleibt er stehen; dort ist der Zubau 0. Folge (bewusst akzeptiert):
+  Die tatsächlich installierte Leistung kann in der Summe über dem Ausbauziel
+  liegen.
+- **Umbenennungen:** „Neuzubau" → „Zubau"; „Ausbau gesamt" → „Ausbau".
+  „Zubaukonsens" bleibt (Konsens über den Zubau, s. decisions).
+  Teilmengen-Regel aus A gilt weiter: Zubaukonsens ≤ Zubau ≤ Ausbau.
+- **Schalter:** „Bestandsanlagen anrechnen" → **„Bestandsanlagen
+  berücksichtigen"** (überall, auch in Szenario-Unterschiedszeilen:
+  „Bestand berücksichtigt / nicht berücksichtigt").
+- Hinweis zur Formel der Vorlage („Ausbau = Bestand + Zubau"): stimmt nur, wo
+  der Bestand den Ausbau nicht übersteigt. Deshalb steht in den Texten die
+  max-Formel. **[Annahme — bestätigen]**
+
+**Offen (Team):** Bestandsberücksichtigung standardmäßig an? Aktuell aus
+(Greenfield). Für „aus": die Frage des Werkzeugs ist „wo wäre der Ausbau
+fair?", die Galerie verliert mit Bestand an Kontrast, und der neue Reiter
+„Bestand & Potenziale" zeigt den heutigen Stand bereits. Für „an": Planende
+fragen meist „wie viel kommt hier noch dazu?". → Mit Öko-Institut /
+EmPowerPlan klären (offene Frage I.10).
+
+### R.2 Begriff „Gerechtigkeitsprinzip"
+
+- Es bleibt bei „Prinzip". Wo der Begriff eingeführt wird (Überschrift der
+  Prinzipienliste, erste Zeile einer Infobox, Methodik), steht einmal das
+  volle Wort **„Gerechtigkeitsprinzip"**; danach genügt „Prinzip".
+- „Gerechtigkeitsvorstellung" wird nicht verwendet.
+
+### R.3 Bereichs-Tabs: Bestand & Potenziale · Deutschland · Regional
+
+**Problem:** Der Wechsel DE ↔ Region ist zu wenig herausgestellt; beim
+Wechsel ändern sich zu viele Stellen gleichzeitig.
+
+**Grundgedanke:** Ich gehe von heute aus (Bestand & Potenziale), untersuche
+dann Gerechtigkeit bundesweit (Deutschland) und danach innerhalb eines
+Landkreises (Regional).
+
+- **Ort:** Die drei Bereichs-Tabs stehen in der Kartenleiste, dort wo bisher
+  „← Deutschland" und der Ortsname stehen. **Das Suchfeld bleibt.**
+- **Hierarchie:** Linke Spalte, Mitte und rechte Spalte gehören zum aktiven
+  Bereichs-Tab. Die bisherigen Reiter (Konsens, Was begrenzt?, Dissens,
+  Einzelverteilungen, Szenarien vergleichen) sind Unter-Reiter von
+  „Deutschland" und „Regional". „Bestand & Potenziale" hat eigene
+  Unter-Reiter (R.13).
+- **Kennzeichnung:** nur Grautöne bzw. eine neutrale Umrandung, die den aktiven
+  Tab mit seinem Inhalt verbindet (Ordner-Optik). Keine Farbe (J2: Farbe gehört
+  den Daten).
+- **Landkreisname** im Regional-Tab: „Regional · [Landkreis]". **[Annahme]**
+- **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
+- **Regional ohne gewählten Landkreis** (direkt auf den Tab geklickt):
+  Leerzustand „Wählen Sie einen Landkreis — über die Suche oder auf der
+  Deutschlandkarte."
+- **Zustand bleibt erhalten:** Wer zwischen den Tabs wechselt, findet die
+  Region so wieder, wie er sie verlassen hat (regionale Prinzipien,
+  Regionalziel, berechnetes Ergebnis, Ansicht). Wird ein **anderer**
+  Landkreis gewählt, startet dieser mit den Voreinstellungen (regionale
+  Prinzipien = bundesweite, Regionalziel = DE-Empfehlung). **[Annahme]**
+- **Suchfeld je Tab** **[Annahme]**: Deutschland — wählt den Landkreis aus
+  (Popover, wie bisher); Regional — wechselt in diesen Landkreis; Bestand &
+  Potenziale — zoomt auf den Landkreis.
+
+### R.4 „Im Detail auswerten" (Einstieg in den Regionsmodus)
+
+- **Aktion stärker:** Die Aktion im Popover „[Landkreis] im Detail auswerten →"
+  ist ein gefüllter Knopf in der Akzentfarbe (bisher zurückgenommen). Sie
+  wechselt in den Tab „Regional".
+- **Einmaliger Hinweis über der Deutschlandkarte:** „Klicken Sie auf einen
+  Landkreis, um ihn im Detail auszuwerten." Verschwindet nach dem ersten Klick
+  auf einen Landkreis und kommt in der Sitzung nicht wieder (K: einmalige
+  Lehre).
+- **Info „Was passiert in der Detailauswertung?"** als „i" neben der Aktion im
+  Popover und neben dem Regionsbudget im Tab „Regional" **[Annahme]**. Text:
+
+  > **Was passiert in der Detailauswertung?**
+  > Die Deutschlandrechnung legt fest, wie viel Ausbau nach den bundesweit
+  > gewählten Gerechtigkeitsprinzipien auf diesen Landkreis entfällt
+  > (Regionsbudget). In der Detailauswertung wird dieses Regionsbudget
+  > innerhalb des Landkreises auf einem 5 × 5-km-Raster neu verteilt.
+  > Ausgangspunkt sind dieselben Gerechtigkeitsprinzipien wie bundesweit. Sie
+  > können sie ändern und prüfen, wie sich dasselbe Regionsbudget nach anderen
+  > Prinzipien verteilen würde.
+  > Auch das Regionsbudget lässt sich ändern. Weicht es vom Ergebnis der
+  > Deutschlandrechnung ab, wird das gekennzeichnet: Es entspricht dann nicht
+  > mehr der bundesweiten Empfehlung.
+
+### R.5 Regionsmodus: linke Spalte und Regionalziel
+
+**Neu: Die Leistung ist in beiden Modi einstellbar.**
+
+- **Deutschland:** linke Spalte unverändert.
+- **Regional:**
+  - Bleiben: „Bundesweit: [n] Prinzipien" (Kontext, zugeklappt), die regionale
+    Prinzipienauswahl, Technologie, „Bestandsanlagen berücksichtigen".
+  - **Entfällt:** der Textblock „Bei [X] MW liegen [Y] MW im Konsens."
+  - **Keine Zieljahre** (Marken 2030/2035/2045 ausgeblendet).
+  - **Regler „Ausbauziel"** für den Landkreis:
+    - Bereich 0 … maximales Leistungspotenzial des Landkreises für die gewählte
+      Technologie (aus den Potenzialflächen, R.13).
+    - Voreinstellung = **DE-Empfehlung**: der Ausbau, den die bundesweite
+      Verteilung (gewichtete Kombination der bundesweit gewählten Prinzipien,
+      wie „Zubau" in A) diesem Landkreis zuweist. Das ist **die Verteilung,
+      nicht der bundesweite Konsens**. → Ändert M (dort: „Anteil dieses
+      Landkreises am bundesweiten Konsens").
+    - **Ein eigenes Regionalziel bleibt bestehen**, auch wenn sich die
+      bundesweiten Prinzipien ändern. Dann ändert sich nur die angezeigte
+      DE-Empfehlung.
+    - Daneben ein Link „Auf DE-Empfehlung zurücksetzen", nur sichtbar bei
+      eigenem Ziel. **[Annahme]**
+- **Headline über der Karte** (ersetzt die Regions-Headline aus M):
+  - Ohne eigenes Ziel: „Regionsbudget: 0,39 GW — der Anteil dieses Landkreises
+    laut bundesweiter Verteilung."
+  - Mit eigenem Ziel, deutlich als Abweichung gekennzeichnet, zweizeilig:
+    „DE-Empfehlung für den Landkreis: 0,39 GW" /
+    „Aktuell untersuchtes Regionalziel: 0,50 GW"
+- **Einheit (Ausnahme zu L):** Diese Budget-Zeilen stehen in **GW** (zwei
+  Nachkommastellen). Karte, Legende, rechte Spalte und Zelldetail bleiben in der
+  Region bei **MW**.
+- **Szenarien** speichern das Regionalziel und ob es die DE-Empfehlung oder ein
+  eigenes Ziel ist. Unterschiedszeile in den A/B-Boxen (O): „Regionalziel:
+  0,50 GW (eigenes)" bzw. „(DE-Empfehlung)".
+
+### R.6 Rechte Spalte im Regionsmodus: Herleitung von oben nach unten
+
+Damit dauerhaft sichtbar bleibt, woher das Regionsbudget kommt und was wo gilt,
+zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
+
+**Prinzipien bundesweit → Regionsbudget → Prinzipien regional → Zubaukonsens**
+
+- Regionsbudget mit Kennzeichnung „DE-Empfehlung" bzw. „eigenes Ziel" (dann
+  zusätzlich die DE-Empfehlung klein daneben).
+- Letztes Glied je nach Auswahl: „Zubaukonsens der Region" (nichts gewählt),
+  „… der Gemeinde [Name]" bzw. „… der Rasterzelle".
+- Prinzipien als Farbpunkt + Name, in derselben Reihenfolge und Darstellung wie
+  in der linken Spalte.
+- **Der bundesweite Kontext in der linken Spalte bleibt.** Links steht die
+  Einstellung (was gilt), rechts die Herleitung (wie das Ergebnis entsteht).
+  Beide Stellen müssen identisch dargestellt sein (Farben, Reihenfolge, Namen).
+
+### R.7 „Ergebnis veraltet" im Regionsmodus
+
+- **Fehler beheben:** Jede Eingabe, die das Regionsergebnis ändert, setzt den
+  Zustand „nicht aktuell": regionale Prinzipien, Regionalziel, Technologie,
+  Bestandsberücksichtigung und bundesweite Prinzipien (diese ändern die
+  DE-Empfehlung). Bisher löste eine Änderung am Leistungsregler die Box nicht
+  zuverlässig aus.
+- **Stärker zeigen:** zusätzlich zur Box (ein Ort, K) eine deutliche Umrandung
+  der Karte in der Akzentfarbe (`#1f2a33`, 2 px, gestrichelt) und die bestehende
+  Abdimmung. Verschwindet mit „Neu berechnen".
+
+### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
+
+- „Szenarien vergleichen" ist Unter-Reiter in **beiden** Bereichs-Tabs.
+  - **Deutschland:** nur Deutschland-Szenarien + Referenzen auf
+    Deutschland-Ebene.
+  - **Regional:** nur Regions-Szenarien + Referenzen **für diese Region**
+    (nicht Deutschland).
+- **Dropdowns in der Region:** gruppiert je Landkreis, sobald Szenarien aus mehr
+  als einem Landkreis existieren. Vergleichbar bleiben nur Objekte desselben
+  Landkreises: Steht in A ein Szenario aus Landkreis X, sind in B Szenarien
+  anderer Landkreise ausgegraut („anderer Landkreis"). Referenzen gelten immer
+  für den aktuellen Landkreis.
+- **Voreinstellung A/B:**
+  - Keine Szenarien der aktuellen Ebene (bzw. des aktuellen Landkreises)
+    gespeichert → **A und B bleiben leer**, Hinweis: „Noch keine Szenarien
+    gespeichert. Zum Vergleich stehen nur die Referenzen zur Verfügung."
+    Die Referenzen sind im Dropdown wählbar. → Ändert O („ohne Szenario die zwei
+    Referenzen").
+  - Regional: Voreinstellung sind Szenarien des aktuell gewählten Landkreises.
+  - Ein bzw. zwei Szenarien vorhanden: Regel aus O bleibt. **[Annahme]**
+- **Referenzen in der Region** sind auf das **aktuell untersuchte Regionalziel**
+  skaliert. Bei eigenem Ziel Hinweis: „Die Referenzen sind auf das aktuell
+  untersuchte Regionalziel (0,50 GW) skaliert, nicht auf die DE-Empfehlung
+  (0,39 GW)."
+- **Planungsflächen nur bei Wind.** Bei PV steht als Referenz nur „Historischer
+  Ausbau" zur Verfügung.
+- **Ein Hinweis für unterschiedliche Mengen** (ersetzt den Referenz-Hinweis aus
+  O; nie zwei Hinweise mit derselben Aussage, K). Erscheint immer, wenn A und B
+  unterschiedliche Summen verteilen (zwei Szenarien oder Szenario/Referenz);
+  entfällt, wenn die angezeigten Summen gleich sind:
+
+  > A und B verteilen unterschiedlich viel Leistung: A [X], B [Y]. Die Karte
+  > zeigt deshalb nicht nur, wo anders verteilt wird, sondern auch diesen
+  > Mengenunterschied von [Δ].
+
+  Zusatzsatz nur bei Szenario gegen Referenz: „[Referenz] verteilt das ganze
+  Ausbauziel, das Szenario nur seinen Zubaukonsens." Offene Frage I.9 bleibt
+  offen.
+- **Infobox „Szenarien vergleichen"** („i" an der Erklärzeile des Hubs):
+
+  > **Was kann ich hier vergleichen?**
+  > Sie können gespeicherte Szenarien miteinander vergleichen — auf
+  > Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen
+  > sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den
+  > ausgewiesenen Planungsflächen (nur Wind).
+  > Wichtig: A und B können unterschiedlich viel Leistung verteilen. Die Karte
+  > zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der
+  > Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen.
+  > Deutschland- und Regionsszenarien sowie Wind und PV werden nicht
+  > miteinander verglichen.
+
+### R.9 Speichern und Wiederfinden
+
+- **Hinweis am Knopf „Zum Vergleich speichern":** solange noch kein Szenario
+  gespeichert ist und der Knopf sichtbar ist, steht direkt darüber eine Zeile
+  „Speichern Sie diese Einstellung, um sie später zu vergleichen." und der Knopf
+  ist leicht hervorgehoben (Tönung, kein Puls). Entfällt nach dem ersten
+  Speichern.
+- **Nach dem ersten Speichern** (Toast, einmalig): „Gespeichert. Vergleichen
+  Sie Ihre Szenarien im Reiter „Szenarien vergleichen"."
+- **Grüner Punkt** neben dem Reiter „Szenarien vergleichen", wenn dort
+  gespeicherte Szenarien der aktuellen Ebene liegen. **Bewusste Ausnahme von
+  J2** (Grün sonst nur Logo und Daten).
+
+### R.10 Reiter „Konfliktflächen" → „Dissens"
+
+- Reitername „Dissens" (nicht „Dissenz"). Unter-Ansichten „Wie stark?" /
+  „Welche Prinzipien?" und alle Captions bleiben. Im Fließtext weiter
+  „abweichen / Abweichung".
+- Hinweis: Ältere Stellen in diesem Dokument, die „Dissens" für die
+  Unter-Ansicht „Wie stark?" verwenden, meinen die Unter-Ansicht, nicht den
+  Reiter.
+
+### R.11 Paarweise Matrix: feste Größe (ändert P)
+
+- Die Matrix zeigt **immer alle wählbaren Prinzipien**, unabhängig von der
+  Auswahl. Damit bleibt sie gleich groß.
+- Paare mit mindestens einem nicht gewählten Prinzip: **leere graue Zelle**,
+  ohne Wert. Namen nicht gewählter Prinzipien in den Köpfen ausgegraut.
+- **Sichtbar ab einem gewählten Prinzip** (dann sind alle Zellen leer).
+- Sonst unverändert: Erweitert, Reiter Konsens, DE und Region.
+
+### R.12 Infoboxen (Texte)
+
+**Einstieg** (ersetzt den vorhandenen Text an der Prinzipienliste):
+
+> **Was kann ich hier tun?**
+> Wählen Sie ein Gerechtigkeitsprinzip, um zu sehen, wie es den Ausbau
+> verteilt. Wählen Sie mehrere, um zu sehen, wo sie übereinstimmen, wo sie
+> voneinander abweichen und was den Konsens begrenzt.
+
+**Bestand** („i" am Schalter „Bestandsanlagen berücksichtigen"):
+
+> **Was bedeutet „Bestandsanlagen berücksichtigen"?**
+> Ohne diese Option zeigt EEquityMap eine Greenfield-Verteilung: Der Ausbau
+> wird so verteilt, als würde neu geplant — unabhängig davon, wo heute schon
+> Anlagen stehen.
+> Mit dieser Option bleibt die vorhandene Leistung bestehen. Für jeden
+> Landkreis bzw. jede Rasterzelle gilt: Liegt der verteilte Ausbau unter dem
+> Bestand, ist kein Zubau nötig. Liegt er darüber, ist die Differenz der Zubau.
+> Bestand wird also nicht zurückgebaut; er verringert nur, wie viel noch
+> zugebaut werden muss.
+
+**Begriffe** (neuer Absatz im Methodik-Abschnitt „Rahmen"):
+
+> **Ausbau, Bestand, Zubau**
+> Ausbau ist die installierte Leistung, die eine Verteilung insgesamt
+> vorsieht; das Ausbauziel gibt sie vor. Bestand ist die heute schon
+> installierte Leistung. Zubau ist die zusätzlich nötige Leistung:
+> Zubau = Ausbau − Bestand, mindestens 0. Ohne Berücksichtigung des Bestands
+> (Greenfield) ist der Zubau gleich dem Ausbau.
+
+### R.13 Reiter „Bestand & Potenziale" (neu)
+
+**Zweck:** Ausgangspunkt — was ist heute da, womit arbeiten wir, warum.
+
+- **Unter-Reiter:** „Bestand heute" · „Potenzialflächen" (Flächen der gewählten
+  Technologie) · „Planungsflächen" (nur Wind; bei PV ausgeblendet; ist er aktiv
+  und wird auf PV gewechselt, springt die Ansicht auf „Potenzialflächen").
+- **Linke Spalte:** nur Technologie (Wind/PV).
+- **Karte frei zoombar** (Reversal von M „kein Pan/Zoom" — nur für diesen
+  Reiter). Verwaltungsebene nach Zoomstufe: weit = Landkreise, nah = Gemeinden.
+  Umsetzung im Prototyp mit D3-Zoom auf SVG; Ziel ist, das Verhalten der echten
+  Anwendung zu zeigen, nicht ihre Technik.
+- **Umschalter an der Karte (nur Erweitert):** „Administrativ" (Werte je
+  Landkreis/Gemeinde, je nach Zoom) · „Rohdaten" (Potenzial- und
+  Planungsflächen als Flächen, Bestand als Anlagen-Punkte). Rohdaten im
+  Prototyp als **Platzhalter** (erzeugte Formen bzw. Punkte), solange sie
+  glaubwürdig aussehen und bedienbar sind. Basic zeigt immer „Administrativ".
+- **Klick → rechte Spalte:**
+  - Bestand heute: installierte Leistung in MW.
+  - Potenzial- und Planungsflächen: Fläche in ha, Leistungspotenzial in MW,
+    energetisches Potenzial in GWh.
+  - Ohne Auswahl: Summen für Deutschland. **[Annahme]**
+- **Daten:** Platzhalterwerte je Landkreis und Gemeinde für Bestand,
+  Potenzialflächen und Planungsflächen, je Technologie. Dieselben Werte liefern
+  das Maximum des Regionalziel-Reglers (R.5) und die Referenz
+  „Planungsflächen".
