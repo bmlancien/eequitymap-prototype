@@ -208,7 +208,6 @@
         </div>
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
-        <div style="font-size:14px;color:#1b2126;margin-top:7px;line-height:1.45">{{ sliderResult }}</div>
       </div>
       </sc-if>
 
@@ -3514,7 +3513,7 @@ class Component extends DCLogic {
       R.onRegionSlider = e => this.setState({ regionOwnTarget: Math.round(+e.target.value * 100) / 100 });
       R.resetRegionTarget = () => this.setState({ regionOwnTarget: null });
     }
-    R.sliderResult = stufe >= 2 ? ('Bei ' + this.fmtU(target, isRegion) + ' liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens.') : ('Bei ' + this.fmtU(target, isRegion) + ' verteilt ' + this.byId[singlePid].name + ' den gesamten Zubau.');
+    // Kein Satz „Bei [X] liegen [Y] im Konsens" unter dem Regler (R.5, Nachtrag): die Headline über der Karte nennt beides
 
     R.accountSwitchStyle = this.switchStyle(S.account);
     R.accountKnobStyle = this.knobStyle(S.account);

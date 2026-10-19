@@ -1589,7 +1589,10 @@ Landkreises (Regional).
 
 **Neu: Die Leistung ist in beiden Modi einstellbar.**
 
-- **Deutschland:** linke Spalte unverändert.
+- **Deutschland:** linke Spalte unverändert — mit einer Ausnahme (Nachtrag,
+  Session 2026-10-19): der Satz „Bei [X] GW liegen [Y] GW im Konsens." unter
+  dem Regler entfällt auch hier. Die Headline über der Karte („Von [X] GW
+  Ausbauziel liegen [Y] GW im Konsens …") nennt dieselben Zahlen.
 - **Regional:**
   - Bleiben: „Bundesweit: [n] Prinzipien" (Kontext, zugeklappt), die regionale
     Prinzipienauswahl, Technologie, „Bestandsanlagen berücksichtigen".
