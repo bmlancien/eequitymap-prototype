@@ -406,6 +406,10 @@
                 <span onClick="{{ toggleHubInfo }}" style="{{ hubInfoBtnStyle }}">i</span>
               </div>
               <div style="{{ hubInfoStyle }}"><b style="color:#1b2126">Was kann ich hier vergleichen?</b><br>Sie können gespeicherte Szenarien miteinander vergleichen — auf Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den ausgewiesenen Planungsflächen (nur Wind).<br>Wichtig: A und B können unterschiedlich viel Leistung verteilen. Die Karte zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen. Deutschland- und Regionsszenarien sowie Wind und PV werden nicht miteinander verglichen.</div>
+              <!-- Keine passenden Szenarien: A/B leer, nur Referenzen wählbar (R.8) -->
+              <sc-if value="{{ hubNoScenNote }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#1b2126;line-height:1.45;margin:0 2px;padding:8px 11px;background:#fff;border:1px solid #d7dce0;border-radius:8px">{{ hubNoScenNote }}</div>
+              </sc-if>
               <!-- Klick außerhalb schließt ein offenes Dropdown -->
               <div onClick="{{ closeHubMenu }}" style="{{ hubMenuBackdrop }}"></div>
               <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -453,6 +457,10 @@
                   </div>
                 </sc-for>
               </div>
+              <!-- Referenzen auf ein eigenes Regionalziel skaliert (nur Regional, nur bei eigenem Ziel) -->
+              <sc-if value="{{ hubScaleNote }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px">{{ hubScaleNote }}</div>
+              </sc-if>
 
                 <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
                   <!-- Titel links; rechts (Regionsvergleich, nur Erweitert) derselbe Ansichts-Umschalter wie in der
@@ -474,6 +482,9 @@
                   </sc-if>
                   <sc-if value="{{ scenDiffHint }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
+                  </sc-if>
+                  <sc-if value="{{ scenDiffEmpty }}" hint-placeholder-val="{{ false }}">
+                    <div style="height:260px;margin-top:8px;display:flex;align-items:center;justify-content:center;border:1px dashed #d3d8dc;border-radius:10px;background:#f9fafb;font-size:14px;color:#6b7680;text-align:center;padding:0 20px">Wählen Sie A und B, um die Differenz zu sehen.</div>
                   </sc-if>
                   <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
                     <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
@@ -1443,7 +1454,7 @@ class Component extends DCLogic {
     // Szenarien speichern & vergleichen (§N) — session-only, im Speicher, keine Persistenz.
     scenarios: [],
     scenarioSaveOpen: false,
-    hubPairs: null,     // A/B je Technologie: { wind: [idA, idB], pv: [...] }
+    hubPairs: null,     // A/B je Hub: { de: { tech, pair: [idA, idB] }, region: { tech, krsId, pair } }
     hubRefInfo: null,
     shareOpen: false,
     shareCopied: false,
@@ -2396,46 +2407,74 @@ class Component extends DCLogic {
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
     R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.showHubGemToggle = false; R.scenDiffGemNote = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
+    R.hubNoScenNote = ''; R.hubScaleNote = ''; R.scenDiffEmpty = false;
     R.hubSlots = []; R.hubTables = []; R.hubRows = []; R.hubRowGroups = []; R.hubHeadCells = []; R.hubHeadStyle = ''; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
     if (view === 'szenarien') {
+      // Ein Hub je Bereich (R.8): Deutschland zeigt nur Deutschland-Szenarien, Regional nur Regions-Szenarien
+      // (Dropdown: alle Landkreise, vergleichbar nur derselbe). Referenzen gelten für die Ebene des Hubs.
       const hubTech = S.tech;
-      const hubScen = scenariosAll.filter(sc => sc.tech === hubTech);
-      const refObjs = this.hubRefs.map(r => ({ id: r.id, name: r.name, info: r.info, isRef: true }));
+      const hubRegion = isRegion;
+      const hubKrs = hubRegion ? S.region.krsId : null;
+      const hubScen = scenariosAll.filter(sc => sc.tech === hubTech && !!sc.isRegion === hubRegion);
+      const krsScen = hubRegion ? hubScen.filter(sc => sc.regionKrsId === hubKrs) : hubScen;
+      // Planungsflächen nur bei Wind
+      const refObjs = this.hubRefs.filter(r => hubTech === 'wind' || r.id !== 'ref_planung').map(r => ({ id: r.id, name: r.name, info: r.info, isRef: true }));
       const objById = {}; hubScen.forEach(sc => objById[sc.id] = sc); refObjs.forEach(r => objById[r.id] = r);
-      const pairs = S.hubPairs || {};
-      let pair = pairs[hubTech];
-      if (!pair) {
-        // Default: zwei Szenarien; bei nur einem Szenario gegen „Planungsflächen"; ohne Szenario die zwei Referenzen
-        const pool = hubScen.map(sc => sc.id).concat(['ref_planung', 'ref_historisch']);
-        pair = pool.slice(0, 2);
-      }
+      // A/B je Hub gespeichert, zusammen mit Technologie (und Landkreis): passt das nicht mehr, gilt die Voreinstellung
+      // (erstes Öffnen, anderer Landkreis, Technologiewechsel). Voreinstellung: keine passenden Szenarien → leer;
+      // eins → gegen Planungsflächen (Wind) bzw. Historischen Ausbau (PV); mehrere → die zwei zuletzt gespeicherten.
+      const hubKey = hubRegion ? 'region' : 'de';
+      const stored = (S.hubPairs || {})[hubKey];
+      const storedOk = stored && stored.tech === hubTech && (!hubRegion || stored.krsId === hubKrs);
+      let pair;
+      if (storedOk) pair = stored.pair;
+      else if (!krsScen.length) pair = [null, null];
+      else if (krsScen.length === 1) pair = [krsScen[0].id, hubTech === 'wind' ? 'ref_planung' : 'ref_historisch'];
+      else pair = [krsScen[krsScen.length - 2].id, krsScen[krsScen.length - 1].id];
       pair = [0, 1].map(k => (pair[k] && objById[pair[k]]) ? pair[k] : null);
-      const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubTech]: np }), hubMenu: null });
+      const setPair = np => this.setState({ hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubKey]: { tech: hubTech, krsId: hubKrs, pair: np } }), hubMenu: null });
+      R.hubNoScenNote = krsScen.length ? '' : (hubRegion
+        ? 'Für ' + S.region.label + ' sind noch keine Szenarien gespeichert. Zum Vergleich stehen nur die Referenzen zur Verfügung.'
+        : 'Noch keine Szenarien gespeichert. Zum Vergleich stehen nur die Referenzen zur Verfügung.');
       // A/B-Kennzeichen neutral (dunkles bzw. mittleres Grau) — nicht in den Farben der Differenzkarte
       const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#34424f' : '#8a94a0') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
 
-      // Objekte gruppiert wie bisher: Referenzen · Deutschland · je Landkreis (Reihenfolge des ersten Speicherns)
-      const deScen = hubScen.filter(sc => !sc.isRegion);
+      // Gruppen: Deutschland — „Deutschland"; Regional — „Szenarien" bzw. je Landkreis (aktueller zuerst)
       const regionKeys = [];
-      hubScen.forEach(sc => { if (sc.isRegion && !regionKeys.includes(sc.regionKrsId)) regionKeys.push(sc.regionKrsId); });
+      hubScen.forEach(sc => { if (hubRegion && !regionKeys.includes(sc.regionKrsId)) regionKeys.push(sc.regionKrsId); });
+      if (hubRegion && regionKeys.includes(hubKrs)) regionKeys.splice(regionKeys.indexOf(hubKrs), 1), regionKeys.unshift(hubKrs);
       const levelGroups = [];
-      if (deScen.length) levelGroups.push({ key: 'de', label: 'Deutschland', isRegion: false, list: deScen });
-      regionKeys.forEach(k => { const list = hubScen.filter(sc => sc.isRegion && sc.regionKrsId === k); levelGroups.push({ key: 'r_' + k, label: list[0].regionLabel, isRegion: true, list }); });
+      if (!hubRegion) { if (hubScen.length) levelGroups.push({ label: 'Deutschland', list: hubScen }); }
+      else if (regionKeys.length === 1) levelGroups.push({ label: 'Szenarien', list: hubScen });
+      else regionKeys.forEach(k => { const list = hubScen.filter(sc => sc.regionKrsId === k); levelGroups.push({ label: list[0].regionLabel, list }); });
 
       // A und B sind selbst Auswahl-Picker: Klick auf den Slot öffnet das Dropdown, Auswahl füllt genau diesen
       // Slot; Wechseln = Slot erneut anklicken. Ein Objekt im anderen Slot ist deaktiviert und markiert.
       // Farbpunkte der Prinzipien eines Szenarios (Dropdowns und Tabelle)
       const dotsOf = ids => (ids || []).map(id => ({ color: this.byId[id] ? this.byId[id].color : '#c4c9cd' }));
       const openMenu = S.hubMenu === 0 || S.hubMenu === 1 ? S.hubMenu : null;
+      // Ebene und Ziel der Referenzen (R.8): ein Szenario in A oder B gibt Landkreis und Regionalziel vor (Regel aus
+      // O); sonst der aktuelle Landkreis und das aktuell untersuchte Regionalziel (DE-Empfehlung oder eigenes Ziel).
+      // Deutschland: bundesweites Ausbauziel bzw. das Ziel des Szenarios.
+      const scenInPair = pair.map(id => id ? objById[id] : null).filter(o => o && !o.isRef);
+      const refLvl = scenInPair.length
+        ? { region: hubRegion, krs: scenInPair[0].regionKrsId, label: hubRegion ? scenInPair[0].regionLabel : 'Deutschland',
+            target: scenInPair[0].target, own: !!scenInPair[0].regionOwn, deRec: scenInPair[0].regionDeRec }
+        : { region: hubRegion, krs: hubKrs, label: hubRegion ? S.region.label : 'Deutschland',
+            target: hubRegion ? liveBudget : S.targetGW, own: hubRegion && S.regionOwnTarget != null, deRec: liveDeRec };
       const menuGroups = k => {
-        const other = pair[1 - k];
+        const other = pair[1 - k], otherObj = other ? objById[other] : null;
         const item = o => {
-          const inOther = o.id === other, isHere = o.id === pair[k];
+          const isHere = o.id === pair[k];
+          // nur derselbe Landkreis ist vergleichbar: steht im anderen Slot ein Szenario aus Landkreis X, sind
+          // Szenarien anderer Landkreise hier ausgegraut
+          const otherKrs = !o.isRef && otherObj && !otherObj.isRef && otherObj.regionKrsId !== o.regionKrsId;
+          const inOther = o.id === other || otherKrs;
           const infoOpen = o.isRef && S.hubRefInfo === o.id;
           return {
             name: o.name,
-            tag: inOther ? ('bereits in ' + (k === 0 ? 'B' : 'A')) : (isHere ? 'gewählt' : ''),
+            tag: o.id === other ? ('bereits in ' + (k === 0 ? 'B' : 'A')) : otherKrs ? 'anderer Landkreis' : (isHere ? 'gewählt' : ''),
             tagStyle: (inOther || isHere) ? 'flex:none;font-size:12px;color:' + (isHere ? '#1f2a33' : '#6b7680') + ';margin-left:auto;padding-left:8px' : 'display:none',
             // Referenzen abgesetzt: gestrichelter Rahmen am Kennzeichen, Szenarien voll
             markStyle: o.isRef ? 'flex:none;width:10px;height:10px;border-radius:3px;border:1.5px dashed #7a848c;background:#f4f5f6' : 'display:none',
@@ -2451,9 +2490,9 @@ class Component extends DCLogic {
             infoStyle: infoOpen ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:2px 12px 6px;line-height:1.45' : 'display:none'
           };
         };
-        const gs = [{ label: 'Referenzen (immer vorhanden)', items: refObjs.map(item), emptyText: '', emptyStyle: 'display:none' }];
+        const gs = [{ label: hubRegion ? 'Referenzen (' + refLvl.label + ')' : 'Referenzen', items: refObjs.map(item), emptyText: '', emptyStyle: 'display:none' }];
         levelGroups.forEach(g => gs.push({ label: g.label, items: g.list.map(item), emptyText: '', emptyStyle: 'display:none' }));
-        if (!hubScen.length) gs.push({ label: 'Gespeicherte Szenarien', items: [],
+        if (!hubScen.length) gs.push({ label: hubRegion ? 'Szenarien' : 'Deutschland', items: [],
           emptyText: 'Noch keine ' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + '-Szenarien gespeichert. Links mit „Zum Vergleich speichern" anlegen.',
           emptyStyle: 'font-size:14px;color:#6b7680;line-height:1.45;padding:2px 12px 6px' });
         return gs;
@@ -2511,17 +2550,21 @@ class Component extends DCLogic {
       R.shareSummary = 'A = ' + (A ? A.name : '—') + ', B = ' + (B ? B.name : '—') + ' (' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + ')';
       // Ebene + Ziel bestimmen: ein Szenario gibt sie vor; zwei Szenarien müssen übereinstimmen
       const scenSide = [A, B].filter(o => o && !o.isRef);
-      let lvlOk = !!(A && B), lvlRegion = false, lvlKrs = null, lvlLabel = 'Deutschland', lvlTarget = S.targetGW;
+      let lvlOk = !!(A && B);
+      const lvlRegion = refLvl.region, lvlKrs = refLvl.krs, lvlLabel = refLvl.label, lvlTarget = refLvl.target;
       if (scenSide.length === 2) {
         lvlOk = lvlOk && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId) && A.cellCons.length === B.cellCons.length;
       }
-      if (scenSide.length) { const s0 = scenSide[0]; lvlRegion = s0.isRegion; lvlKrs = s0.regionKrsId; lvlLabel = s0.isRegion ? s0.regionLabel : 'Deutschland'; lvlTarget = s0.target; }
+      // Hinweis bei eigenem Regionalziel, sobald eine Referenz im Spiel ist (bei DE-Empfehlung kein Hinweis)
+      R.hubScaleNote = lvlRegion && refLvl.own && [A, B].some(o => o && o.isRef) && refLvl.deRec != null
+        ? 'Die Referenzen sind auf das Regionalziel ' + this.fmt(lvlTarget) + ' GW (eigenes Ziel) skaliert, nicht auf die DE-Empfehlung (' + this.fmt(refLvl.deRec) + ' GW).' : '';
       // Dachzeile der rechten Spalte: Ebene des Vergleichs („Deutschland" bzw. der Landkreis)
       R.hubScopeLabel = lvlLabel;
       // Regionsvergleich: Landkreis im Kartentitel nennen (die Karte zeigt dann sein 5 × 5-km-Raster)
       R.scenDiffLevel = lvlRegion ? ' · ' + lvlLabel : '';
       if (!A || !B) {
-        R.scenDiffHint = 'Für die Differenzkarte A und B wählen.';
+        // ruhige Leerfläche statt Karte, bis A und B gewählt sind
+        R.scenDiffEmpty = true;
       } else if (!lvlOk) {
         R.scenDiffHint = 'Kartenvergleich nur für zwei Szenarien derselben Ebene möglich.';
       } else {
@@ -2588,15 +2631,13 @@ class Component extends DCLogic {
         const diffWord = (dv, txt) => txt === this.fmtU(0, lvlRegion) ? 'gleich viel in A und B' : (dv > 0 ? 'mehr in A' : 'mehr in B');
         R.hubSumDiff = this.fmtU(Math.abs(sumA - sumB), lvlRegion);
         R.hubSumDiffWord = diffWord(sumA - sumB, R.hubSumDiff);
-        // Referenz verteilt das volle Ziel, das Szenario nur den Konsens darunter — nur Hinweis, Logik bleibt
+        // Ein Hinweis für unterschiedliche Mengen (R.8): immer, wenn A und B verschiedene (angezeigte) Summen
+        // verteilen — zwei Szenarien ebenso wie Szenario gegen Referenz. Ersetzt den früheren Referenz-Hinweis.
         const refSide = [A, B].find(o => o.isRef);
-        if (refSide && scenSide.length === 1) {
-          const refSum = refSide === A ? sumA : sumB, scenSum = refSide === A ? sumB : sumA;
-          const refTxt = this.fmtU(refSum, lvlRegion), scenTxt = this.fmtU(scenSum, lvlRegion);
-          // ohne sichtbare Lücke (Konsens = Ziel) gibt es nichts zu erklären
-          if (refSum > scenSum && refTxt !== scenTxt) {
-            R.hubRefGapNote = 'Die beiden Seiten verteilen unterschiedlich viel: ' + refSide.name + ' ' + refTxt + (lvlRegion ? ' (das ganze Regionsbudget)' : ' (das ganze Ausbauziel)') + ', das Szenario ' + scenTxt + ' (nur den Zubaukonsens). Die ' + this.fmtU(refSum - scenSum, lvlRegion) + ' Unterschied stecken mit in der Karte. Sie zeigt also nicht nur, wo anders verteilt wird, sondern auch, dass ' + refSide.name + ' mehr verteilt.';
-          }
+        const aTxt = this.fmtU(sumA, lvlRegion), bTxt = this.fmtU(sumB, lvlRegion);
+        if (aTxt !== bTxt) {
+          R.hubRefGapNote = 'A und B verteilen unterschiedlich viel Leistung: A ' + aTxt + ', B ' + bTxt + '. Die Karte zeigt deshalb nicht nur, wo anders verteilt wird, sondern auch diesen Mengenunterschied von ' + this.fmtU(Math.abs(sumA - sumB), lvlRegion) + '.'
+            + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt das ganze ' + (lvlRegion ? 'Regionalziel' : 'Ausbauziel') + ', das Szenario nur seinen Zubaukonsens.' : '');
         }
         // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +
         // Konfliktflächen des Szenarios. „Im Konsens" = konfliktfreie Zelle über 35 % des Zellmaximums.
@@ -2641,10 +2682,9 @@ class Component extends DCLogic {
           rowsStyle: 'margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px' };
         if (!o) return Object.assign(card, { kind: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt', name: 'Noch nicht gewählt', rowsStyle: 'display:none' });
         if (o.isRef) {
-          const reg = scenSide.length ? lvlRegion : false;
           return Object.assign(card, { kind: 'Referenz', name: o.name, rows: [
-            { k: 'Ebene', v: scenSide.length ? lvlLabel : 'Deutschland', vStyle: txtCss },
-            { k: 'Verteilt', v: this.fmtU(scenSide.length ? lvlTarget : S.targetGW, reg) + ' (volles Ziel)', vStyle: numCss }
+            { k: 'Ebene', v: lvlLabel, vStyle: txtCss },
+            { k: 'Verteilt', v: this.fmtU(lvlTarget, lvlRegion) + ' (volles Ziel)', vStyle: numCss }
           ] });
         }
         const rows = [{ k: 'Ebene', v: o.isRegion ? o.regionLabel : 'Deutschland', vStyle: txtCss }];
@@ -2700,17 +2740,17 @@ class Component extends DCLogic {
       });
       // Deutschland (GW) und Regionen (MW) getrennt: unterschiedliche Größenordnung, nicht direkt vergleichbar.
       // Alle Landkreise stehen zusammen in „Regionen"; der Landkreis steht in der zweiten Zeile des Namens.
-      R.hubRowGroups = [
-        { title: 'Deutschland · GW', rows: mkRows(sortedScen.filter(sc => !sc.isRegion)) },
-        { title: 'Regionen · MW', rows: mkRows(sortedScen.filter(sc => sc.isRegion)) }
-      ].filter(g => g.rows.length);
+      // Je Hub nur die Tabelle seiner Ebene (hubScen enthält nur diese)
+      R.hubRowGroups = [{ title: hubRegion ? 'Regionen · MW' : 'Deutschland · GW', rows: mkRows(sortedScen) }].filter(g => g.rows.length);
       R.hubRows = sortedScen;
       R.hubTables = R.hubRows;   // showHubTables prüft nur, ob es Zeilen gibt
 
       // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
       // Hub-Umschalter und Umschalter links sind gekoppelt: beide setzen dieselbe Technologie (kein Abweichen)
-      R.setHubWind = () => this.setState({ tech: 'wind', hubMenu: null });
-      R.setHubPV = () => this.setState({ tech: 'pv', hubMenu: null });
+      // Technologiewechsel im Hub: Voreinstellung neu (gespeicherte A/B-Auswahl dieses Hubs verwerfen)
+      const hubTechTo = t => () => this.setState({ tech: t, hubMenu: null, hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubKey]: null }) });
+      R.setHubWind = hubTechTo('wind');
+      R.setHubPV = hubTechTo('pv');
       R.hubWindStyle = this.segTech('wind', hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
       R.hubPVStyle = this.segTech('pv', hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
       R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
@@ -2971,6 +3011,8 @@ class Component extends DCLogic {
         target, consensusTotal, limitingName,
         // Region: Regionalziel (= target, GW) und ob es ein eigenes Ziel oder die DE-Empfehlung war
         regionOwn: isRegion ? !!S.regionComputedOwn : false,
+        // DE-Empfehlung zum Zeitpunkt der Berechnung — für den Skalierungshinweis der Referenzen im Hub (R.8)
+        regionDeRec: isRegion ? S.regionComputedDeRec : null,
         cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice(),
         cellConflict: isConflict.slice()
       };
@@ -3172,8 +3214,8 @@ class Component extends DCLogic {
       onClick: () => this.setState(this.dismissTrioHint({ tab: t.id, hubMenu: null })),
       style: this.tabBtn(activeTab === t.id),
       // Grüner Punkt am Hub-Reiter, sobald ein Szenario gespeichert ist — bewusste Ausnahme von J2 (R.9);
-      // Einschränkung auf die aktuelle Ebene folgt mit der Aufteilung des Hubs.
-      dotStyle: t.id === 'szenarien' && scenariosAll.length ? 'display:inline-block;width:8px;height:8px;border-radius:50%;background:#57c4ab;margin-left:7px;vertical-align:1px' : 'display:none'
+      // nur, wenn der Hub DIESES Bereichs Szenarien enthält (Deutschland bzw. aktueller Landkreis), Technologie egal
+      dotStyle: t.id === 'szenarien' && scenariosAll.some(sc => isRegion ? (sc.isRegion && sc.regionKrsId === S.region.krsId) : !sc.isRegion) ? 'display:inline-block;width:8px;height:8px;border-radius:50%;background:#57c4ab;margin-left:7px;vertical-align:1px' : 'display:none'
     }));
     // In-Tab-Umschalter des Reiters Dissens: „Wie stark?" (braune Heatmap) / „Welche Prinzipien?" (Einfärbung)
     R.showKonfliktToggle = view === 'konflikt';
@@ -3881,7 +3923,7 @@ class Component extends DCLogic {
     this._undoT1 = setTimeout(() => this.setState({ undoShow: false }), 6000);
     this._undoT2 = setTimeout(() => this.setState({ undoMounted: false, undoDelete: null }), 6400);
     if (this.state.hubPairs) {
-      const hp = {}; Object.keys(this.state.hubPairs).forEach(t => hp[t] = this.state.hubPairs[t].map(x => x === id ? null : x));
+      const hp = {}; Object.keys(this.state.hubPairs).forEach(k => { const e = this.state.hubPairs[k]; hp[k] = Object.assign({}, e, { pair: e.pair.map(x => x === id ? null : x) }); });
       patch.hubPairs = hp;
     }
     this.setState(patch);
