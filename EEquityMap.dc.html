@@ -25,6 +25,7 @@
   @keyframes fadeOutHint{from{opacity:1}to{opacity:0}}
   @keyframes pulseSwatch{0%,100%{box-shadow:0 0 0 0 rgba(47,102,144,0)}50%{box-shadow:0 0 0 5px rgba(47,102,144,.28)}}
   @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bpFadeIn{from{opacity:0}to{opacity:1}}
   .spin{animation:spin 1s linear infinite}
   /* Trickle-Fortschrittsbalken (keine Prozentzahl — Dauer der Regionsberechnung ist nicht bekannt, s. §M):
      Breite wird pro Frame aus dem echten Fortschritt berechnet und gesetzt (s. R.trickleBarStyle), nicht
@@ -257,9 +258,80 @@
 
     <!-- ============ MIDDLE COLUMN ============ -->
     <main class="scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 18px 12px;overflow-y:auto;background:#f6f7f8">
-      <!-- Bereich „Bestand & Potenziale": Platzhalter, bis R.13 umgesetzt ist -->
+      <!-- Bereich „Bestand & Potenziale" (R.13): Ausgangspunkt — heutiger Bestand, Potenzial- und Planungsflächen.
+           Die einzige zoombare Karte des Werkzeugs (Landkreise → Gemeinden nach Zoomstufe). -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:16px;color:#5b6672;margin:40px auto;text-align:center">Bestand &amp; Potenziale — in Vorbereitung.</div>
+        <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:4px 2px 10px;letter-spacing:-.2px">{{ bpHead }}</div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
+          <sc-for list="{{ bpTabs }}" as="bt" hint-placeholder-count="3">
+            <button onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
+          </sc-for>
+          <div style="flex:1"></div>
+          <span style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
+        </div>
+        <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px 10px">{{ bpCaption }}</div>
+        <div ref="{{ bzWrapRef }}" style="flex:1;min-height:420px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;overflow:hidden">
+          <svg ref="{{ bzAttachRef }}" viewBox="0 0 480 628.4" preserveAspectRatio="xMidYMid meet" onClick="{{ bpClearSel }}" style="position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);touch-action:none;cursor:grab;user-select:none">
+            <g ref="{{ bzGRef }}">
+              <sc-for list="{{ bpKrs }}" as="bk" hint-placeholder-count="40">
+                <path d="{{ bk.d }}" fill="{{ bk.fill }}" stroke="#ffffff" stroke-width="0.8" vector-effect="non-scaling-stroke" data-tip="{{ bk.tip }}" onClick="{{ bk.onClick }}" style="transition:fill .25s"></path>
+              </sc-for>
+              <sc-for list="{{ bpGroups }}" as="gr" hint-placeholder-count="0">
+                <g transform="{{ gr.tf }}" style="animation:bpFadeIn .25s ease">
+                  <sc-for list="{{ gr.gems }}" as="gm" hint-placeholder-count="0">
+                    <path d="{{ gm.d }}" fill="{{ gm.fill }}" stroke="{{ gm.stroke }}" stroke-width="{{ gm.sw }}" vector-effect="non-scaling-stroke" data-tip="{{ gm.tip }}" onClick="{{ gm.onClick }}"></path>
+                  </sc-for>
+                  <sc-for list="{{ gr.shapes }}" as="sh" hint-placeholder-count="0">
+                    <path d="{{ sh.d }}" fill="{{ sh.fill }}" fill-opacity="{{ sh.op }}" stroke="#ffffff" stroke-width="0.6" vector-effect="non-scaling-stroke" data-tip="{{ sh.tip }}" onClick="{{ sh.onClick }}"></path>
+                  </sc-for>
+                  <sc-for list="{{ gr.pts }}" as="pt" hint-placeholder-count="0">
+                    <circle cx="{{ pt.cx }}" cy="{{ pt.cy }}" r="{{ pt.r }}" fill="{{ pt.fill }}" fill-opacity="0.85" stroke="#ffffff" stroke-width="0.8" vector-effect="non-scaling-stroke" data-tip="{{ pt.tip }}" onClick="{{ pt.onClick }}"></circle>
+                  </sc-for>
+                </g>
+              </sc-for>
+              <!-- Landkreisgrenzen dunkler über den Gemeinden -->
+              <sc-for list="{{ bpKrsBorders }}" as="kb" hint-placeholder-count="0">
+                <path d="{{ kb.d }}" fill="none" stroke="#3d4852" stroke-width="1.2" vector-effect="non-scaling-stroke" pointer-events="none"></path>
+              </sc-for>
+              <path d="{{ bpSelKrsD }}" fill="none" stroke="#12181d" stroke-width="2.4" vector-effect="non-scaling-stroke" pointer-events="none"></path>
+              <g transform="{{ bpSelLocalTf }}"><path d="{{ bpSelLocalD }}" fill="none" stroke="#12181d" stroke-width="2.4" vector-effect="non-scaling-stroke" pointer-events="none"></path></g>
+            </g>
+          </svg>
+          <!-- Hover: Name + Wert (Text und Position setzt der Zeiger-Listener direkt) -->
+          <div ref="{{ bzTipRef }}" style="display:none;position:absolute;z-index:5;pointer-events:none;background:#1f2a33;color:#fff;font-size:14px;padding:5px 9px;border-radius:6px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2)"></div>
+          <!-- Administrativ / Rohdaten (nur Erweitert), Ecke oben rechts wie der Ansichts-Umschalter der Region -->
+          <sc-if value="{{ bpShowModeToggle }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:10px;right:10px;background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+              <div style="display:flex;background:#eff1f3;border-radius:6px;padding:2px;gap:2px">
+                <button onClick="{{ setBpAdmin }}" style="{{ bpAdminStyle }}">Administrativ</button>
+                <button onClick="{{ setBpRaw }}" style="{{ bpRawStyle }}">Rohdaten</button>
+              </div>
+            </div>
+          </sc-if>
+          <!-- Zoom-Knöpfe unten rechts -->
+          <div style="position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #d2d7db;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+              <button onClick="{{ bpZoomIn }}" aria-label="Hineinzoomen" style="width:34px;height:32px;border:none;border-bottom:1px solid #e2e5e8;background:#fff;font-size:18px;color:#1f2a33;cursor:pointer" style-hover="background:#f1f3f4">+</button>
+              <button onClick="{{ bpZoomOut }}" aria-label="Herauszoomen" style="width:34px;height:32px;border:none;background:#fff;font-size:18px;color:#1f2a33;cursor:pointer" style-hover="background:#f1f3f4">−</button>
+            </div>
+            <button onClick="{{ bpZoomReset }}" style="background:#fff;border:1px solid #d2d7db;border-radius:8px;padding:6px 10px;font-size:14px;color:#1f2a33;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.08)" style-hover="background:#f1f3f4">Ganz Deutschland</button>
+          </div>
+        </div>
+        <!-- Legende unter der Karte -->
+        <sc-if value="{{ bpShowLegend }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 2px 0">
+            <span class="num" style="font-size:14px;color:#6b7680">{{ bpLegendMin }}</span>
+            <div style="width:150px;height:11px;border-radius:3px;background:{{ bpLegendGrad }}"></div>
+            <span class="num" style="font-size:14px;color:#6b7680">{{ bpLegendMax }}</span>
+            <span style="font-size:14px;color:#5b6672">{{ bpLegendTitle }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ bpRawHint }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#5b6672;margin:10px 2px 0">{{ bpRawHint }}</div>
+        </sc-if>
+        <sc-if value="{{ bpRawLegend }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#5b6672;margin:10px 2px 0">{{ bpRawLegend }}</div>
+        </sc-if>
       </sc-if>
       <!-- Bereich „Regional" ohne gewählten Landkreis: Leerzustand, keine Karte, keine Unter-Reiter -->
       <sc-if value="{{ areaRegionEmpty }}" hint-placeholder-val="{{ false }}">
@@ -782,6 +854,34 @@
 
     <!-- ============ RIGHT COLUMN ============ -->
     <aside class="scroll" style="width:340px;flex:none;background:#fff;border-left:1px solid #dde1e5;overflow-y:auto;padding:18px 18px 40px">
+      <!-- Bestand & Potenziale: Deutschland gesamt bzw. gewählter Landkreis / Gemeinde / Rohdaten-Objekt (R.13) -->
+      <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div>
+            <sc-if value="{{ bpRScope }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ bpRScope }}</div>
+            </sc-if>
+            <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">{{ bpRTitle }}</div>
+          </div>
+          <sc-if value="{{ bpRShowClose }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ bpRClose }}" title="Auswahl aufheben" aria-label="Auswahl aufheben" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#6b7680;cursor:pointer;font-size:15px;flex:none">×</button>
+          </sc-if>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+          <sc-for list="{{ bpRows }}" as="br" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:4px 0">
+              <span style="color:#5b6672">{{ br.k }}</span>
+              <span class="num" style="color:#1b2126;font-weight:600;white-space:nowrap">{{ br.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ bpRSub }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#5b6672;line-height:1.45;margin-top:8px">{{ bpRSub }}</div>
+        </sc-if>
+        <sc-if value="{{ bpRHint }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:#6b7680;line-height:1.45;margin-top:16px">{{ bpRHint }}</div>
+        </sc-if>
+      </sc-if>
       <sc-if value="{{ areaMain }}" hint-placeholder-val="{{ true }}">
       <!-- Hub: A/B-Zusammenfassung statt der Links-Konfiguration (sonst eine dritte, verwechselbare
            Konsenszahl neben A und B). Ohne Auswahl nur ein kurzer Hinweis. -->
@@ -1385,8 +1485,9 @@ const PotentialData = {
         const floorMW = Math.max(1.3 * needMW(k, tech), 1.3 * bestandMW);
         areaHa = Math.min(0.25 * totalHa, Math.max(areaHa, floorMW / dens));
         const potMW = areaHa * dens;
-        const f = { bestandMW, potFlaecheHa: areaHa, potLeistungMW: potMW, potEnergieGWh: potMW * P.flh / 1000 };
+        const f = { bestandMW, potFlaecheHa: areaHa, potLeistungMW: potMW, potEnergieGWh: potMW * P.flh / 1000, dens, flh: P.flh };
         if (tech === 'wind') {
+          f.planRatio = k.ausgAnteil;
           f.planFlaecheHa = areaHa * k.ausgAnteil;
           f.planLeistungMW = f.planFlaecheHa * dens;
           f.planEnergieGWh = f.planLeistungMW * P.flh / 1000;
@@ -1396,8 +1497,44 @@ const PotentialData = {
       this.krs[k.id] = rec;
     });
   },
-  forKrs(krsId, tech) { return (this.krs[krsId] || {})[tech === 'pv' ? 'pv' : 'wind'] || null; }
+  forKrs(krsId, tech) { return (this.krs[krsId] || {})[tech === 'pv' ? 'pv' : 'wind'] || null; },
+  // Gemeinden eines Landkreises (R.13): Landkreiswerte nach deterministischen Gewichten (Fläche × Zufallsfaktor
+  // aus der Gemeinde-ID) aufgeteilt — die Summe der Gemeinden ist exakt der Landkreis. Leistung und Energie aus
+  // derselben Leistungsdichte und denselben Volllaststunden wie der Landkreis; Planungsfläche = Potenzialfläche ×
+  // Anteil ausgewiesen des Landkreises (liegt damit immer innerhalb). Erst berechnet, wenn die Gemeinde-
+  // Geometrie geladen ist (gemList aus gemeinden/<krsId>.json), danach gecacht.
+  gemFor(krsId, gemList) {
+    if (this.gem[krsId]) return this.gem[krsId];
+    const K = this.krs[krsId];
+    if (!K || !gemList || !gemList.length) return null;
+    const frac = v => { const r = Math.sin(v) * 43758.5453; return r - Math.floor(r); };
+    const out = {};
+    ['wind', 'pv'].forEach((tech, ti) => {
+      const k = K[tech];
+      const wPot = gemList.map(g => Math.max(0.05, g.kfl || 0) * (0.4 + 1.2 * frac(parseInt(g.id, 10) % 100003 * 1.371 + 11.7 * (ti + 1))));
+      const wBest = gemList.map(g => Math.max(0.05, g.kfl || 0) * (0.15 + 1.7 * frac(parseInt(g.id, 10) % 100003 * 2.713 + 5.3 * (ti + 1))));
+      const sP = wPot.reduce((a, b) => a + b, 0), sB = wBest.reduce((a, b) => a + b, 0);
+      gemList.forEach((g, i) => {
+        const area = k.potFlaecheHa * wPot[i] / sP, mw = area * k.dens;
+        const f = { bestandMW: k.bestandMW * wBest[i] / sB, potFlaecheHa: area, potLeistungMW: mw, potEnergieGWh: mw * k.flh / 1000, dens: k.dens, flh: k.flh };
+        if (tech === 'wind') {
+          f.planFlaecheHa = area * k.planRatio;
+          f.planLeistungMW = f.planFlaecheHa * k.dens;
+          f.planEnergieGWh = f.planLeistungMW * k.flh / 1000;
+        }
+        (out[g.id] = out[g.id] || {})[tech] = f;
+      });
+    });
+    return (this.gem[krsId] = out);
+  },
+  // Deutschland-Summe = Summe der Landkreise
+  total(tech, field) { return Object.keys(this.krs).reduce((a, id) => a + ((this.krs[id][tech] || {})[field] || 0), 0); }
 };
+
+// Bereich „Bestand & Potenziale" (R.13): Zoomstufe (Vergrößerung gegenüber ganz Deutschland), ab der Gemeinden
+// statt Landkreise gezeigt werden — offene Frage I.11, hier anpassen. 8 ≈ ein bis zwei Landkreise füllen die Breite.
+const BP_GEM_ZOOM = 8;
+const BP_MAX_ZOOM = 60;
 class Component extends DCLogic {
   state = {
     mode: 'basic',
@@ -1424,6 +1561,8 @@ class Component extends DCLogic {
     regionDetailInfo: false,  // „i" an der Regions-Headline
     // Regionalziel (R.5): null = DE-Empfehlung, sonst eigenes Ziel in GW (bleibt bei Änderungen in „Deutschland")
     regionOwnTarget: null,
+    // Bestand & Potenziale (R.13): Unter-Reiter, Darstellung, Auswahl; bzTick stößt nach Zoom-Gesten ein Re-Render an
+    bpTab: 'bestand', bpMode: 'admin', bpSel: null, bzTick: 0,
     // Eingaben der letzten Regionsberechnung — die Karte und die Herleitung rechts zeigen diesen Stand
     regionComputedTech: null, regionComputedAccount: false, regionComputedNatSel: null,
     regionComputedDeRec: null, regionComputedOwn: false,
@@ -1511,7 +1650,9 @@ class Component extends DCLogic {
     // Die zwei festen Referenzen im Vergleichs-Hub („Szenarien vergleichen") — immer vorhanden, als A/B wählbar.
     this.hubRefs = [
       { id: 'ref_historisch', name: 'Historischer Ausbau', info: 'So wurde bisher real gebaut — die heutige Verteilung des Bestands, auf dasselbe Ausbauziel skaliert.', field: c => Math.max(0.05, 0.6*c.y + 0.4*c.x + 0.15*c.noise) },
-      { id: 'ref_planung', name: 'Planungsflächen', info: 'Offiziell ausgewiesene Flächen — der Zubau verteilt nach dem ausgewiesenen Flächenanteil, auf dasselbe Ausbauziel skaliert.', field: c => c.ausgAnteil }
+      // Landkreise: Leistungspotenzial der Planungsflächen aus dem Datenmodul (dieselben Werte wie „Bestand &
+      // Potenziale"); Rasterzellen einer Region: Verteilung innerhalb des Landkreises nach dem Zellanteil ausgewiesen
+      { id: 'ref_planung', name: 'Planungsflächen', info: 'Offiziell ausgewiesene Flächen — der Zubau verteilt nach dem Leistungspotenzial der Planungsflächen, auf dasselbe Ausbauziel skaliert.', field: c => { const f = PotentialData.forKrs(c.id, 'wind'); return f ? f.planLeistungMW : c.ausgAnteil; } }
     ];
     this.byId = {};
     this.principles.forEach(p => this.byId[p.id] = p);
@@ -1549,6 +1690,12 @@ class Component extends DCLogic {
     // Build-Zeit nicht bekannt). Ref + ResizeObserver halten die Messung aktuell; ein Resize/Layout-Wechsel
     // stößt einen Re-Render an, damit die Overlay-Position/-Klemmung neu berechnet wird.
     this._mapSvgEl = null;
+    // Bestand & Potenziale: Zoomzustand (k = Vergrößerung, x/y = Verschiebung in viewBox-Einheiten)
+    this._bz = { k: 1, x: 0, y: 0 };
+    this._bzAttachRef = el => this.bzAttach(el);
+    this._bzGRef = el => { this._bzG = el; if (el) this.bzApply(); };
+    this._bzTipRef = el => { this._bzTip = el; };
+    this._bzWrapRef = el => { this._bzWrap = el; };
     this._resizeObs = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => this.forceUpdate()) : null;
     this._mapSvgRef = el => {
       if (this._resizeObs) {
@@ -1724,6 +1871,213 @@ class Component extends DCLogic {
   // outlineD (Build-Zeit-Vorverarbeitung, s. gemeinden/README bzw. Generierungsskript), also kein
   // weiterer Projektions-Code hier nötig. Idempotent — sicher aus build() heraus bei jedem Render
   // aufzurufen, solange Cache/Ladeflag geprüft werden.
+  // ================= BESTAND & POTENZIALE: zoombare Karte (R.13) =================
+  // Eigene kleine Zoom-Logik statt D3 (keine Fremdbibliothek, s. §Q): Mausrad/Trackpad, Ziehen, Pinch und Knöpfe
+  // setzen die transform-Eigenschaft der inneren <g> DIREKT im DOM — kein Re-Render je Bewegung. Erst wenn die
+  // Geste ruht (oder die Gemeinde-Schwelle überschritten wird), rendert die Komponente neu (Ebene, Gemeinden,
+  // Rohdaten, Punktgrößen). Zustand in this._bz bleibt beim Wechsel der Bereichs-Tabs erhalten.
+  bzApply() {
+    const z = this._bz;
+    if (this._bzG) this._bzG.setAttribute('transform', 'translate(' + z.x.toFixed(2) + ',' + z.y.toFixed(2) + ') scale(' + z.k.toFixed(4) + ')');
+  }
+  bzClamp() {
+    const z = this._bz, W = 480, H = 628.4;
+    z.k = Math.max(1, Math.min(BP_MAX_ZOOM, z.k));
+    z.x = Math.min(0, Math.max(W - W * z.k, z.x));
+    z.y = Math.min(0, Math.max(H - H * z.k, z.y));
+  }
+  bzToVb(cx, cy) {
+    const m = this._bzSvg && this._bzSvg.getScreenCTM();
+    return m ? { x: (cx - m.e) / m.a, y: (cy - m.f) / m.d, s: m.a } : null;
+  }
+  bzZoomAt(cx, cy, factor) {
+    const p = this.bzToVb(cx, cy); if (!p) return;
+    const z = this._bz, k0 = z.k;
+    z.k = Math.max(1, Math.min(BP_MAX_ZOOM, k0 * factor));
+    z.x = p.x - (p.x - z.x) * z.k / k0; z.y = p.y - (p.y - z.y) * z.k / k0;
+    this.bzChanged(k0);
+  }
+  bzChanged(k0) {
+    this.bzClamp(); this.bzApply();
+    if (this._bzTip) this._bzTip.style.display = 'none';
+    // Schwelle überschritten → sofort neu rendern (Ebenenwechsel), sonst erst, wenn die Geste ruht
+    const crossed = (k0 >= BP_GEM_ZOOM) !== (this._bz.k >= BP_GEM_ZOOM);
+    clearTimeout(this._bzT);
+    if (crossed) this.setState({ bzTick: (this.state.bzTick || 0) + 1 });
+    else this._bzT = setTimeout(() => this.setState({ bzTick: (this.state.bzTick || 0) + 1 }), 160);
+  }
+  // Sanfte Fahrt zu einem Zielausschnitt (Suche, „Ganz Deutschland", +/−)
+  bzAnimateTo(k, cxNat, cyNat) {
+    const svg = this._bzSvg; if (!svg) { this._bz = { k: 1, x: 0, y: 0 }; return; }
+    const r = svg.getBoundingClientRect(), c = this.bzToVb(r.left + r.width / 2, r.top + r.height / 2); if (!c) return;
+    const from = Object.assign({}, this._bz), k0 = from.k;
+    const to = { k: Math.max(1, Math.min(BP_MAX_ZOOM, k)) }; to.x = c.x - cxNat * to.k; to.y = c.y - cyNat * to.k;
+    const t0 = performance.now(), D = 320;
+    cancelAnimationFrame(this._bzRaf);
+    const step = now => {
+      const t = Math.min(1, (now - t0) / D), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      // in log(k) interpolieren, damit die Fahrt gleichmäßig wirkt
+      const kk = Math.exp(Math.log(from.k) + (Math.log(to.k) - Math.log(from.k)) * e);
+      const cx = (c.x - from.x) / from.k + (((c.x - to.x) / to.k) - (c.x - from.x) / from.k) * e;
+      const cy = (c.y - from.y) / from.k + (((c.y - to.y) / to.k) - (c.y - from.y) / from.k) * e;
+      this._bz = { k: kk, x: c.x - cx * kk, y: c.y - cy * kk };
+      this.bzClamp(); this.bzApply();
+      if (t < 1) this._bzRaf = requestAnimationFrame(step); else this.bzChanged(k0);
+    };
+    this._bzRaf = requestAnimationFrame(step);
+  }
+  bzZoomButton(factor) {
+    const svg = this._bzSvg; if (!svg) return;
+    const r = svg.getBoundingClientRect(), c = this.bzToVb(r.left + r.width / 2, r.top + r.height / 2); if (!c) return;
+    const z = this._bz;
+    this.bzAnimateTo(z.k * factor, (c.x - z.x) / z.k, (c.y - z.y) / z.k);
+  }
+  bzZoomToKrs(k) {
+    const svg = this._bzSvg; if (!svg) return;
+    const r = svg.getBoundingClientRect(), m = svg.getScreenCTM(); if (!m) return;
+    const vw = r.width / m.a, vh = r.height / m.d;
+    const kk = Math.min(vw / ((k.bx1 - k.bx0) * 1.5), vh / ((k.by1 - k.by0) * 1.5));
+    this.bzAnimateTo(kk, (k.bx0 + k.bx1) / 2, (k.by0 + k.by1) / 2);
+  }
+  // Ref der Bestand-Karte: Gesten-Listener einmal je SVG-Element anhängen (nicht-passives Mausrad)
+  bzAttach(el) {
+    if (el === this._bzSvg) return;
+    this._bzSvg = el;
+    if (!el) return;
+    const ptrs = new Map();
+    let last = null, moved = 0;
+    el.addEventListener('wheel', e => {
+      e.preventDefault();
+      this.bzZoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0018)));
+    }, { passive: false });
+    el.addEventListener('pointerdown', e => {
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      moved = 0; this._bzDragged = false; last = null;
+    });
+    el.addEventListener('pointermove', e => {
+      const tipEl = this._bzTip;
+      if (!ptrs.has(e.pointerId)) {
+        // Hover: Name + Wert der Einheit (data-tip am Element)
+        const t = e.target && e.target.closest ? e.target.closest('[data-tip]') : null;
+        if (tipEl && this._bzWrap) {
+          if (t && t.getAttribute('data-tip')) {
+            const wr = this._bzWrap.getBoundingClientRect();
+            tipEl.textContent = t.getAttribute('data-tip');
+            tipEl.style.display = 'block';
+            tipEl.style.left = Math.min(wr.width - 12, e.clientX - wr.left + 14) + 'px';
+            tipEl.style.top = (e.clientY - wr.top + 14) + 'px';
+          } else tipEl.style.display = 'none';
+        }
+        return;
+      }
+      const prev = ptrs.get(e.pointerId);
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const k0 = this._bz.k;
+      if (ptrs.size === 1) {
+        const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+        moved += Math.abs(dx) + Math.abs(dy);
+        if (moved > 4) {
+          if (!this._bzDragged) { this._bzDragged = true; try { el.setPointerCapture(e.pointerId); } catch (err) {} el.style.cursor = 'grabbing'; }
+          const s = this.bzToVb(0, 0); if (!s) return;
+          this._bz.x += dx / s.s; this._bz.y += dy / s.s;
+          this.bzChanged(k0);
+        }
+      } else if (ptrs.size === 2) {
+        const [a, b] = [...ptrs.values()];
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (last) {
+          this._bzDragged = true;
+          const s = this.bzToVb(0, 0);
+          if (s) { this._bz.x += (mid.x - last.mid.x) / s.s; this._bz.y += (mid.y - last.mid.y) / s.s; }
+          this.bzZoomAt(mid.x, mid.y, dist / (last.dist || dist));
+        }
+        last = { mid, dist };
+      }
+    });
+    const up = e => {
+      ptrs.delete(e.pointerId); last = null;
+      el.style.cursor = '';
+      // ein Klick direkt nach dem Ziehen zählt nicht als Auswahl
+      if (this._bzDragged) setTimeout(() => { this._bzDragged = false; }, 0);
+    };
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    el.addEventListener('pointerleave', () => { if (this._bzTip) this._bzTip.style.display = 'none'; });
+  }
+  // Sichtbarer Kartenausschnitt in Landkreis-Koordinaten (für das Nachladen der Gemeinden)
+  bzViewNat() {
+    const svg = this._bzSvg, z = this._bz;
+    if (!svg) return { x0: 0, y0: 0, x1: 480, y1: 628.4 };
+    const r = svg.getBoundingClientRect(), a = this.bzToVb(r.left, r.top), b = this.bzToVb(r.right, r.bottom);
+    if (!a || !b) return { x0: 0, y0: 0, x1: 480, y1: 628.4 };
+    return { x0: (a.x - z.x) / z.k, y0: (a.y - z.y) / z.k, x1: (b.x - z.x) / z.k, y1: (b.y - z.y) / z.k };
+  }
+  // Umrechnung Gemeinde-Geometrie (lokale Rasterkoordinaten des Landkreises, s. regionCellsFor) → Landkreiskarte
+  bzLocalTransform(k) {
+    const sL = 34 / (5 * KRS_PX_PER_KM), PAD = 12;
+    return 'translate(' + (k.bx0 - PAD / sL).toFixed(3) + ',' + (k.by0 - PAD / sL).toFixed(3) + ') scale(' + (1 / sL).toFixed(5) + ')';
+  }
+
+  // Rohdaten-Platzhalter einer Gemeinde (R.13), deterministisch aus der Gemeinde-ID, in lokalen Koordinaten.
+  // Potenzialflächen: Wind verstreute, längliche Teilflächen; PV kompakte, rechteckige Felder. Summe ≈ Wert der
+  // Gemeinde (ha). Planungsflächen = Potenzialflächen, um ihren Mittelpunkt verkleinert (liegen also darin).
+  // Anlagen: Wind 3–6 MW je Anlage, PV-Parks unterschiedlich groß; Summe = Bestand der Gemeinde.
+  bpRawFor(g, tech, f) {
+    const key = g.id + '|' + tech;
+    this._bpRaw = this._bpRaw || {};
+    if (this._bpRaw[key]) return this._bpRaw[key];
+    let seed = (parseInt(g.id, 10) % 2147483647) ^ (tech === 'pv' ? 0x9e3779b9 : 0x85ebca6b);
+    const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const rings = this.parseD(g.d);
+    const pts = rings.flat(); const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const bx0 = Math.min(...xs), bx1 = Math.max(...xs), by0 = Math.min(...ys), by1 = Math.max(...ys);
+    const inside = (x, y) => this.pointInRings(x, y, rings);
+    const PX2_PER_HA = 0.01 * 6.8 * 6.8;   // 6,8 lokale Einheiten je km (34 px je 5 km)
+    const target = f.potFlaecheHa * PX2_PER_HA;
+    // Anzahl gedeckelt (Wind ≤ 8, PV ≤ 6 je Gemeinde), damit nah herangezoomt nicht tausende Pfade entstehen
+    const n = tech === 'wind' ? Math.max(2, Math.min(8, Math.round(target / 30))) : Math.max(1, Math.min(6, Math.round(target / 18)));
+    const shapes = [];
+    for (let s = 0; s < n; s++) {
+      let a = target / n * (0.6 + 0.8 * rnd());
+      const rot = rnd() * Math.PI, verts = [];
+      let placed = null;
+      for (let tries = 0; tries < 40 && !placed; tries++) {
+        if (tries && tries % 12 === 0) a *= 0.6;
+        const cx = bx0 + rnd() * (bx1 - bx0), cy = by0 + rnd() * (by1 - by0);
+        if (!inside(cx, cy)) continue;
+        const v = [];
+        if (tech === 'wind') {
+          const e = 2 + 2 * rnd(), rx = Math.sqrt(a / Math.PI * e), ry = Math.sqrt(a / Math.PI / e);
+          for (let i = 0; i < 9; i++) { const t = i / 9 * 2 * Math.PI, q = 0.8 + 0.35 * rnd(); v.push([rx * q * Math.cos(t), ry * q * Math.sin(t)]); }
+        } else {
+          const asp = 1 + 0.8 * rnd(), w = Math.sqrt(a * asp), h = a / w;
+          [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => v.push([sx * w / 2 * (0.94 + 0.12 * rnd()), sy * h / 2 * (0.94 + 0.12 * rnd())]));
+        }
+        const rr = tech === 'wind' ? rot : rot * 0.15;
+        const abs = v.map(([x, y]) => [cx + x * Math.cos(rr) - y * Math.sin(rr), cy + x * Math.sin(rr) + y * Math.cos(rr)]);
+        if (abs.every(([x, y]) => inside(x, y))) placed = { cx, cy, abs };
+      }
+      if (placed) shapes.push(placed);
+    }
+    const toD = poly => 'M' + poly.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join('L') + 'Z';
+    const pot = shapes.map(sh => ({ d: toD(sh.abs), cx: sh.cx, cy: sh.cy, ha: this.polygonArea(sh.abs) / PX2_PER_HA }));
+    let plan = [];
+    if (tech === 'wind' && f.potFlaecheHa > 0) {
+      const sc = Math.sqrt(Math.min(1, (f.planFlaecheHa || 0) / f.potFlaecheHa));
+      plan = shapes.map(sh => { const poly = sh.abs.map(([x, y]) => [sh.cx + (x - sh.cx) * sc, sh.cy + (y - sh.cy) * sc]); return { d: toD(poly), cx: sh.cx, cy: sh.cy, ha: this.polygonArea(poly) / PX2_PER_HA }; });
+    }
+    // Anlagen-Punkte
+    const best = [];
+    let rest = f.bestandMW;
+    for (let guard = 0; rest > 0.3 && guard < 200; guard++) {
+      let mw = tech === 'wind' ? 3 + 3 * rnd() : 0.5 + 19.5 * Math.pow(rnd(), 2);
+      mw = Math.min(mw, rest); rest -= mw;
+      let x, y, ok = false;
+      for (let t = 0; t < 30 && !ok; t++) { x = bx0 + rnd() * (bx1 - bx0); y = by0 + rnd() * (by1 - by0); ok = inside(x, y); }
+      if (ok) best.push({ cx: x, cy: y, mw });
+    }
+    return (this._bpRaw[key] = { pot, plan, best });
+  }
+
   ensureGemeinden(krsId) {
     if (!krsId || this._gemCache[krsId] || this._gemLoading[krsId]) return;
     this._gemLoading[krsId] = true;
@@ -3719,7 +4073,7 @@ class Component extends DCLogic {
     R.setBasic = () => this.setState({ mode: 'basic' });
     R.setErweitert = () => this.setState({ mode: 'erweitert' });
     R.setWind = () => this.setState({ tech: 'wind' });
-    R.setPV = () => this.setState({ tech: 'pv' });
+    R.setPV = () => this.setState(S.bpTab === 'planung' ? { tech: 'pv', bpTab: 'potenzial', bpSel: null } : { tech: 'pv' });
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
     R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
@@ -3729,6 +4083,8 @@ class Component extends DCLogic {
 
     // ---------- BEREICHS-TABS (R.3) ----------
     const area = S.area || 'de';
+    R.bpGroups = []; R.bpKrs = []; R.bpKrsBorders = []; R.bpTabs = []; R.bpRows = [];
+    if (area === 'bestand') this.buildBestand(R, S, isExt);
     R.areaBestand = area === 'bestand';
     R.areaRegionEmpty = area === 'region' && !S.region;
     R.areaMain = area === 'de' || (area === 'region' && !!S.region);
@@ -3766,6 +4122,168 @@ class Component extends DCLogic {
     }
 
     return R;
+  }
+
+  // ================= BESTAND & POTENZIALE: Render-Daten (R.13) =================
+  // Nur berechnet, wenn der Bereich aktiv ist. Ebene nach Zoomstufe (BP_GEM_ZOOM): Landkreise bzw. Gemeinden der
+  // sichtbaren Landkreise (werden nachgeladen; bis dahin bleibt der Landkreis grau sichtbar).
+  buildBestand(R, S, isExt) {
+    const tech = S.tech === 'pv' ? 'pv' : 'wind';
+    const tab = (S.bpTab === 'planung' && tech === 'pv') ? 'potenzial' : (S.bpTab || 'bestand');
+    const raw = isExt && S.bpMode === 'raw';
+    const z = this._bz, gemLevel = z.k >= BP_GEM_ZOOM;
+    const techName = tech === 'pv' ? 'Freiflächen-Photovoltaik' : 'Windenergie';
+    const field = tab === 'bestand' ? 'bestandMW' : tab === 'planung' ? 'planLeistungMW' : 'potLeistungMW';
+    const sel = S.bpSel || null;
+    const nf = (v, d) => v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+    const mwTxt = v => nf(v, 1) + ' MW';
+    const dark = tech === 'pv' ? '#8a5a00' : '#1f4e79';
+    const col = t => this.mix('#eef1f4', dark, 0.08 + 0.92 * Math.max(0, Math.min(1, t)));
+    const pick = obj => e => { if (e && e.stopPropagation) e.stopPropagation(); if (this._bzDragged) return; this.setState({ bpSel: obj }); };
+
+    // Unter-Reiter, Headline, Caption
+    const tabDefs = [{ id: 'bestand', label: 'Bestand heute' }, { id: 'potenzial', label: 'Potenzialflächen' }];
+    if (tech === 'wind') tabDefs.push({ id: 'planung', label: 'Planungsflächen' });
+    // Rohdaten-Objekte gehören zu einem Unter-Reiter — beim Wechsel Auswahl aufheben (Landkreis/Gemeinde bleibt)
+    R.bpTabs = tabDefs.map(t => ({ label: t.label, style: this.tabBtn(t.id === tab), onClick: () => this.setState({ bpTab: t.id, bpSel: sel && sel.kind === 'raw' ? null : sel }) }));
+    R.bpHead = tab === 'bestand' ? 'Wo stehen heute schon Anlagen?' : tab === 'planung' ? 'Wo ist Windenergie geplant?' : 'Wo wäre Ausbau möglich?';
+    R.bpCaption = tab === 'bestand' ? 'Die Karte zeigt die heute installierte Leistung.'
+      : tab === 'planung' ? 'Die Karte zeigt das Leistungspotenzial der Flächen, die für Windenergie offiziell ausgewiesen sind.'
+      : 'Die Karte zeigt das Leistungspotenzial der Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
+
+    // Umschalter Administrativ / Rohdaten (nur Erweitert)
+    R.bpShowModeToggle = isExt;
+    R.bpAdminStyle = this.segLight(!raw) + ';white-space:nowrap;padding:4px 10px;font-size:13px';
+    R.bpRawStyle = this.segLight(raw) + ';white-space:nowrap;padding:4px 10px;font-size:13px';
+    R.setBpAdmin = () => this.setState({ bpMode: 'admin', bpSel: sel && sel.kind === 'raw' ? null : sel });
+    R.setBpRaw = () => this.setState({ bpMode: 'raw' });
+    R.bpZoomIn = () => this.bzZoomButton(2);
+    R.bpZoomOut = () => this.bzZoomButton(0.5);
+    R.bpZoomReset = () => this.bzAnimateTo(1, 240, 314.2);
+    R.bpClearSel = () => { if (this._bzDragged) return; this.setState({ bpSel: null }); };
+    R.bzAttachRef = this._bzAttachRef; R.bzGRef = this._bzGRef; R.bzTipRef = this._bzTipRef; R.bzWrapRef = this._bzWrapRef;
+
+    // Landkreise
+    const krsVal = k => { const f = PotentialData.forKrs(k.id, tech); return f ? (f[field] || 0) : 0; };
+    const view = this.bzViewNat();
+    const visKrs = gemLevel ? this.krs.filter(k => k.bx1 >= view.x0 && k.bx0 <= view.x1 && k.by1 >= view.y0 && k.by0 <= view.y1) : [];
+    visKrs.forEach(k => this.ensureGemeinden(k.id));
+    const loaded = new Set(visKrs.filter(k => this._gemCache[k.id]).map(k => k.id));
+
+    // Gemeinden der sichtbaren, geladenen Landkreise
+    const groups = [];
+    const gemVals = [];
+    loaded.forEach(id => {
+      const k = this.krs.find(x => x.id === id), list = this._gemCache[id], gd = PotentialData.gemFor(id, list);
+      if (!gd) return;
+      groups.push({ k, list, gd });
+      list.forEach(g => gemVals.push((gd[g.id][tech] || {})[field] || 0));
+    });
+    const vals = gemLevel && gemVals.length ? gemVals : this.krs.map(krsVal);
+    const vmin = Math.min(...vals), vmax = Math.max(...vals), vr = vmax - vmin || 1;
+    const unitWord = gemLevel && groups.length ? 'je Gemeinde' : 'je Landkreis';
+    R.bpLegendTitle = (tab === 'bestand' ? 'Installierte Leistung ' : 'Leistungspotenzial ') + unitWord;
+    R.bpLegendMin = nf(vmin, 1); R.bpLegendMax = nf(vmax, 1) + ' MW';
+    R.bpLegendGrad = 'linear-gradient(90deg,' + col(0) + ',' + col(1) + ')';
+    R.bpShowLegend = !raw;
+    R.bpRawHint = raw && !gemLevel ? (tab === 'bestand' ? 'Zoomen Sie hinein, um die einzelnen Anlagen zu sehen.' : 'Zoomen Sie hinein, um die einzelnen Flächen zu sehen.') : '';
+    R.bpRawLegend = raw && gemLevel ? (tab === 'bestand' ? 'Ein Punkt je Anlage bzw. Solarpark · Größe nach installierter Leistung'
+      : tab === 'planung' ? 'Dunkel: Planungsflächen · hell: Potenzialflächen' : 'Je Fläche eine Form · Platzhalter') : '';
+
+    const tipFor = (name, v) => name + ' · ' + mwTxt(v);
+    R.bpKrs = this.krs.map(k => {
+      const v = krsVal(k), covered = gemLevel && loaded.has(k.id);
+      // Unter geladenen Gemeinden: Farbe der mittleren Gemeinde — die vereinfachten Gemeindeumrisse lassen kleine
+      // Lücken, die so nicht als weiße Risse auffallen
+      const nGem = covered ? (this._gemCache[k.id] || []).length || 1 : 1;
+      const fill = raw ? (gemLevel ? '#f4f5f6' : '#e6e9ec') : covered ? col((v / nGem - vmin) / vr) : (gemLevel ? '#e9ecee' : col((v - vmin) / vr));
+      return { d: k.d, fill, tip: covered ? '' : tipFor(k.kind + ' ' + k.label, v), onClick: pick({ kind: 'krs', id: k.id }) };
+    });
+    // Landkreisgrenzen über den Gemeinden (dunkler); auf Landkreisebene nur die weißen Trennlinien der Flächen
+    R.bpKrsBorders = gemLevel ? this.krs.filter(k => loaded.has(k.id)).map(k => ({ d: k.d })) : [];
+
+    // Punktgrößen in lokalen Einheiten (Bildschirm-px / Maßstab), damit Anlagen beim Zoomen gleich groß bleiben
+    const ctm = this.bzToVb(0, 0), sL = 34 / (5 * KRS_PX_PER_KM);
+    const pxPerLocal = (ctm ? ctm.s : 1) * z.k / sL;
+    R.bpGroups = groups.map(({ k, list, gd }) => {
+      const gems = list.map(g => {
+        const f = gd[g.id][tech] || {}, v = f[field] || 0;
+        return { d: g.d, fill: raw ? '#f4f5f6' : col((v - vmin) / vr), stroke: raw ? '#c3c9ce' : '#ffffff', sw: raw ? '0.7' : '0.6',
+          tip: raw ? (g.bez || 'Gemeinde') + ' ' + g.name : tipFor((g.bez || 'Gemeinde') + ' ' + g.name, v), onClick: pick({ kind: 'gem', krsId: k.id, id: g.id }) };
+      });
+      const shapes = [], pts = [];
+      // Ausdünnen: Rohdaten nur für Gemeinden, deren Mittelpunkt im sichtbaren Ausschnitt (+ 25 % Rand) liegt
+      const sLk = 34 / (5 * KRS_PX_PER_KM), mx = (view.x1 - view.x0) * 0.25, my = (view.y1 - view.y0) * 0.25;
+      const inView = g => { const nx = k.bx0 + (g.cx - 12) / sLk, ny = k.by0 + (g.cy - 12) / sLk; return nx >= view.x0 - mx && nx <= view.x1 + mx && ny >= view.y0 - my && ny <= view.y1 + my; };
+      if (raw) list.forEach(g => {
+        const f = gd[g.id][tech]; if (!f || !inView(g)) return;
+        const rw = this.bpRawFor(g, tech, f);
+        if (tab === 'bestand') rw.best.forEach((b, i) => pts.push({ cx: b.cx.toFixed(2), cy: b.cy.toFixed(2), r: ((2.5 + 1.6 * Math.sqrt(b.mw)) / pxPerLocal).toFixed(3),
+          fill: dark, tip: (tech === 'pv' ? 'Solarpark' : 'Windenergieanlage') + ' · ' + mwTxt(b.mw), onClick: pick({ kind: 'raw', krsId: k.id, gemId: g.id, type: 'best', idx: i }) }));
+        else {
+          const objs = tab === 'planung' ? rw.plan : rw.pot;
+          if (tab === 'planung') rw.pot.forEach(o => shapes.push({ d: o.d, fill: col(0.25), op: '1', tip: '', onClick: () => {} }));
+          objs.forEach((o, i) => shapes.push({ d: o.d, fill: col(0.85), op: '0.9', tip: (tab === 'planung' ? 'Planungsfläche' : 'Potenzialfläche') + ' · ' + nf(o.ha, 1) + ' ha · ' + mwTxt(o.ha * f.dens),
+            onClick: pick({ kind: 'raw', krsId: k.id, gemId: g.id, type: tab === 'planung' ? 'plan' : 'pot', idx: i }) }));
+        }
+      });
+      return { tf: this.bzLocalTransform(k), gems, shapes, pts };
+    });
+
+    // Auswahl: dunkle Kontur (Landkreis in Kartenkoordinaten, Gemeinde/Fläche in den lokalen Koordinaten)
+    R.bpSelKrsD = ''; R.bpSelLocalD = ''; R.bpSelLocalTf = ''; R.bpSelPt = null;
+    const gemOf = (krsId, gemId) => (this._gemCache[krsId] || []).find(g => g.id === gemId);
+    if (sel && sel.kind === 'krs') { const k = this.krs.find(x => x.id === sel.id); if (k) R.bpSelKrsD = k.d; }
+    if (sel && (sel.kind === 'gem' || sel.kind === 'raw')) {
+      const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.kind === 'gem' ? sel.id : sel.gemId);
+      if (k && g) {
+        R.bpSelLocalTf = this.bzLocalTransform(k);
+        if (sel.kind === 'gem') R.bpSelLocalD = g.d;
+        else if (sel.type !== 'best') { const f = (PotentialData.gemFor(k.id, this._gemCache[k.id]) || {})[g.id]; const rw = f && f[tech] ? this.bpRawFor(g, tech, f[tech]) : null; const o = rw && rw[sel.type][sel.idx]; if (o) R.bpSelLocalD = o.d; }
+        else { const f = (PotentialData.gemFor(k.id, this._gemCache[k.id]) || {})[g.id]; const rw = f && f[tech] ? this.bpRawFor(g, tech, f[tech]) : null; const b = rw && rw.best[sel.idx];
+          if (b) { const r = (2.5 + 1.6 * Math.sqrt(b.mw) + 2) / pxPerLocal; R.bpSelLocalD = 'M' + (b.cx - r) + ',' + b.cy + 'a' + r + ',' + r + ' 0 1,0 ' + (2 * r) + ',0a' + r + ',' + r + ' 0 1,0 ' + (-2 * r) + ',0'; } }
+      }
+    }
+
+    // Rechte Spalte
+    const rowsFor = f => tab === 'bestand'
+      ? [{ k: 'Installierte Leistung', v: mwTxt(f.bestandMW || 0) }]
+      : tab === 'planung'
+        ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.planLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh' }]
+        : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.potLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh' }];
+    R.bpRSub = ''; R.bpRScope = ''; R.bpRShowClose = !!sel; R.bpRHint = '';
+    let shown = false;
+    if (sel && sel.kind === 'krs') {
+      const k = this.krs.find(x => x.id === sel.id), f = k && PotentialData.forKrs(k.id, tech);
+      if (k && f) { R.bpRTitle = k.kind + ' ' + k.label; R.bpRows = rowsFor(f); shown = true; }
+    } else if (sel && sel.kind === 'gem') {
+      const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.id), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
+      if (k && g && gd) { R.bpRTitle = (g.bez || 'Gemeinde') + ' ' + g.name; R.bpRScope = k.kind + ' ' + k.label; R.bpRows = rowsFor(gd[g.id][tech]); shown = true; }
+    } else if (sel && sel.kind === 'raw') {
+      const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.gemId), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
+      const f = gd && g ? gd[g.id][tech] : null, rw = f ? this.bpRawFor(g, tech, f) : null, o = rw ? rw[sel.type][sel.idx] : null;
+      if (o) {
+        R.bpRTitle = sel.type === 'best' ? 'Anlage' : 'Fläche';
+        R.bpRScope = (g.bez || 'Gemeinde') + ' ' + g.name;
+        R.bpRows = sel.type === 'best' ? [{ k: 'Installierte Leistung', v: mwTxt(o.mw) }]
+          : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(o.ha * f.dens) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh' }];
+        shown = true;
+      }
+    }
+    if (!shown) {
+      R.bpRShowClose = false;
+      R.bpRScope = tab === 'bestand' ? 'Bestand heute' : tab === 'planung' ? 'Planungsflächen' : 'Potenzialflächen';
+      R.bpRTitle = 'Deutschland gesamt';
+      const T = fld => PotentialData.total(tech, fld);
+      R.bpRows = tab === 'bestand'
+        ? [{ k: 'Installierte Leistung', v: nf(T('bestandMW') / 1000, 2) + ' GW' }]
+        : tab === 'planung'
+          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh' }]
+          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh' }];
+      R.bpRSub = tab === 'bestand' ? 'Heute installierte Leistung.' : tab === 'planung' ? 'Offiziell ausgewiesene Windgebiete.' : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
+      R.bpRHint = 'Klicken Sie auf einen Landkreis bzw. eine Gemeinde, um die Zahlen für diesen Ort zu sehen.';
+    }
+    R.bpRClose = () => this.setState({ bpSel: null });
   }
 
   // style helpers
@@ -3869,8 +4387,8 @@ class Component extends DCLogic {
     const best = this.krs.find(k => k.label.toLowerCase() === q) || this.krs.find(k => k.label.toLowerCase().includes(q));
     if (!best) return;
     const area = this.state.area || 'de';
-    // Bestand & Potenziale: vorerst ohne Wirkung (Zoom folgt mit R.13)
-    if (area === 'bestand') return;
+    // Bestand & Potenziale: zoomt auf den Landkreis und wählt ihn aus
+    if (area === 'bestand') { this.setState({ bpSel: { kind: 'krs', id: best.id }, search: '' }); this.bzZoomToKrs(best); return; }
     // Regional: wechselt direkt in diesen Landkreis (anderer Landkreis = Voreinstellungen + erste Berechnung)
     if (area === 'region') { this.enterRegion(best.id, best.kind + ' ' + best.label); this.setState({ search: '' }); return; }
     // Deutschland: wie ein Kartenklick — der Landkreis wird nur ausgewählt, das Popover
