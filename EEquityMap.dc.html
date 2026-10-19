@@ -3604,10 +3604,12 @@ class Component extends DCLogic {
     // Im Regionsraum ist je Ansicht genau eine Einheit klickbar — eine noch gesetzte Auswahl der anderen
     // Einheit (z. B. nach Basic/Erweitert-Wechsel) wird ignoriert statt angezeigt.
     const gemSelectable = isRegion && R.regionViewMode !== 'raster';
-    const selectedCell = (S.cell && !gemSelectable) ? cells.find(c => c.id === S.cell) : null;
+    // Ohne gewähltes Prinzip gibt es keine Werte je Einheit — dann kein Zelldetail (eine z. B. über die Suche
+    // gesetzte Auswahl bleibt stehen, bis ein Prinzip gewählt wird; sonst lief die Detailberechnung ins Leere)
+    const selectedCell = (S.cell && !gemSelectable && !isEmpty) ? cells.find(c => c.id === S.cell) : null;
     // Gemeinde-Detail (Modi 'gemeinden' / 'gemeinden-raster', s. o.) — aggregierte Zell-Ergebnisse dieser Gemeinde
     const selectedGemeindeIdx = (S.gemeinde && gemList && gemSelectable) ? gemList.findIndex(g => g.id === S.gemeinde) : -1;
-    const selectedGemeinde = selectedGemeindeIdx >= 0 ? gemList[selectedGemeindeIdx] : null;
+    const selectedGemeinde = selectedGemeindeIdx >= 0 && !isEmpty ? gemList[selectedGemeindeIdx] : null;
     // Im Hub zeigt die rechte Spalte die A/B-Zusammenfassung, nicht die Links-Konfiguration.
     R.showHubSummary = view === 'szenarien';
     R.showOverview = !R.showHubSummary && !selectedCell && !selectedGemeinde;
