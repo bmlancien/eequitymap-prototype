@@ -1651,6 +1651,16 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 - **Stärker zeigen:** zusätzlich zur Box (ein Ort, K) eine deutliche Umrandung
   der Karte in der Akzentfarbe (`#1f2a33`, 2 px, gestrichelt) und die bestehende
   Abdimmung. Verschwindet mit „Neu berechnen".
+- **Nachtrag (Session 2026-10-19, nach Test):** Die Box mit „Neu berechnen"
+  steht nicht mehr in der linken Spalte, sondern als Leiste direkt unter der
+  Karte: „**Ergebnis veraltet.** Die Eingaben haben sich geändert.
+  Aktualisieren Sie die Karte. [Neu berechnen]". Grund: Links erschien die Box
+  mitten in einer Eingabe (z. B. beim Ziehen des Regionalziel-Reglers) und
+  verschob den Regler unter dem Mauszeiger bzw. verdeckte ihn als angeheftete
+  Fußzeile. Die linke Spalte ändert sich jetzt beim Eingeben nicht mehr. Die
+  Leiste bleibt die einzige Textstelle (K); Umrandung und Abdimmung der Karte
+  wie oben. „Berechnung starten" (Region noch nicht berechnet) steht ebenso an
+  der Karte, im Leerzustand. → Ändert M („fester Platz an der linken Liste").
 
 ### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
 
