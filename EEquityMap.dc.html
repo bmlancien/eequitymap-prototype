@@ -105,10 +105,12 @@
            Akzentbalken in der Markenfarbe, kräftigere Type. -->
       <div style="display:flex;align-items:center;gap:8px">
         <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
-        <span style="font-size:15px;font-weight:700;color:#1b2126">{{ princHeading }}</span>
+        <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
+        <span onClick="{{ toggleIntroInfo }}" style="{{ introInfoBtnStyle }}">i</span>
       </div>
-      <!-- Unterzeile nur auf Bundesebene; in der Region steht schon der Zwei-Ebenen-Hinweis, hier nur Abstand -->
-      <div style="{{ princSublineStyle }}">Kein Prinzip ist objektiv richtig — es sind unterschiedliche Antworten auf dieselbe Frage.</div>
+      <!-- Einstiegs-Info hinter dem „i" an der Überschrift (zu, bis angeklickt; ersetzt die frühere Unterzeile, R.12) -->
+      <div style="{{ introInfoStyle }}"><b style="color:#1b2126">Was kann ich hier tun?</b><br>Wählen Sie ein Gerechtigkeitsprinzip, um zu sehen, wie es den Ausbau verteilt. Wählen Sie mehrere, um zu sehen, wo sie übereinstimmen, wo sie voneinander abweichen und was den Konsens begrenzt.</div>
+      <div style="{{ princSublineStyle }}"></div>
 
       <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px">
@@ -187,17 +189,21 @@
 
       <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
         <button onClick="{{ toggleAccount }}" style="{{ accountSwitchStyle }}"><span style="{{ accountKnobStyle }}"></span></button>
-        <span style="font-size:14px;color:#1b2126;flex:1">Bestandsanlagen anrechnen</span>
+        <span style="font-size:14px;color:#1b2126;flex:1">Bestandsanlagen berücksichtigen</span>
         <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6b7680;cursor:pointer;font-style:italic">i</span>
       </div>
-      <div style="{{ accountInfoStyle }}">Bereits bestehende Anlagen zählen als getragene Last — Regionen mit viel Bestand erhalten weniger Neuzubau.</div>
+      <div style="{{ accountInfoStyle }}"><b style="color:#1b2126">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Ohne diese Option zeigt EEquityMap eine Greenfield-Verteilung: Der Ausbau wird so verteilt, als würde neu geplant — unabhängig davon, wo heute schon Anlagen stehen.<br>Mit dieser Option bleibt die vorhandene Leistung bestehen. Für jeden Landkreis bzw. jede Rasterzelle gilt: Liegt der verteilte Ausbau unter dem Bestand, ist kein Zubau nötig. Liegt er darüber, ist die Differenz der Zubau. Bestand wird also nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</div>
 
       <!-- „Zum Vergleich speichern": am unteren Rand der Spalte angeheftet — NACH allem, was gespeichert wird
            (Prinzipien + Rahmen). Sichtbar, sobald es etwas zu speichern gibt und die Konfiguration noch nicht
            gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
       <div style="{{ saveFooterStyle }}">
         <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
-          <button onClick="{{ openSaveScenario }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">
+          <!-- Bis zum ersten Speichern der Sitzung: Hinweiszeile + leicht getönter Knopf (kein Puls, R.9) -->
+          <sc-if value="{{ showSaveHint }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 0 8px">Speichern Sie diese Einstellung, um sie später zu vergleichen.</div>
+          </sc-if>
+          <button onClick="{{ openSaveScenario }}" style="{{ saveBtnStyle }}" style-hover="background:#e6eaed">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             Zum Vergleich speichern
           </button>
@@ -228,7 +234,7 @@
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
-              <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</button>
+              <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
             </sc-for>
           </sc-if>
           <!-- Technologie-Chip: auf jedem Reiter sichtbar, Farbe wie die Hub-Box (blau = Wind, gelb = PV) -->
@@ -322,7 +328,11 @@
 
             <div style="display:flex;flex-direction:column;gap:10px">
               <!-- Erklärzeile des Reiters: über der A/B-Auswahl im Hub (nicht unter der Tab-Reihe) -->
-              <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px;text-wrap:pretty">Wählen Sie zwei Szenarien oder Referenzen als A und B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht.</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;margin:0 2px">
+                <div style="flex:1;font-size:14px;color:#5b6672;line-height:1.45;text-wrap:pretty">Wählen Sie zwei Szenarien oder Referenzen als A und B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht.</div>
+                <span onClick="{{ toggleHubInfo }}" style="{{ hubInfoBtnStyle }}">i</span>
+              </div>
+              <div style="{{ hubInfoStyle }}"><b style="color:#1b2126">Was kann ich hier vergleichen?</b><br>Sie können gespeicherte Szenarien miteinander vergleichen — auf Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den ausgewiesenen Planungsflächen (nur Wind).<br>Wichtig: A und B können unterschiedlich viel Leistung verteilen. Die Karte zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen. Deutschland- und Regionsszenarien sowie Wind und PV werden nicht miteinander verglichen.</div>
               <!-- Klick außerhalb schließt ein offenes Dropdown -->
               <div onClick="{{ closeHubMenu }}" style="{{ hubMenuBackdrop }}"></div>
               <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -610,7 +620,7 @@
               </sc-for>
             </div>
           </sc-if>
-          <!-- Konfliktflächen „Wer denkt anders?"-Legende -->
+          <!-- Dissens · „Welche Prinzipien?"-Legende -->
           <sc-if value="{{ legendSchnitt }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:6px">
               <span style="font-size:14px;color:#5b6672;line-height:1.45">{{ schnittColorCaption }}</span>
@@ -637,7 +647,7 @@
           <div style="font-size:14px;color:#6b7680;margin:6px 0 0;line-height:1.45">Konsens heißt: alle gewählten Prinzipien tragen diesen Zubau mit. Er bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </sc-if>
 
-        <!-- Kombinations-Aufschlüsselung (Konfliktflächen · „Wer denkt anders?", nur Erweitert, ab 3 Prinzipien):
+        <!-- Kombinations-Aufschlüsselung (Dissens · „Wer denkt anders?", nur Erweitert, ab 3 Prinzipien):
              eigener Abschnitt NACH Karte + Legende. Zeilen sind mit den Prinzipnamen beschriftet, deshalb
              keine zweite Farblegende. -->
         <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
@@ -662,7 +672,7 @@
           </div>
         </sc-if>
 
-        <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab 2 Prinzipien): Zubaukonsens je
+        <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab einem Prinzip, feste Größe mit allen wählbaren Prinzipien): Zubaukonsens je
              Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
         <sc-if value="{{ showPairMatrix }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
@@ -784,7 +794,7 @@
             </sc-if>
           </div>
 
-          <!-- Konfliktflächen · „Wie stark?": Konzentrations-Satz + Top 5 der größten Abweichungen (KONFLIKT_TOPLIST) -->
+          <!-- Dissens · „Wie stark?": Konzentrations-Satz + Top 5 der größten Abweichungen (KONFLIKT_TOPLIST) -->
           <sc-if value="{{ anDissTop }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:3px">Größte Abweichungen</div>
@@ -846,7 +856,7 @@
             </div>
           </sc-if>
 
-          <!-- Konfliktflächen: Zellen je abweichender Verteilung -->
+          <!-- Dissens · „Welche Prinzipien?": Zellen je abweichender Verteilung -->
           <sc-if value="{{ anCombos }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:18px">
               <div style="font-size:14px;font-weight:600;color:#1b2126;margin-bottom:4px">{{ comboTitle }}</div>
@@ -896,7 +906,7 @@
             </div>
           </sc-if>
 
-          <!-- Hauptzahl: Zubau bzw. Zubaukonsens (ZUBAU_AS_HERO); sonst Ausbau gesamt (= Bestand + Neuzubau) -->
+          <!-- Hauptzahl: Zubau bzw. Zubaukonsens (ZUBAU_AS_HERO); sonst Ausbau (= Bestand + Zubau) -->
           <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
             <!-- „i" neben „Zubaukonsens" klappt die Definition auf (nur ab zwei Prinzipien) -->
             <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
@@ -910,7 +920,7 @@
             </sc-if>
             <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
-            <!-- Kontextzeile nur bei Bestandsanrechnung: Bestand + Hauptzahl = installierte Leistung -->
+            <!-- Kontextzeile nur bei Bestandsberücksichtigung: Bestand + Hauptzahl = installierte Leistung -->
             <sc-if value="{{ cellContextLine }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:14px;color:#6b7680;margin-top:7px;line-height:1.45">{{ cellContextLine }}</div>
             </sc-if>
@@ -1047,7 +1057,7 @@
           <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#1b2126">
-          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Regionsbudget:</b> der Wert, den der Landkreis aus der bundesweiten Rechnung erhält — bei mehreren Prinzipien sein Anteil am bundesweiten Konsens.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Dieses Budget wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">6. Rahmen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen anrechnen:</b> Landkreise mit viel Bestand erhalten weniger Neuzubau; der Bestand zählt als bereits getragene Last.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Regionsbudget:</b> der Wert, den der Landkreis aus der bundesweiten Rechnung erhält — bei mehreren Prinzipien sein Anteil am bundesweiten Konsens.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Dieses Budget wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br>Ausbau ist die installierte Leistung, die eine Verteilung insgesamt vorsieht; das Ausbauziel gibt sie vor. Bestand ist die heute schon installierte Leistung. Zubau ist die zusätzlich nötige Leistung: Zubau = Ausbau − Bestand, mindestens 0. Ohne Berücksichtigung des Bestands (Greenfield) ist der Zubau gleich dem Ausbau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1143,7 +1153,7 @@
   <!-- Speicher-Bestätigung als Toast: momentane Bestätigung einer bereits erfolgten Handlung, kein
        dauerhafter Zustand — fadet selbst aus, kein ×, belegt keinen Platz im Karten-Stack (s. SoT §K). -->
   <sc-if value="{{ scenarioToastVisible }}" hint-placeholder-val="{{ false }}">
-    <div style="{{ scenarioToastStyle }}">Gespeichert. Speichern Sie weitere Szenarien und vergleichen Sie sie.</div>
+    <div style="{{ scenarioToastStyle }}">Gespeichert. Vergleichen Sie Ihre Szenarien im Reiter „Szenarien vergleichen".</div>
   </sc-if>
 
   <!-- Löschen im Hub: Undo-Toast statt Dialog — stellt Szenario inkl. A/B-Zuordnung wieder her, blendet aus. -->
@@ -1180,9 +1190,9 @@ const KRS_VB = "0 0 480 628.4";
 // Maßstab der KRS_GEO-Pfade: national-Kartenraum-px je echtem km (für die 5×5-km-Rasterlogik der Regionsansicht).
 const KRS_PX_PER_KM = 0.7175541639944562;
 // Rechte Spalte, Zelldetail: Hauptzahl = Zubau (1 Prinzip) bzw. Zubaukonsens (≥ 2 Prinzipien) statt
-// „Ausbau gesamt"; Bestand + Zubau nur noch als Kontextzeile. false = früheres „Ausbau gesamt"-Verhalten.
+// „Ausbau"; Bestand + Zubau nur noch als Kontextzeile. false = früheres „Ausbau"-Verhalten.
 const ZUBAU_AS_HERO = true;
-// Rechte Spalte, Konfliktflächen · „Wie stark?": unter der Zubaukonsens-Box zusätzlich ein Satz zur
+// Rechte Spalte, Dissens · „Wie stark?": unter der Zubaukonsens-Box zusätzlich ein Satz zur
 // Konzentration der Abweichung + Liste „Größte Abweichungen" (Top 5). false = früherer Stand: dort nur die
 // Zubaukonsens-Box und der Klick-Hinweis (s. SoT, Session 2026-10-12).
 const KONFLIKT_TOPLIST = true;
@@ -1235,8 +1245,8 @@ class Component extends DCLogic {
     shareOpen: false,
     shareCopied: false,
     hubMenu: null,      // offenes A/B-Dropdown im Hub (0 = A, 1 = B)
-    hoverDiss: null,    // Konfliktflächen · „Wie stark?": in „Größte Abweichungen" überfahrene Zelle (id)
-    hoverCombo: null,   // Konfliktflächen · „Wer denkt anders?": in der Liste rechts überfahrene Kombination
+    hoverDiss: null,    // Dissens · „Wie stark?": in „Größte Abweichungen" überfahrene Zelle (id)
+    hoverCombo: null,   // Dissens · „Wer denkt anders?": in der Liste rechts überfahrene Kombination
     hubSort: null,      // Sortierung der Szenarien-Tabelle im Hub: { k: Spalte, d: 1 | -1 } oder null (Speicherreihenfolge)
     hubCell: null,      // auf der Differenzkarte gewählte Zelle: { lvl: 'de' | 'r:<krsId>', i }
     undoDelete: null,   // zuletzt gelöschtes Szenario (für „Rückgängig")
@@ -1246,7 +1256,9 @@ class Component extends DCLogic {
     konfliktMode: 'dissens',
     scenarioToastShow: false,
     scenarioToastMounted: false,
-    scenarioFirstSaveSeen: false
+    scenarioFirstSaveSeen: false,
+    introInfo: false,   // Einstiegs-Info an der Prinzipien-Überschrift (R.12)
+    hubInfo: false      // Info „Was kann ich hier vergleichen?" im Hub (R.8)
   };
 
   // Referenzwerte einer Hub-Referenz auf beliebigen Zellen (Landkreise oder 5×5-km-Raster), auf ein Ziel skaliert.
@@ -1593,9 +1605,15 @@ class Component extends DCLogic {
     return sel.length === 1 ? shr(sel[0]) : Math.min(...sel.map(shr));
   }
 
+  // Signatur aller Eingaben, die das Regionsergebnis ändern — weicht sie vom letzten Rechenlauf ab, ist das
+  // Ergebnis „veraltet". Das Budget geht ungerundet ein: vorher stand hier fmt(budget) (GW, zwei Nachkommastellen),
+  // und eine Reglerbewegung um einige GW verschob das Budget eines Landkreises oft nur um < 0,005 GW — die
+  // Signatur blieb gleich, die Box erschien nicht. Bundesweite Prinzipien und Ausbauziel stehen zusätzlich
+  // explizit drin, damit auch eine Änderung zählt, die das Budget zufällig nicht bewegt.
   regionSigFrom(krsId, sel, budget) {
     const S = this.state;
-    return [krsId, sel.slice().sort().join(','), this.fmt(budget), S.tech, S.account ? 1 : 0].join('|');
+    const nat = S.selected.filter(id => this.byId[id] && this.byId[id].available).slice().sort().join(',');
+    return [krsId, sel.slice().sort().join(','), budget.toPrecision(12), nat, S.targetGW, S.tech, S.account ? 1 : 0].join('|');
   }
 
   enterRegion(krsId, label) {
@@ -1765,14 +1783,14 @@ class Component extends DCLogic {
     // Beide Ebenen zeigen ihre je eigene, bereits scope-passende Zellmenge — kein weiterer Scope-Filter nötig.
     const scopeIdx = cells.map((c,i)=>i);
 
-    // effektiver Plan — Bestand/Zubau/Gesamt nur sinnvoll bei Bestandsanrechnung
+    // effektiver Plan — Bestand/Zubau/Gesamt nur sinnvoll bei Bestandsberücksichtigung
     const effPlan = S.account ? S.plan : 'zubau';
 
     // Median je Prinzip → schwellenfreie "empfiehlt"-Definition (Schnittmengen)
     const medOf = pid => { const a = gwArr(pid).slice().sort((x,y)=>x-y); const n = a.length; return n%2 ? a[(n-1)/2] : (a[n/2-1]+a[n/2])/2; };
     const medians = {}; sel.forEach(p => medians[p] = medOf(p));
     const recBy = i => sel.filter(p => gwArr(p)[i] > medians[p]);
-    // Konfliktflächen / „Wer denkt anders?": feste 20-%-Regel NUR für diese Einfärbung — die
+    // Dissens · „Welche Prinzipien?": feste 20-%-Regel NUR für diese Einfärbung — die
     // Konsensrechnung (Minimum-Regel) bleibt unberührt. Abweichung = |Prinzipwert − Konsens| / Konsens
     // > 20 % (beide Richtungen); bei Konsens = 0 zählt jeder positive Prinzipwert als abweichend.
     const DEV_RULE = 0.2;
@@ -1909,6 +1927,75 @@ class Component extends DCLogic {
     // „Gemeinden" bzw. Basic) oder das 5 × 5-km-Raster (Region, Ansichten mit Raster — nur Erweitert).
     const legendUnit = !isRegion ? 'je Landkreis'
       : ((isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
+    // Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab einem gewählten Prinzip): Zubaukonsens je
+    // Paar = Minimum-Regel über genau diese zwei Prinzipien, Summe über alle Zellen. Feste Größe (R.11): immer
+    // alle wählbaren Prinzipien in der Reihenfolge der Prinzipienliste; Paare mit einem nicht gewählten Prinzip
+    // sind leere graue Zellen, deren Namen ausgegraut. Dreieck ohne Diagonale; Konsens-Skala nur über die Werte
+    // gewählter Paare (dunkel = hoch).
+    const buildPairMatrix = () => {
+      const all = this.principles.filter(p => p.available).map(p => p.id);
+      if (all.length < 2) return;
+      const isSel = p => sel.includes(p);
+      const pairVal = {};
+      all.forEach((p, a) => all.forEach((q, b) => {
+        if (b >= a || !isSel(p) || !isSel(q)) return;
+        let sum = 0; const gp = gwSel[p], gq = gwSel[q];
+        for (let i = 0; i < N; i++) sum += Math.min(gp[i], gq[i]);
+        pairVal[p + '|' + q] = sum;
+      }));
+      const vals = Object.values(pairVal);
+      const pmx = vals.length ? Math.max(...vals) : 0, pmn = vals.length ? Math.min(...vals) : 0, pr = pmx - pmn;
+      const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
+      const nameCol = p => isSel(p) ? '#1b2126' : '#9aa3ab';
+      const hdr = p => 'font-size:14px;color:' + nameCol(p) + ';font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
+      const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color + (isSel(p) ? '' : ';opacity:.3');
+      const flat = 'display:contents';
+      // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
+      // Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1. Werte bleiben dieselben Paare an denselben Plätzen.
+      const rowsP = all.slice(1), colsP = all.slice(0, -1);
+      // Spaltenköpfe 45° gedreht (Farbpunkt bleibt vorn). Lange Namen brechen auf zwei Zeilen um (HEAD_MAXW),
+      // sonst treibt ein einzelner langer Name die Kopfhöhe für alle Spalten hoch. Kopfhöhe und rechter
+      // Überstand aus der geschätzten Labelbreite (≈ 7,6 px je Zeichen bei 14 px halbfett + Farbpunkt).
+      const PAIR_ROW_W = 180, PAIR_COL_W = 88, HEAD_MAXW = 150;
+      const labelW = p => Math.min(HEAD_MAXW, this.byId[p].name.length * 7.6 + 18);
+      const twoLine = p => this.byId[p].name.length * 7.6 + 18 > HEAD_MAXW;
+      const SIN45 = Math.SQRT1_2;
+      const headH = Math.ceil(Math.max(...colsP.map(p => labelW(p) * SIN45 + (twoLine(p) ? 30 : 16))));
+      const lastP = colsP[colsP.length - 1];
+      const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
+      const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:6px;background:' + bg });
+      const cellsOut = [{
+        text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
+        title: '', swatchStyle: 'display:none', innerStyle: flat,
+        style: 'font-size:14px;color:#5b6672;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
+      }];
+      colsP.forEach(q => cellsOut.push({
+        text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q),
+        style: 'position:relative;height:' + headH + 'px',
+        innerStyle: 'position:absolute;left:50%;bottom:' + (twoLine(q) ? 16 : 8) + 'px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;width:max-content;max-width:' + HEAD_MAXW + 'px;line-height:1.2;font-size:14px;font-weight:600;color:' + nameCol(q)
+      }));
+      rowsP.forEach(p => {
+        const a = all.indexOf(p);
+        cellsOut.push({ text: this.byId[p].name, title: this.byId[p].name, swatchStyle: sw(p), style: hdr(p), innerStyle: flat });
+        colsP.forEach((q, b) => {
+          // obere rechte Hälfte (kein Paar): fast unsichtbar; Paar mit nicht gewähltem Prinzip: leeres Grau
+          if (b >= a) { cellsOut.push(emptyCell('#f7f8f9')); return; }
+          if (!isSel(p) || !isSel(q)) { cellsOut.push(emptyCell('#dde2e6')); return; }
+          const v = pairVal[p + '|' + q], t = pnorm(v);
+          cellsOut.push({
+            text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
+            swatchStyle: 'display:none', innerStyle: flat,
+            style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
+          });
+        });
+      });
+      R.pairCells = cellsOut;
+      R.pairWrapStyle = 'padding-right:' + overhang + 'px';
+      // Feste Spaltenbreiten: kompakt und linksbündig, statt bei wenigen Prinzipien über die volle Breite zu laufen
+      R.pairGridStyle = 'display:grid;grid-template-columns:' + PAIR_ROW_W + 'px repeat(' + colsP.length + ',' + PAIR_COL_W + 'px);gap:4px;align-items:stretch';
+      R.showPairMatrix = true;
+    };
+
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
@@ -1929,6 +2016,7 @@ class Component extends DCLogic {
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
       R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau ' + legendUnit;
       R.showPlan = true;
+      if (isExt) buildPairMatrix();
     } else if (view === 'konsens') {
       // Min–Max nur über die sichtbaren Zellen (Konfliktflächen bei aktivem Ausblenden nicht mitrechnen —
       // sonst zieht deren ≈0-Wert die Skala künstlich auf, genau dann, wenn Kontrast am meisten gefragt ist).
@@ -1942,65 +2030,7 @@ class Component extends DCLogic {
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
       R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens ' + legendUnit;
       R.showPlan = false;
-      // Paarweise Prinzipien-Matrix (nur Erweitert): Zubaukonsens je Paar = Minimum-Regel über genau diese
-      // zwei Prinzipien, Summe über alle Zellen. Dreieck ohne Diagonale; Konsens-Blauskala über den
-      // Wertebereich der Matrix (dunkel = hoch).
-      if (isExt) {
-        const pairVal = {};
-        sel.forEach((p, a) => sel.forEach((q, b) => {
-          if (b >= a) return;
-          let sum = 0; const gp = gwSel[p], gq = gwSel[q];
-          for (let i = 0; i < N; i++) sum += Math.min(gp[i], gq[i]);
-          pairVal[p + '|' + q] = sum;
-        }));
-        const vals = Object.values(pairVal);
-        const pmx = Math.max(...vals), pmn = Math.min(...vals), pr = pmx - pmn;
-        const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
-        const hdr = 'font-size:14px;color:#1b2126;font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
-        const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color;
-        const flat = 'display:contents';
-        // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
-        // Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1. Werte bleiben dieselben Paare an denselben Plätzen.
-        const rowsP = sel.slice(1), colsP = sel.slice(0, -1);
-        // Spaltenköpfe 45° gedreht (Farbpunkt bleibt vorn). Lange Namen brechen auf zwei Zeilen um (HEAD_MAXW),
-        // sonst treibt ein einzelner langer Name die Kopfhöhe für alle Spalten hoch. Kopfhöhe und rechter
-        // Überstand aus der geschätzten Labelbreite (≈ 7,6 px je Zeichen bei 14 px halbfett + Farbpunkt).
-        const PAIR_ROW_W = 180, PAIR_COL_W = 88, HEAD_MAXW = 150;
-        const labelW = p => Math.min(HEAD_MAXW, this.byId[p].name.length * 7.6 + 18);
-        const twoLine = p => this.byId[p].name.length * 7.6 + 18 > HEAD_MAXW;
-        const SIN45 = Math.SQRT1_2;
-        const headH = Math.ceil(Math.max(...colsP.map(p => labelW(p) * SIN45 + (twoLine(p) ? 30 : 16))));
-        const lastP = colsP[colsP.length - 1];
-        const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
-        const cellsOut = [{
-          text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
-          title: '', swatchStyle: 'display:none', innerStyle: flat,
-          style: 'font-size:14px;color:#5b6672;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
-        }];
-        colsP.forEach(q => cellsOut.push({
-          text: this.byId[q].name, title: this.byId[q].name, swatchStyle: sw(q),
-          style: 'position:relative;height:' + headH + 'px',
-          innerStyle: 'position:absolute;left:50%;bottom:' + (twoLine(q) ? 16 : 8) + 'px;transform-origin:0 50%;transform:translateX(-5px) rotate(-45deg);display:flex;align-items:center;gap:6px;width:max-content;max-width:' + HEAD_MAXW + 'px;line-height:1.2;font-size:14px;font-weight:600;color:#1b2126'
-        }));
-        rowsP.forEach(p => {
-          const a = sel.indexOf(p);
-          cellsOut.push({ text: this.byId[p].name, title: this.byId[p].name, swatchStyle: sw(p), style: hdr, innerStyle: flat });
-          colsP.forEach((q, b) => {
-            if (b >= a) { cellsOut.push({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'border-radius:6px;background:#f7f8f9' }); return; }
-            const v = pairVal[p + '|' + q], t = pnorm(v);
-            cellsOut.push({
-              text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
-              swatchStyle: 'display:none', innerStyle: flat,
-              style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
-            });
-          });
-        });
-        R.pairCells = cellsOut;
-        R.pairWrapStyle = 'padding-right:' + overhang + 'px';
-        // Feste Spaltenbreiten: kompakt und linksbündig, statt bei wenigen Prinzipien über die volle Breite zu laufen
-        R.pairGridStyle = 'display:grid;grid-template-columns:' + PAIR_ROW_W + 'px repeat(' + colsP.length + ',' + PAIR_COL_W + 'px);gap:4px;align-items:stretch';
-        R.showPairMatrix = true;
-      }
+      if (isExt) buildPairMatrix();
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
       R.legendCat = true;
@@ -2188,7 +2218,7 @@ class Component extends DCLogic {
           if (!same(me.regionalSel, other.regionalSel)) parts.push('Regional: ' + setTxt(me.regionalSel, other.regionalSel));
         } else if (!same(me.regionalSel, other.regionalSel)) parts.push('Prinzipien: ' + setTxt(me.regionalSel, other.regionalSel));
         if (this.fmt(me.targetGW) !== this.fmt(other.targetGW)) parts.push('Ausbauziel: ' + this.fmt(me.targetGW) + ' GW');
-        if (!!me.account !== !!other.account) parts.push(me.account ? 'Bestand angerechnet' : 'Bestand nicht angerechnet');
+        if (!!me.account !== !!other.account) parts.push(me.account ? 'Bestand berücksichtigt' : 'Bestand nicht berücksichtigt');
         return parts.length ? parts.join(' · ') : 'Gleiche Einstellungen wie ' + (k === 0 ? 'B' : 'A');
       };
       R.hubSlots = [0, 1].map(k => {
@@ -2582,7 +2612,7 @@ class Component extends DCLogic {
       szenarien: '' // steht im Hub selbst, über der A/B-Auswahl
     })[view] || '';
     R.explainLine = galleryAll ? '' : R.tabExplain; // Galerie-Kopf trägt Titel + Legende bereits
-    // nicht im Hub, nicht in Konfliktflächen · „Wer denkt anders?" und nicht in Einzelverteilungen (kein Konsens gezeigt)
+    // nicht im Hub, nicht in Dissens · „Wer denkt anders?" und nicht in Einzelverteilungen (kein Konsens gezeigt)
     R.showKonsensDisclaimer = view !== 'regionGate' && view !== 'szenarien' && view !== 'verteilungen' && !(view === 'konflikt' && S.konfliktMode === 'anders') && stufe >= 2;
     R.currentView = view;
     R.isSingleView = view === 'single';
@@ -2595,7 +2625,7 @@ class Component extends DCLogic {
     // Button nur zeigen, wenn es etwas zu speichern gibt — keine ausgegrauten Elemente (s. §D),
     // stattdessen ganz ausgeblendet (steuert auch showTabRow weiter unten).
     // Nur zeigen, wenn die aktuelle Konfiguration noch nicht als Szenario gespeichert ist — Vergleich über
-    // dieselbe Signatur (Ebene, Prinzipien DE + regional, Technologie, Ausbauziel, Bestandsanrechnung).
+    // dieselbe Signatur (Ebene, Prinzipien DE + regional, Technologie, Ausbauziel, Bestandsberücksichtigung).
     const scenarioSig = sc => [sc.isRegion ? 'r:' + sc.regionKrsId : 'de', (sc.nationalSel || []).slice().sort().join(','),
       sc.isRegion ? (sc.regionalSel || []).slice().sort().join(',') : '', sc.tech, this.fmt(sc.targetGW), sc.account ? 1 : 0].join('|');
     const currentSig = scenarioSig({ isRegion, regionKrsId: isRegion && S.region ? S.region.krsId : null,
@@ -2606,6 +2636,10 @@ class Component extends DCLogic {
     R.saveFooterStyle = R.showSaveScenario
       ? 'position:sticky;bottom:0;z-index:3;background:#fff;margin:22px -16px 0;padding:12px 16px 14px;border-top:1px solid #e2e5e8;box-shadow:0 -6px 12px rgba(255,255,255,.9)'
       : 'height:40px';
+    // Bis zum ersten Speichern der Sitzung: Hinweiszeile über dem Knopf, Knopf leicht grau getönt (R.9)
+    const neverSaved = !S.scenarioFirstSaveSeen;
+    R.showSaveHint = neverSaved;
+    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;background:' + (neverSaved ? '#eceff2' : '#fff');
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
@@ -2626,7 +2660,7 @@ class Component extends DCLogic {
     R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#1f2a33');
     // Auto-Name kurz halten: ab zwei Prinzipien nur die Anzahl (die Namen stehen in der rechten Spalte und in
     // den Tabellen), Landkreis ohne das Wort „Landkreis". Gleiche Namen bekommen eine laufende Nummer — zwei
-    // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsanrechnung unterscheiden.
+    // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsberücksichtigung unterscheiden.
     const scenarioAutoName = () => {
       const names = sel.length === 0 ? 'Kein Prinzip' : sel.length === 1 ? this.byId[sel[0]].name : sel.length + ' Prinzipien';
       const scopeName = isRegion && S.region ? S.region.label.replace(/^Landkreis /, '') : 'Deutschland';
@@ -2693,8 +2727,17 @@ class Component extends DCLogic {
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
     R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
     R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
-    R.princSublineStyle = isRegion ? 'height:10px;overflow:hidden;visibility:hidden' : 'font-size:14px;color:#5b6672;line-height:1.5;margin:6px 0 14px';
+    R.princSublineStyle = 'height:12px';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
+    // Einstiegs-Info an der Prinzipien-Überschrift (R.12) und Info an der Erklärzeile des Hubs (R.8) — zu, bis angeklickt
+    const infoBtn = on => 'flex:none;width:16px;height:16px;border:1px solid ' + (on ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (on ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
+    const infoBox = 'font-size:14px;color:#5b6672;line-height:1.5;padding:8px 10px;background:#f4f6f6;border-radius:7px';
+    R.introInfoBtnStyle = infoBtn(S.introInfo);
+    R.introInfoStyle = S.introInfo ? infoBox + ';margin:8px 0 0' : 'display:none';
+    R.toggleIntroInfo = () => this.setState({ introInfo: !this.state.introInfo });
+    R.hubInfoBtnStyle = infoBtn(S.hubInfo) + ';margin-top:1px';
+    R.hubInfoStyle = S.hubInfo ? infoBox + ';margin:0 2px' : 'display:none';
+    R.toggleHubInfo = () => this.setState({ hubInfo: !this.state.hubInfo });
     // Definition „Zubaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
     R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
     R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;line-height:1.45' : 'display:none';
@@ -2711,7 +2754,8 @@ class Component extends DCLogic {
     // Zwei benannte Prinzipiensätze (§M): links steht immer genau EINE editierbare Liste;
     // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
     // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
-    R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach:' : 'Bundesweit verteilt nach:';
+    // Einführung des Begriffs: hier einmal das volle Wort „Gerechtigkeitsprinzipien", danach „Prinzip" (R.2)
+    R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach Gerechtigkeitsprinzipien:' : 'Bundesweit verteilt nach Gerechtigkeitsprinzipien:';
     R.showNatBreadcrumb = isRegion;
     const natSelForBreadcrumb = S.selected.filter(avail);
     // Farb-Rhyme: dieselben Prinzipfarben wie in der regionalen Liste, auch schon in der eingeklappten
@@ -2812,7 +2856,7 @@ class Component extends DCLogic {
     }
 
 
-    // Reiter: Konsens → Was begrenzt? → Konfliktflächen → Einzelverteilungen → Szenarien vergleichen.
+    // Reiter: Konsens → Was begrenzt? → Dissens → Einzelverteilungen → Szenarien vergleichen.
     // „Szenarien vergleichen" ist der einzige Vergleichs-Hub und immer sichtbar (Referenzen sind immer da);
     // der frühere „Vergleich"-Reiter (Konsens vs. Referenz / Planung) ist darin aufgegangen.
     R.showTabs = true;
@@ -2820,7 +2864,7 @@ class Component extends DCLogic {
     R.showTabRow = true;
     let tabDefs;
     if (stufe >= 2) {
-      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'konflikt', label: 'Konfliktflächen' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
+      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'konflikt', label: 'Dissens' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
     } else {
       tabDefs = [{ id: 'konsens', label: stufe === 1 ? 'Einzelverteilung' : 'Übersicht' }];
     }
@@ -2830,9 +2874,12 @@ class Component extends DCLogic {
     R.tabs = tabDefs.map(t => ({
       label: t.label,
       onClick: () => this.setState(this.dismissTrioHint({ tab: t.id, hubMenu: null })),
-      style: this.tabBtn(activeTab === t.id)
+      style: this.tabBtn(activeTab === t.id),
+      // Grüner Punkt am Hub-Reiter, sobald ein Szenario gespeichert ist — bewusste Ausnahme von J2 (R.9);
+      // Einschränkung auf die aktuelle Ebene folgt mit der Aufteilung des Hubs.
+      dotStyle: t.id === 'szenarien' && scenariosAll.length ? 'display:inline-block;width:8px;height:8px;border-radius:50%;background:#57c4ab;margin-left:7px;vertical-align:1px' : 'display:none'
     }));
-    // In-Tab-Umschalter der Konfliktflächen: Dissens (braune Heatmap) / Wer denkt anders? (Einfärbung)
+    // In-Tab-Umschalter des Reiters Dissens: „Wie stark?" (braune Heatmap) / „Welche Prinzipien?" (Einfärbung)
     R.showKonfliktToggle = view === 'konflikt';
     R.setKonfliktDissens = () => this.setState({ konfliktMode: 'dissens', cell: null });
     R.setKonfliktAnders = () => this.setState({ konfliktMode: 'anders', cell: null });
@@ -2877,7 +2924,7 @@ class Component extends DCLogic {
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
     const scopeWord = isRegion ? 'dieser Region' : 'gesamt';
 
-    // Zelldetail-Kennzahlen: Hauptzahl „Ausbau gesamt" = Bestand (nur bei Bestandsanrechnung) + Neuzubau,
+    // Zelldetail-Kennzahlen: Hauptzahl „Ausbau" = Bestand (nur bei Bestandsberücksichtigung) + Zubau,
     // Anteil am Ausbau im Scope, Anteil an der deutschen Fläche und Einordnung des Zubaubedarfs je km²
     // gegenüber dem Durchschnitt aller Landkreise (= Ausbauziel / Fläche Deutschlands).
     const DE_KM2 = this._deKm2 || (this._deKm2 = this.krs.reduce((a, k) => a + (k.kfl || 0), 0) || 357588);
@@ -2903,7 +2950,7 @@ class Component extends DCLogic {
     const heroNum = v => isRegion ? Math.round(v * 1000 * 10) / 10 : Math.round(v * 100) / 100;
     const heroStr = n => n.toFixed(isRegion ? 1 : 2).replace('.', ',');
     const setHero = (zubau, cons, bestand) => {
-      if (!ZUBAU_AS_HERO) { R.cellHeroLabel = 'Ausbau gesamt'; R.cellHeroValue = R.cellTotal; R.cellHeroCaption = ''; R.cellContextLine = ''; return; }
+      if (!ZUBAU_AS_HERO) { R.cellHeroLabel = 'Ausbau'; R.cellHeroValue = R.cellTotal; R.cellHeroCaption = ''; R.cellContextLine = ''; return; }
       const v = heroNum(stufe >= 2 ? cons : zubau), b = heroNum(bestand);
       R.cellHeroLabel = stufe >= 2 ? 'Zubaukonsens' : 'Zubau';
       R.cellHeroValue = heroStr(v);
@@ -3147,8 +3194,8 @@ class Component extends DCLogic {
       R.cellRecommend = this.fmtN(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
       R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
-      // Neuzubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
-      // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Neuzubau ≤ Gesamt.
+      // Zubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
+      // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Zubau ≤ Ausbau.
       const neu = neuOf(i);
       const total = bestOf(i) + neu;
       R.cellTotal = this.fmtN(total, isRegion); R.cellBestand = this.fmtN(c.bestandGW, isRegion); R.cellNew = this.fmtN(neu, isRegion);
@@ -3157,7 +3204,7 @@ class Component extends DCLogic {
       R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
       R.cellEinordnung = einordnungFor(neu, areaOf(i));
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
-      // Zubaukonsens ≤ Neuzubau ≤ Ausbau gesamt; gefüllter Anteil ≤ voller Balken.
+      // Zubaukonsens ≤ Zubau ≤ Ausbau; gefüllter Anteil ≤ voller Balken.
       R.cellConsFill = (neu && consCells) ? (Math.min(consCells[i], neu) / neu * 100).toFixed(1) + '%' : '0%';
       // Live-Beispiel: einmalig beim ersten Klick auf eine Konfliktzelle
       if (stufe >= 2 && isConflict[i] && !S.seenConflictHint) {
