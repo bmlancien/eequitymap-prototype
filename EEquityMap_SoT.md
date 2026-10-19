@@ -445,7 +445,7 @@ seiner Bausteine übertreffen) und damit informationslos. Daher:
 
 ## G. Verständlichkeit / Erststart (geändert)
 
-> **Geändert durch R (Session 2026-10-19):** Neue Infobox-Texte für Einstieg, Bestand und Begriffe (R.12); einmaliger Kartenhinweis zur Detailauswertung (R.4); Speicher-Hinweise (R.9).
+> **Geändert durch R (Session 2026-10-19):** Neue Infobox-Texte für Einstieg, Bestand und Begriffe (R.12); einmaliger Kartenhinweis zur Detailauswertung (R.4); Speicher-Hinweise (R.9). Das Werkzeug startet im Bereich „Bestand & Potenziale"; der Knopf des Prämissen-Overlays heißt „Los geht's →" (R.3, Nachtrag).
 
 **Kein Onboarding-Modal mehr** (entfernt, s. H). Die Konzepterklärung, die früher
 das Modal trug, liegt jetzt auf dem Erststart-Zustand der Hauptansicht und im
@@ -1543,6 +1543,23 @@ Landkreises (Regional).
 - **Suchfeld je Tab** **[Annahme]**: Deutschland — wählt den Landkreis aus
   (Popover, wie bisher); Regional — wechselt in diesen Landkreis; Bestand &
   Potenziale — zoomt auf den Landkreis.
+
+**Nachtrag (Session 2026-10-19, nach Umsetzung):**
+- **Start im Bereich „Bestand & Potenziale"** (statt „Deutschland"). Folgt dem
+  Grundgedanken: erst der heutige Stand, dann Gerechtigkeit bundesweit, dann
+  regional. Das Prämissen-Overlay beim Erststart bleibt; sein Knopf heißt
+  „Los geht's →" (vorher „Verteilungen ansehen →", das hätte direkt nach
+  „Deutschland" geführt) und schließt nur das Overlay. Der Erststart im
+  Bereich „Deutschland" (Galerie aller Prinzipien, CTA) bleibt unverändert und
+  greift beim ersten Wechsel dorthin.
+- **Regional ohne bundesweites Prinzip:** Solange in „Deutschland" kein
+  Prinzip gewählt ist, gibt es kein Regionsbudget. Der Tab zeigt dann statt der
+  Region (oder des Leerzustands „Wählen Sie einen Landkreis …") den Hinweis
+  „Wählen Sie zuerst im Bereich „Deutschland" mindestens ein
+  Gerechtigkeitsprinzip. Daraus ergibt sich, wie viel Ausbau auf einen
+  Landkreis entfällt." mit dem Knopf „Zum Bereich Deutschland". Die Suche
+  öffnet in diesem Zustand keinen Landkreis. (Vorher entstand eine Region mit
+  Regionsbudget 0.)
 
 ### R.4 „Im Detail auswerten" (Einstieg in den Regionsmodus)
 
