@@ -868,7 +868,7 @@
         <sc-if value="{{ bpNextStep }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:22px;padding:13px 14px;border:1px solid #d7dce0;border-radius:10px;background:#fff">
             <div style="font-size:14px;color:#5b6672;line-height:1.5">{{ bpNextText }}</div>
-            <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#fff;color:#1f2a33;border:1px solid #b9c1c8;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#f1f3f4">Zum Bereich Deutschland →</button>
+            <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#fff;color:#1f2a33;border:1px solid #b9c1c8;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;line-height:1.35;text-wrap:balance" style-hover="background:#f1f3f4">{{ bpNextBtn }}</button>
           </div>
         </sc-if>
       </sc-if>
@@ -4367,9 +4367,15 @@ class Component extends DCLogic {
     // Nächster Schritt (2): nur in der Deutschland-Übersicht, nicht bei einem gewählten Ort
     // immer sichtbar; mit Auswahl auf deren Landkreis bezogen, und der Knopf wählt ihn in „Deutschland" gleich aus
     R.bpNextStep = true;
+    // Mit Auswahl: Text und Knopf sagen, dass man in „Deutschland" bei genau diesem Ort landet — und dass die Werte
+    // dort erst mit einem Prinzip erscheinen
+    const hasPrinciple = S.selected.some(id => this.byId[id] && this.byId[id].available);
     R.bpNextText = selKrs
-      ? 'Wie viel Ausbau entfiele gerecht auf ' + (selKrs.kind === 'Stadt' ? 'die Stadt ' : 'den Landkreis ') + selKrs.label + '?'
+      ? 'Wie viel Ausbau entfiele gerecht auf ' + (selKrs.kind === 'Stadt' ? 'die Stadt ' : 'den Landkreis ') + selKrs.label + '? '
+        + (hasPrinciple ? 'Im Bereich „Deutschland" sehen Sie es nach Ihren Prinzipien.' : 'Wählen Sie dazu im Bereich „Deutschland" ein Gerechtigkeitsprinzip.')
       : 'Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen?';
+    // mit Art (Landkreis/Stadt): „Rostock“ allein wäre mehrdeutig (Landkreis Rostock / Stadt Rostock)
+    R.bpNextBtn = selKrs ? selKrs.kind + ' ' + selKrs.label + ' in Deutschland ansehen →' : 'Zum Bereich Deutschland →';
     const nextKrsId = selKrs ? selKrs.id : null;
     R.gotoDEFromBestand = () => this.switchArea('de', nextKrsId ? { cell: nextKrsId, deCell: nextKrsId, gemeinde: null, seenKrsHint: true } : null);
     R.bpRClose = () => this.setState({ bpSel: null });

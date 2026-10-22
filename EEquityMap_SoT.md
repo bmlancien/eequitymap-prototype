@@ -1547,9 +1547,12 @@ Landkreises (Regional).
   Der Satz „Klicken Sie auf einen Landkreis bzw. eine Gemeinde, um die Zahlen
   für diesen Ort zu sehen." entfällt.
   **Nachtrag (UX-Review):** Die Karte bleibt auch mit Auswahl stehen. Mit
-  Landkreis, Gemeinde oder Objekt lautet die Frage „Wie viel Ausbau entfiele
-  gerecht auf den Landkreis [Name]?" (bzw. „die Stadt [Name]"), und der Knopf
-  wählt diesen Landkreis in „Deutschland" gleich aus. Die Auswahl bleibt
+  Landkreis, Gemeinde oder Objekt lautet der Text „Wie viel Ausbau entfiele
+  gerecht auf den Landkreis [Name]?" (bzw. „die Stadt [Name]") plus „Wählen
+  Sie dazu im Bereich „Deutschland" ein Gerechtigkeitsprinzip." (ohne Prinzip)
+  bzw. „Im Bereich „Deutschland" sehen Sie es nach Ihren Prinzipien." Der
+  Knopf heißt „[Landkreis/Stadt] [Name] in Deutschland ansehen →" und wählt
+  diesen Landkreis in „Deutschland" gleich aus. Die Auswahl bleibt
   erhalten, wenn danach das erste Prinzip gewählt wird (Liste oder Galerie);
   ab dann hebt ein Prinzipwechsel sie wie bisher auf.
 - **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
