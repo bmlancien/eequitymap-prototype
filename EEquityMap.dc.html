@@ -159,12 +159,6 @@
         </div>
       </sc-for>
 
-      <sc-if value="{{ showCTA }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:12px;padding:11px 12px;background:#f0f5f4;border:1px solid #dbdde0;border-radius:8px">
-          <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-bottom:9px">Sie können ein zweites Prinzip hinzufügen, um zu sehen, wo sich beide einig sind.</div>
-          <button onClick="{{ addSecond }}" style="width:100%;background:#1f2a33;color:#fff;border:none;padding:8px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Zweites Prinzip hinzufügen</button>
-        </div>
-      </sc-if>
 
 
       <!-- RAHMEN (früher „SZENARIO" — ein gespeichertes Szenario umfasst Prinzipien UND diesen Block) -->
@@ -732,15 +726,6 @@
             </sc-if>
           </div>
 
-          <!-- Regionsansicht: veraltet-Hinweis, Ergebnis vorhanden aber Eingaben geändert — Aktion liegt links -->
-          <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
-            <!-- „Ergebnis veraltet" mit der Aktion — unter der Karte, nicht links: dort würde die Box beim Ändern einer
-                 Eingabe (z. B. Ziehen des Reglers) die Eingaben verschieben oder verdecken -->
-            <div style="display:flex;align-items:center;gap:12px;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 10px 9px 12px;margin-top:9px">
-              <span style="font-size:14px;color:#6b5726;line-height:1.4;flex:1"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</span>
-              <button onClick="{{ startRegionCompute }}" style="flex:none;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;white-space:nowrap">Neu berechnen</button>
-            </div>
-          </sc-if>
         </sc-if>
       </div>
 
@@ -898,6 +883,13 @@
                 </div>
                 <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#6b7680;font-size:20px;line-height:1;padding:2px;flex:none">×</span>
               </div>
+              <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
+              <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ staleBoxStyleHub }}">
+                  <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
+                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                </div>
+              </sc-if>
               <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                 <div style="font-size:14px;color:#5b6672">Differenz A − B</div>
                 <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
@@ -927,6 +919,13 @@
                 </sc-if>
                 <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
               </div>
+              <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
+              <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ staleBoxStyleHub }}">
+                  <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
+                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                </div>
+              </sc-if>
               <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                   <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
@@ -967,6 +966,13 @@
             <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ ovScopeLabel }}</div>
           </sc-if>
           <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
+          <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
+          <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ staleBoxStyle }}">
+              <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+            </div>
+          </sc-if>
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
@@ -1117,6 +1123,13 @@
             </div>
             <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#6b7680;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
           </div>
+          <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
+          <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ staleBoxStyle }}">
+              <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+            </div>
+          </sc-if>
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
@@ -2494,8 +2507,10 @@ class Component extends DCLogic {
       ? 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.'
       : 'Das Regionsergebnis ist noch nicht berechnet.';
 
-    // Start / Neu berechnen stehen an der Karte (Leerzustand bzw. Leiste „Ergebnis veraltet"), nicht links:
+    // „Berechnung starten" steht an der Karte (Leerzustand), „Neu berechnen" rechts unter dem Titel — nicht links:
     // eine Box in der linken Spalte verschob beim Ändern einer Eingabe die Eingaben selbst.
+    R.staleBoxStyle = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;margin-top:12px';
+    R.staleBoxStyleHub = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px';  // Hub: Abstand kommt vom gap
 
     const singlePid = sel[0] || this.principles[0].id;
 
@@ -3461,7 +3476,6 @@ class Component extends DCLogic {
     R.trioHint = !!(S.trioHint || S.trioHintMounted);
     R.trioHintStyle = 'font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px;'
       + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
-    R.showCTA = uiSel.length === 1;
     R.hintOppo = S.hintOppo;
 
     R.targetBtns = Object.keys(this.targets).map(k => ({
@@ -4074,7 +4088,6 @@ class Component extends DCLogic {
     R.setPV = () => this.setState(S.bpTab === 'planung' ? { tech: 'pv', bpTab: 'potenzial', bpSel: null } : { tech: 'pv' });
     R.toggleAccount = () => this.setState({ account: !S.account });
     R.toggleAccountInfo = () => this.setState({ accountInfo: !S.accountInfo });
-    R.addSecond = () => this.toggleP(uiSel.includes('verbrauchsnah') ? 'oekonomisch' : 'verbrauchsnah');
     R.clearCell = () => this.setState({ cell: null, gemeinde: null });
     R.onSearchInput = e => this.setState({ search: e.target.value });
     R.onSearchKey = e => { if (e.key === 'Enter') this.doSearch(); };

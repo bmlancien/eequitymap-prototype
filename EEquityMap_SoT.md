@@ -1674,6 +1674,14 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Leiste bleibt die einzige Textstelle (K); Umrandung und Abdimmung der Karte
   wie oben. „Berechnung starten" (Region noch nicht berechnet) steht ebenso an
   der Karte, im Leerzustand. → Ändert M („fester Platz an der linken Liste").
+- **Nachtrag (Session 2026-10-22):** Der Hinweis „**Ergebnis veraltet.** …
+  [Neu berechnen]" steht nicht mehr unter der Karte, sondern in der **rechten
+  Spalte direkt unter dem Titel** (Übersicht, Zell-/Gemeindedetail und
+  „Szenarien vergleichen"), nur solange das Ergebnis veraltet ist. Knopf in
+  voller Spaltenbreite unter dem Text. Die rechte Spalte enthält keine
+  Eingaben, ein Erscheinen verschiebt also nichts unter dem Mauszeiger.
+  Umrandung und Abdimmung der Karte bleiben. „Berechnung starten" bleibt im
+  Leerzustand an der Karte.
 
 ### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
 
@@ -1759,12 +1767,18 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 
 ### R.12 Infoboxen (Texte)
 
-**Einstieg** (ersetzt den vorhandenen Text an der Prinzipienliste):
+**Einstieg** (ersetzt den vorhandenen Text an der Prinzipienliste; hinter dem
+„i" an der Prinzipien-Überschrift, standardmäßig **zugeklappt**):
 
 > **Was kann ich hier tun?**
 > Wählen Sie ein Gerechtigkeitsprinzip, um zu sehen, wie es den Ausbau
 > verteilt. Wählen Sie mehrere, um zu sehen, wo sie übereinstimmen, wo sie
 > voneinander abweichen und was den Konsens begrenzt.
+
+**Entfällt (Session 2026-10-22):** der Kasten unter der Prinzipienliste bei genau
+einem gewählten Prinzip („Sie können ein zweites Prinzip hinzufügen, um zu
+sehen, wo sich beide einig sind." + Knopf „Zweites Prinzip hinzufügen"). Die
+Einstiegs-Info oben sagt dasselbe.
 
 **Bestand** („i" am Schalter „Bestandsanlagen berücksichtigen"):
 
