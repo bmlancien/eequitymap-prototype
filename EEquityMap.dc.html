@@ -892,7 +892,7 @@
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
                   <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
                   </sc-if>
                 </div>
               </sc-if>
@@ -934,7 +934,7 @@
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
                   <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
                   </sc-if>
                 </div>
               </sc-if>
@@ -987,7 +987,7 @@
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
             </div>
           </sc-if>
@@ -1147,7 +1147,7 @@
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
             </div>
           </sc-if>
@@ -2542,6 +2542,19 @@ class Component extends DCLogic {
     // „Änderungen verwerfen" (R.7): ein Schritt zurück auf die Eingaben der letzten Berechnung — nur wenn alle
     // Änderungen aus „Regional" stammen (regionale Prinzipien, Regionalziel, Technologie, Bestand)
     R.regionCanUndo = R.regionStaleBar && !regionNatChanged;
+    // Der Link nennt, was er zurücksetzt („Regionalziel zurücksetzen", „Prinzipien und Regionalziel zurücksetzen")
+    if (R.regionCanUndo) {
+      const ownNow = S.regionOwnTarget != null;
+      const changed = [
+        sortedKey(uiSelRegional) !== sortedKey(S.regionComputedSel) && 'Prinzipien',
+        (ownNow !== !!S.regionComputedOwn || (ownNow && S.regionOwnTarget !== S.regionComputedTarget)) && 'Regionalziel',
+        S.tech !== S.regionComputedTech && 'Technologie',
+        !!S.account !== !!S.regionComputedAccount && 'Bestand'
+      ].filter(Boolean);
+      const list = changed.length > 1 ? changed.slice(0, -1).join(', ') + ' und ' + changed[changed.length - 1] : (changed[0] || 'Eingaben');
+      R.undoRegionLabel = list + ' zurücksetzen';
+      R.undoRegionTitle = 'Setzt ' + list + ' auf den Stand der letzten Berechnung zurück. Die Karte ist dann wieder aktuell.';
+    }
     R.undoRegionChanges = () => {
       const T = this.state;
       const patch = { selectedRegional: T.regionComputedSelRaw ? T.regionComputedSelRaw.slice() : null,

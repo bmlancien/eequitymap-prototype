@@ -1704,8 +1704,12 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   aktuell gelesen). Nach „Neu berechnen" erscheinen sie wieder. Die frühere
   abgedimmte Herleitung mit „Stand der letzten Berechnung" entfällt
   (auch im Code).
-- **„Änderungen verwerfen" (Session 2026-10-22):** Unter „Neu berechnen" ein
-  unauffälliger Link (Text, unterstrichen, keine Knopf-Optik). Er setzt die
+- **Zurücksetzen-Link (Session 2026-10-22):** Unter „Neu berechnen" ein
+  unauffälliger Link (Text, unterstrichen, keine Knopf-Optik). Er nennt, was
+  sich geändert hat: „[Prinzipien / Regionalziel / Technologie / Bestand]
+  zurücksetzen", mehrere mit „, " und „und" verbunden (z. B. „Prinzipien und
+  Regionalziel zurücksetzen"); beim Hovern „Setzt … auf den Stand der letzten
+  Berechnung zurück. Die Karte ist dann wieder aktuell." Er setzt die
   Eingaben auf den Stand der letzten Berechnung zurück: regionale Prinzipien,
   Regionalziel (eigenes Ziel bzw. DE-Empfehlung), Technologie,
   „Bestandsanlagen berücksichtigen". Damit ist das Ergebnis wieder aktuell und
