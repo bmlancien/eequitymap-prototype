@@ -3058,7 +3058,8 @@ class Component extends DCLogic {
         const refSide = [A, B].find(o => o.isRef);
         const aTxt = this.fmtU(sumA, lvlRegion), bTxt = this.fmtU(sumB, lvlRegion);
         if (aTxt !== bTxt) {
-          R.hubRefGapNote = 'A und B verteilen unterschiedlich viel Leistung: A ' + aTxt + ', B ' + bTxt + '. Die Karte zeigt deshalb nicht nur, wo anders verteilt wird, sondern auch diesen Mengenunterschied von ' + this.fmtU(Math.abs(sumA - sumB), lvlRegion) + '.'
+          // Text nach Vorlage des Teams (R.8), dahinter die konkreten Summen
+          R.hubRefGapNote = 'A und B enthalten unterschiedliche Gesamtmengen (A ' + aTxt + ', B ' + bTxt + '). Die Karte zeigt daher sowohl Unterschiede in der räumlichen Verteilung als auch Unterschiede in der Gesamtleistung.'
             + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt das ganze ' + (lvlRegion ? 'Regionalziel' : 'Ausbauziel') + ', das Szenario nur seinen Zubaukonsens.' : '');
         }
         // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +

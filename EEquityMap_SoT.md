@@ -1775,9 +1775,12 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   unterschiedliche Summen verteilen (zwei Szenarien oder Szenario/Referenz);
   entfällt, wenn die angezeigten Summen gleich sind:
 
-  > A und B verteilen unterschiedlich viel Leistung: A [X], B [Y]. Die Karte
-  > zeigt deshalb nicht nur, wo anders verteilt wird, sondern auch diesen
-  > Mengenunterschied von [Δ].
+  > A und B enthalten unterschiedliche Gesamtmengen (A [X], B [Y]). Die Karte
+  > zeigt daher sowohl Unterschiede in der räumlichen Verteilung als auch
+  > Unterschiede in der Gesamtleistung.
+
+  (Text überarbeitet Session 2026-10-22 nach Vorlage des Teams; die Summen in
+  Klammern sind ergänzt. Steht direkt unter der Legende der Differenzkarte.)
 
   Zusatzsatz nur bei Szenario gegen Referenz: „[Referenz] verteilt das ganze
   Ausbauziel, das Szenario nur seinen Zubaukonsens." Offene Frage I.9 bleibt
