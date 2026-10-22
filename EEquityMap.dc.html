@@ -403,7 +403,7 @@
            ersten Suche oder über × und kommt in der Sitzung nicht wieder -->
       <sc-if value="{{ showKrsClickHint }}" hint-placeholder-val="{{ false }}">
         <div style="flex:none;display:flex;align-items:center;gap:10px;margin:0 2px 8px;padding:7px 11px;background:#fff;border:1px solid #d7dce0;border-radius:8px;font-size:14px;color:#1b2126">
-          <span style="flex:1">Klicken Sie auf einen Landkreis, um ihn im Detail auszuwerten.</span>
+          <span style="flex:1">Klicken Sie auf einen Landkreis, um seine Zahlen zu sehen und ihn im Detail auszuwerten.</span>
           <span onClick="{{ dismissKrsClickHint }}" aria-label="Hinweis schließen" style="cursor:pointer;color:#6b7680;font-size:16px;line-height:1;padding:2px 4px">×</span>
         </div>
       </sc-if>
@@ -463,7 +463,7 @@
           <div style="{{ hubStyle }}">
             <div style="display:flex;align-items:center;gap:10px">
               <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Vergleich A − B</div>
-              <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">
+              <button onClick="{{ openShare }}" title="{{ shareBtnTitle }}" style="{{ shareBtnStyle }}" style-hover="{{ shareBtnHover }}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
                 Vergleich teilen
               </button>
@@ -896,18 +896,6 @@
                 </div>
                 <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#6b7680;font-size:20px;line-height:1;padding:2px;flex:none">×</span>
               </div>
-              <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
-              <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
-                <div style="{{ staleBoxStyleHub }}">
-                  <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
-                  <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
-                  </sc-if>
-                </div>
-              </sc-if>
-              <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
-              <div style="{{ staleHideStyle }}">
               <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                 <div style="font-size:14px;color:#5b6672">Differenz A − B</div>
                 <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
@@ -925,7 +913,6 @@
                   </div>
                 </div>
               </sc-for>
-              </div>
             </div>
           </sc-if>
           <!-- Entweder die gewählte Zelle ODER der Überblick über A und B — nie beides zugleich
@@ -938,18 +925,6 @@
                 </sc-if>
                 <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
               </div>
-              <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
-              <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
-                <div style="{{ staleBoxStyleHub }}">
-                  <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
-                  <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
-                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
-                  </sc-if>
-                </div>
-              </sc-if>
-              <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
-              <div style="{{ staleHideStyle }}">
               <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                   <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
@@ -978,7 +953,6 @@
                   </div>
                 </div>
               </sc-for>
-              </div>
             </div>
           </sc-if>
         </div>
@@ -1209,7 +1183,6 @@
             <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
-            <div style="font-size:14px;color:#5b6672;margin-top:5px">{{ cellZubauPct }} des deutschen Zubaus</div>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
             <!-- Kontextzeile nur bei Bestandsberücksichtigung: Bestand + Hauptzahl = installierte Leistung -->
             <sc-if value="{{ cellContextLine }}" hint-placeholder-val="{{ false }}">
@@ -2587,7 +2560,6 @@ class Component extends DCLogic {
     R.staleBoxStyle = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;margin-top:12px';
     // Inhalt unter „Neu berechnen" ausblenden, solange das Ergebnis veraltet ist (contents: Flex-Abstände bleiben)
     R.staleHideStyle = R.regionStaleBar ? 'display:none' : 'display:contents';
-    R.staleBoxStyleHub = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px';  // Hub: Abstand kommt vom gap
 
     const singlePid = sel[0] || this.principles[0].id;
 
@@ -2670,7 +2642,7 @@ class Component extends DCLogic {
       const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
       const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:6px;background:' + bg });
       const cellsOut = [{
-        text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmtU(target, isRegion) + ')',
+        text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' + this.fmt(target) + ' GW' : 'Ziel: ' + this.fmtU(target, false)) + ')',
         title: '', swatchStyle: 'display:none', innerStyle: flat,
         style: 'font-size:14px;color:#5b6672;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
       }];
@@ -2840,7 +2812,7 @@ class Component extends DCLogic {
     // Technologie links, ändert die Berechnung nicht) + die zwei Referenzen (immer vorhanden). A/B je ein
     // Szenario oder eine Referenz. Differenzkarte nur auf gemeinsamer Ebene: zwei Szenarien derselben
     // Ebene; eine Referenz übernimmt Ebene + Ziel des Szenarios; zwei Referenzen = Deutschland.
-    R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.showHubGemToggle = false; R.scenDiffGemNote = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
+    R.shareReady = false; R.showScenDiffMap = false; R.hubCellShow = false; R.hubOverviewShow = true; R.hubScopeLabel = ''; R.scenDiffLevel = ''; R.showHubGemToggle = false; R.scenDiffGemNote = ''; R.scenDiffSelD = ''; R.scenDiffHint = ''; R.scenDiffCells = []; R.showHubCover = false; R.showHubCoverB = false;
     R.hubNoScenNote = ''; R.hubScaleNote = ''; R.scenDiffEmpty = false;
     R.hubSlots = []; R.hubTables = []; R.hubRows = []; R.hubRowGroups = []; R.hubHeadCells = []; R.hubHeadStyle = ''; R.showHubTables = false; R.hubSumCards = []; R.hubSumDiff = ''; R.hubRefGapNote = '';
     R.hubMenuBackdrop = 'display:none'; R.shareLink = ''; R.shareSummary = '';
@@ -2981,6 +2953,7 @@ class Component extends DCLogic {
       const shareKey = [hubTech, pair[0] || '-', pair[1] || '-'].join('.');
       let h = 0; for (let i = 0; i < shareKey.length; i++) h = (h * 31 + shareKey.charCodeAt(i)) >>> 0;
       R.shareLink = 'https://eequitymap.de/vergleich/' + h.toString(36).padStart(7, '0');
+      R.shareReady = !!(A && B);
       R.shareSummary = 'A = ' + (A ? A.name : '—') + ', B = ' + (B ? B.name : '—') + ' (' + (hubTech === 'pv' ? 'Freiflächen-PV' : 'Wind') + ')';
       // Ebene + Ziel bestimmen: ein Szenario gibt sie vor; zwei Szenarien müssen übereinstimmen
       const scenSide = [A, B].filter(o => o && !o.isRef);
@@ -3391,7 +3364,11 @@ class Component extends DCLogic {
     R.saveBtnTitle = savePaused ? 'Erst neu berechnen, dann speichern: Das Ergebnis passt nicht mehr zu den Eingaben.' : '';
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
-    R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
+    R.openShare = R.shareReady ? (() => this.setState({ shareOpen: true, shareCopied: false })) : (() => {});
+    R.shareBtnStyle = 'display:flex;align-items:center;gap:6px;background:#fff;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;white-space:nowrap;'
+      + (R.shareReady ? 'border:1px solid #1f2a33;color:#1f2a33;cursor:pointer' : 'border:1px solid #dde1e4;color:#a3abb2;cursor:not-allowed');
+    R.shareBtnHover = R.shareReady ? 'background:#f1f3f4' : '';
+    R.shareBtnTitle = R.shareReady ? '' : 'Wählen Sie zuerst A und B.';
     R.closeShare = () => this.setState({ shareOpen: false, shareCopied: false });
     R.selectShareInput = e => { if (e && e.target && e.target.select) e.target.select(); };
     R.copyShareLink = () => {
@@ -3533,7 +3510,7 @@ class Component extends DCLogic {
     // Mode-Transition-Text lebt jetzt im Ladezustand statt als eigenes dauerhaftes Band (§M) — dadurch
     // an den Lade-Moment gebunden (Auto-Berechnung beim Betreten, „Neu berechnen"), nicht als garantierte
     // Einmal-Ankündigung; ok, weil die Scope-Leiste den Landkreis ohnehin dauerhaft nennt.
-    R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die bundesweite Verteilung bleibt oben als Kontext.') : '';
+    R.regionComputingLabel = isRegion ? (S.region.label + ' wird ausgewertet — die bundesweite Verteilung bleibt links als Kontext.') : '';
     // Dauer ist unbekannt (kein Prozent-/Countdown, s.o.) — nach kurzer Zeit eine Beruhigungszeile,
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
     R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 5000) ? 'Das kann einen Moment dauern …' : '';
@@ -3640,7 +3617,9 @@ class Component extends DCLogic {
     R.headTwo = isRegion && S.regionOwnTarget != null && (view === 'konsens' || view === 'regionGate');
     R.headOne = !R.headTwo;
     R.headL1 = R.headTwo ? 'DE-Empfehlung für ' + (/^Stadt /.test(S.region.label) ? 'die Stadt' : 'den Landkreis') + ': ' + this.fmt(liveDeRec) + ' GW' : '';
-    R.headL2 = R.headTwo ? 'Aktuell untersuchtes Regionalziel: ' + this.fmt(liveBudget) + ' GW' : '';
+    R.headL2 = !R.headTwo ? '' : regionStale && !S.regionComputing
+      ? 'Eingestelltes Regionalziel: ' + this.fmt(liveBudget) + ' GW (noch nicht berechnet)'
+      : 'Aktuell untersuchtes Regionalziel: ' + this.fmt(liveBudget) + ' GW';
 
     // Reiter: Konsens → Was begrenzt? → Dissens → Einzelverteilungen → Szenarien vergleichen.
     // „Szenarien vergleichen" ist der einzige Vergleichs-Hub und immer sichtbar (Referenzen sind immer da);
@@ -3765,8 +3744,6 @@ class Component extends DCLogic {
       R.cellHeroInfoBtnStyle = stufe >= 2 ? R.consInfoBtnStyle : 'display:none';
       R.cellContextLine = accEff ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' ' + this.unitFor(isRegion) + ' installierte Leistung' : '';
     };
-    // „% des deutschen Zubaus": Zubau dieser Einheit am nationalen Ausbauziel (Werte intern in GW)
-    const pctZubau = neu => this.pct(S.targetGW ? neu / S.targetGW : 0, 2);
     R.cellEinordnung = '';
     R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
 
@@ -3798,7 +3775,7 @@ class Component extends DCLogic {
         // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
         R.ovBarCaption = isRegion
-          ? 'Vom Regionsbudget (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens der regionalen Prinzipien.'
+          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmtU(consST, isRegion) + ' im Konsens der regionalen Prinzipien.'
           : 'Vom Ausbauziel (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
         // Einheit der Zählung = die auf der Karte klickbare Einheit: Landkreise (Deutschland), Gemeinden (Region,
@@ -3854,7 +3831,7 @@ class Component extends DCLogic {
           hideLead = true;
         } else if (view === 'konflikt') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, false) + ')';  // Budget immer in GW
           // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
           R.anCombos = S.konfliktMode === 'anders';
           // gezählt werden Landkreise (Deutschland) bzw. Rasterzellen (Region) — so benennen, nie pauschal „Zellen"
@@ -3910,7 +3887,7 @@ class Component extends DCLogic {
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, isRegion) + ')';
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, false) + ')';  // Budget immer in GW
           R.anBlockers = true; mkBlockers();
         }
       }
@@ -4027,7 +4004,6 @@ class Component extends DCLogic {
       const total = bestOf(i) + neu;
       R.cellTotal = this.fmtN(total, isRegion); R.cellBestand = this.fmtN(c.bestandGW, isRegion); R.cellNew = this.fmtN(neu, isRegion);
       setHero(neu, stufe >= 2 ? consCells[i] : 0, c.bestandGW || 0);
-      R.cellZubauPct = pctZubau(neu);
       R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
       R.cellEinordnung = einordnungFor(neu, areaOf(i));
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
@@ -4080,7 +4056,6 @@ class Component extends DCLogic {
       const gKm2 = covWeight * CELL_KM2;
       R.cellTotal = this.fmtN(gTotal, isRegion); R.cellBestand = this.fmtN(gBest, isRegion); R.cellNew = this.fmtN(gNeu, isRegion);
       setHero(gNeu, stufe >= 2 ? gAgg(consCells) : 0, gBest);
-      R.cellZubauPct = pctZubau(gNeu);
       R.cellAreaPct = pctArea(gKm2 / DE_KM2);
       R.cellEinordnung = einordnungFor(gNeu, gKm2);
 
@@ -4184,11 +4159,12 @@ class Component extends DCLogic {
     R.areaRegionNoPrinc = area === 'region' && natCount === 0;
     R.areaMain = area === 'de' || (area === 'region' && !!S.region && natCount > 0);
     R.gotoDE = () => this.switchArea('de');
-    const regionTabLabel = S.region ? 'Regional · ' + S.region.label : 'Regional';
+    // Präfix Landkreis weglassen, damit der Name in den Tab passt (vollständig im Tooltip)
+    const regionTabLabel = S.region ? 'Regional · ' + S.region.label.replace(/^Landkreis /, '') : 'Regional';
     R.areaTabs = [
       { id: 'bestand', label: 'Bestand & Potenziale' },
       { id: 'de', label: 'Deutschland' },
-      { id: 'region', label: regionTabLabel }
+      { id: 'region', label: regionTabLabel, full: S.region ? 'Regional · ' + S.region.label : 'Regional' }
     ].map((t, i) => {
       const on = t.id === area;
       // Schrittnummer (1 → 2 → 3): die Tabs sind eine Reihenfolge, nicht nur Ablagen — neutral grau (J2)
@@ -4203,7 +4179,7 @@ class Component extends DCLogic {
       const style = on
         ? base + 'font-weight:600;color:#1b2126;background:#fff;border:1px solid #b9c1c8;border-bottom-color:#fff;margin-bottom:-1px;position:relative;z-index:1;cursor:default'
         : base + 'font-weight:500;color:#5b6672;background:#e3e6e9;border:1px solid #d3d8dc;border-bottom:none;cursor:pointer';
-      return { label: t.label, num: i + 1, numStyle: on ? numStyle('#fff', '#1f2a33') + ';background:#1f2a33' : numStyle('#5b6672', '#b9c1c8'), title: t.label, style, hover: on ? 'background:#fff' : 'background:#d6dade;color:#1b2126', onClick: () => this.switchArea(t.id) };
+      return { label: t.label, num: i + 1, numStyle: on ? numStyle('#fff', '#1f2a33') + ';background:#1f2a33' : numStyle('#5b6672', '#b9c1c8'), title: t.full || t.label, style, hover: on ? 'background:#fff' : 'background:#d6dade;color:#1b2126', onClick: () => this.switchArea(t.id) };
     });
     // Einmaliger Hinweis über der Deutschlandkarte — nur dort, wo die Landkreiskarte klickbar ist
     R.showKrsClickHint = area === 'de' && !isRegion && !S.seenKrsHint && ['konsens', 'minimum', 'konflikt', 'single'].includes(view);

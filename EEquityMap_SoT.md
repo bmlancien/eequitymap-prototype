@@ -1925,3 +1925,28 @@ Infobox „Bestandsanlagen berücksichtigen" Greenfield schon erklärt.)
   Potenzialflächen und Planungsflächen, je Technologie. Dieselben Werte liefern
   das Maximum des Regionalziel-Reglers (R.5) und die Referenz
   „Planungsflächen".
+
+## S. UX-Review (Session 2026-10-22)
+
+Kleine Korrekturen nach einem heuristischen Review der Live-Version:
+
+- **Kartenhinweis Deutschland:** „Klicken Sie auf einen Landkreis, um seine
+  Zahlen zu sehen und ihn im Detail auszuwerten." (vorher nur „…im Detail
+  auszuwerten", während die rechte Spalte „…um die Zahlen zu sehen" sagte).
+- **Regionsbudget immer in GW** — auch in „…% des Regionsbudgets (0,36 GW)",
+  „Vom Regionsbudget (0,36 GW) liegen …" und in der Paarmatrix. Verteilte
+  Mengen (Zubaukonsens, Gemeinden, Zellen) bleiben in MW (§L, R.5).
+- **Headline bei eigenem, noch nicht berechnetem Regionalziel:**
+  „Eingestelltes Regionalziel: [X] GW (noch nicht berechnet)" statt „Aktuell
+  untersuchtes Regionalziel".
+- **Kein „Ergebnis veraltet" in „Szenarien vergleichen":** Der Vergleich nutzt
+  gespeicherte Szenarien; der Hinweis steht nur in Übersicht und Detail.
+- **Ladehinweis:** „…die bundesweite Verteilung bleibt **links** als Kontext"
+  (vorher „oben").
+- **Landkreis-Detail (Deutschland):** Die Zeile „[x] % des deutschen Zubaus"
+  entfällt; sie stand direkt über „Anteil an Zielerreichung" mit fast
+  gleichem Wert, aber anderer Grundlage (Zubau statt Zubaukonsens).
+- **Tab „Regional":** ohne „Landkreis " im Namen („Regional ·
+  Unstrut-Hainich-Kreis"); voller Name im Tooltip.
+- **„Vergleich teilen"** ist ausgegraut, bis A und B gewählt sind (Tooltip
+  „Wählen Sie zuerst A und B.").
