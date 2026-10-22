@@ -1590,16 +1590,22 @@ Landkreises (Regional).
   Popover und neben dem Regionsbudget im Tab „Regional" **[Annahme]**. Text:
 
   > **Was passiert in der Detailauswertung?**
-  > Die Deutschlandrechnung legt fest, wie viel Ausbau nach den bundesweit
-  > gewählten Gerechtigkeitsprinzipien auf diesen Landkreis entfällt
-  > (Regionsbudget). In der Detailauswertung wird dieses Regionsbudget
-  > innerhalb des Landkreises auf einem 5 × 5-km-Raster neu verteilt.
-  > Ausgangspunkt sind dieselben Gerechtigkeitsprinzipien wie bundesweit. Sie
-  > können sie ändern und prüfen, wie sich dasselbe Regionsbudget nach anderen
-  > Prinzipien verteilen würde.
-  > Auch das Regionsbudget lässt sich ändern. Weicht es vom Ergebnis der
-  > Deutschlandrechnung ab, wird das gekennzeichnet: Es entspricht dann nicht
-  > mehr der bundesweiten Empfehlung.
+  > Die Deutschlandrechnung legt zunächst fest, **wie viel Ausbau nach der
+  > gewählten Verteilung auf diesen Landkreis entfällt**. Diese Ausbaumenge
+  > (**Regionsbudget**) wird in der Detailauswertung übernommen und innerhalb des Landkreises auf
+  > einem **5 × 5-km-Raster** neu verteilt.
+  > Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der
+  > Deutschlandrechnung. Sie können diese aber variieren und prüfen, **wie sich
+  > dieselbe regionale Ausbaumenge nach anderen Prinzipien innerhalb des
+  > Landkreises verteilen würde**.
+  > Auch die **Ausbaumenge des Landkreises** kann verändert werden. Weicht sie
+  > vom Ergebnis der Deutschlandrechnung ab, wird dies gekennzeichnet: Die
+  > gewählte Menge entspricht dann nicht mehr der DE-Empfehlung.
+
+  (Text überarbeitet Session 2026-10-22 nach Vorlage des Teams, fett wie dort;
+  „Gerechtigkeitsvorstellungen" → „Prinzipien" gemäß R.2; „bundesweiten
+  Ausbauempfehlung" → „DE-Empfehlung" (Marke am Regler); „(Regionsbudget)"
+  ergänzt, weil der Begriff in der App steht.)
 
 **Nachtrag (Session 2026-10-22):**
 - **Popover als Karte mit Knopf:** Der dunkle Chip, dessen zweite Zeile wie Text

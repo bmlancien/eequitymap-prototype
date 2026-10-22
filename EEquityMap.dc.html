@@ -354,7 +354,7 @@
           </sc-if>
         </div>
       </sc-if>
-      <div style="{{ regionDetailInfoStyle }}"><b style="color:#1b2126">Was passiert in der Detailauswertung?</b><br>{{ detailInfoText }}</div>
+      <div style="{{ regionDetailInfoStyle }}"><b style="color:#1b2126">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#1b2126">wie viel Ausbau nach der gewählten Verteilung auf diesen Landkreis entfällt</b>. Diese Ausbaumenge (<b style="color:#1b2126">Regionsbudget</b>) wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#1b2126">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#1b2126">wie sich dieselbe regionale Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#1b2126">Ausbaumenge des Landkreises</b> kann verändert werden. Weicht sie vom Ergebnis der Deutschlandrechnung ab, wird dies gekennzeichnet: Die gewählte Menge entspricht dann nicht mehr der DE-Empfehlung.</div>
 
       <!-- Tab-Reihe (nur Reiter). „Zum Vergleich speichern" steht links unter den Prinzipien,
            „Vergleich teilen" rechts oben über der Hub-Box. -->
@@ -709,7 +709,7 @@
                 </div>
               </div>
               <!-- Info zur Detailauswertung: eigene Fläche neben dem Popover, damit das Popover seine Größe behält -->
-              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#1b2126">Was passiert in der Detailauswertung?</b><br>{{ detailInfoText }}</div>
+              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#1b2126">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#1b2126">wie viel Ausbau nach der gewählten Verteilung auf diesen Landkreis entfällt</b>. Diese Ausbaumenge (<b style="color:#1b2126">Regionsbudget</b>) wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#1b2126">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#1b2126">wie sich dieselbe regionale Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#1b2126">Ausbaumenge des Landkreises</b> kann verändert werden. Weicht sie vom Ergebnis der Deutschlandrechnung ab, wird dies gekennzeichnet: Die gewählte Menge entspricht dann nicht mehr der DE-Empfehlung.</div>
             </sc-if>
 
             <!-- Regionsansicht, noch nicht berechnet (Idle) — mittig auf der Karte. Der „läuft"-Zustand hat
@@ -3964,7 +3964,7 @@ class Component extends DCLogic {
           // daneben (dann schmaler). Höhe aus der Breite geschätzt (≈ 7,2 px je Zeichen, 21 px je Zeile, großzügig);
           // passt sie nicht in die Karte, scrollt die Fläche.
           if (S.popoverInfo) {
-            const gap = 8, TEXT_CH = 660;
+            const gap = 8, TEXT_CH = 742;  // Länge des Info-Texts (ohne Markup), für die Höhenschätzung
             const estH = w => Math.ceil(TEXT_CH / ((w - 24) / 7.2) + 2) * 21 + 22;
             let infoW = Math.min(400, proj.boxW - 8), infoH = estH(infoW), ix, iy;
             const clampX = x => Math.max(4, Math.min(proj.boxW - infoW - 4, x));
@@ -4189,8 +4189,6 @@ class Component extends DCLogic {
     // Einmaliger Hinweis über der Deutschlandkarte — nur dort, wo die Landkreiskarte klickbar ist
     R.showKrsClickHint = area === 'de' && !isRegion && !S.seenKrsHint && ['konsens', 'minimum', 'konflikt', 'single'].includes(view);
     R.dismissKrsClickHint = () => this.setState({ seenKrsHint: true });
-    // „Was passiert in der Detailauswertung?" — gleicher Text am Popover und an der Regions-Headline (R.4)
-    R.detailInfoText = 'Die Deutschlandrechnung legt fest, wie viel Ausbau nach den bundesweit gewählten Gerechtigkeitsprinzipien auf diesen Landkreis entfällt (Regionsbudget). In der Detailauswertung wird dieses Regionsbudget innerhalb des Landkreises auf einem 5 × 5-km-Raster neu verteilt. Ausgangspunkt sind dieselben Gerechtigkeitsprinzipien wie bundesweit. Sie können sie ändern und prüfen, wie sich dasselbe Regionsbudget nach anderen Prinzipien verteilen würde. Auch das Regionsbudget lässt sich ändern. Weicht es vom Ergebnis der Deutschlandrechnung ab, wird das gekennzeichnet: Es entspricht dann nicht mehr der bundesweiten Empfehlung.';
     const infoCircle = (on, dark) => 'flex:none;width:16px;height:16px;border:1px solid ' + (dark ? (on ? '#fff' : 'rgba(255,255,255,.6)') : (on ? '#1f2a33' : '#c8ced3')) + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (dark ? '#fff' : (on ? '#1f2a33' : '#6b7680')) + ';font-style:italic;cursor:pointer;line-height:1';
     R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, false) + ';position:absolute;top:9px;right:8px;background:#fff';
     R.togglePopoverInfo = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ popoverInfo: !this.state.popoverInfo }); };
