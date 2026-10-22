@@ -891,6 +891,9 @@
                 <div style="{{ staleBoxStyleHub }}">
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                  <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                  </sc-if>
                 </div>
               </sc-if>
               <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
@@ -930,6 +933,9 @@
                 <div style="{{ staleBoxStyleHub }}">
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                  <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+                  </sc-if>
                 </div>
               </sc-if>
               <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
@@ -980,6 +986,9 @@
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+              <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+              </sc-if>
             </div>
           </sc-if>
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
@@ -1137,6 +1146,9 @@
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+              <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Änderungen verwerfen</span></div>
+              </sc-if>
             </div>
           </sc-if>
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
@@ -1588,6 +1600,7 @@ class Component extends DCLogic {
     // Eingaben der letzten Regionsberechnung — die Karte und die Herleitung rechts zeigen diesen Stand
     regionComputedTech: null, regionComputedAccount: false, regionComputedNatSel: null,
     regionComputedDeRec: null, regionComputedOwn: false,
+    regionComputedTargetGW: null, regionComputedSelRaw: null,  // für „Änderungen verwerfen“ (R.7)
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
     // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
     regionViewMode: 'gemeinden',   // Standard wie in Basic: Gemeinden allein sind am besten lesbar
@@ -2267,7 +2280,8 @@ class Component extends DCLogic {
     const budget = this.regionTargetFor(krsId);
     const sig = this.regionSigFrom(krsId, effSel, budget);
     const frozen = { regionComputedTech: S.tech, regionComputedAccount: !!S.account, regionComputedNatSel: S.selected.filter(avail),
-      regionComputedDeRec: this.natBudgetFor(krsId), regionComputedOwn: S.regionOwnTarget != null };
+      regionComputedDeRec: this.natBudgetFor(krsId), regionComputedOwn: S.regionOwnTarget != null,
+      regionComputedTargetGW: S.targetGW, regionComputedSelRaw: S.selectedRegional != null ? S.selectedRegional.slice() : null };
     if (this._regionRaf) cancelAnimationFrame(this._regionRaf);
     const DUR = 5000;
     const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
@@ -2517,9 +2531,26 @@ class Component extends DCLogic {
     R.trickleBarStyle = 'width:' + (R.regionComputing ? tricklePct.toFixed(1) : '100') + '%';
     // Dauer der Regionsberechnung ist nicht bekannt — Zustände nennen keine Prozentzahl und keine feste Sekundenangabe.
     R.regionGateTitle = hasRegionResult ? 'Ergebnis veraltet' : 'Noch nicht berechnet';
-    R.regionGateSub = hasRegionResult
-      ? 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.'
-      : 'Das Regionsergebnis ist noch nicht berechnet.';
+    // Wurde seit der letzten Berechnung etwas in „Deutschland" geändert (bundesweite Prinzipien, Ausbauziel)?
+    // Dann kein „Änderungen verwerfen": es würde Einstellungen eines anderen Bereichs unbemerkt zurücksetzen.
+    const sortedKey = a => (a || []).slice().sort().join(',');
+    const regionNatChanged = hasRegionResult && (sortedKey(S.selected.filter(avail)) !== sortedKey(S.regionComputedNatSel)
+      || S.regionComputedTargetGW == null || S.targetGW !== S.regionComputedTargetGW);
+    R.regionGateSub = !hasRegionResult ? 'Das Regionsergebnis ist noch nicht berechnet.'
+      : regionNatChanged ? 'Die bundesweiten Prinzipien oder das Ausbauziel haben sich geändert. Aktualisieren Sie die Karte.'
+      : 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.';
+    // „Änderungen verwerfen" (R.7): ein Schritt zurück auf die Eingaben der letzten Berechnung — nur wenn alle
+    // Änderungen aus „Regional" stammen (regionale Prinzipien, Regionalziel, Technologie, Bestand)
+    R.regionCanUndo = R.regionStaleBar && !regionNatChanged;
+    R.undoRegionChanges = () => {
+      const T = this.state;
+      const patch = { selectedRegional: T.regionComputedSelRaw ? T.regionComputedSelRaw.slice() : null,
+        regionOwnTarget: T.regionComputedOwn ? T.regionComputedTarget : null,
+        tech: T.regionComputedTech, account: T.regionComputedAccount };
+      // PV hat keine Planungsflächen (wie setPV)
+      if (patch.tech === 'pv' && T.bpTab === 'planung') Object.assign(patch, { bpTab: 'potenzial', bpSel: null });
+      this.setState(patch);
+    };
 
     // „Berechnung starten" steht an der Karte (Leerzustand), „Neu berechnen" rechts unter dem Titel — nicht links:
     // eine Box in der linken Spalte verschob beim Ändern einer Eingabe die Eingaben selbst.
@@ -4444,6 +4475,7 @@ class Component extends DCLogic {
         regionOwnTarget: sc.regionOwn ? sc.target : null,
         regionComputedTech: sc.tech, regionComputedAccount: !!sc.account, regionComputedNatSel: sc.nationalSel.slice(),
         regionComputedDeRec: this.natBudgetFor(sc.regionKrsId, over), regionComputedOwn: !!sc.regionOwn,
+        regionComputedTargetGW: sc.targetGW, regionComputedSelRaw: sc.regionalSel.slice(),
         regionComputing: false, regionProgress: 1,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
         cell: null, tab: 'konsens', committed: true,

@@ -1704,6 +1704,18 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   aktuell gelesen). Nach „Neu berechnen" erscheinen sie wieder. Die frühere
   abgedimmte Herleitung mit „Stand der letzten Berechnung" entfällt
   (auch im Code).
+- **„Änderungen verwerfen" (Session 2026-10-22):** Unter „Neu berechnen" ein
+  unauffälliger Link (Text, unterstrichen, keine Knopf-Optik). Er setzt die
+  Eingaben auf den Stand der letzten Berechnung zurück: regionale Prinzipien,
+  Regionalziel (eigenes Ziel bzw. DE-Empfehlung), Technologie,
+  „Bestandsanlagen berücksichtigen". Damit ist das Ergebnis wieder aktuell und
+  der Hinweis verschwindet. Nur ein Schritt zurück, keine Undo-Historie.
+  - **Nur wenn alle Änderungen aus „Regional" stammen.** Wurden seit der
+    letzten Berechnung die bundesweiten Prinzipien oder das Ausbauziel (Bereich
+    „Deutschland") geändert, fehlt der Link: Er würde Einstellungen eines
+    anderen Bereichs unbemerkt zurücksetzen (und die DE-Empfehlung ändert sich
+    mit). Der Hinweis lautet dann „Die bundesweiten Prinzipien oder das
+    Ausbauziel haben sich geändert. Aktualisieren Sie die Karte."
 
 ### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
 
