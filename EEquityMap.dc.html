@@ -3768,6 +3768,14 @@ class Component extends DCLogic {
         R.ovEmpty = true;
         R.ovLeadLabel = isRegion ? 'Noch kein regionales Prinzip gewählt' : 'Noch kein Prinzip gewählt'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
         R.ovLeadSub = 'Wählen Sie links ein Gerechtigkeitsprinzip. Sobald zwei oder mehr gewählt sind, erscheint hier der Zubaukonsens.';
+        // Schon ein Landkreis ausgewählt (z. B. aus „Bestand & Potenziale" mitgebracht): rechts nennen, damit klar ist,
+        // dass er erhalten bleibt und mit dem ersten Prinzip seine Werte zeigt
+        const preKrs = !isRegion && S.cell ? this.krs.find(k => k.id === S.cell) : null;
+        if (preKrs) {
+          R.ovScopeLabel = 'Ausgewählt';
+          R.ovTitle = preKrs.kind + ' ' + preKrs.label;
+          R.ovLeadSub = 'Wählen Sie links ein Gerechtigkeitsprinzip, um zu sehen, wie viel Ausbau auf ' + (preKrs.kind === 'Stadt' ? 'diese Stadt' : 'diesen Landkreis') + ' entfiele.';
+        }
         R.ovClickHint = false;
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
@@ -4370,12 +4378,13 @@ class Component extends DCLogic {
     // Mit Auswahl: Text und Knopf sagen, dass man in „Deutschland" bei genau diesem Ort landet — und dass die Werte
     // dort erst mit einem Prinzip erscheinen
     const hasPrinciple = S.selected.some(id => this.byId[id] && this.byId[id].available);
-    R.bpNextText = selKrs
-      ? 'Wie viel Ausbau entfiele gerecht auf ' + (selKrs.kind === 'Stadt' ? 'die Stadt ' : 'den Landkreis ') + selKrs.label + '? '
-        + (hasPrinciple ? 'Im Bereich „Deutschland" sehen Sie es nach Ihren Prinzipien.' : 'Wählen Sie dazu im Bereich „Deutschland" ein Gerechtigkeitsprinzip.')
-      : 'Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen?';
-    // mit Art (Landkreis/Stadt): „Rostock“ allein wäre mehrdeutig (Landkreis Rostock / Stadt Rostock)
-    R.bpNextBtn = selKrs ? selKrs.kind + ' ' + selKrs.label + ' in Deutschland ansehen →' : 'Zum Bereich Deutschland →';
+    // Ohne Prinzip landet man in der Übersicht (Galerie) — dann verspricht der Knopf nicht den Landkreis, sondern nur
+    // den Bereich; der Landkreis bleibt ausgewählt und steht dort rechts. Mit Prinzip zeigt die Karte ihn direkt.
+    const selName = selKrs ? selKrs.kind + ' ' + selKrs.label : '';  // mit Art: „Rostock“ allein wäre mehrdeutig
+    R.bpNextText = !selKrs ? 'Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen?'
+      : 'Wie viel Ausbau entfiele gerecht auf ' + (selKrs.kind === 'Stadt' ? 'die Stadt ' : 'den Landkreis ') + selKrs.label + '? '
+        + (hasPrinciple ? 'Im Bereich „Deutschland" sehen Sie es nach Ihren Prinzipien.' : 'Das hängt von den Gerechtigkeitsprinzipien ab, die Sie im Bereich „Deutschland" wählen.');
+    R.bpNextBtn = selKrs && hasPrinciple ? selName + ' in Deutschland ansehen →' : 'Zum Bereich Deutschland →';
     const nextKrsId = selKrs ? selKrs.id : null;
     R.gotoDEFromBestand = () => this.switchArea('de', nextKrsId ? { cell: nextKrsId, deCell: nextKrsId, gemeinde: null, seenKrsHint: true } : null);
     R.bpRClose = () => this.setState({ bpSel: null });

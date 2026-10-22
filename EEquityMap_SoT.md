@@ -1548,11 +1548,16 @@ Landkreises (Regional).
   für diesen Ort zu sehen." entfällt.
   **Nachtrag (UX-Review):** Die Karte bleibt auch mit Auswahl stehen. Mit
   Landkreis, Gemeinde oder Objekt lautet der Text „Wie viel Ausbau entfiele
-  gerecht auf den Landkreis [Name]?" (bzw. „die Stadt [Name]") plus „Wählen
-  Sie dazu im Bereich „Deutschland" ein Gerechtigkeitsprinzip." (ohne Prinzip)
-  bzw. „Im Bereich „Deutschland" sehen Sie es nach Ihren Prinzipien." Der
-  Knopf heißt „[Landkreis/Stadt] [Name] in Deutschland ansehen →" und wählt
-  diesen Landkreis in „Deutschland" gleich aus. Die Auswahl bleibt
+  gerecht auf den Landkreis [Name]?" (bzw. „die Stadt [Name]") plus
+  - ohne Prinzip: „Das hängt von den Gerechtigkeitsprinzipien ab, die Sie im
+    Bereich „Deutschland" wählen." — Knopf bleibt „Zum Bereich Deutschland →"
+    (man landet in der Übersicht, nicht beim Landkreis);
+  - mit Prinzip: „Im Bereich „Deutschland" sehen Sie es nach Ihren
+    Prinzipien." — Knopf „[Landkreis/Stadt] [Name] in Deutschland ansehen →".
+  Der Knopf wählt den Landkreis in „Deutschland" in beiden Fällen aus. In der
+  Übersicht ohne Prinzip zeigt die rechte Spalte dann „Ausgewählt ·
+  [Landkreis/Stadt] [Name]" und „Wählen Sie links ein Gerechtigkeitsprinzip,
+  um zu sehen, wie viel Ausbau auf diesen Landkreis entfiele." Die Auswahl bleibt
   erhalten, wenn danach das erste Prinzip gewählt wird (Liste oder Galerie);
   ab dann hebt ein Prinzipwechsel sie wie bisher auf.
 - **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
