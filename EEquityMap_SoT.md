@@ -2111,3 +2111,8 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   ihrem Text ein Symbol in der Prinzipfarbe (Blitz = Verbrauch, Personen =
   Bevölkerung, Euro = Kosten; Linienpfade nach Lucide, ISC-Lizenz). Die Datei
   `illustration-prinzipien.png` wird nicht mehr verwendet.
+- **Nachtrag:** Startdialog-Karten größer (104 px hoch statt 72 px); Symbol
+  links neben dem Satz, beides linksbündig. Erst-Hinweis-Popups (Speichern,
+  regionale Prinzipien) in Terrakotta #B4552F statt Grün — abgedunkeltes
+  #DC825D, damit weiße Schrift lesbar bleibt (Kontrast 4,9 : 1; #DC825D selbst
+  nur 2,8 : 1).
