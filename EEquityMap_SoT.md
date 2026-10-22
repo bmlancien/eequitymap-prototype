@@ -1805,6 +1805,12 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   „Speichern Sie diese Einstellung, um sie später zu vergleichen." und der Knopf
   ist leicht hervorgehoben (Tönung, kein Puls). Entfällt nach dem ersten
   Speichern.
+  **Geändert (Session 2026-10-22), Rückmeldung „nicht catchy genug":** Der
+  Knopf ist immer gefüllt in der Akzentfarbe (`#1f2a33`, weiße Schrift). Die
+  Hinweiszeile steht nicht mehr fest über dem Knopf, sondern erscheint
+  **einmal pro Sitzung** als dunkles Popup mit Zeiger direkt über dem Knopf,
+  sobald er das erste Mal sichtbar ist. Es schließt per Klick darauf oder beim
+  ersten Klick irgendwo in der Oberfläche.
 - **Nach dem ersten Speichern** (Toast, einmalig): „Gespeichert. Vergleichen
   Sie Ihre Szenarien im Reiter „Szenarien vergleichen"."
 - **Grüner Punkt** neben dem Reiter „Szenarien vergleichen", wenn dort

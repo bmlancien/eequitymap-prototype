@@ -232,11 +232,16 @@
            gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
       <div style="{{ saveFooterStyle }}">
         <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
-          <!-- Bis zum ersten Speichern der Sitzung: Hinweiszeile + leicht getönter Knopf (kein Puls, R.9) -->
-          <sc-if value="{{ showSaveHint }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 0 8px">Speichern Sie diese Einstellung, um sie später zu vergleichen.</div>
+          <!-- Erst-Hinweis (einmal pro Sitzung): dunkles Popup über dem Knopf, Zeiger nach unten. Schließt per Klick
+               darauf oder beim ersten Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
+          <sc-if value="{{ saveHintPopup }}" hint-placeholder-val="{{ false }}">
+            <div role="button" onClick="{{ dismissSaveHint }}" title="Hinweis schließen" style="position:absolute;left:16px;right:16px;bottom:calc(100% + 2px);z-index:5;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+              Speichern Sie diese Einstellung, um sie später zu vergleichen.
+              <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
+              <span style="position:absolute;bottom:-5px;left:50%;margin-left:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
+            </div>
           </sc-if>
-          <button onClick="{{ openSaveScenario }}" style="{{ saveBtnStyle }}" style-hover="background:#e6eaed">
+          <button onClick="{{ openSaveScenario }}" style="{{ saveBtnStyle }}" style-hover="background:#33424f">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             Zum Vergleich speichern
           </button>
@@ -1616,6 +1621,7 @@ class Component extends DCLogic {
     regionComputing: false,
     regionProgress: 0,
     natBreadcrumbOpen: false,
+    saveHintSeen: false,                            // Erst-Hinweis (Popup) am Knopf „Zum Vergleich speichern“ (R.9)
     regionHintSeen: false,                          // Erst-Hinweis an der regionalen Liste (Opt-in sichtbar machen)
     search: '',
     hintOppo: false, seenOppo: false,
@@ -1706,10 +1712,12 @@ class Component extends DCLogic {
     this._scenarioSeq = 0;
     // Vergrößerte Einzelverteilung: Pfeiltasten blättern, Esc schließt (nur solange sie offen ist)
     this._zoomOrder = [];
-    // Erst-Hinweis an der regionalen Prinzipienliste: verschwindet beim ersten Klick irgendwo in der Oberfläche
+    // Erst-Hinweise (regionale Prinzipienliste, Speichern-Knopf): verschwinden beim ersten Klick irgendwo in der Oberfläche
     document.addEventListener('pointerdown', () => {
       const S = this.state;
       if (S && S.level === 'region' && S.region && !S.regionHintSeen && !S.regionComputing) this.setState({ regionHintSeen: true });
+      // Erst-Hinweis am Speichern-Knopf: nur wenn er gerade zu sehen ist (sonst schlösse ihn schon der Klick, der ihn auslöst)
+      if (S && this._saveHintVisible && !S.saveHintSeen) this.setState({ saveHintSeen: true });
     }, true);
     document.addEventListener('keydown', e => {
       const z = this.state && this.state.zoom, o = this._zoomOrder;
@@ -3367,10 +3375,11 @@ class Component extends DCLogic {
     R.saveFooterStyle = R.showSaveScenario
       ? 'position:sticky;bottom:0;z-index:3;background:#fff;margin:22px -16px 0;padding:12px 16px 14px;border-top:1px solid #e2e5e8;box-shadow:0 -6px 12px rgba(255,255,255,.9)'
       : 'height:40px';
-    // Bis zum ersten Speichern der Sitzung: Hinweiszeile über dem Knopf, Knopf leicht grau getönt (R.9)
-    const neverSaved = !S.scenarioFirstSaveSeen;
-    R.showSaveHint = neverSaved;
-    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #1f2a33;color:#1f2a33;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;background:' + (neverSaved ? '#eceff2' : '#fff');
+    // Erst-Hinweis als Popup über dem Knopf, einmal pro Sitzung (R.9); Knopf immer gefüllt in der Akzentfarbe
+    R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen;
+    this._saveHintVisible = R.saveHintPopup;
+    R.dismissSaveHint = () => this.setState({ saveHintSeen: true });
+    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;background:#1f2a33';
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
