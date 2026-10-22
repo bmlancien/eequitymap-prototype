@@ -1795,7 +1795,8 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 - **Klick → rechte Spalte:**
   - Bestand heute: installierte Leistung in MW.
   - Potenzial- und Planungsflächen: Fläche in ha, Leistungspotenzial in MW,
-    energetisches Potenzial in GWh.
+    energetisches Potenzial in GWh/a (Jahresertrag = Leistung × Volllaststunden;
+    Summe Deutschland in TWh/a).
   - Ohne Auswahl: Summen für Deutschland. **[Annahme]**
 - **Daten:** Platzhalterwerte je Landkreis und Gemeinde für Bestand,
   Potenzialflächen und Planungsflächen, je Technologie. Dieselben Werte liefern

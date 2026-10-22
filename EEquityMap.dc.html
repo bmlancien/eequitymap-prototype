@@ -4244,8 +4244,8 @@ class Component extends DCLogic {
     const rowsFor = f => tab === 'bestand'
       ? [{ k: 'Installierte Leistung', v: mwTxt(f.bestandMW || 0) }]
       : tab === 'planung'
-        ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.planLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh' }]
-        : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.potLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh' }];
+        ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.planLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh/a' }]
+        : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.potLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh/a' }];
     R.bpRSub = ''; R.bpRScope = ''; R.bpRShowClose = !!sel; R.bpRHint = '';
     let shown = false;
     if (sel && sel.kind === 'krs') {
@@ -4261,7 +4261,7 @@ class Component extends DCLogic {
         R.bpRTitle = sel.type === 'best' ? 'Anlage' : 'Fläche';
         R.bpRScope = (g.bez || 'Gemeinde') + ' ' + g.name;
         R.bpRows = sel.type === 'best' ? [{ k: 'Installierte Leistung', v: mwTxt(o.mw) }]
-          : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(o.ha * f.dens) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh' }];
+          : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(o.ha * f.dens) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh/a' }];
         shown = true;
       }
     }
@@ -4273,8 +4273,8 @@ class Component extends DCLogic {
       R.bpRows = tab === 'bestand'
         ? [{ k: 'Installierte Leistung', v: nf(T('bestandMW') / 1000, 2) + ' GW' }]
         : tab === 'planung'
-          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh' }]
-          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh' }];
+          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh/a' }]
+          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh/a' }];
       R.bpRSub = tab === 'bestand' ? 'Heute installierte Leistung.' : tab === 'planung' ? 'Offiziell ausgewiesene Windgebiete.' : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
       R.bpRHint = 'Klicken Sie auf einen Landkreis bzw. eine Gemeinde, um die Zahlen für diesen Ort zu sehen.';
     }
