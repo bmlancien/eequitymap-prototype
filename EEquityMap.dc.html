@@ -214,7 +214,7 @@
             <div style="{{ rtLineStyle }}"></div>
             <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative">
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>0 GW</span><span>{{ rtMaxLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>0 GW</span><span title="{{ rtMaxTitle }}" style="cursor:help">{{ rtMaxLabel }}</span></div>
           <sc-if value="{{ rtOverPotential }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:14px;color:#5b6672;line-height:1.45;margin-top:6px">Die DE-Empfehlung liegt über dem Leistungspotenzial dieses Landkreises.</div>
           </sc-if>
@@ -3479,9 +3479,14 @@ class Component extends DCLogic {
       const potGW = potR ? potR.potLeistungMW / 1000 : 0;
       // Bereich 0 … Leistungspotenzial; liegt die DE-Empfehlung ausnahmsweise darüber, reicht er bis zu ihr
       const maxGW = Math.ceil(Math.max(potGW, liveDeRec) * 100) / 100;
-      R.rtMax = maxGW; R.rtMaxLabel = this.fmt(maxGW) + ' GW';
+      R.rtMax = maxGW;
       R.rtValue = Math.min(liveBudget, maxGW);
       R.rtOverPotential = liveDeRec > potGW;
+      // Bereichsende benennen: sonst wirkt es wie eine beliebige Skala (Quelle sind die Potenzialflächen, nicht „Deutschland")
+      R.rtMaxLabel = this.fmt(maxGW) + ' GW' + (R.rtOverPotential ? '' : ' Potenzial');
+      R.rtMaxTitle = R.rtOverPotential
+        ? 'Bereichsende = DE-Empfehlung. Das Leistungspotenzial der Potenzialflächen dieses Landkreises liegt mit ' + this.fmt(potGW) + ' GW darunter.'
+        : 'Leistungspotenzial der Potenzialflächen dieses Landkreises (wie in „Bestand & Potenziale").';
       // Marke an der DE-Empfehlung: das Dreieck zeigt auf den Wert, der Text läuft zur freien Seite
       const pos = maxGW ? liveDeRec / maxGW * 100 : 0, flip = pos > 55;
       R.rtMarkText = flip ? 'DE-Empfehlung ▲' : '▲ DE-Empfehlung';

@@ -1605,6 +1605,10 @@ Landkreises (Regional).
       in „Bestand & Potenziale" (R.13), aber unabhängig von dessen Ansicht
       (Zoom, Auswahl, Unter-Reiter). Liegt die DE-Empfehlung darüber, reicht
       der Bereich bis zu ihr, und ein Hinweis nennt das.
+    - Das rechte Bereichsende ist beschriftet: „[X] GW Potenzial", beim
+      Hovern „Leistungspotenzial der Potenzialflächen dieses Landkreises (wie
+      in „Bestand & Potenziale")". Reicht der Bereich bis zur DE-Empfehlung,
+      steht nur „[X] GW"; der Hover-Text nennt dann das niedrigere Potenzial.
     - Bereich und Marke haben verschiedene Quellen: Der Bereich ist das, was
       der Landkreis an Fläche hergibt; die Marke ist das, was die bundesweite
       Verteilung (Bereich „Deutschland") von ihm verlangt.
