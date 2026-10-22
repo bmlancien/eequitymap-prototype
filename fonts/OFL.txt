@@ -1,3 +1,6 @@
+Bricolage Grotesque: Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
+(Beide Schriften stehen unter der SIL Open Font License 1.1, Text unten.)
+
 Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.

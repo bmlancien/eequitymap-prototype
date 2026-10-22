@@ -2055,3 +2055,25 @@ Erster Durchgang nach der Rückmeldung „wirkt KI-gemacht" (Punkte 1, 2, 4):
 
 Offen (mit Team): Texte kürzen (3), Onboarding-Ebenen reduzieren (7),
 Daten direkt beschriften/Quellen (5), eigene Markenfarbe/Schrift/Illustration (6).
+
+## U. Farbpalette und Schriften (Session 2026-10-22, Branch `style-palette`)
+
+Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
+· #5C5451 (warmes Dunkelbraun-Grau) · #515A5C (Schiefer).
+
+- **Datenfarben bleiben** (Prinzipfarben, Dissens-Braun, Diverging-Skalen;
+  J2: Farbe gehört den Daten). Die Palette gilt für die Oberfläche.
+- **Neutraltöne warm statt kühl:** Text #2E2927 (abgedunkeltes #5C5451),
+  Sekundärtext #5C5451, Linien/Flächen als warme Grautöne; Seitengrund warm.
+- **Akzent = Grün:** Hauptaktionen, aktive Reiter, Fokus, Akzentbalken in
+  #1D6B4C (aus #5CDB9B abgedunkelt, damit weiße Schrift lesbar bleibt);
+  Punkt „Szenarien gespeichert" in #5CDB9B.
+- **Technologien:** Wind = #5CC7DB, PV = #DC825D (Punkt in der Reiterzeile,
+  Linie über dem Vergleich, aktiver Wind/PV-Schalter). Die Karten in
+  „Bestand & Potenziale" laufen in dunkle Töne derselben Farben (Wind
+  #14697A, PV #93421F).
+- **Zustand „Ergebnis veraltet":** Terrakotta-Töne statt Bernstein.
+- **Konsens-Skala (neutral):** Schiefer #515A5C.
+- **Schriften:** Bricolage Grotesque (variabel, OFL, lokal in `fonts/`) für
+  Headlines, Spaltentitel, Dialogtitel und Kennzahlen; IBM Plex Sans bleibt
+  für Text und Bedienelemente.
