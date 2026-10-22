@@ -1620,6 +1620,8 @@ Landkreises (Regional).
   kleines dunkles Popup direkt unter der Prinzipien-Überschrift, über der
   Liste. Es schließt per Klick darauf oder beim ersten Klick irgendwo in der
   Oberfläche und kommt in der Sitzung nicht wieder (K: einmalige Lehre).
+  **Nachtrag (UX-Review):** Das Popup steht **rechts neben der Überschrift**
+  (über der Mitte, Zeiger nach links), nicht über der Liste, die es erklärt.
 
 ### R.5 Regionsmodus: linke Spalte und Regionalziel
 
@@ -1721,6 +1723,8 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Eingaben, ein Erscheinen verschiebt also nichts unter dem Mauszeiger.
   Umrandung und Abdimmung der Karte bleiben. „Berechnung starten" bleibt im
   Leerzustand an der Karte.
+  „Neu berechnen" ist ein gefüllter Knopf in der Akzentfarbe (Hauptaktion,
+  UX-Review 2026-10-22); „Zum Vergleich speichern" ist so lange pausiert (R.9).
   Solange der Hinweis steht, zeigt die rechte Spalte **nur Titel und
   Hinweis**: Herleitung, Werte, Balken und A/B-Karten darunter sind
   ausgeblendet (sie gehörten zur letzten Berechnung und würden sonst als
@@ -1811,6 +1815,11 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   **einmal pro Sitzung** als dunkles Popup mit Zeiger direkt über dem Knopf,
   sobald er das erste Mal sichtbar ist. Es schließt per Klick darauf oder beim
   ersten Klick irgendwo in der Oberfläche.
+  **Nachtrag (Session 2026-10-22, UX-Review):** Das Popup steht **rechts neben
+  dem Knopf** (über der Mitte, Zeiger nach links), nicht darüber: Dort verdeckte
+  es „Bestandsanlagen berücksichtigen". Solange das Regionsergebnis veraltet ist,
+  ist Speichern **pausiert**: Knopf grau, nicht klickbar, beim Hovern „Erst neu
+  berechnen, dann speichern …"; das Popup erscheint dann nicht.
 - **Nach dem ersten Speichern** (Toast, einmalig): „Gespeichert. Vergleichen
   Sie Ihre Szenarien im Reiter „Szenarien vergleichen"."
 - **Grüner Punkt** neben dem Reiter „Szenarien vergleichen", wenn dort

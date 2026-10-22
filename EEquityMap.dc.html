@@ -125,15 +125,16 @@
 
       <!-- Prominent: das aktive Steuerelement (im Gegensatz zum zurückgenommenen Kontext-Kasten oben) —
            Akzentbalken in der Markenfarbe, kräftigere Type. -->
-      <div style="display:flex;align-items:center;gap:8px;position:relative">
+      <div data-princ-head style="display:flex;align-items:center;gap:8px;position:relative">
         <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
         <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
         <span onClick="{{ toggleIntroInfo }}" style="{{ introInfoBtnStyle }}">i</span>
-        <!-- Erst-Hinweis beim ersten Betreten einer Region: kleines Popup unter der Überschrift, über der Liste.
-             Schließt per Klick darauf oder bei jedem Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
+        <!-- Erst-Hinweis beim ersten Betreten einer Region: Popup RECHTS neben der Überschrift (über der Mitte), damit
+             es die Prinzipienliste nicht verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder
+             bei jedem Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
         <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
-          <div role="button" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:absolute;top:calc(100% + 10px);left:0;right:0;z-index:5;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
-            <span style="position:absolute;top:-5px;left:14px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
+          <div role="button" data-anchor-popup="[data-princ-head]" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+            <span style="position:absolute;left:-5px;top:50%;margin-top:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
             Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.
             <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
           </div>
@@ -232,16 +233,16 @@
            gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
       <div style="{{ saveFooterStyle }}">
         <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
-          <!-- Erst-Hinweis (einmal pro Sitzung): dunkles Popup über dem Knopf, Zeiger nach unten. Schließt per Klick
-               darauf oder beim ersten Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
+          <!-- Erst-Hinweis (einmal pro Sitzung): Popup RECHTS neben dem Knopf (über der Mitte), damit es keine Eingaben
+               verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder beim ersten Klick irgendwo. -->
           <sc-if value="{{ saveHintPopup }}" hint-placeholder-val="{{ false }}">
-            <div role="button" onClick="{{ dismissSaveHint }}" title="Hinweis schließen" style="position:absolute;left:16px;right:16px;bottom:calc(100% + 2px);z-index:5;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+            <div role="button" data-anchor-popup="[data-save-btn]" onClick="{{ dismissSaveHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+              <span style="position:absolute;left:-5px;top:50%;margin-top:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
               Speichern Sie diese Einstellung, um sie später zu vergleichen.
               <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
-              <span style="position:absolute;bottom:-5px;left:50%;margin-left:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
             </div>
           </sc-if>
-          <button onClick="{{ openSaveScenario }}" style="{{ saveBtnStyle }}" style-hover="background:#33424f">
+          <button data-save-btn onClick="{{ openSaveScenario }}" title="{{ saveBtnTitle }}" style="{{ saveBtnStyle }}" style-hover="{{ saveBtnHover }}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             Zum Vergleich speichern
           </button>
@@ -899,7 +900,7 @@
               <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
                 <div style="{{ staleBoxStyleHub }}">
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
                   <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                     <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
                   </sc-if>
@@ -941,7 +942,7 @@
               <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
                 <div style="{{ staleBoxStyleHub }}">
                   <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+                  <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
                   <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                     <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
                   </sc-if>
@@ -994,7 +995,7 @@
           <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
@@ -1154,7 +1155,7 @@
           <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
@@ -1719,6 +1720,9 @@ class Component extends DCLogic {
       // Erst-Hinweis am Speichern-Knopf: nur wenn er gerade zu sehen ist (sonst schlösse ihn schon der Klick, der ihn auslöst)
       if (S && this._saveHintVisible && !S.saveHintSeen) this.setState({ saveHintSeen: true });
     }, true);
+    // Popups folgen ihrem Anker beim Scrollen der Spalten und beim Ändern der Fenstergröße
+    document.addEventListener('scroll', () => this.placeAnchoredPopups(), true);
+    window.addEventListener('resize', () => this.placeAnchoredPopups());
     document.addEventListener('keydown', e => {
       const z = this.state && this.state.zoom, o = this._zoomOrder;
       if (e.key === 'Escape' && this.state && (this.state.methodOpen || this.state.aboutOpen)) { this.setState({ methodOpen: false, aboutOpen: false }); return; }
@@ -3376,10 +3380,15 @@ class Component extends DCLogic {
       ? 'position:sticky;bottom:0;z-index:3;background:#fff;margin:22px -16px 0;padding:12px 16px 14px;border-top:1px solid #e2e5e8;box-shadow:0 -6px 12px rgba(255,255,255,.9)'
       : 'height:40px';
     // Erst-Hinweis als Popup über dem Knopf, einmal pro Sitzung (R.9); Knopf immer gefüllt in der Akzentfarbe
-    R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen;
+    // Solange das Regionsergebnis veraltet ist, ist Speichern pausiert: „Neu berechnen" ist dann die Hauptaktion (R.7)
+    const savePaused = !!R.regionStaleBar;
+    R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen && !savePaused;
     this._saveHintVisible = R.saveHintPopup;
     R.dismissSaveHint = () => this.setState({ saveHintSeen: true });
-    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;background:#1f2a33';
+    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;white-space:nowrap;'
+      + (savePaused ? 'border:1px solid #dde1e4;color:#a3abb2;background:#eef0f2;cursor:not-allowed' : 'border:1px solid #1f2a33;color:#fff;background:#1f2a33;cursor:pointer');
+    R.saveBtnHover = savePaused ? '' : 'background:#33424f';
+    R.saveBtnTitle = savePaused ? 'Erst neu berechnen, dann speichern: Das Ergebnis passt nicht mehr zu den Eingaben.' : '';
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = () => this.setState({ shareOpen: true, shareCopied: false });
@@ -3416,7 +3425,7 @@ class Component extends DCLogic {
       let n = 2; while (taken.has(base + ' (' + n + ')')) n++;
       return base + ' (' + n + ')';
     };
-    R.openSaveScenario = scenarioReady ? (() => this.setState({ scenarioSaveOpen: true, scenarioNameDraft: scenarioAutoName() })) : (() => {});
+    R.openSaveScenario = scenarioReady && !savePaused ? (() => this.setState({ scenarioSaveOpen: true, scenarioNameDraft: scenarioAutoName() })) : (() => {});
     R.scenarioSaveOpen = !!S.scenarioSaveOpen;
     R.scenarioNameDraft = S.scenarioNameDraft || '';
     R.onScenarioNameInput = e => this.setState({ scenarioNameDraft: e.target.value });
@@ -4552,7 +4561,24 @@ class Component extends DCLogic {
     this.setState({ scenarios, hubPairs: u.hubPairs, undoDelete: null, undoShow: false, undoMounted: false });
   }
 
-  renderVals() { return this.build(); }
+  renderVals() { const R = this.build(); this.placeAnchoredPopups(); return R; }
+
+  // Erst-Hinweis-Popups (data-anchor-popup="<Selektor>") rechts neben ihren Anker setzen, vertikal mittig, im Fenster
+  // gehalten. position:fixed, damit die scrollende linke Spalte sie nicht abschneidet; nach jedem Rendern neu.
+  placeAnchoredPopups() {
+    if (typeof requestAnimationFrame === 'undefined') return;
+    requestAnimationFrame(() => {
+      document.querySelectorAll('[data-anchor-popup]').forEach(pop => {
+        const anchor = document.querySelector(pop.getAttribute('data-anchor-popup'));
+        if (!anchor) return;
+        const a = anchor.getBoundingClientRect(), h = pop.offsetHeight;
+        const top = Math.max(8, Math.min(window.innerHeight - h - 8, a.top + a.height / 2 - h / 2));
+        pop.style.left = (a.right + 14) + 'px';
+        pop.style.top = top + 'px';
+        pop.style.visibility = 'visible';
+      });
+    });
+  }
 }
 </script>
 </body>
