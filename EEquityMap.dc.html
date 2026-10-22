@@ -864,10 +864,10 @@
         <sc-if value="{{ bpRSub }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:14px;color:#5b6672;line-height:1.45;margin-top:8px">{{ bpRSub }}</div>
         </sc-if>
-        <!-- Nächster Schritt: von heute (Bestand) zur gerechten Verteilung (Deutschland) — leise, immer da, kein Erst-Hinweis -->
+        <!-- Nächster Schritt: von heute (Bestand) zur gerechten Verteilung (Deutschland) — leise, immer da (auch mit Auswahl, dann auf deren Landkreis bezogen) -->
         <sc-if value="{{ bpNextStep }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:22px;padding:13px 14px;border:1px solid #d7dce0;border-radius:10px;background:#fff">
-            <div style="font-size:14px;color:#5b6672;line-height:1.5">Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen?</div>
+            <div style="font-size:14px;color:#5b6672;line-height:1.5">{{ bpNextText }}</div>
             <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#fff;color:#1f2a33;border:1px solid #b9c1c8;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#f1f3f4">Zum Bereich Deutschland →</button>
           </div>
         </sc-if>
@@ -3194,7 +3194,7 @@ class Component extends DCLogic {
           max: this.fmtN(mx, isRegion),
           cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
-          onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens', cell: null }) : () => this.setState({ zoom: p })
+          onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens' }) : () => this.setState({ zoom: p })
         };
       });
       R.showPlan = !galleryAll;
@@ -4334,13 +4334,13 @@ class Component extends DCLogic {
         ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.planLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh/a' }]
         : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.potLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh/a' }];
     R.bpRSub = ''; R.bpRScope = ''; R.bpRShowClose = !!sel;
-    let shown = false;
+    let shown = false, selKrs = null;  // selKrs: Landkreis der Auswahl (auch bei Gemeinde/Objekt) für den nächsten Schritt
     if (sel && sel.kind === 'krs') {
       const k = this.krs.find(x => x.id === sel.id), f = k && PotentialData.forKrs(k.id, tech);
-      if (k && f) { R.bpRTitle = k.kind + ' ' + k.label; R.bpRows = rowsFor(f); shown = true; }
+      if (k && f) { R.bpRTitle = k.kind + ' ' + k.label; R.bpRows = rowsFor(f); shown = true; selKrs = k; }
     } else if (sel && sel.kind === 'gem') {
       const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.id), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
-      if (k && g && gd) { R.bpRTitle = (g.bez || 'Gemeinde') + ' ' + g.name; R.bpRScope = k.kind + ' ' + k.label; R.bpRows = rowsFor(gd[g.id][tech]); shown = true; }
+      if (k && g && gd) { R.bpRTitle = (g.bez || 'Gemeinde') + ' ' + g.name; R.bpRScope = k.kind + ' ' + k.label; R.bpRows = rowsFor(gd[g.id][tech]); shown = true; selKrs = k; }
     } else if (sel && sel.kind === 'raw') {
       const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.gemId), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
       const f = gd && g ? gd[g.id][tech] : null, rw = f ? this.bpRawFor(g, tech, f) : null, o = rw ? rw[sel.type][sel.idx] : null;
@@ -4349,7 +4349,7 @@ class Component extends DCLogic {
         R.bpRScope = (g.bez || 'Gemeinde') + ' ' + g.name;
         R.bpRows = sel.type === 'best' ? [{ k: 'Installierte Leistung', v: mwTxt(o.mw) }]
           : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(o.ha * f.dens) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh/a' }];
-        shown = true;
+        shown = true; selKrs = k;
       }
     }
     if (!shown) {
@@ -4365,8 +4365,13 @@ class Component extends DCLogic {
       R.bpRSub = tab === 'bestand' ? 'Heute installierte Leistung.' : tab === 'planung' ? 'Offiziell ausgewiesene Windgebiete.' : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
     }
     // Nächster Schritt (2): nur in der Deutschland-Übersicht, nicht bei einem gewählten Ort
-    R.bpNextStep = !shown;
-    R.gotoDEFromBestand = () => this.switchArea('de');
+    // immer sichtbar; mit Auswahl auf deren Landkreis bezogen, und der Knopf wählt ihn in „Deutschland" gleich aus
+    R.bpNextStep = true;
+    R.bpNextText = selKrs
+      ? 'Wie viel Ausbau entfiele gerecht auf ' + (selKrs.kind === 'Stadt' ? 'die Stadt ' : 'den Landkreis ') + selKrs.label + '?'
+      : 'Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen?';
+    const nextKrsId = selKrs ? selKrs.id : null;
+    R.gotoDEFromBestand = () => this.switchArea('de', nextKrsId ? { cell: nextKrsId, deCell: nextKrsId, gemeinde: null, seenKrsHint: true } : null);
     R.bpRClose = () => this.setState({ bpSel: null });
   }
 
@@ -4401,7 +4406,10 @@ class Component extends DCLogic {
     if (now === 0 && this.state.committed) return;
     // Handlung bestätigt Verständnis — Hinweis blendet aus (kein Schließen-Button).
     // Element bleibt für die Dauer der Transition gemountet, danach entfernen.
-    const patch = this.dismissTrioHint({ selected: sel, cell: null, gemeinde: null });
+    // Beim ersten Prinzip bleibt ein schon gewählter Landkreis ausgewählt (z. B. aus „Bestand & Potenziale"
+    // mitgebracht); sonst hebt ein Prinzipwechsel die Auswahl auf
+    const firstPick = S.selected.filter(x => this.byId[x] && this.byId[x].available).length === 0;
+    const patch = this.dismissTrioHint({ selected: sel, cell: firstPick ? S.cell : null, gemeinde: null });
     if (now >= 1) patch.committed = true;
     if (sel.includes('bevoelkerungsnah') && sel.includes('bevoelkerungsfern') && !S.seenOppo) { patch.hintOppo = true; patch.seenOppo = true; }
     if (now < 2) patch.tab = 'konsens';
@@ -4431,7 +4439,7 @@ class Component extends DCLogic {
 
   // Bereichswechsel (R.3): Unter-Reiter und Auswahl des verlassenen Bereichs merken, die des Zielbereichs
   // zurückholen. Keine Neuberechnung — ob das Regionsergebnis noch aktuell ist, entscheidet die Signatur.
-  switchArea(area) {
+  switchArea(area, extra) {
     const S = this.state;
     const from = S.area || 'de';
     if (area === from) return;
@@ -4452,6 +4460,7 @@ class Component extends DCLogic {
     } else {
       Object.assign(patch, { level: 'de', cell: null, gemeinde: null });
     }
+    if (extra) Object.assign(patch, extra);  // z. B. Landkreis aus „Bestand & Potenziale“ gleich auswählen
     this.setState(patch);
   }
 

@@ -1546,6 +1546,12 @@ Landkreises (Regional).
   wegklickbar. Grund: Nach dem Start in Bestand war unklar, wie es weitergeht.
   Der Satz „Klicken Sie auf einen Landkreis bzw. eine Gemeinde, um die Zahlen
   für diesen Ort zu sehen." entfällt.
+  **Nachtrag (UX-Review):** Die Karte bleibt auch mit Auswahl stehen. Mit
+  Landkreis, Gemeinde oder Objekt lautet die Frage „Wie viel Ausbau entfiele
+  gerecht auf den Landkreis [Name]?" (bzw. „die Stadt [Name]"), und der Knopf
+  wählt diesen Landkreis in „Deutschland" gleich aus. Die Auswahl bleibt
+  erhalten, wenn danach das erste Prinzip gewählt wird (Liste oder Galerie);
+  ab dann hebt ein Prinzipwechsel sie wie bisher auf.
 - **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
 - **Regional ohne ausgewerteten Landkreis:** Der Tab ist gesperrt (ausgegraut,
   nicht klickbar). Beim Hovern erklärt ein Hinweis, dass zuerst ein Landkreis
