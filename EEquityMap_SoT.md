@@ -1702,8 +1702,8 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Hinweis**: Herleitung, Werte, Balken und A/B-Karten darunter sind
   ausgeblendet (sie gehörten zur letzten Berechnung und würden sonst als
   aktuell gelesen). Nach „Neu berechnen" erscheinen sie wieder. Die frühere
-  abgedimmte Herleitung mit „Stand der letzten Berechnung" ist damit nicht
-  mehr sichtbar.
+  abgedimmte Herleitung mit „Stand der letzten Berechnung" entfällt
+  (auch im Code).
 
 ### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
 

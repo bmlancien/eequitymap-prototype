@@ -985,11 +985,8 @@
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
           <div style="{{ staleHideStyle }}">
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
-               Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
+               Zeigt die Eingaben der letzten Berechnung (bei „nicht aktuell" ausgeblendet, s. staleHideStyle). -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
-            <sc-if value="{{ chainStale }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#6b5726;margin-top:12px">Stand der letzten Berechnung</div>
-            </sc-if>
             <div style="{{ chainWrapStyle }}">
               <sc-for list="{{ chainSteps }}" as="cs" hint-placeholder-count="3">
                 <div style="position:relative;padding-bottom:12px">
@@ -1145,11 +1142,8 @@
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
           <div style="{{ staleHideStyle }}">
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
-               Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
+               Zeigt die Eingaben der letzten Berechnung (bei „nicht aktuell" ausgeblendet, s. staleHideStyle). -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
-            <sc-if value="{{ chainStale }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#6b5726;margin-top:12px">Stand der letzten Berechnung</div>
-            </sc-if>
             <div style="{{ chainWrapStyle }}">
               <sc-for list="{{ chainSteps }}" as="cs" hint-placeholder-count="3">
                 <div style="position:relative;padding-bottom:12px">
@@ -1182,7 +1176,7 @@
           </sc-if>
 
           <!-- Hauptzahl: Zubau bzw. Zubaukonsens (ZUBAU_AS_HERO); sonst Ausbau (= Bestand + Zubau) -->
-          <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;{{ chainBoxDim }}">
+          <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
             <!-- „i" neben „Zubaukonsens" klappt die Definition auf (nur ab zwei Prinzipien) -->
             <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
               <span>{{ cellHeroLabel }}</span>
@@ -3654,9 +3648,7 @@ class Component extends DCLogic {
     const inListOrder = ids => this.principles.map(p => p.id).filter(id => (ids || []).includes(id));
     const chainDot = id => 'flex:none;width:9px;height:9px;border-radius:3px;background:' + this.byId[id].color;
     R.showChain = isRegion && hasRegionResult && !regionNeedsGate && view !== 'szenarien';
-    R.chainStale = R.showChain && regionStale;
-    R.chainWrapStyle = 'margin:12px 0 0 5px;padding-left:14px;border-left:1px solid #c8ced3;' + (R.chainStale ? 'opacity:.55' : '');
-    R.chainBoxDim = R.chainStale ? 'opacity:.55' : '';
+    R.chainWrapStyle = 'margin:12px 0 0 5px;padding-left:14px;border-left:1px solid #c8ced3';
     if (R.showChain) {
       const own = !!S.regionComputedOwn;
       const princItems = ids => inListOrder(ids).map(id => ({ name: this.byId[id].name, dotStyle: chainDot(id) }));
@@ -3854,7 +3846,7 @@ class Component extends DCLogic {
           R.anBlockers = true; mkBlockers();
         }
       }
-      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;' + R.chainBoxDim;
+      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
       R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5b6672;margin-top:8px;line-height:1.45' : 'display:none';
