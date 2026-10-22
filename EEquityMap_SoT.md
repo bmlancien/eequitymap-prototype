@@ -1600,9 +1600,17 @@ Landkreises (Regional).
   - **Entfällt:** der Textblock „Bei [X] MW liegen [Y] MW im Konsens."
   - **Keine Zieljahre** (Marken 2030/2035/2045 ausgeblendet).
   - **Regler „Ausbauziel"** für den Landkreis:
-    - Bereich 0 … maximales Leistungspotenzial des Landkreises für die gewählte
-      Technologie (aus den Potenzialflächen, R.13).
-    - Voreinstellung = **DE-Empfehlung**: der Ausbau, den die bundesweite
+    - Bereich 0 … Leistungspotenzial der Potenzialflächen **dieses
+      Landkreises** für die gewählte Technologie. Es sind dieselben Daten wie
+      in „Bestand & Potenziale" (R.13), aber unabhängig von dessen Ansicht
+      (Zoom, Auswahl, Unter-Reiter). Liegt die DE-Empfehlung darüber, reicht
+      der Bereich bis zu ihr, und ein Hinweis nennt das.
+    - Bereich und Marke haben verschiedene Quellen: Der Bereich ist das, was
+      der Landkreis an Fläche hergibt; die Marke ist das, was die bundesweite
+      Verteilung (Bereich „Deutschland") von ihm verlangt.
+    - Marke und Voreinstellung = **DE-Empfehlung**: Dreieck über dem Regler mit
+      gestrichelter Linie bis zur Reglerspur, an der Griffmitte ausgerichtet.
+      Die DE-Empfehlung ist der Ausbau, den die bundesweite
       Verteilung (gewichtete Kombination der bundesweit gewählten Prinzipien,
       wie „Zubau" in A) diesem Landkreis zuweist. Das ist **die Verteilung,
       nicht der bundesweite Konsens**. → Ändert M (dort: „Anteil dieses

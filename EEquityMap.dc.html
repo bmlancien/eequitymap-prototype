@@ -206,10 +206,14 @@
       <sc-if value="{{ showRegionTarget }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:14px;color:#5b6672;margin:8px 0 6px">Ausbauziel für den Landkreis</div>
         <div style="margin:4px 0 4px">
-          <div style="position:relative;height:18px;margin-bottom:3px">
-            <div title="{{ rtMarkTitle }}" style="{{ rtMarkStyle }}">{{ rtMarkText }}</div>
+          <!-- Gestrichelte Linie vom Dreieck der Marke bis auf die Reglerspur (liegt unter dem Griff) -->
+          <div style="position:relative">
+            <div style="position:relative;height:18px;margin-bottom:3px">
+              <div title="{{ rtMarkTitle }}" style="{{ rtMarkStyle }}">{{ rtMarkText }}</div>
+            </div>
+            <div style="{{ rtLineStyle }}"></div>
+            <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative">
           </div>
-          <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%">
           <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>0 GW</span><span>{{ rtMaxLabel }}</span></div>
           <sc-if value="{{ rtOverPotential }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:14px;color:#5b6672;line-height:1.45;margin-top:6px">Die DE-Empfehlung liegt über dem Leistungspotenzial dieses Landkreises.</div>
@@ -3482,7 +3486,10 @@ class Component extends DCLogic {
       const pos = maxGW ? liveDeRec / maxGW * 100 : 0, flip = pos > 55;
       R.rtMarkText = flip ? 'DE-Empfehlung ▲' : '▲ DE-Empfehlung';
       R.rtMarkTitle = 'DE-Empfehlung: ' + this.fmt(liveDeRec) + ' GW';
-      R.rtMarkStyle = 'position:absolute;left:' + pos.toFixed(1) + '%;transform:translateX(' + (flip ? 'calc(-100% + 6px)' : '-6px') + ');font-size:14px;color:#6b7680;white-space:nowrap';
+      // Position wie die Griffmitte: der 16-px-Griff läuft von 8 px bis Breite − 8 px
+      const left = 'calc(8px + (100% - 16px) * ' + (pos / 100).toFixed(4) + ')';
+      R.rtMarkStyle = 'position:absolute;left:' + left + ';transform:translateX(' + (flip ? 'calc(-100% + 6px)' : '-6px') + ');font-size:14px;color:#6b7680;white-space:nowrap';
+      R.rtLineStyle = 'position:absolute;left:' + left + ';top:16px;height:13px;border-left:1px dashed #8a949c;transform:translateX(-0.5px);pointer-events:none';
       R.rtIsOwn = S.regionOwnTarget != null;
       R.onRegionSlider = e => this.setState({ regionOwnTarget: Math.round(+e.target.value * 100) / 100 });
       R.resetRegionTarget = () => this.setState({ regionOwnTarget: null });
