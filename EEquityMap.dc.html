@@ -642,7 +642,7 @@
 
         <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }};{{ mapStaleOutline }}">
+          <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }};transition:background .4s;{{ mapStaleOutline }}">
             <!-- Ansichts-Umschalter (Regionsansicht, nur Erweitert — Testfeature s. SoT §M): in der Karte, Ecke
                  oben rechts. Feste, gleich breite Spalten, damit die fette Auswahl nichts verschiebt. Die Karte
                  bekommt dafür oben Platz (mapBoxPadTop), damit der Umschalter sie nicht verdeckt; die Hinweise
@@ -2520,9 +2520,10 @@ class Component extends DCLogic {
     R.regionBlockOverlay = R.regionGateIdle;
     R.regionComputingScrim = R.regionComputing;
     R.regionStaleBar = isRegion && hasRegionResult && regionStale && !S.regionComputing;
-    R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.75' : '1');
-    // „nicht aktuell" (R.7): zusätzlich gestrichelte Umrandung der Karte in der Akzentfarbe
-    R.mapStaleOutline = R.regionStaleBar ? 'outline:2px dashed #1f2a33;outline-offset:3px' : '';
+    // „nicht aktuell" (R.7): Karte wirkt deaktiviert — Region stark durchscheinend, grauer Grund um die Region,
+    // dazu eine graue gestrichelte Umrandung
+    R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.35' : '1');
+    R.mapStaleOutline = R.regionStaleBar ? 'background:#e6e9ec;outline:2px dashed #9aa3ab;outline-offset:3px' : '';
     R.startRegionCompute = () => this.startRegionCompute();
     R.cancelRegionCompute = () => this.cancelRegionCompute();
     // Trickle-Balken: bewegt sich von links nach rechts und wird dabei asymptotisch langsamer (Kappung bei

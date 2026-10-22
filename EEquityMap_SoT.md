@@ -1693,6 +1693,10 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 - **Stärker zeigen:** zusätzlich zur Box (ein Ort, K) eine deutliche Umrandung
   der Karte in der Akzentfarbe (`#1f2a33`, 2 px, gestrichelt) und die bestehende
   Abdimmung. Verschwindet mit „Neu berechnen".
+  **Nachtrag (Session 2026-10-22):** Die Karte soll deaktiviert wirken: Die
+  Region ist stärker durchscheinend (Deckkraft 35 % statt 75 %), der Grund der
+  Kartenfläche um die Region wird grau (`#e6e9ec`). Die gestrichelte
+  Umrandung ist grau (`#9aa3ab`) statt in der Akzentfarbe.
 - **Nachtrag (Session 2026-10-19, nach Test):** Die Box mit „Neu berechnen"
   steht nicht mehr in der linken Spalte, sondern als Leiste direkt unter der
   Karte: „**Ergebnis veraltet.** Die Eingaben haben sich geändert.
