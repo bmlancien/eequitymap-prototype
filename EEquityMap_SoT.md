@@ -1988,3 +1988,23 @@ Kleine Korrekturen nach einem heuristischen Review der Live-Version:
   ignoriert). Die Anzeige rechts in der Reiterzeile ist kein Knopf mehr: nur
   Farbpunkt + „Wind" bzw. „PV" als Text (ohne Rahmen), Tooltip „Technologie:
   … — umschalten links unter „Rahmen"".
+- **Landkreisumriss in der Regionsansicht:** aus den Gemeinden statt aus der
+  stark vereinfachten Deutschland-Geometrie (die hatte z. B. beim
+  Unstrut-Hainich-Kreis ~24 Punkte und schnitt quer durch die Gemeinden).
+  Technisch ein Kontur-Halo: alle Gemeinden mit dicker dunkler Kontur, darüber
+  deckend weiß; sichtbar bleibt nur der äußere Rand. Die Gemeindedaten werden
+  dafür auch im Rastermodus geladen; ohne sie bleibt die grobe Linie.
+- **Farbskala Min–Max auch national (ändert §M „national 0–Max"):**
+  Einzelverteilung, Konsens, Galerie, Vergrößerung und Startoverlay strecken
+  die Farben über den tatsächlichen Wertebereich; die Bereichsangaben nennen
+  das echte Minimum (z. B. „0,35 – 0,43 GW je Landkreis") statt „0,00".
+  Grund: Bei PV liegen die Werte eng zusammen (Streuung um den Mittelwert auf
+  18 % gestaucht), mit 0–Max war die Karte fast einfarbig. Dissens bleibt
+  0-basiert (0 = keine Abweichung ist dort die Aussage).
+- **Ein Klick-Hinweis in „Deutschland":** Solange der Kartenhinweis „Klicken
+  Sie auf einen Landkreis …" steht, entfällt der gleichlautende Hinweis in der
+  rechten Spalte. In „Regional" bleibt der Hinweis rechts (dort gibt es keinen
+  Kartenhinweis).
+- **Erst-Hinweis „Startet mit denselben Prinzipien …":** sitzt rechts neben der
+  ersten Zeile der Prinzipienliste (Oberkante bündig, Zeiger oben), also
+  unterhalb von Headline und Reitern.

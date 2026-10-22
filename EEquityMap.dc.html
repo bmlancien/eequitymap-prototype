@@ -129,12 +129,12 @@
         <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
         <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
         <span onClick="{{ toggleIntroInfo }}" style="{{ introInfoBtnStyle }}">i</span>
-        <!-- Erst-Hinweis beim ersten Betreten einer Region: Popup RECHTS neben der Überschrift (über der Mitte), damit
-             es die Prinzipienliste nicht verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder
+        <!-- Erst-Hinweis beim ersten Betreten einer Region: Popup RECHTS neben der ersten Listenzeile (über der Mitte,
+             unterhalb von Headline und Reitern), damit es weder die Prinzipienliste noch die Headline verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder
              bei jedem Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
         <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
-          <div role="button" data-anchor-popup="[data-princ-head]" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
-            <span style="position:absolute;left:-5px;top:50%;margin-top:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
+          <div role="button" data-anchor-popup="[data-princ-row]" data-anchor-align="top" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+            <span style="position:absolute;left:-5px;top:14px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
             Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.
             <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
           </div>
@@ -149,7 +149,7 @@
       </sc-if>
 
       <sc-for list="{{ princList }}" as="p" hint-placeholder-count="4">
-        <div style="margin-bottom:2px">
+        <div data-princ-row style="margin-bottom:2px">
           <div onClick="{{ p.onToggle }}" style="{{ p.rowStyle }}">
             <span style="{{ p.swatchStyle }}"></span>
             <div style="flex:1;min-width:0">
@@ -436,7 +436,7 @@
                     </sc-for>
                   </svg>
                   <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin-top:6px">
-                    <span style="font-size:14px;color:#6b7680;white-space:nowrap"><span class="num">{{ zeroPrefix }} – {{ mp.max }} {{ scopeUnit }}</span> {{ galleryRangeUnit }}</span>
+                    <span style="font-size:14px;color:#6b7680;white-space:nowrap"><span class="num">{{ mp.min }} – {{ mp.max }} {{ scopeUnit }}</span> {{ galleryRangeUnit }}</span>
                     <span style="font-size:14px;color:#6b7680;margin-left:auto;white-space:nowrap">Einzeln ansehen →</span>
                   </div>
                 </div>
@@ -672,7 +672,14 @@
                   </pattern>
                 </sc-for>
               </defs>
-              <!-- Echte Landkreis-Umrisslinie hinter dem 5×5-km-Raster (nur Regionsansicht; leer in der DE-Ansicht) -->
+              <!-- Landkreisumriss hinter Raster/Gemeinden (nur Regionsansicht): aus den Gemeinden (Kontur-Halo, s. gemHalo),
+                   sonst die grobe Linie aus der Deutschland-Geometrie -->
+              <sc-for list="{{ gemHalo }}" as="gh" hint-placeholder-count="0">
+                <path d="{{ gh.d }}" fill="none" stroke="#5b6672" stroke-width="2.6" stroke-linejoin="round" pointer-events="none"></path>
+              </sc-for>
+              <sc-for list="{{ gemHalo }}" as="gh" hint-placeholder-count="0">
+                <path d="{{ gh.d }}" fill="#fff" stroke="#fff" stroke-width="0.6" stroke-linejoin="round" pointer-events="none"></path>
+              </sc-for>
               <path d="{{ regionOutlineD }}" fill="none" stroke="#5b6672" stroke-width="1.6" pointer-events="none"></path>
               <sc-for list="{{ mainCells }}" as="c" hint-placeholder-count="60">
                 <path class="hx" d="{{ c.d }}" fill="{{ c.fill }}" fill-opacity="{{ c.fo }}" stroke="{{ c.stroke }}" stroke-width="{{ c.sw }}" stroke-dasharray="{{ c.dash }}" opacity="{{ c.op }}" pointer-events="{{ c.pe }}" style="cursor:pointer" onClick="{{ c.onClick }}"></path>
@@ -1371,7 +1378,7 @@
           </svg>
           <button onClick="{{ zoomNext }}" title="Nächstes Prinzip (→)" aria-label="Nächstes Prinzip" style="{{ zoomNavStyle }}">›</button>
         </div>
-        <div class="num" style="font-size:14px;color:#6b7680;margin-top:6px">Empfohlener Zubau {{ zoomUnit }} · {{ zeroPrefix }} – {{ zoomMax }} {{ scopeUnit }}</div>
+        <div class="num" style="font-size:14px;color:#6b7680;margin-top:6px">Empfohlener Zubau {{ zoomUnit }} · {{ zoomMin }} – {{ zoomMax }} {{ scopeUnit }}</div>
         <!-- Welches Prinzip ist offen? Anklicken springt direkt dorthin. -->
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
           <sc-for list="{{ zoomTabs }}" as="zt" hint-placeholder-count="3">
@@ -2683,11 +2690,10 @@ class Component extends DCLogic {
     } else if (view === 'single') {
       const vals = cells.map((c,i)=>planVal(i));
       const mx = Math.max(...vals);
-      // Regionsansicht: Skala auf den tatsächlichen Wertebereich dieser Region strecken (Min–Max der
-      // sichtbaren Zellen) statt auf einen festen 0–Max-Bereich — sonst sitzen eng beieinanderliegende
-      // Zellwerte in einem schmalen Farbband und sind kaum unterscheidbar. National unverändert (0–Max),
-      // da dort die Distanz zu 0 selbst aussagekräftig bleibt.
-      const mn = isRegion ? Math.min(...vals) : 0;
+      // Skala auf den tatsächlichen Wertebereich strecken (Min–Max) statt 0–Max — sonst sitzen eng beieinander-
+      // liegende Werte in einem schmalen Farbband. Gilt seit dem UX-Review auch national: Bei PV liegen die Werte
+      // eng zusammen (s. sharesFor), mit 0–Max war die Karte fast einfarbig. Die Legende nennt das echte Minimum.
+      const mn = Math.min(...vals);
       const range = mx - mn;
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(vals[i]), this.byId[singlePid].color)));
@@ -2701,7 +2707,7 @@ class Component extends DCLogic {
       const visVals = cells.map((c,i) => ({ v: consCells[i], vis: !(S.hideConflict && isConflict[i]) })).filter(o => o.vis).map(o => o.v);
       const scaleVals = visVals.length ? visVals : consCells;
       const mx = Math.max(...scaleVals);
-      const mn = isRegion ? Math.min(...scaleVals) : 0;
+      const mn = Math.min(...scaleVals);  // Min–Max auch national (s. Einzelverteilung)
       const range = mx - mn;
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(consCells[i]), this.CONS), { hidden: S.hideConflict && isConflict[i] }));
@@ -3185,14 +3191,14 @@ class Component extends DCLogic {
         // Gemeinde-Wert = flächengewichtete Summe der Zellwerte (wie in der Regionsansicht)
         const pv = galByGem ? galGem.map((gm, gi) => (galGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
         const shapes = galByGem ? galGem : cells;
-        const mx = Math.max(...pv);
+        const mx = Math.max(...pv), mn = Math.min(...pv), rg = mx - mn;  // Min–Max wie die große Karte
         return {
           name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
           // Name steht schon im Kartentitel — hier nur die Beschreibung, mit großem Anfangsbuchstaben
           explain: (e => e.charAt(0).toUpperCase() + e.slice(1) + '.')(shortExplain[p] || 'so verteilt sich der Ausbau'),
           swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
-          max: this.fmtN(mx, isRegion),
-          cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) })),
+          min: this.fmtN(mn, isRegion), max: this.fmtN(mx, isRegion),
+          cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(rg > 1e-9 ? (pv[i] - mn) / rg : 1, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
           onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens' }) : () => this.setState({ zoom: p })
         };
@@ -3242,6 +3248,13 @@ class Component extends DCLogic {
 
     R.gemCells = [];
     R.gemOutlines = [];
+    // Landkreisumriss aus den Gemeinden statt aus der stark vereinfachten Deutschland-Geometrie (die schnitt quer
+    // durch die Gemeinden, UX-Review #19): alle Gemeinden einmal mit dicker dunkler Kontur, darüber deckend weiß —
+    // sichtbar bleibt nur der äußere Rand. Ohne Gemeindedaten bleibt die grobe Linie (regionOutlineD) als Ersatz.
+    if (isRegion && !gemList) this.ensureGemeinden(S.region.krsId);  // auch im Rastermodus, nur für den Umriss
+    const haloList = isRegion ? (gemList || this._gemCache[S.region.krsId] || null) : null;
+    R.gemHalo = haloList ? haloList.map(g => ({ d: g.d })) : [];
+    if (R.gemHalo.length) R.regionOutlineD = '';
     // „Wer denkt anders?" ist kategorial (Farbe je abweichender Verteilung, mehrere = schraffiert) — eine
     // RGB-Mischung je Gemeinde würde daraus eine Choropleth machen. Daher übernimmt jede Gemeinde die
     // Kategorie (Füllung inkl. Schraffur-Pattern) mit dem größten Flächenanteil ihrer Rasterzellen.
@@ -3580,7 +3593,6 @@ class Component extends DCLogic {
     R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
     // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
     R.scopeUnit = this.unitFor(isRegion);
-    R.zeroPrefix = isRegion ? '0,0' : '0,00'; // Nulluntergrenze in Bereichsangaben, Nachkommastellen wie die Werte (MW eine, GW zwei)
     R.region = !!S.region;
     R.search = S.search;
 
@@ -4107,8 +4119,8 @@ class Component extends DCLogic {
       { id: 'bevoelkerungsnah', label: 'Wo mehr Menschen wohnen' },
       { id: 'oekonomisch', label: 'Wo es am günstigsten ist' }
     ].map(o => {
-      const g = gwArr(o.id), mx = Math.max.apply(null, g);
-      return { label: o.label, cells: cells.map((c,i) => ({ d: c.d, fill: this.seq(mx ? g[i]/mx : 0, this.byId[o.id].color) })) };
+      const g = gwArr(o.id), mx = Math.max.apply(null, g), mn = Math.min.apply(null, g), rg = mx - mn;
+      return { label: o.label, cells: cells.map((c,i) => ({ d: c.d, fill: this.seq(rg > 1e-9 ? (g[i] - mn) / rg : 1, this.byId[o.id].color) })) };
     });
     R.intro = S.intro;
     R.reopenIntro = () => this.setState({ intro: true });
@@ -4136,10 +4148,10 @@ class Component extends DCLogic {
       const zGemW = zGem ? this.gemWeightsFor(S.region.krsId) : null;
       const zByGem = !!(zGem && zGemW);
       const pv = zByGem ? zGem.map((gm, gi) => (zGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
-      const mx = Math.max(...pv);
-      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtN(mx, isRegion);
+      const mx = Math.max(...pv), mn = Math.min(...pv), rg = mx - mn;
+      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtN(mx, isRegion); R.zoomMin = this.fmtN(mn, isRegion);
       R.zoomUnit = !isRegion ? 'je Landkreis' : (zByGem ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
-      R.zoomCells = (zByGem ? zGem : cells).map((c,i) => ({ d: c.d, fill: this.seq(mx ? pv[i]/mx : 0, this.byId[p].color) }));
+      R.zoomCells = (zByGem ? zGem : cells).map((c,i) => ({ d: c.d, fill: this.seq(rg > 1e-9 ? (pv[i] - mn) / rg : 1, this.byId[p].color) }));
       // Blättern: Reihenfolge wie in der Galerie (sel); am Ende geht es vorn weiter
       this._zoomOrder = sel.slice();
       const zStep = dir => () => { const o = this._zoomOrder, k = o.indexOf(this.state.zoom); if (k >= 0) this.setState({ zoom: o[(k + dir + o.length) % o.length] }); };
@@ -4195,6 +4207,8 @@ class Component extends DCLogic {
     });
     // Einmaliger Hinweis über der Deutschlandkarte — nur dort, wo die Landkreiskarte klickbar ist
     R.showKrsClickHint = area === 'de' && !isRegion && !S.seenKrsHint && ['konsens', 'minimum', 'konflikt', 'single'].includes(view);
+    // Nicht zweimal dasselbe sagen: solange der Kartenhinweis steht, entfällt der Klick-Hinweis rechts (UX-Review)
+    if (R.showKrsClickHint) R.ovClickHint = false;
     R.dismissKrsClickHint = () => this.setState({ seenKrsHint: true });
     const infoCircle = (on, dark) => 'flex:none;width:16px;height:16px;border:1px solid ' + (dark ? (on ? '#fff' : 'rgba(255,255,255,.6)') : (on ? '#1f2a33' : '#c8ced3')) + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (dark ? '#fff' : (on ? '#1f2a33' : '#6b7680')) + ';font-style:italic;cursor:pointer;line-height:1';
     R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, false) + ';position:absolute;top:9px;right:8px;background:#fff';
@@ -4576,7 +4590,9 @@ class Component extends DCLogic {
         const anchor = document.querySelector(pop.getAttribute('data-anchor-popup'));
         if (!anchor) return;
         const a = anchor.getBoundingClientRect(), h = pop.offsetHeight;
-        const top = Math.max(8, Math.min(window.innerHeight - h - 8, a.top + a.height / 2 - h / 2));
+        // data-anchor-align="top": Oberkante an Oberkante (Zeiger sitzt dann oben), sonst vertikal mittig
+        const want = pop.getAttribute('data-anchor-align') === 'top' ? a.top - 4 : a.top + a.height / 2 - h / 2;
+        const top = Math.max(8, Math.min(window.innerHeight - h - 8, want));
         pop.style.left = (a.right + 14) + 'px';
         pop.style.top = top + 'px';
         pop.style.visibility = 'visible';
