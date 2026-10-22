@@ -1967,3 +1967,10 @@ Kleine Korrekturen nach einem heuristischen Review der Live-Version:
   ebenfalls eine („62,0 GW"). MW unverändert.
 - **Zahlenschrift:** Zahlen in der Textschrift (IBM Plex Sans) mit
   Tabellenziffern statt IBM Plex Mono.
+- **Technologie: ein Schalter, eine Anzeige.** Umgeschaltet wird nur links
+  („Rahmen" bzw. Bestand & Potenziale). Der eigene Wind/PV-Umschalter in
+  „Szenarien vergleichen" entfällt; Box und Tabellen folgen der Technologie
+  links (eine gespeicherte A/B-Auswahl der anderen Technologie wird
+  ignoriert). Die Anzeige rechts in der Reiterzeile ist kein Knopf mehr: nur
+  Farbpunkt + „Wind" bzw. „PV" als Text (ohne Rahmen), Tooltip „Technologie:
+  … — umschalten links unter „Rahmen"".

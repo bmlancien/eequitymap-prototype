@@ -262,7 +262,7 @@
             <button onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
           </sc-for>
           <div style="flex:1"></div>
-          <span style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
+          <span title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
         </div>
         <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px 10px">{{ bpCaption }}</div>
         <div ref="{{ bzWrapRef }}" style="flex:1;min-height:420px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;overflow:hidden">
@@ -371,9 +371,9 @@
               <button onClick="{{ tb.onClick }}" title="{{ tb.title }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
             </sc-for>
           </sc-if>
-          <!-- Technologie-Chip: auf jedem Reiter sichtbar, Farbe wie die Hub-Box (blau = Wind, gelb = PV) -->
+          <!-- Technologie-Anzeige (kein Knopf): auf jedem Reiter sichtbar, Punktfarbe wie die Hub-Box (blau = Wind, gelb = PV) -->
           <div style="flex:1"></div>
-          <span style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
+          <span title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
         </div>
       </sc-if>
 
@@ -450,16 +450,8 @@
              Wechseln = Slot erneut anklicken. Darunter Differenzkarte, dann die Tabellen je Ebene als
              Gesamtübersicht aller gespeicherten Szenarien. -->
         <sc-if value="{{ isSzenarien }}" hint-placeholder-val="{{ false }}">
-          <!-- Über der Hub-Box: Wind-/PV-Umschalter mittig (gilt für Box UND Tabellen darunter).
+          <!-- Kein eigener Wind-/PV-Umschalter mehr (UX-Review): Box und Tabellen folgen der Technologie links.
                „Vergleich teilen" steht in der Box „Vergleich A − B", oben rechts. -->
-          <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:8px">
-            <div></div>
-            <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
-              <button onClick="{{ setHubWind }}" style="{{ hubWindStyle }}">Wind</button>
-              <button onClick="{{ setHubPV }}" style="{{ hubPVStyle }}">Freiflächen-PV</button>
-            </div>
-            <div></div>
-          </div>
           <div style="{{ hubStyle }}">
             <div style="display:flex;align-items:center;gap:10px">
               <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Vergleich A − B</div>
@@ -3162,14 +3154,9 @@ class Component extends DCLogic {
       R.hubRows = sortedScen;
       R.hubTables = R.hubRows;   // showHubTables prüft nur, ob es Zeilen gibt
 
-      // Technologie-Filter im Hub-Kopf; Rahmen/Hintergrund blau (Wind) bzw. gelb (PV)
-      // Hub-Umschalter und Umschalter links sind gekoppelt: beide setzen dieselbe Technologie (kein Abweichen)
-      // Technologiewechsel im Hub: Voreinstellung neu (gespeicherte A/B-Auswahl dieses Hubs verwerfen)
-      const hubTechTo = t => () => this.setState({ tech: t, hubMenu: null, hubPairs: Object.assign({}, this.state.hubPairs || {}, { [hubKey]: null }) });
-      R.setHubWind = hubTechTo('wind');
-      R.setHubPV = hubTechTo('pv');
-      R.hubWindStyle = this.segTech('wind', hubTech === 'wind') + ';flex:none;white-space:nowrap;padding:6px 14px';
-      R.hubPVStyle = this.segTech('pv', hubTech === 'pv') + ';flex:none;white-space:nowrap;padding:6px 14px';
+      // Rahmen/Hintergrund der Hub-Box blau (Wind) bzw. gelb (PV)
+      // Technologie kommt allein vom Umschalter links; eine gespeicherte A/B-Auswahl einer anderen Technologie
+      // wird über storedOk ignoriert
       R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
         + 'background:' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].bg + ';border:2px solid ' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].line;
       // Tabellen-Box unter der Hub-Box: gleiche Technologiefarbe, nur mit gespeicherten Szenarien
@@ -3488,8 +3475,11 @@ class Component extends DCLogic {
     R.techWindStyle = this.segTech('wind', S.tech === 'wind');
     R.techPVStyle = this.segTech('pv', S.tech === 'pv');
     const techCol = this.techColors[S.tech === 'pv' ? 'pv' : 'wind'];
-    R.techChipLabel = S.tech === 'pv' ? 'Freiflächen-PV' : 'Wind';
-    R.techChipStyle = 'flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#5b6672;white-space:nowrap;border-radius:999px;padding:2px 10px 2px 8px;margin:0 2px 5px 8px;background:' + techCol.bg + ';border:1px solid ' + techCol.line;
+    // kurz, damit die Anzeige neben den fünf Reitern Platz hat; voller Name im Tooltip
+    R.techChipLabel = S.tech === 'pv' ? 'PV' : 'Wind';
+    R.techChipTitle = 'Technologie: ' + (S.tech === 'pv' ? 'Freiflächen-PV' : 'Wind') + ' — umschalten links unter „Rahmen“';
+    // Anzeige, kein Knopf (UX-Review): reiner Text mit Farbpunkt, umgeschaltet wird nur links
+    R.techChipStyle = 'flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#5b6672;white-space:nowrap;padding:2px 0;margin:0 2px 5px 8px;cursor:default';
     R.techChipDotStyle = 'width:9px;height:9px;border-radius:50%;flex:none;background:' + techCol.line;
     R.targetGW = S.targetGW;
 
