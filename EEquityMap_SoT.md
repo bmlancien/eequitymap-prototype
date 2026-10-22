@@ -1841,14 +1841,22 @@ Einstiegs-Info oben sagt dasselbe.
 **Bestand** („i" am Schalter „Bestandsanlagen berücksichtigen"):
 
 > **Was bedeutet „Bestandsanlagen berücksichtigen"?**
-> Ohne diese Option zeigt EEquityMap eine Greenfield-Verteilung: Der Ausbau
-> wird so verteilt, als würde neu geplant — unabhängig davon, wo heute schon
-> Anlagen stehen.
-> Mit dieser Option bleibt die vorhandene Leistung bestehen. Für jeden
-> Landkreis bzw. jede Rasterzelle gilt: Liegt der verteilte Ausbau unter dem
-> Bestand, ist kein Zubau nötig. Liegt er darüber, ist die Differenz der Zubau.
-> Bestand wird also nicht zurückgebaut; er verringert nur, wie viel noch
-> zugebaut werden muss.
+> Standardmäßig zeigt EEquityMap eine **Greenfield-Verteilung**: Der Ausbau
+> wird so verteilt, als würde die räumliche Verteilung neu geplant –
+> unabhängig davon, wo heute bereits Anlagen stehen.
+> Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst
+> bestehen. Für jede Region bzw. Zelle wird geprüft:
+> - liegt der berechnete Ausbau **unterhalb des Bestands**, erfolgt kein
+>   zusätzlicher Zubau;
+> - liegt sie **oberhalb des Bestands**, entspricht die Differenz dem
+>   erforderlichen Zubau.
+>
+> Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel
+> zusätzliche Leistung noch erforderlich ist.
+
+(Text überarbeitet Session 2026-10-22 nach Vorlage des Teams; fett wie in der
+Vorlage; „Ausbauempfehlung" der Vorlage → „Ausbau" (Begriff aus R.1). Ebenso fett in „Was kann ich hier vergleichen?": „Wichtig" und „nicht
+miteinander".)
 
 **Begriffe** (neuer Absatz im Methodik-Abschnitt „Rahmen"):
 
