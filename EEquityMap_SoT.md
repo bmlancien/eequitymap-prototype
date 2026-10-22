@@ -1826,9 +1826,12 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 „i" an der Prinzipien-Überschrift, standardmäßig **zugeklappt**):
 
 > **Was kann ich hier tun?**
-> Wählen Sie ein Gerechtigkeitsprinzip, um zu sehen, wie es den Ausbau
-> verteilt. Wählen Sie mehrere, um zu sehen, wo sie übereinstimmen, wo sie
-> voneinander abweichen und was den Konsens begrenzt.
+> Wählen Sie ein Gerechtigkeitsprinzip, um eine Verteilung zu analysieren.
+> Wählen Sie mehrere Prinzipien, um zu sehen, wo sie übereinstimmen, wo sie
+> sich unterscheiden und was den gemeinsamen Ausbau begrenzt.
+
+(Text überarbeitet Session 2026-10-22 nach Vorlage des Teams; dort
+„Gerechtigkeitsvorstellung", hier gemäß R.2 „Gerechtigkeitsprinzip".)
 
 **Entfällt (Session 2026-10-22):** der Kasten unter der Prinzipienliste bei genau
 einem gewählten Prinzip („Sie können ein zweites Prinzip hinzufügen, um zu
