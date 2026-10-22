@@ -18,6 +18,9 @@
   a:hover{color:#111a21}
   ::selection{background:#dbdde0}
   .num{font-variant-numeric:tabular-nums}
+  /* Schmalere Bildschirme: Unter-Reiter kleiner, rechte Spalte schmaler, Technologie-Anzeige neben den fünf Reitern
+     ausgeblendet (der Schalter links ist dort sichtbar) — damit die Reiterzeile nicht umbricht (UX-Review) */
+  @media (max-width:1360px){ .subtab{font-size:13px !important;padding-left:6px !important;padding-right:6px !important} .rightcol{width:300px !important} .techchip-sub{display:none !important} }
   input,button{font-family:inherit}
   input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#c7ccd1;outline:none}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#1f2731;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
@@ -87,7 +90,7 @@
   <div style="display:flex;flex:1;min-height:0;margin:0 14px 12px;border:1px solid #b9c1c8;border-radius:0 9px 9px 9px;overflow:hidden;background:#fff">
 
     <!-- ============ LEFT COLUMN ============ -->
-    <aside class="scroll" style="width:312px;flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 0">
+    <aside class="scroll" style="{{ leftColWidth }};flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 0">
       <!-- Bereich „Bestand & Potenziale": links nur die Technologie (Inhalt folgt, R.13) -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Technologie</div>
@@ -187,12 +190,8 @@
         </sc-for>
       </div>
 
-      <div style="margin:12px 0 4px">
-        <div style="position:relative;height:15px;margin-bottom:3px">
-          <sc-for list="{{ targetMarks }}" as="mk" hint-placeholder-count="3">
-            <div title="{{ mk.title }}" style="{{ mk.style }}">▲{{ mk.label }}</div>
-          </sc-for>
-        </div>
+      <!-- Ohne ▲-Jahresmarken über dem Regler: die Ziel-Knöpfe darüber nennen die Jahre schon (UX-Review) -->
+      <div style="margin:14px 0 4px">
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7680;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
       </div>
@@ -259,7 +258,7 @@
         <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:4px 2px 10px;letter-spacing:-.2px">{{ bpHead }}</div>
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-for list="{{ bpTabs }}" as="bt" hint-placeholder-count="3">
-            <button onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
+            <button class="subtab" onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
           </sc-for>
           <div style="flex:1"></div>
           <span title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
@@ -368,12 +367,12 @@
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
-              <button onClick="{{ tb.onClick }}" title="{{ tb.title }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
+              <button class="subtab" onClick="{{ tb.onClick }}" title="{{ tb.title }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
             </sc-for>
           </sc-if>
           <!-- Technologie-Anzeige (kein Knopf): auf jedem Reiter sichtbar, Punktfarbe wie die Hub-Box (blau = Wind, gelb = PV) -->
           <div style="flex:1"></div>
-          <span title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
+          <span class="techchip-sub" title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
         </div>
       </sc-if>
 
@@ -416,7 +415,7 @@
             <sc-if value="{{ galleryAll }}" hint-placeholder-val="{{ false }}">
               <div style="margin-bottom:12px">
                 
-                <div style="font-size: 16px; color: #1b2126; line-height: 1.4; font-weight: 600; text-wrap: pretty; padding-top: 16px">So unterschiedlich verteilen die Prinzipien den Ausbau — und wo sie sich einig sind.</div><div style="font-size:14px;color:#5b6672;margin-top:5px">Je eine Karte pro Prinzip · dunkel = viel empfohlener Zubau</div>
+                <div style="font-size: 16px; color: #1b2126; line-height: 1.4; font-weight: 600; text-wrap: pretty; padding-top: 16px">So unterschiedlich verteilen die Prinzipien den Ausbau — und wo sie sich einig sind.</div><div style="font-size:14px;color:#5b6672;margin-top:5px">Je eine Karte pro Prinzip · dunkel = viel empfohlener Zubau · Farbskala je Karte</div>
               </div>
             </sc-if>
             <div style="{{ galleryGridStyle }}">
@@ -846,7 +845,7 @@
     </main>
 
     <!-- ============ RIGHT COLUMN ============ -->
-    <aside class="scroll" style="width:340px;flex:none;background:#fff;border-left:1px solid #dde1e5;overflow-y:auto;padding:18px 18px 40px">
+    <aside class="scroll rightcol" style="width:340px;flex:none;background:#fff;border-left:1px solid #dde1e5;overflow-y:auto;padding:18px 18px 40px">
       <!-- Bestand & Potenziale: Deutschland gesamt bzw. gewählter Landkreis / Gemeinde / Rohdaten-Objekt (R.13) -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
@@ -1293,7 +1292,7 @@
           <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #b9c1c8;font-size:12px;font-weight:600;color:#5b6672;margin-right:6px;flex:none">3</span>Regional</span>
         </div>
         <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Mit dem Bestand beginnen →</button>
-        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1f2a33;cursor:pointer;font-weight:500">Mehr dazu</span></div>
+        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1f2a33;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
       </div>
     </div>
   </sc-if>
@@ -1662,7 +1661,6 @@ class Component extends DCLogic {
     this.techColors = { wind: { bg: '#eef4f9', line: '#6f9fc6', seg: '#dce9f4' }, pv: { bg: '#fdf8e8', line: '#e3c35a', seg: '#faecbb' } };
     this.targets = { z2030: 115, z2035: 160, z2045: 215 };
     this.targetLabels = { z2030: 'Ziel 2030', z2035: 'Ziel 2035', z2045: 'Ziel 2045' };
-    this.marks = [{ y: '2030', gw: 115 }, { y: '2035', gw: 160 }, { y: '2045', gw: 215 }];
     this.principles = [
       { id: 'verbrauchsnah', name: 'Verbrauchsnah', color: '#D55E00', basic: true, available: true, info: 'Der Zubau folgt dem Stromverbrauch. Regionen mit hoher Nachfrage erhalten mehr Zubau, um Netztransporte zu verringern.', explain: 'Verbrauchsnah verteilt den Ausbau dorthin, wo viel Strom verbraucht wird.' },
       { id: 'bevoelkerungsnah', name: 'Bevölkerungsnah', color: '#0072B2', basic: true, available: true, info: 'Der Zubau folgt der Bevölkerungsdichte. Wer den Strom nutzt, trägt die Anlagen auch in der eigenen Nähe.', explain: 'Bevölkerungsnah verteilt den Ausbau dorthin, wo mehr Menschen wohnen.' },
@@ -2279,7 +2277,7 @@ class Component extends DCLogic {
       regionComputedDeRec: this.natBudgetFor(krsId), regionComputedOwn: S.regionOwnTarget != null,
       regionComputedTargetGW: S.targetGW, regionComputedSelRaw: S.selectedRegional != null ? S.selectedRegional.slice() : null };
     if (this._regionRaf) cancelAnimationFrame(this._regionRaf);
-    const DUR = 5000;
+    const DUR = 1500;  // Mock-Dauer; kürzer seit UX-Review (5 s blockierten bei jedem „Neu berechnen“)
     const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
     const t0 = clock();
     this.setState({ regionComputing: true, regionProgress: 0 });
@@ -3556,7 +3554,6 @@ class Component extends DCLogic {
       onClick: () => { this.setState({ targetKey: k, targetGW: this.targets[k], freeTarget: false }); this.startReveal(); },
       style: this.chip(S.targetKey === k && !S.freeTarget)
     }));
-    R.targetMarks = this.marks.map(m => ({ label: ' ' + m.y, title: m.gw + ' GW', style: 'position:absolute;left:' + ((m.gw - 60) / 200 * 100).toFixed(1) + '%;transform:translateX(-50%);font-size:14px;color:#6b7680;white-space:nowrap' }));
     R.onSlider = e => { this.setState({ targetGW: +e.target.value, targetKey: null, freeTarget: true }); this.startReveal(); };
     // Ausbauziel: Deutschland mit Zieljahren; in der Region ein eigener Regler für den Landkreis (R.5)
     R.showNatTarget = !isRegion;
@@ -4178,6 +4175,8 @@ class Component extends DCLogic {
     R.bpGroups = []; R.bpKrs = []; R.bpKrsBorders = []; R.bpTabs = []; R.bpRows = [];
     if (area === 'bestand') this.buildBestand(R, S, isExt);
     R.areaBestand = area === 'bestand';
+    // Bestand & Potenziale: links steht nur der Technologie-Schalter — schmale Spalte, mehr Platz für die Karte
+    R.leftColWidth = R.areaBestand ? 'width:280px' : 'width:312px';
     // „Regional" braucht mindestens ein bundesweites Prinzip — ohne gibt es kein Regionsbudget (Hinweis statt Region)
     const natCount = S.selected.filter(avail).length;
     R.areaRegionNoPrinc = area === 'region' && natCount === 0;

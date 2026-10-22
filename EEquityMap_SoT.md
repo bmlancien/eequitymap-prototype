@@ -2008,3 +2008,20 @@ Kleine Korrekturen nach einem heuristischen Review der Live-Version:
 - **Erst-Hinweis „Startet mit denselben Prinzipien …":** sitzt rechts neben der
   ersten Zeile der Prinzipienliste (Oberkante bündig, Zeiger oben), also
   unterhalb von Headline und Reitern.
+- **Ausbauziel (Deutschland):** keine ▲-Jahresmarken mehr über dem Regler; die
+  Knöpfe „Ziel 2030/2035/2045" nennen die Jahre. Der Regler bleibt für Werte
+  dazwischen.
+- **Mock-Rechenzeit der Region:** 1,5 s statt 5 s.
+- **Bestand & Potenziale:** linke Spalte 280 px statt 312 px (dort steht nur
+  der Technologie-Schalter).
+- **Schmalere Bildschirme (≤ 1360 px):** Unter-Reiter 13 px mit kleinerem
+  Innenabstand, rechte Spalte 300 px statt 340 px, Technologie-Anzeige neben
+  den fünf Reitern ausgeblendet (der Schalter links ist sichtbar). Bewusste
+  Ausnahme zur 14-px-Regel (§K), die für Fließ- und Infotext gilt, nicht für
+  Reiterbeschriftungen.
+- **Startoverlay:** „Mehr dazu" unterstrichen (als Link erkennbar).
+- **Galerie:** Unterzeile „Je eine Karte pro Prinzip · dunkel = viel
+  empfohlener Zubau · Farbskala je Karte".
+- **Erweitert bleibt im Kopf:** Der Schalter ändert nicht nur die Karte
+  (auch mehr Prinzipien in Liste und Galerie, Paarmatrix, Rohdaten in
+  Bestand), daher kein Umzug an die Karte.
