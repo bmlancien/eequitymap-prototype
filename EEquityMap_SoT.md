@@ -1867,11 +1867,18 @@ miteinander".)
 **Begriffe** (neuer Absatz im Methodik-Abschnitt „Rahmen"):
 
 > **Ausbau, Bestand, Zubau**
-> Ausbau ist die installierte Leistung, die eine Verteilung insgesamt
-> vorsieht; das Ausbauziel gibt sie vor. Bestand ist die heute schon
-> installierte Leistung. Zubau ist die zusätzlich nötige Leistung:
-> Zubau = Ausbau − Bestand, mindestens 0. Ohne Berücksichtigung des Bestands
-> (Greenfield) ist der Zubau gleich dem Ausbau.
+> **Ausbau** bezeichnet die insgesamt vorgesehene installierte Leistung nach
+> der Verteilung.
+> **Bestand** ist die bereits vorhandene Leistung.
+> **Zubau** ist die zusätzlich erforderliche Leistung:
+> **Zubau = max(Ausbau − Bestand, 0)**
+> Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.
+
+(Text überarbeitet Session 2026-10-22 nach Vorlage des Teams, als Absatz in
+der Methodik, keine eigene Infobox. Die Überschrift der Vorlage „Ausbau =
+Bestand + Zubau" entfällt: Sie widerspricht der max-Formel, wo der Bestand den
+Ausbau übersteigt (s. R.1). Der alternative Greenfield-Satz entfällt, weil die
+Infobox „Bestandsanlagen berücksichtigen" Greenfield schon erklärt.)
 
 ### R.13 Reiter „Bestand & Potenziale" (neu)
 
