@@ -1950,3 +1950,20 @@ Kleine Korrekturen nach einem heuristischen Review der Live-Version:
   Unstrut-Hainich-Kreis"); voller Name im Tooltip.
 - **„Vergleich teilen"** ist ausgegraut, bis A und B gewählt sind (Tooltip
   „Wählen Sie zuerst A und B.").
+- **Unter-Reiter immer gleich (ändert R.3/N):** In „Deutschland" und „Regional"
+  stehen immer dieselben fünf Reiter an derselben Stelle. „Was begrenzt?",
+  „Dissens" und „Einzelverteilungen" sind unter zwei Prinzipien ausgegraut
+  (Tooltip „Ab zwei gewählten Prinzipien verfügbar."). Nur der erste Reiter
+  benennt, was er zeigt: „Übersicht" (0) · „Einzelverteilung" (1) ·
+  „Konsens" (ab 2). Reiter etwas schmaler (Innenabstand 11 px).
+- **Startoverlay:** Unter dem Satz „Jede solche Vorstellung …" stehen die drei
+  Schritte wie die Bereichs-Tabs: ① Bestand & Potenziale → ② Deutschland →
+  ③ Regional. Knopf „Mit dem Bestand beginnen →" (vorher „Los geht's →"),
+  weil er nach Schritt 1 führt und nicht zu den Prinzipien.
+- **„Was begrenzt den Konsens?"** steht in der rechten Spalte nur noch im
+  Reiter „Was begrenzt?", nicht mehr zusätzlich im Reiter „Konsens".
+- **Zahlenformat:** GW ab 10 mit einer Nachkommastelle („160,0 GW",
+  „145,0 GW"), darunter mit zwei („0,35 GW"); Bestand & Potenziale gesamt
+  ebenfalls eine („62,0 GW"). MW unverändert.
+- **Zahlenschrift:** Zahlen in der Textschrift (IBM Plex Sans) mit
+  Tabellenziffern statt IBM Plex Mono.

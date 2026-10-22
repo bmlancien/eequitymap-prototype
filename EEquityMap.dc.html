@@ -17,7 +17,7 @@
   a{color:#1f2a33;text-decoration:none}
   a:hover{color:#111a21}
   ::selection{background:#dbdde0}
-  .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums}
   input,button{font-family:inherit}
   input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#c7ccd1;outline:none}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#1f2731;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
@@ -368,7 +368,7 @@
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
-              <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
+              <button onClick="{{ tb.onClick }}" title="{{ tb.title }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.dotStyle }}"></span></button>
             </sc-for>
           </sc-if>
           <!-- Technologie-Chip: auf jedem Reiter sichtbar, Farbe wie die Hub-Box (blau = Wind, gelb = PV) -->
@@ -1284,8 +1284,16 @@
             </div>
           </sc-for>
         </div>
-        <p style="font-size:14px;line-height:1.6;color:#5b6672;margin:0 0 22px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
-        <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Los geht's →</button>
+        <p style="font-size:14px;line-height:1.6;color:#5b6672;margin:0 0 14px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
+        <!-- Die drei Schritte = die drei Bereichs-Tabs (R.3); der Knopf führt zu Schritt 1 (UX-Review) -->
+        <div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:#1b2126;margin:0 0 22px">
+          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #b9c1c8;font-size:12px;font-weight:600;color:#5b6672;margin-right:6px;flex:none">1</span>Bestand &amp; Potenziale</span>
+          <span style="color:#9aa3ab">→</span>
+          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #b9c1c8;font-size:12px;font-weight:600;color:#5b6672;margin-right:6px;flex:none">2</span>Deutschland</span>
+          <span style="color:#9aa3ab">→</span>
+          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #b9c1c8;font-size:12px;font-weight:600;color:#5b6672;margin-right:6px;flex:none">3</span>Regional</span>
+        </div>
+        <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Mit dem Bestand beginnen →</button>
         <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1f2a33;cursor:pointer;font-weight:500">Mehr dazu</span></div>
       </div>
     </div>
@@ -2305,7 +2313,8 @@ class Component extends DCLogic {
   }
 
   // ---- helpers ----
-  fmt(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
+  // GW: ab 10 GW eine Nachkommastelle („160,0 GW"), darunter zwei („0,35 GW") — keine Scheingenauigkeit (UX-Review)
+  fmt(n) { return Math.abs(n) >= 10 ? (Math.round(n * 10) / 10).toFixed(1).replace('.', ',') : (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
   pct(n, d) { return (n * 100).toFixed(d == null ? 1 : d).replace('.', ',') + ' %'; }
   // Regionsansicht rechnet in MW statt GW (Zellwerte sind sonst durchgängig „0,00 GW") — fest nach
   // Modus, nicht adaptiv je Wert. MW folgt einer eigenen, gröberen Rundung (ganze Zahl oder eine
@@ -2662,7 +2671,7 @@ class Component extends DCLogic {
           cellsOut.push({
             text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
             swatchStyle: 'display:none', innerStyle: flat,
-            style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
+            style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
           });
         });
       });
@@ -3081,7 +3090,7 @@ class Component extends DCLogic {
       const hubRowNorm = r => r.items
         ? Object.assign({ v: '', vStyle: '', rowStyle: 'display:none', listStyle: 'font-size:14px;padding:5px 0 4px' }, r)
         : Object.assign({ items: [], rowStyle: HUB_ROW, listStyle: 'display:none' }, r);
-      const numCss = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;font-weight:600;text-align:right";
+      const numCss = "font-variant-numeric:tabular-nums;color:#1b2126;font-weight:600;text-align:right";
       const txtCss = 'color:#1b2126;text-align:right';
       R.hubSumCards = [0, 1].map(k => {
         const o = pair[k] ? objById[pair[k]] : null;
@@ -3129,7 +3138,7 @@ class Component extends DCLogic {
       }))).concat([{ label: '', style: '', onClick: () => {} }]);
       let sortedScen = hubScen.slice();
       if (hs) { const def = sortDefs.find(d => d.k === hs.k); sortedScen.sort((x, y) => { const a = def.val(x), b = def.val(y); return (a < b ? -1 : a > b ? 1 : 0) * hs.d; }); }
-      const numCell = "font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#1b2126;text-align:right;white-space:nowrap";
+      const numCell = "font-variant-numeric:tabular-nums;color:#1b2126;text-align:right;white-space:nowrap";
       const mkRows = list => list.map((sc, ix) => {
         const pi = pair.indexOf(sc.id);
         return {
@@ -3627,19 +3636,23 @@ class Component extends DCLogic {
     R.showTabs = true;
     // Reihe existiert, sobald Tabs ODER der Speichern-Button etwas zu zeigen haben (§N).
     R.showTabRow = true;
-    let tabDefs;
-    if (stufe >= 2) {
-      tabDefs = [{ id: 'konsens', label: 'Konsens' }, { id: 'minimum', label: 'Was begrenzt?' }, { id: 'konflikt', label: 'Dissens' }, { id: 'verteilungen', label: 'Einzelverteilungen' }];
-    } else {
-      tabDefs = [{ id: 'konsens', label: stufe === 1 ? 'Einzelverteilung' : 'Übersicht' }];
-    }
-    tabDefs.push({ id: 'szenarien', label: 'Szenarien vergleichen' });
+    // Immer dieselben fünf Reiter an derselben Stelle (UX-Review): Ansichten, die erst ab zwei Prinzipien Sinn
+    // ergeben, sind darunter ausgegraut statt ausgeblendet. Nur der erste Reiter benennt, was er gerade zeigt.
+    const needTwo = stufe < 2;
+    const tabDefs = [
+      { id: 'konsens', label: stufe >= 2 ? 'Konsens' : stufe === 1 ? 'Einzelverteilung' : 'Übersicht' },
+      { id: 'minimum', label: 'Was begrenzt?', off: needTwo },
+      { id: 'konflikt', label: 'Dissens', off: needTwo },
+      { id: 'verteilungen', label: 'Einzelverteilungen', off: needTwo },
+      { id: 'szenarien', label: 'Szenarien vergleichen' }
+    ];
     const activeTab = view === 'szenarien' ? 'szenarien'
       : (stufe >= 2 && ['konsens', 'konflikt', 'minimum', 'verteilungen'].includes(S.tab) ? S.tab : 'konsens');
     R.tabs = tabDefs.map(t => ({
       label: t.label,
-      onClick: () => this.setState(this.dismissTrioHint({ tab: t.id, hubMenu: null })),
-      style: this.tabBtn(activeTab === t.id),
+      title: t.off ? 'Ab zwei gewählten Prinzipien verfügbar.' : '',
+      onClick: t.off ? (() => {}) : () => this.setState(this.dismissTrioHint({ tab: t.id, hubMenu: null })),
+      style: t.off ? this.tabBtn(false) + ';color:#b4bbc1;cursor:not-allowed' : this.tabBtn(activeTab === t.id),
       // Grüner Punkt am Hub-Reiter, sobald ein Szenario gespeichert ist — bewusste Ausnahme von J2 (R.9);
       // nur, wenn der Hub DIESES Bereichs Szenarien enthält (Deutschland bzw. aktueller Landkreis), Technologie egal
       dotStyle: t.id === 'szenarien' && scenariosAll.some(sc => isRegion ? (sc.isRegion && sc.regionKrsId === S.region.krsId) : !sc.isRegion) ? 'display:inline-block;width:8px;height:8px;border-radius:50%;background:#57c4ab;margin-left:7px;vertical-align:1px' : 'display:none'
@@ -3888,7 +3901,8 @@ class Component extends DCLogic {
           // konsens & minimum → Was begrenzt den Konsens?
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
           R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, false) + ')';  // Budget immer in GW
-          R.anBlockers = true; mkBlockers();
+          // Im Reiter „Konsens" nicht doppelt: dafür gibt es den Reiter „Was begrenzt?" (UX-Review)
+          R.anBlockers = view === 'minimum'; mkBlockers();
         }
       }
       R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
@@ -4354,10 +4368,10 @@ class Component extends DCLogic {
       R.bpRTitle = 'Deutschland gesamt';
       const T = fld => PotentialData.total(tech, fld);
       R.bpRows = tab === 'bestand'
-        ? [{ k: 'Installierte Leistung', v: nf(T('bestandMW') / 1000, 2) + ' GW' }]
+        ? [{ k: 'Installierte Leistung', v: nf(T('bestandMW') / 1000, 1) + ' GW' }]
         : tab === 'planung'
-          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh/a' }]
-          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 2) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh/a' }];
+          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 1) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh/a' }]
+          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 1) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh/a' }];
       R.bpRSub = tab === 'bestand' ? 'Heute installierte Leistung.' : tab === 'planung' ? 'Offiziell ausgewiesene Windgebiete.' : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
     }
     // Nächster Schritt (2): nur in der Deutschland-Übersicht, nicht bei einem gewählten Ort
@@ -4372,7 +4386,7 @@ class Component extends DCLogic {
   segTech(tech, on) { const c = this.techColors[tech]; return this.segLight(on) + (on ? ';background:' + c.seg + ';box-shadow:inset 0 0 0 1px ' + c.line : ''); }
   segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
   chip(on) { return 'flex:1;border:1px solid ' + (on ? '#1f2a33' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#1f2a33' : '#fff') + ';color:' + (on ? '#fff' : '#5b6672'); }
-  tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 14px;cursor:pointer;color:' + (on ? '#1f2a33' : '#6b7680') + ';border-bottom:2px solid ' + (on ? '#1f2a33' : 'transparent') + ';margin-bottom:-1px'; }
+  tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 11px;cursor:pointer;color:' + (on ? '#1f2a33' : '#6b7680') + ';border-bottom:2px solid ' + (on ? '#1f2a33' : 'transparent') + ';margin-bottom:-1px'; }
   switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#1f2a33' : '#c7ccd1'); }
   knobStyle(on) { return 'position:absolute;top:2px;left:' + (on ? '17px' : '2px') + ';width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s'; }
 
