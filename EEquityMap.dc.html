@@ -17,6 +17,10 @@
   a{color:#1f2a33;text-decoration:none}
   a:hover{color:#111a21}
   ::selection{background:#dbdde0}
+  /* Gestaltungsregeln (UX-Review „weniger generisch"): Radien 4 px (Bedienelemente) / 8 px (Rahmen, Popups, Dialoge);
+     Schatten nur für Schwebendes: 0 4px 16px rgba(15,30,45,.16) (Popups) bzw. 0 16px 48px rgba(15,30,45,.22) (Dialoge);
+     Schrift 12 (Versal-Labels, Badges) · 14 (Text) · 16 (Zwischentitel) · 20 (Spaltentitel) · 24 (Headline) · 32 (Kennzahl);
+     Kennzahlen ohne Kasten — Trennung durch Linien und Weißraum, Hinweise als Text mit dünner Linie links. */
   .num{font-variant-numeric:tabular-nums}
   /* Schmalere Bildschirme: Unter-Reiter kleiner, rechte Spalte schmaler, Technologie-Anzeige neben den fünf Reitern
      ausgeblendet (der Schalter links ist dort sichtbar) — damit die Reiterzeile nicht umbricht (UX-Review) */
@@ -35,10 +39,10 @@
      per CSS-Loop — bewegt sich dadurch von links nach rechts, verlangsamt sich asymptotisch und bleibt
      unter 100 %, bis die Rechnung tatsächlich fertig ist. Die kurze Transition glättet nur zwischen zwei
      Frames, behauptet keine Dauer. */
-  .loadbar{position:relative;width:100%;height:6px;background:#e2e5e8;border-radius:3px;overflow:hidden}
-  .loadbar-fill{position:absolute;top:0;left:0;bottom:0;background:#1f2a33;border-radius:3px;transition:width .2s linear}
+  .loadbar{position:relative;width:100%;height:6px;background:#e2e5e8;border-radius:4px;overflow:hidden}
+  .loadbar-fill{position:absolute;top:0;left:0;bottom:0;background:#1f2a33;border-radius:4px;transition:width .2s linear}
   .scroll::-webkit-scrollbar{width:9px}
-  .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:5px;border:2px solid transparent;background-clip:padding-box}
+  .scroll::-webkit-scrollbar-thumb{background:#c7ccd1;border-radius:4px;border:2px solid transparent;background-clip:padding-box}
   .hx{transition:opacity .15s}
 </style>
 </helmet>
@@ -60,17 +64,17 @@
     <img src="eequitymap-logo.png" alt="EEquityMap" style="height:46px;width:auto;display:block;flex:none">
     <!-- Erklär-Einträge als schlichte Textlinks (kein Rahmen) — der einzige Knopf im Kopf ist die Aktion „Daten herunterladen" -->
     <nav style="display:flex;align-items:center;gap:2px;margin-left:6px">
-      <button onClick="{{ reopenIntro }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Was ist das?</button>
-      <button onClick="{{ openMethod }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Methodik</button>
-      <button onClick="{{ openAbout }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Über das Projekt</button>
+      <button onClick="{{ reopenIntro }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Was ist das?</button>
+      <button onClick="{{ openMethod }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Methodik</button>
+      <button onClick="{{ openAbout }}" style="background:none;border:none;color:#1b2126;font-size:14px;font-weight:500;padding:6px 9px;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#f1f3f4">Über das Projekt</button>
     </nav>
     <div style="flex:1"></div>
     <!-- Daten herunterladen: Aktion, rechts vor dem Modus-Umschalter. Prototyp: ohne Funktion. -->
-    <button style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap">
+    <button style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #ccd2d7;color:#1b2126;font-size:14px;padding:5px 11px;border-radius:4px;cursor:pointer;white-space:nowrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v12"></path><path d="M7 11l5 5 5-5"></path><path d="M5 21h14"></path></svg>
       Daten herunterladen
     </button>
-    <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+    <div style="display:flex;background:#eff1f3;border-radius:4px;padding:3px;gap:2px">
       <button onClick="{{ setBasic }}" style="{{ modeBasicStyle }}">Basic</button>
       <button onClick="{{ setErweitert }}" style="{{ modeExtStyle }}">Erweitert</button>
     </div>
@@ -84,17 +88,17 @@
       <button onClick="{{ at.onClick }}" title="{{ at.title }}" style="{{ at.style }}" style-hover="{{ at.hover }}"><span style="{{ at.numStyle }}">{{ at.num }}</span>{{ at.label }}</button>
     </sc-for>
     <div style="flex:1"></div>
-    <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;margin-bottom:6px;background:#fff;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:6px 10px;border-radius:6px">
+    <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;margin-bottom:6px;background:#fff;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:6px 10px;border-radius:4px">
   </div>
 
-  <div style="display:flex;flex:1;min-height:0;margin:0 14px 12px;border:1px solid #b9c1c8;border-radius:0 9px 9px 9px;overflow:hidden;background:#fff">
+  <div style="display:flex;flex:1;min-height:0;margin:0 14px 12px;border:1px solid #b9c1c8;border-radius:0 8px 8px 8px;overflow:hidden;background:#fff">
 
     <!-- ============ LEFT COLUMN ============ -->
     <aside class="scroll" style="{{ leftColWidth }};flex:none;background:#fff;border-right:1px solid #dde1e5;overflow-y:auto;padding:18px 16px 0">
       <!-- Bereich „Bestand & Potenziale": links nur die Technologie (Inhalt folgt, R.13) -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Technologie</div>
-        <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+        <div style="display:flex;background:#eff1f3;border-radius:4px;padding:3px;gap:2px">
           <button onClick="{{ setWind }}" style="{{ techWindStyle }}">Wind</button>
           <button onClick="{{ setPV }}" style="{{ techPVStyle }}">Freiflächen-PV</button>
         </div>
@@ -104,13 +108,13 @@
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
         <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
              leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
-        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#6b7680;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:7px;padding:7px 10px;margin-bottom:14px;line-height:1.4;display:flex;align-items:center;gap:6px;white-space:nowrap">
+        <div onClick="{{ toggleNatBreadcrumb }}" style="cursor:pointer;font-size:14px;font-weight:500;color:#6b7680;background:#f4f6f6;border:1px solid #e5e8ea;border-radius:4px;padding:7px 10px;margin-bottom:14px;line-height:1.4;display:flex;align-items:center;gap:6px;white-space:nowrap">
           <!-- Zugeklappt eine Zeile: Farbpunkte + Anzahl. Die Namen stehen nur aufgeklappt (Chips darunter) —
                nicht doppelt. -->
           <span>Bundesweit:</span>
           <span style="display:flex;align-items:center;gap:3px;flex:none">
             <sc-for list="{{ natInline }}" as="ni" hint-placeholder-count="2">
-              <span style="flex:none;width:9px;height:9px;border-radius:3px;background:{{ ni.color }}"></span>
+              <span style="flex:none;width:9px;height:9px;border-radius:4px;background:{{ ni.color }}"></span>
             </sc-for>
           </span>
           <span style="color:#5b6672">{{ natCountText }}</span>
@@ -120,7 +124,7 @@
         <sc-if value="{{ natBreadcrumbOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 14px">
             <sc-for list="{{ natChips }}" as="nc" hint-placeholder-count="2">
-              <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:#5b6672;background:#f4f6f6;border:1px solid #e2e6e8;border-radius:6px;padding:3px 8px"><span style="width:9px;height:9px;border-radius:3px;background:{{ nc.color }}"></span>{{ nc.name }}</span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:#5b6672;background:#f4f6f6;border:1px solid #e2e6e8;border-radius:4px;padding:3px 8px"><span style="width:9px;height:9px;border-radius:4px;background:{{ nc.color }}"></span>{{ nc.name }}</span>
             </sc-for>
           </div>
         </sc-if>
@@ -130,13 +134,13 @@
            Akzentbalken in der Markenfarbe, kräftigere Type. -->
       <div data-princ-head style="display:flex;align-items:center;gap:8px;position:relative">
         <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
-        <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
+        <span style="font-size:16px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
         <span onClick="{{ toggleIntroInfo }}" style="{{ introInfoBtnStyle }}">i</span>
         <!-- Erst-Hinweis beim ersten Betreten einer Region: Popup RECHTS neben der ersten Listenzeile (über der Mitte,
              unterhalb von Headline und Reitern), damit es weder die Prinzipienliste noch die Headline verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder
              bei jedem Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
         <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
-          <div role="button" data-anchor-popup="[data-princ-row]" data-anchor-align="top" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+          <div role="button" data-anchor-popup="[data-princ-row]" data-anchor-align="top" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
             <span style="position:absolute;left:-5px;top:14px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
             Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.
             <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
@@ -171,7 +175,7 @@
       <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#1b2126;margin:26px 0 12px">RAHMEN</div>
 
       <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Technologie</div>
-      <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin-bottom:6px">
+      <div style="display:flex;background:#eff1f3;border-radius:4px;padding:3px;gap:2px;margin-bottom:6px">
         <button onClick="{{ setWind }}" style="{{ techWindStyle }}">Wind</button>
         <button onClick="{{ setPV }}" style="{{ techPVStyle }}">Freiflächen-PV</button>
       </div>
@@ -235,7 +239,7 @@
           <!-- Erst-Hinweis (einmal pro Sitzung): Popup RECHTS neben dem Knopf (über der Mitte), damit es keine Eingaben
                verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder beim ersten Klick irgendwo. -->
           <sc-if value="{{ saveHintPopup }}" hint-placeholder-val="{{ false }}">
-            <div role="button" data-anchor-popup="[data-save-btn]" onClick="{{ dismissSaveHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+            <div role="button" data-anchor-popup="[data-save-btn]" onClick="{{ dismissSaveHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
               <span style="position:absolute;left:-5px;top:50%;margin-top:-5px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
               Speichern Sie diese Einstellung, um sie später zu vergleichen.
               <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
@@ -255,7 +259,7 @@
       <!-- Bereich „Bestand & Potenziale" (R.13): Ausgangspunkt — heutiger Bestand, Potenzial- und Planungsflächen.
            Die einzige zoombare Karte des Werkzeugs (Landkreise → Gemeinden nach Zoomstufe). -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;margin:4px 2px 10px;letter-spacing:-.2px">{{ bpHead }}</div>
+        <div style="font-size:24px;font-weight:600;line-height:1.25;color:#1b2126;margin:4px 2px 10px;letter-spacing:-.2px">{{ bpHead }}</div>
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #d7dbdf;margin-bottom:10px;flex:none">
           <sc-for list="{{ bpTabs }}" as="bt" hint-placeholder-count="3">
             <button class="subtab" onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
@@ -264,7 +268,7 @@
           <span title="{{ techChipTitle }}" style="{{ techChipStyle }}"><span style="{{ techChipDotStyle }}"></span>{{ techChipLabel }}</span>
         </div>
         <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px 10px">{{ bpCaption }}</div>
-        <div ref="{{ bzWrapRef }}" style="flex:1;min-height:420px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;overflow:hidden">
+        <div ref="{{ bzWrapRef }}" style="flex:1;min-height:420px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:8px;overflow:hidden">
           <svg ref="{{ bzAttachRef }}" viewBox="0 0 480 628.4" preserveAspectRatio="xMidYMid meet" onClick="{{ bpClearSel }}" style="position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);touch-action:none;cursor:grab;user-select:none">
             <g ref="{{ bzGRef }}">
               <sc-for list="{{ bpKrs }}" as="bk" hint-placeholder-count="40">
@@ -292,11 +296,11 @@
             </g>
           </svg>
           <!-- Hover: Name + Wert (Text und Position setzt der Zeiger-Listener direkt) -->
-          <div ref="{{ bzTipRef }}" style="display:none;position:absolute;z-index:5;pointer-events:none;background:#1f2a33;color:#fff;font-size:14px;padding:5px 9px;border-radius:6px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2)"></div>
+          <div ref="{{ bzTipRef }}" style="display:none;position:absolute;z-index:5;pointer-events:none;background:#1f2a33;color:#fff;font-size:14px;padding:5px 9px;border-radius:4px;white-space:nowrap;box-shadow:0 4px 16px rgba(15,30,45,.16)"></div>
           <!-- Administrativ / Rohdaten (nur Erweitert), Ecke oben rechts wie der Ansichts-Umschalter der Region -->
           <sc-if value="{{ bpShowModeToggle }}" hint-placeholder-val="{{ false }}">
-            <div style="position:absolute;top:10px;right:10px;background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
-              <div style="display:flex;background:#eff1f3;border-radius:6px;padding:2px;gap:2px">
+            <div style="position:absolute;top:10px;right:10px;background:#fff;border:1px solid #dfe3e6;border-radius:8px;padding:3px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
+              <div style="display:flex;background:#eff1f3;border-radius:4px;padding:2px;gap:2px">
                 <button onClick="{{ setBpAdmin }}" style="{{ bpAdminStyle }}">Administrativ</button>
                 <button onClick="{{ setBpRaw }}" style="{{ bpRawStyle }}">Rohdaten</button>
               </div>
@@ -304,18 +308,18 @@
           </sc-if>
           <!-- Zoom-Knöpfe unten rechts -->
           <div style="position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
-            <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #d2d7db;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+            <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #d2d7db;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(15,30,45,.16)">
               <button onClick="{{ bpZoomIn }}" aria-label="Hineinzoomen" style="width:34px;height:32px;border:none;border-bottom:1px solid #e2e5e8;background:#fff;font-size:18px;color:#1f2a33;cursor:pointer" style-hover="background:#f1f3f4">+</button>
               <button onClick="{{ bpZoomOut }}" aria-label="Herauszoomen" style="width:34px;height:32px;border:none;background:#fff;font-size:18px;color:#1f2a33;cursor:pointer" style-hover="background:#f1f3f4">−</button>
             </div>
-            <button onClick="{{ bpZoomReset }}" style="background:#fff;border:1px solid #d2d7db;border-radius:8px;padding:6px 10px;font-size:14px;color:#1f2a33;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.08)" style-hover="background:#f1f3f4">Ganz Deutschland</button>
+            <button onClick="{{ bpZoomReset }}" style="background:#fff;border:1px solid #d2d7db;border-radius:8px;padding:6px 10px;font-size:14px;color:#1f2a33;cursor:pointer;white-space:nowrap;box-shadow:0 4px 16px rgba(15,30,45,.16)" style-hover="background:#f1f3f4">Ganz Deutschland</button>
           </div>
         </div>
         <!-- Legende unter der Karte -->
         <sc-if value="{{ bpShowLegend }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 2px 0">
             <span class="num" style="font-size:14px;color:#6b7680">{{ bpLegendMin }}</span>
-            <div style="width:150px;height:11px;border-radius:3px;background:{{ bpLegendGrad }}"></div>
+            <div style="width:150px;height:11px;border-radius:4px;background:{{ bpLegendGrad }}"></div>
             <span class="num" style="font-size:14px;color:#6b7680">{{ bpLegendMax }}</span>
             <span style="font-size:14px;color:#5b6672">{{ bpLegendTitle }}</span>
           </div>
@@ -344,14 +348,14 @@
             <!-- Eigenes Regionalziel (R.5): zweizeilig, als Abweichung von der DE-Empfehlung gekennzeichnet -->
             <div style="flex:1;display:flex;gap:12px;align-items:stretch">
               <span style="flex:none;width:4px;border-radius:2px;background:#1f2a33"></span>
-              <div style="font-size:22px;line-height:1.3;color:#1b2126;letter-spacing:-.2px">
+              <div style="font-size:24px;line-height:1.25;color:#1b2126;letter-spacing:-.2px">
                 <div style="font-weight:400;color:#5b6672">{{ headL1 }}</div>
                 <div style="font-weight:600">{{ headL2 }}</div>
               </div>
             </div>
           </sc-if>
           <sc-if value="{{ headOne }}" hint-placeholder-val="{{ true }}">
-            <div style="flex:1;font-size:22px;font-weight:600;line-height:1.28;color:#1b2126;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
+            <div style="flex:1;font-size:24px;font-weight:600;line-height:1.25;color:#1b2126;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
           </sc-if>
           <!-- „i" neben der Regions-Headline: Was passiert in der Detailauswertung? (R.4) -->
           <sc-if value="{{ showRegionDetailInfoBtn }}" hint-placeholder-val="{{ false }}">
@@ -379,7 +383,7 @@
       <!-- Single-View: Zurück zur Galerie + Kennzeichnung -->
       <sc-if value="{{ isSingleView }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:12px;margin:0 2px 8px;flex-wrap:wrap;flex:none">
-          <button onClick="{{ backToGallery }}" style="background:#eef2f1;border:1px solid #d4d6d9;border-radius:7px;padding:5px 11px;font-size:14px;color:#1f2a33;font-weight:600;cursor:pointer">← Alle Prinzipien vergleichen</button>
+          <button onClick="{{ backToGallery }}" style="background:#eef2f1;border:1px solid #d4d6d9;border-radius:4px;padding:5px 11px;font-size:14px;color:#1f2a33;font-weight:600;cursor:pointer">← Alle Prinzipien vergleichen</button>
           <span style="font-size:14px;color:#6b7680;font-style:italic">Einzelverteilung eines Prinzips — nicht der Konsens.</span>
         </div>
       </sc-if>
@@ -388,7 +392,7 @@
            Reiter zeigt — keine Farblegende in Worten, die steht unter der Karte. -->
       <div style="flex:none;margin:0 2px 10px">
         <sc-if value="{{ showKonfliktToggle }}" hint-placeholder-val="{{ false }}">
-          <div style="display:inline-flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px;margin:8px 0 4px">
+          <div style="display:inline-flex;background:#eff1f3;border-radius:4px;padding:3px;gap:2px;margin:8px 0 4px">
             <button onClick="{{ setKonfliktDissens }}" style="{{ konfliktDissensStyle }}">Wie stark?</button>
             <button onClick="{{ setKonfliktAnders }}" style="{{ konfliktAndersStyle }}">Welche Prinzipien?</button>
           </div>
@@ -401,7 +405,7 @@
       <!-- Einmaliger Hinweis über der Deutschlandkarte (R.4): verschwindet beim ersten Landkreis-Klick, bei der
            ersten Suche oder über × und kommt in der Sitzung nicht wieder -->
       <sc-if value="{{ showKrsClickHint }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:none;display:flex;align-items:center;gap:10px;margin:0 2px 8px;padding:7px 11px;background:#fff;border:1px solid #d7dce0;border-radius:8px;font-size:14px;color:#1b2126">
+        <div style="flex:none;display:flex;align-items:center;gap:10px;margin:0 2px 8px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;font-size:14px;color:#1b2126">
           <span style="flex:1">Klicken Sie auf einen Landkreis, um seine Zahlen zu sehen und ihn im Detail auszuwerten.</span>
           <span onClick="{{ dismissKrsClickHint }}" aria-label="Hinweis schließen" style="cursor:pointer;color:#6b7680;font-size:16px;line-height:1;padding:2px 4px">×</span>
         </div>
@@ -420,10 +424,10 @@
             </sc-if>
             <div style="{{ galleryGridStyle }}">
               <sc-for list="{{ smallMaps }}" as="mp" hint-placeholder-count="4">
-                <div onClick="{{ mp.onClick }}" style="background:#fff;border:1px solid #e0e4e7;border-radius:10px;padding:12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" style-hover="border-color:#1f2a33;box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)">
+                <div onClick="{{ mp.onClick }}" style="background:#fff;border:1px solid #e0e4e7;border-radius:8px;padding:12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" style-hover="border-color:#1f2a33;box-shadow:0 4px 16px rgba(15,30,45,.16);transform:translateY(-2px)">
                   <div style="display:flex;align-items:center;gap:7px">
                     <span style="{{ mp.swatch }}"></span>
-                    <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1">{{ mp.name }}</span>
+                    <span style="font-size:16px;font-weight:700;color:#1b2126;flex:1">{{ mp.name }}</span>
                     <span style="{{ mp.tagStyle }}">{{ mp.tag }}</span>
                   </div>
                   <!-- flex:1 → Karte + Wertebereich sitzen am unteren Kartenrand und fluchten in jeder Zeile,
@@ -453,7 +457,7 @@
                „Vergleich teilen" steht in der Box „Vergleich A − B", oben rechts. -->
           <div style="{{ hubStyle }}">
             <div style="display:flex;align-items:center;gap:10px">
-              <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Vergleich A − B</div>
+              <div style="font-size:16px;font-weight:600;color:#1b2126;flex:1">Vergleich A − B</div>
               <button onClick="{{ openShare }}" title="{{ shareBtnTitle }}" style="{{ shareBtnStyle }}" style-hover="{{ shareBtnHover }}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
                 Vergleich teilen
@@ -469,7 +473,7 @@
               <div style="{{ hubInfoStyle }}"><b style="color:#1b2126">Was kann ich hier vergleichen?</b><br>Sie können gespeicherte Szenarien miteinander vergleichen — auf Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den ausgewiesenen Planungsflächen (nur Wind).<br><b style="color:#1b2126">Wichtig:</b> A und B können unterschiedlich viel Leistung verteilen. Die Karte zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen. Deutschland- und Regionsszenarien sowie Wind und PV werden <b style="color:#1b2126">nicht miteinander</b> verglichen.</div>
               <!-- Keine passenden Szenarien: A/B leer, nur Referenzen wählbar (R.8) -->
               <sc-if value="{{ hubNoScenNote }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#1b2126;line-height:1.45;margin:0 2px;padding:8px 11px;background:#fff;border:1px solid #d7dce0;border-radius:8px">{{ hubNoScenNote }}</div>
+                <div style="font-size:14px;color:#1b2126;line-height:1.45;margin:0 2px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc">{{ hubNoScenNote }}</div>
               </sc-if>
               <!-- Klick außerhalb schließt ein offenes Dropdown -->
               <div onClick="{{ closeHubMenu }}" style="{{ hubMenuBackdrop }}"></div>
@@ -500,7 +504,7 @@
                                   <!-- Szenarien: ein Farbpunkt je Prinzip — unterscheidet gleich lautende Namen („4 Prinzipien …") -->
                                   <span style="{{ it.dotsStyle }}">
                                     <sc-for list="{{ it.dots }}" as="dd" hint-placeholder-count="2">
-                                      <span style="flex:none;width:9px;height:9px;border-radius:3px;background:{{ dd.color }}"></span>
+                                      <span style="flex:none;width:9px;height:9px;border-radius:4px;background:{{ dd.color }}"></span>
                                     </sc-for>
                                   </span>
                                   <span title="{{ it.name }}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.name }}</span>
@@ -523,14 +527,14 @@
                 <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:0 2px">{{ hubScaleNote }}</div>
               </sc-if>
 
-                <div style="background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:12px 14px">
+                <div style="padding:4px 0 0">
                   <!-- Titel links; rechts (Regionsvergleich, nur Erweitert) derselbe Ansichts-Umschalter wie in der
                        Regionsansicht — beide teilen sich die Einstellung regionViewMode. -->
                   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                    <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1;min-width:200px">Differenzkarte: A − B<span style="font-weight:500;color:#5b6672">{{ scenDiffLevel }}</span></div>
+                    <div style="font-size:16px;font-weight:600;color:#1b2126;flex:1;min-width:200px">Differenzkarte: A − B<span style="font-weight:500;color:#5b6672">{{ scenDiffLevel }}</span></div>
                     <sc-if value="{{ showHubGemToggle }}" hint-placeholder-val="{{ false }}">
-                      <div style="background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;flex:none">
-                        <div style="display:grid;grid-template-columns:90px 140px 122px;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                      <div style="background:#fff;border:1px solid #dfe3e6;border-radius:8px;padding:3px;flex:none">
+                        <div style="display:grid;grid-template-columns:90px 140px 122px;background:#eff1f3;border-radius:4px;padding:2px;gap:2px;box-sizing:border-box">
                           <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
                           <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                           <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
@@ -545,7 +549,7 @@
                     <div style="font-size:14px;color:#6b5726;background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:9px 12px;margin-top:10px">{{ scenDiffHint }}</div>
                   </sc-if>
                   <sc-if value="{{ scenDiffEmpty }}" hint-placeholder-val="{{ false }}">
-                    <div style="height:260px;margin-top:8px;display:flex;align-items:center;justify-content:center;border:1px dashed #d3d8dc;border-radius:10px;background:#f9fafb;font-size:14px;color:#6b7680;text-align:center;padding:0 20px">Wählen Sie A und B, um die Differenz zu sehen.</div>
+                    <div style="height:260px;margin-top:8px;display:flex;align-items:center;justify-content:center;border:1px dashed #d3d8dc;border-radius:8px;background:#f9fafb;font-size:14px;color:#6b7680;text-align:center;padding:0 20px">Wählen Sie A und B, um die Differenz zu sehen.</div>
                   </sc-if>
                   <sc-if value="{{ showScenDiffMap }}" hint-placeholder-val="{{ false }}">
                     <svg viewBox="{{ scenDiffVb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:420px;margin-top:8px">
@@ -561,21 +565,21 @@
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
                       <span style="font-size:14px;color:#5b6672">mehr in A</span>
                       <span class="num" style="font-size:14px;color:#6b7680">bis {{ scenDiffMax }}</span>
-                      <div style="width:170px;height:11px;border-radius:3px;background:{{ scenDiffGrad }}"></div>
+                      <div style="width:170px;height:11px;border-radius:4px;background:{{ scenDiffGrad }}"></div>
                       <span class="num" style="font-size:14px;color:#6b7680">bis {{ scenDiffMax }}</span>
                       <span style="font-size:14px;color:#5b6672">mehr in B</span>
                       <span style="font-size:14px;color:#6b7680">· Mitte = gleich</span>
                     </div>
                     <sc-if value="{{ hubRefGapNote }}" hint-placeholder-val="{{ false }}">
-                      <div style="font-size:14px;color:#5b6672;background:#f4f6f7;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
+                      <div style="font-size:14px;color:#5b6672;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;margin-top:8px;line-height:1.45">{{ hubRefGapNote }}</div>
                     </sc-if>
                   </sc-if>
                   <!-- Szenario gegen eine Referenz: Deckungs-Kennzahlen (Planungsflächen: zwei Richtungen, Historischer Ausbau: nur „liegt im Konsens") -->
                   <sc-if value="{{ showHubCover }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:12px">
-                      <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#5b6672;line-height:1.5">{{ hubCoverA1 }} <b class="num" style="font-size:22px;color:#a85a17">{{ hubCoverA }} %</b> {{ hubCoverA2 }}</div>
+                      <div style="flex:1;min-width:220px;padding:14px 0 0;border-top:1px solid #dfe3e6;font-size:14px;color:#5b6672;line-height:1.5">{{ hubCoverA1 }} <b class="num" style="font-size:32px;color:#a85a17">{{ hubCoverA }} %</b> {{ hubCoverA2 }}</div>
                       <sc-if value="{{ showHubCoverB }}" hint-placeholder-val="{{ false }}">
-                        <div style="flex:1;min-width:220px;padding:13px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px;font-size:14px;color:#5b6672;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:22px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
+                        <div style="flex:1;min-width:220px;padding:14px 0 0;border-top:1px solid #dfe3e6;font-size:14px;color:#5b6672;line-height:1.5">Vom Konsens sind erst <b class="num" style="font-size:32px;color:#1d5f80">{{ hubCoverB }} %</b> ausgewiesen.</div>
                       </sc-if>
                     </div>
                   </sc-if>
@@ -588,13 +592,13 @@
                Eigene Box unter „Vergleich A − B", gleiche Wind-/PV-Farbe; nur wenn Szenarien gespeichert sind. -->
           <sc-if value="{{ showHubTables }}" hint-placeholder-val="{{ false }}">
             <div style="{{ hubTablesStyle }}">
-              <div style="font-size:15px;font-weight:600;color:#1b2126">Gespeicherte Szenarien</div>
+              <div style="font-size:16px;font-weight:600;color:#1b2126">Gespeicherte Szenarien</div>
               <div style="font-size:14px;color:#5b6672;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Regionen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
               <!-- Zwei Gruppen: Deutschland (GW) und Regionen (MW) — getrennte Tabellen, gleiche Spalten und Sortierung -->
               <sc-for list="{{ hubRowGroups }}" as="hg" hint-placeholder-count="1">
               <div>
               <div style="font-size:14px;font-weight:600;color:#5b6672;margin-bottom:6px">{{ hg.title }}</div>
-              <div style="border:1px solid #e2e5e8;border-radius:10px;background:#fff;overflow:hidden">
+              <div style="border:1px solid #e2e5e8;border-radius:8px;background:#fff;overflow:hidden">
                 <div style="{{ hubHeadStyle }}">
                   <sc-for list="{{ hubHeadCells }}" as="hh" hint-placeholder-count="7">
                     <span onClick="{{ hh.onClick }}" style="{{ hh.style }}">{{ hh.label }}</span>
@@ -608,7 +612,7 @@
                       <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
                         <span style="display:flex;align-items:center;gap:2px;flex:none">
                           <sc-for list="{{ hr.dots }}" as="dd" hint-placeholder-count="2">
-                            <span style="flex:none;width:10px;height:10px;border-radius:3px;background:{{ dd.color }}"></span>
+                            <span style="flex:none;width:10px;height:10px;border-radius:4px;background:{{ dd.color }}"></span>
                           </sc-for>
                         </span>
                         <span title="{{ hr.name }}" style="font-weight:600;color:#1b2126;line-height:1.3">{{ hr.name }}</span>
@@ -639,16 +643,16 @@
 
         <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:12px;padding:8px;padding-top:{{ mapBoxPadTop }};transition:background .4s;{{ mapStaleOutline }}">
+          <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #e4e7ea;border-radius:8px;padding:8px;padding-top:{{ mapBoxPadTop }};transition:background .4s;{{ mapStaleOutline }}">
             <!-- Ansichts-Umschalter (Regionsansicht, nur Erweitert — Testfeature s. SoT §M): in der Karte, Ecke
                  oben rechts. Feste, gleich breite Spalten, damit die fette Auswahl nichts verschiebt. Die Karte
                  bekommt dafür oben Platz (mapBoxPadTop), damit der Umschalter sie nicht verdeckt; die Hinweise
                  dazu stehen direkt unter der Karte (s. „UNDER CARD"), nicht in ihr. -->
             <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;top:10px;right:10px;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:calc(100% - 20px)">
-                <div style="background:#fff;border:1px solid #dfe3e6;border-radius:9px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+                <div style="background:#fff;border:1px solid #dfe3e6;border-radius:8px;padding:3px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
                   <!-- Spaltenbreiten fest und auf den fetten (aktiven) Text bemessen — kompakt, ohne dass die Auswahl etwas verschiebt -->
-                  <div style="display:grid;grid-template-columns:90px 140px 122px;max-width:100%;background:#eff1f3;border-radius:6px;padding:2px;gap:2px;box-sizing:border-box">
+                  <div style="display:grid;grid-template-columns:90px 140px 122px;max-width:100%;background:#eff1f3;border-radius:4px;padding:2px;gap:2px;box-sizing:border-box">
                     <button onClick="{{ setGemView }}" style="{{ gemViewBtnStyle }}">Gemeinden</button>
                     <button onClick="{{ setGemRasterView }}" style="{{ gemRasterViewBtnStyle }}">Gemeinden + Raster</button>
                     <button onClick="{{ setRasterView }}" style="{{ rasterViewBtnStyle }}">Raster (5 × 5 km)</button>
@@ -705,10 +709,10 @@
               <div style="{{ cellPopoverBoxStyle }}">
                 <span style="{{ cellPopoverTailStyle }}"></span>
                 <!-- Weiße Karte mit Landkreisname und gefülltem Knopf (R.4); die ganze Karte ist klickbar, das „i" stoppt den Klick -->
-                <div onClick="{{ evaluateRegionPopover }}" style="position:relative;box-sizing:border-box;width:100%;height:100%;background:#fff;border:1px solid #b9c1c8;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 12px rgba(15,30,45,.18);text-align:left;line-height:1.35;display:flex;flex-direction:column">
+                <div onClick="{{ evaluateRegionPopover }}" style="position:relative;box-sizing:border-box;width:100%;height:100%;background:#fff;border:1px solid #b9c1c8;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 4px 16px rgba(15,30,45,.16);text-align:left;line-height:1.35;display:flex;flex-direction:column">
                   <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;padding-right:22px">{{ cellPopoverLine1 }}</span>
                   <!-- Eigener, gefüllter Knopf: als Aktion erkennbar (vorher sah die zweite Zeile wie Text aus) -->
-                  <button style="margin-top:auto;width:100%;background:#1f2a33;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:14px;font-weight:600;cursor:pointer;text-align:center" style-hover="background:#33424f">{{ cellPopoverLine2 }}</button>
+                  <button style="margin-top:auto;width:100%;background:#1f2a33;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:14px;font-weight:600;cursor:pointer;text-align:center" style-hover="background:#33424f">{{ cellPopoverLine2 }}</button>
                   <span onClick="{{ togglePopoverInfo }}" title="Was passiert in der Detailauswertung?" style="{{ popoverInfoBtnStyle }}">i</span>
                 </div>
               </div>
@@ -721,12 +725,12 @@
                  mehr diese kleine Kartenbox — sonst blieben Eingaben links/rechts während der Rechnung
                  bedienbar. -->
             <sc-if value="{{ regionBlockOverlay }}" hint-placeholder-val="{{ false }}">
-              <div style="position:absolute;inset:8px;border-radius:9px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
+              <div style="position:absolute;inset:8px;border-radius:8px;background:rgba(247,248,249,.72);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px">
                 <div style="max-width:280px">
                   <sc-if value="{{ regionGateIdle }}" hint-placeholder-val="{{ true }}">
                     <div style="font-size:14px;color:#1b2126;font-weight:600">{{ regionGateTitle }}</div>
                     <div style="font-size:14px;color:#6b7680;margin-top:5px;line-height:1.5">{{ regionGateSub }}</div>
-                    <button onClick="{{ startRegionCompute }}" style="margin-top:12px;background:#1f2a33;color:#fff;border:none;padding:9px 16px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer">Berechnung starten</button>
+                    <button onClick="{{ startRegionCompute }}" style="margin-top:12px;background:#1f2a33;color:#fff;border:none;padding:9px 16px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer">Berechnung starten</button>
                   </sc-if>
                 </div>
               </div>
@@ -758,7 +762,7 @@
           <sc-if value="{{ legendSeq }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:14px;color:#6b7680" class="num">{{ legendMin }}</span>
-              <div style="width:150px;height:11px;border-radius:3px;background:{{ legendGrad }}"></div>
+              <div style="width:150px;height:11px;border-radius:4px;background:{{ legendGrad }}"></div>
               <span style="font-size:14px;color:#6b7680" class="num">{{ legendMax }} {{ scopeUnit }}</span>
               <span style="font-size:14px;color:#5b6672;margin-left:2px">{{ legendTitle }}</span>
             </div>
@@ -768,7 +772,7 @@
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
               <span style="font-size:14px;color:#5b6672">Begrenzendes Prinzip:</span>
               <sc-for list="{{ catItems }}" as="ci" hint-placeholder-count="2">
-                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:12px;height:12px;border-radius:3px;background:{{ ci.color }}"></span>{{ ci.name }}</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:12px;height:12px;border-radius:4px;background:{{ ci.color }}"></span>{{ ci.name }}</span>
               </sc-for>
             </div>
           </sc-if>
@@ -778,7 +782,7 @@
               <span style="font-size:14px;color:#5b6672;line-height:1.45">{{ schnittColorCaption }}</span>
               <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
                 <sc-for list="{{ schnittItems }}" as="si" hint-placeholder-count="3">
-                  <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:16px;height:12px;border-radius:3px;{{ si.css }}"></span>{{ si.label }}</span>
+                  <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#1b2126"><span style="width:16px;height:12px;border-radius:4px;{{ si.css }}"></span>{{ si.label }}</span>
                 </sc-for>
               </div>
             </div>
@@ -786,7 +790,7 @@
           <div style="flex:1"></div>
 
           <sc-if value="{{ showPlan }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;background:#eff1f3;border-radius:7px;padding:3px;gap:2px">
+            <div style="display:flex;background:#eff1f3;border-radius:4px;padding:3px;gap:2px">
               <sc-for list="{{ planBtns }}" as="pb" hint-placeholder-count="3">
                 <button onClick="{{ pb.onClick }}" style="{{ pb.style }}">{{ pb.label }}</button>
               </sc-for>
@@ -805,7 +809,7 @@
         <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
             <div style="display:flex;align-items:baseline;gap:12px">
-              <div style="font-size:15px;font-weight:600;color:#1b2126;flex:1">Welche Prinzipien weichen gemeinsam ab?</div>
+              <div style="font-size:16px;font-weight:600;color:#1b2126;flex:1">Welche Prinzipien weichen gemeinsam ab?</div>
               <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#1f2a33;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
             </div>
             <div style="{{ upsetBodyStyle }}">
@@ -828,7 +832,7 @@
              Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
         <sc-if value="{{ showPairMatrix }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e2e5e8">
-            <div style="font-size:15px;font-weight:600;color:#1b2126">Zubaukonsens je Prinzipienpaar</div>
+            <div style="font-size:16px;font-weight:600;color:#1b2126">Zubaukonsens je Prinzipienpaar</div>
             <div style="font-size:14px;color:#5b6672;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Zubaukonsens.</div>
             <div style="{{ pairWrapStyle }}"><div style="{{ pairGridStyle }}">
               <sc-for list="{{ pairCells }}" as="pc" hint-placeholder-count="9">
@@ -851,15 +855,15 @@
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
           <div>
             <sc-if value="{{ bpRScope }}" hint-placeholder-val="{{ true }}">
-              <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ bpRScope }}</div>
+              <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">{{ bpRScope }}</div>
             </sc-if>
             <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">{{ bpRTitle }}</div>
           </div>
           <sc-if value="{{ bpRShowClose }}" hint-placeholder-val="{{ false }}">
-            <button onClick="{{ bpRClose }}" title="Auswahl aufheben" aria-label="Auswahl aufheben" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#6b7680;cursor:pointer;font-size:15px;flex:none">×</button>
+            <button onClick="{{ bpRClose }}" title="Auswahl aufheben" aria-label="Auswahl aufheben" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:4px;color:#6b7680;cursor:pointer;font-size:16px;flex:none">×</button>
           </sc-if>
         </div>
-        <div style="margin-top:14px;padding:12px 14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+        <div style="margin-top:14px;padding:14px 0 0;border-top:1px solid #dfe3e6">
           <sc-for list="{{ bpRows }}" as="br" hint-placeholder-count="3">
             <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:4px 0">
               <span style="color:#5b6672">{{ br.k }}</span>
@@ -872,9 +876,9 @@
         </sc-if>
         <!-- Nächster Schritt: von heute (Bestand) zur gerechten Verteilung (Deutschland) — leise, immer da (auch mit Auswahl, dann auf deren Landkreis bezogen) -->
         <sc-if value="{{ bpNextStep }}" hint-placeholder-val="{{ true }}">
-          <div style="margin-top:22px;padding:13px 14px;border:1px solid #d7dce0;border-radius:10px;background:#fff">
+          <div style="margin-top:22px;padding:14px 0 0;border-top:1px solid #dfe3e6">
             <div style="font-size:14px;color:#5b6672;line-height:1.5">{{ bpNextText }}</div>
-            <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#fff;color:#1f2a33;border:1px solid #b9c1c8;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;line-height:1.35;text-wrap:balance" style-hover="background:#f1f3f4">{{ bpNextBtn }}</button>
+            <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#fff;color:#1f2a33;border:1px solid #b9c1c8;padding:7px 12px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;line-height:1.35;text-wrap:balance" style-hover="background:#f1f3f4">{{ bpNextBtn }}</button>
           </div>
         </sc-if>
       </sc-if>
@@ -889,23 +893,23 @@
             <div style="display:flex;flex-direction:column;gap:12px">
               <div style="display:flex;align-items:flex-start;gap:8px">
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">Auf der Karte ausgewählt</div>
+                  <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">Auf der Karte ausgewählt</div>
                   <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px;line-height:1.25">{{ hubCellName }}</div>
                 </div>
                 <span onClick="{{ clearHubCell }}" title="Auswahl aufheben" style="cursor:pointer;color:#6b7680;font-size:20px;line-height:1;padding:2px;flex:none">×</span>
               </div>
-              <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+              <div style="padding:14px 0 0;border-top:1px solid #dfe3e6">
                 <div style="font-size:14px;color:#5b6672">Differenz A − B</div>
-                <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
+                <div class="num" style="font-size:32px;font-weight:700;line-height:1.1;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
                 <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ hubCellDiffWord }}</div>
               </div>
               <sc-for list="{{ hubCellCards }}" as="cc" hint-placeholder-count="2">
-                <div style="padding:12px 13px;border-radius:10px;border:1px solid #e2e8e6;background:#fff">
+                <div style="padding:12px 0 0;border-top:1px solid #dfe3e6">
                   <div style="display:flex;align-items:center;gap:8px">
                     <span style="{{ cc.badgeStyle }}">{{ cc.badge }}</span>
                     <span style="font-size:14px;color:#5b6672">{{ cc.kind }}</span>
                   </div>
-                  <div title="{{ cc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ cc.name }}</div>
+                  <div title="{{ cc.name }}" style="font-size:16px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ cc.name }}</div>
                   <div style="margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px">
                     <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0"><span style="color:#5b6672">{{ cc.k }}</span><span class="num" style="color:#1b2126;font-weight:600;white-space:nowrap">{{ cc.v }}</span></div>
                   </div>
@@ -919,14 +923,14 @@
             <div style="display:flex;flex-direction:column;gap:12px">
               <div>
                 <sc-if value="{{ hubScopeLabel }}" hint-placeholder-val="{{ true }}">
-                  <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ hubScopeLabel }}</div>
+                  <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">{{ hubScopeLabel }}</div>
                 </sc-if>
                 <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:2px">A und B im Überblick</div>
               </div>
               <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
-                <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+                <div style="padding:14px 0 0;border-top:1px solid #dfe3e6">
                   <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
-                  <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubSumDiff }}</div>
+                  <div class="num" style="font-size:32px;font-weight:700;line-height:1.1;color:#1b2126;margin-top:2px">{{ hubSumDiff }}</div>
                   <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ hubSumDiffWord }}</div>
                 </div>
               </sc-if>
@@ -936,7 +940,7 @@
                     <span style="{{ hc.badgeStyle }}">{{ hc.badge }}</span>
                     <span style="font-size:14px;color:#5b6672">{{ hc.kind }}</span>
                   </div>
-                  <div title="{{ hc.name }}" style="font-size:15px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
+                  <div title="{{ hc.name }}" style="font-size:16px;font-weight:600;color:#1b2126;margin-top:5px;line-height:1.35">{{ hc.name }}</div>
                   <div style="{{ hc.rowsStyle }}">
                     <sc-for list="{{ hc.rows }}" as="hr" hint-placeholder-count="4">
                       <div style="{{ hr.rowStyle }}"><span style="color:#5b6672">{{ hr.k }}</span><span style="{{ hr.vStyle }}">{{ hr.v }}</span></div>
@@ -944,7 +948,7 @@
                       <div style="{{ hr.listStyle }}">
                         <div style="color:#5b6672;margin-bottom:3px">{{ hr.k }}</div>
                         <sc-for list="{{ hr.items }}" as="pi" hint-placeholder-count="2">
-                          <div style="display:flex;align-items:center;gap:7px;padding:2px 0;color:#1b2126"><span style="flex:none;width:11px;height:11px;border-radius:3px;background:{{ pi.color }}"></span>{{ pi.name }}</div>
+                          <div style="display:flex;align-items:center;gap:7px;padding:2px 0;color:#1b2126"><span style="flex:none;width:11px;height:11px;border-radius:4px;background:{{ pi.color }}"></span>{{ pi.name }}</div>
                         </sc-for>
                       </div>
                     </sc-for>
@@ -960,14 +964,14 @@
       <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
         <div>
           <sc-if value="{{ ovScopeLabel }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ ovScopeLabel }}</div>
+            <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">{{ ovScopeLabel }}</div>
           </sc-if>
           <div style="font-size: 20px; font-weight: 600; color: #1b2126; margin-top: 2px">{{ ovTitle }}</div>
           <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
           <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:4px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
@@ -1004,15 +1008,15 @@
 
           <div style="{{ ovLeadBoxStyle }}">
             <!-- „i" neben dem Label klappt die Balken-Erklärung („Vom Ausbauziel … liegen … im Konsens") auf -->
-            <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">
               <span>{{ ovLeadLabel }}</span>
               <span onClick="{{ toggleOvBarInfo }}" style="{{ ovBarInfoBtnStyle }}">i</span>
             </div>
-            <div class="num" style="font-size: 34px; font-weight: 700; color: var(--cons); line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
+            <div class="num" style="font-size:32px; font-weight: 700; color: var(--cons); line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:16px;color:#5b6672;font-weight:500">{{ ovLeadUnit }}</span></div>
             <div style="font-size:14px;color:#5b6672;margin-top:4px">{{ ovLeadSub }}</div>
             <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:11px;height:14px;border-radius:5px;background:#e3e7ea;overflow:hidden">
-                <div style="height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:5px"></div>
+              <div style="margin-top:11px;height:14px;border-radius:4px;background:#e3e7ea;overflow:hidden">
+                <div style="height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:4px"></div>
               </div>
               <div style="{{ ovBarCaptionStyle }}">{{ ovBarCaption }}</div>
             </sc-if>
@@ -1030,7 +1034,7 @@
                     <span class="num" style="font-weight:600;color:#1b2126;white-space:nowrap">{{ dr.v }}</span>
                   </div>
                   <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:#6b7680;margin-top:3px">
-                    <span style="width:11px;height:11px;border-radius:3px;flex:none;background:{{ dr.pColor }}"></span>{{ dr.pName }}
+                    <span style="width:11px;height:11px;border-radius:4px;flex:none;background:{{ dr.pColor }}"></span>{{ dr.pName }}
                   </div>
                 </div>
               </sc-for>
@@ -1045,7 +1049,7 @@
               <sc-for list="{{ blockers }}" as="b" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:baseline;gap:7px;font-size:14px;margin-bottom:4px">
-                    <span style="width:11px;height:11px;border-radius:3px;background:{{ b.color }};align-self:center"></span>
+                    <span style="width:11px;height:11px;border-radius:4px;background:{{ b.color }};align-self:center"></span>
                     <span style="color:#1b2126;flex:1">{{ b.name }}</span>
                     <span class="num" style="font-size:14px;font-weight:600;color:#1b2126;white-space:nowrap">{{ b.valueText }}</span>
                   </div>
@@ -1053,7 +1057,7 @@
                   <div style="font-size:14px;color:#6b7680;margin:2px 0 0 18px">{{ b.subText }}</div>
                 </div>
               </sc-for>
-              <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-top:12px;padding:11px 12px;background:#f2f4f5;border:1px solid #e2e5e8;border-radius:8px;font-weight:500">{{ counterfactual }}</div>
+              <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-top:12px;padding:2px 0 2px 12px;border-left:2px solid #1f2a33;font-weight:500">{{ counterfactual }}</div>
             </div>
           </sc-if>
 
@@ -1070,7 +1074,7 @@
               <sc-for list="{{ sumRows }}" as="s" hint-placeholder-count="2">
                 <div style="margin-bottom:11px">
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:4px">
-                    <span style="width:11px;height:11px;border-radius:3px;background:{{ s.color }}"></span>
+                    <span style="width:11px;height:11px;border-radius:4px;background:{{ s.color }}"></span>
                     <span style="color:#1b2126;flex:1">{{ s.name }}</span>
                     <span class="num" style="font-size:14px;font-weight:600;color:#1b2126">{{ s.gw }} {{ scopeUnit }}</span>
                   </div>
@@ -1090,7 +1094,7 @@
                   <div style="display:flex;align-items:center;gap:8px">
                     <div style="display:flex;align-items:center;gap:4px;flex:1">
                       <sc-for list="{{ cm.dots }}" as="dt" hint-placeholder-count="2">
-                        <span style="width:13px;height:13px;border-radius:3px;flex:none;background:{{ dt.color }}"></span>
+                        <span style="width:13px;height:13px;border-radius:4px;flex:none;background:{{ dt.color }}"></span>
                       </sc-for>
                     </div>
                     <span class="num" style="font-size:14px;color:#1b2126;font-weight:600">{{ cm.count }}</span>
@@ -1117,17 +1121,17 @@
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
             <div>
               <sc-if value="{{ cellScope }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:14px;color:#6b7680;letter-spacing:.3px">{{ cellScope }}</div>
+                <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">{{ cellScope }}</div>
               </sc-if>
-              <div style="font-size:17px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
+              <div style="font-size:20px;font-weight:600;color:#1b2126;margin-top:1px">{{ cellKindLabel }} {{ cellLabel }}</div>
             </div>
-            <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:6px;color:#6b7680;cursor:pointer;font-size:15px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
+            <button onClick="{{ clearCell }}" title="Zurück zur Übersicht" aria-label="Zurück zur Übersicht" style="background:#f1f3f4;border:none;width:24px;height:24px;border-radius:4px;color:#6b7680;cursor:pointer;font-size:16px;flex:none" style-hover="background:#e4e7ea;color:#5b6672">×</button>
           </div>
           <!-- „Ergebnis veraltet" mit „Neu berechnen" unter dem Titel (R.7) -->
           <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
             <div style="{{ staleBoxStyle }}">
               <div style="font-size:14px;color:#6b5726;line-height:1.4"><b>Ergebnis veraltet.</b> {{ regionGateSub }}</div>
-              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:4px;cursor:pointer" style-hover="background:#33424f">Neu berechnen</button>
               <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#8a7a55;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
               </sc-if>
@@ -1170,16 +1174,16 @@
           </sc-if>
 
           <!-- Hauptzahl: Zubau bzw. Zubaukonsens (ZUBAU_AS_HERO); sonst Ausbau (= Bestand + Zubau) -->
-          <div style="margin-top:15px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
+          <div style="margin-top:15px;padding:14px 0 0;border-top:1px solid #dfe3e6">
             <!-- „i" neben „Zubaukonsens" klappt die Definition auf (nur ab zwei Prinzipien) -->
-            <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5b6672">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7680">
               <span>{{ cellHeroLabel }}</span>
               <span onClick="{{ toggleConsInfo }}" style="{{ cellHeroInfoBtnStyle }}">i</span>
             </div>
-            <div class="num" style="font-size:34px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:15px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
+            <div class="num" style="font-size:32px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:16px;color:#5b6672;font-weight:500">{{ scopeUnit }}</span></div>
             <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Regionsprofil -->
             <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
+              <div style="font-size:14px;color:#5b6672;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
             <div style="font-size:14px;color:#5b6672;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
             <!-- Kontextzeile nur bei Bestandsberücksichtigung: Bestand + Hauptzahl = installierte Leistung -->
@@ -1210,7 +1214,7 @@
               <sc-for list="{{ cellBars }}" as="br" hint-placeholder-count="2">
                 <div style="margin-bottom:9px">
                   <div style="display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:3px">
-                    <span style="width:10px;height:10px;border-radius:3px;background:{{ br.color }}"></span>
+                    <span style="width:10px;height:10px;border-radius:4px;background:{{ br.color }}"></span>
                     <span style="color:#1b2126;flex:1">{{ br.name }}</span>
                     <span style="{{ br.tagStyle }}">{{ br.tag }}</span>
                     <span class="num" style="color:#1b2126">{{ br.gw }} {{ scopeUnit }}</span>
@@ -1261,7 +1265,7 @@
   <!-- Intro-Overlay: Prämisse -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div class="scroll" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:16px;padding:32px 36px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
+      <div class="scroll" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 28px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
         <div style="font-size:24px;font-weight:700;color:#1b2126;letter-spacing:-.3px">Wo wäre der Ausbau fair?</div>
         <p style="font-size:14px;line-height:1.65;color:#5b6672;margin:14px 0 18px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
         <!-- Ursache: verschiedene Menschen priorisieren Verschiedenes — rein dekorativ, trägt keine Aussage, die der Text nicht auch nennt -->
@@ -1272,7 +1276,7 @@
         <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
           <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
-            <div style="background:#fff;border:1px solid #e4e7ea;border-radius:10px;padding:8px">
+            <div style="background:#fff;border:1px solid #e4e7ea;border-radius:8px;padding:8px">
               <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:72px">
                 <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
                   <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
@@ -1291,7 +1295,7 @@
           <span style="color:#9aa3ab">→</span>
           <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #b9c1c8;font-size:12px;font-weight:600;color:#5b6672;margin-right:6px;flex:none">3</span>Regional</span>
         </div>
-        <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer">Mit dem Bestand beginnen →</button>
+        <button onClick="{{ closeIntro }}" style="background:#1f2a33;color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Mit dem Bestand beginnen →</button>
         <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1f2a33;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
       </div>
     </div>
@@ -1301,16 +1305,16 @@
   <!-- Über das Projekt: Partner, Förderung, Kontakt, Zitieren, Stand — Gliederung mit Platzhaltern (s. SoT §Q) -->
   <sc-if value="{{ aboutOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeAbout }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:32px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(15,30,45,.22)">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 26px 14px;border-bottom:1px solid #e6e9eb;flex:none">
           <div>
-            <div style="font-weight:700;font-size:18px;color:#1b2126">Über das Projekt</div>
+            <div style="font-weight:700;font-size:20px;color:#1b2126">Über das Projekt</div>
             <div style="font-size:14px;color:#5b6672;margin-top:2px">Wer hinter EEquityMap steht und wie Sie uns erreichen</div>
           </div>
-          <button onClick="{{ closeAbout }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
+          <button onClick="{{ closeAbout }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#1b2126">
-          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726"><b>Entwurf.</b> Diese Seite zeigt die vorgesehene Gliederung. Die markierten Platzhalter müssen vor einer Veröffentlichung ersetzt werden.</div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Das Projekt</div><p style="margin:0 0 10px">EEquityMap macht sichtbar, wie unterschiedlich sich der Ausbau erneuerbarer Energien verteilt, je nachdem, welche Vorstellung von Fairness man anlegt — und wo diese Vorstellungen übereinstimmen.</p><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: zwei bis drei Sätze: Anlass, Ziel und Zielgruppe des Projekts, Laufzeit]</span></p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Partner</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px"><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Projektleitung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Modellierung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Gestaltung und Umsetzung]</span></div></div></div></div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Förderung</div><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Fördergeber, Programm, Förderkennzeichen; ggf. Logo mit vorgeschriebenem Zusatz]</span></p><div id="kontakt"></div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Kontakt</div><p style="margin:0 0 4px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Ansprechperson]</span>, <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Organisation]</span></p><p style="margin:0 0 10px">E-Mail: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: adresse@beispiel.de]</span></p><p style="margin:0 0 10px;color:#5b6672">Fragen zur Methodik, zu den Daten oder zur Nutzung der Karten richten Sie bitte an diese Adresse.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Zitieren und weiterverwenden</div><p style="margin:0 0 6px">Zitiervorschlag: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Autor:innen (Jahr): EEquityMap. Herausgeber. URL]</span></p><p style="margin:0 0 10px">Lizenz für Daten und Karten: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: z. B. CC BY 4.0]</span> · Quellcode: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Lizenz und Link zum Repository]</span></p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 8px">Stand</div><p style="margin:0">Version <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Versionsnummer]</span> · Datenstand <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Monat Jahr]</span></p>
+          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726"><b>Entwurf.</b> Diese Seite zeigt die vorgesehene Gliederung. Die markierten Platzhalter müssen vor einer Veröffentlichung ersetzt werden.</div><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Das Projekt</div><p style="margin:0 0 10px">EEquityMap macht sichtbar, wie unterschiedlich sich der Ausbau erneuerbarer Energien verteilt, je nachdem, welche Vorstellung von Fairness man anlegt — und wo diese Vorstellungen übereinstimmen.</p><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: zwei bis drei Sätze: Anlass, Ziel und Zielgruppe des Projekts, Laufzeit]</span></p><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Partner</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px"><div style="border:1px solid #e2e5e8;border-radius:8px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Projektleitung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:8px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Modellierung]</span></div></div></div><div style="border:1px solid #e2e5e8;border-radius:8px;padding:12px;display:flex;gap:12px;align-items:center"><div style="flex:none;width:72px;height:48px;border:1px dashed #c2c9cf;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7680">Logo</div><div style="min-width:0"><div style="font-weight:600"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Organisation]</span></div><div style="color:#5b6672;margin-top:2px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Rolle, z. B. Gestaltung und Umsetzung]</span></div></div></div></div><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Förderung</div><p style="margin:0 0 10px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Fördergeber, Programm, Förderkennzeichen; ggf. Logo mit vorgeschriebenem Zusatz]</span></p><div id="kontakt"></div><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Kontakt</div><p style="margin:0 0 4px"><span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Name der Ansprechperson]</span>, <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Organisation]</span></p><p style="margin:0 0 10px">E-Mail: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: adresse@beispiel.de]</span></p><p style="margin:0 0 10px;color:#5b6672">Fragen zur Methodik, zu den Daten oder zur Nutzung der Karten richten Sie bitte an diese Adresse.</p><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Zitieren und weiterverwenden</div><p style="margin:0 0 6px">Zitiervorschlag: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Autor:innen (Jahr): EEquityMap. Herausgeber. URL]</span></p><p style="margin:0 0 10px">Lizenz für Daten und Karten: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: z. B. CC BY 4.0]</span> · Quellcode: <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Lizenz und Link zum Repository]</span></p><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 8px">Stand</div><p style="margin:0">Version <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Versionsnummer]</span> · Datenstand <span style="background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726">[Platzhalter: Monat Jahr]</span></p>
         </div>
       </div>
     </div>
@@ -1320,16 +1324,16 @@
        Datenquellen werden bewusst nicht behauptet, solange der Prototyp mit Platzhalterwerten arbeitet. -->
   <sc-if value="{{ methodOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeMethod }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:32px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(15,30,45,.22)">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 26px 14px;border-bottom:1px solid #e6e9eb;flex:none">
           <div>
-            <div style="font-weight:700;font-size:18px;color:#1b2126">Methodik</div>
+            <div style="font-weight:700;font-size:20px;color:#1b2126">Methodik</div>
             <div style="font-size:14px;color:#5b6672;margin-top:2px">Wie EEquityMap rechnet und was die Karten zeigen</div>
           </div>
-          <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
+          <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#1b2126">
-          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Regionsbudget:</b> der Ausbau, den die bundesweite Verteilung (Kombination der bundesweit gewählten Prinzipien) dem Landkreis zuweist — die DE-Empfehlung. Es lässt sich als eigenes Regionalziel ändern; dann ist es als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Dieses Budget wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:15px;color:#1b2126;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Regionsbudget:</b> der Ausbau, den die bundesweite Verteilung (Kombination der bundesweit gewählten Prinzipien) dem Landkreis zuweist — die DE-Empfehlung. Es lässt sich als eigenes Regionalziel ändern; dann ist es als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Dieses Budget wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#1b2126;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1337,10 +1341,10 @@
 
   <sc-if value="{{ infoPanel }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ toggleInfoPanel }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;justify-content:flex-start">
-      <div onClick="{{ stop }}" style="width:440px;height:100%;background:#fff;padding:30px 30px 40px;overflow-y:auto;box-shadow:2px 0 30px rgba(0,0,0,.2)" class="scroll">
+      <div onClick="{{ stop }}" style="width:440px;height:100%;background:#fff;padding:30px 30px 40px;overflow-y:auto;box-shadow:0 16px 48px rgba(15,30,45,.22)" class="scroll">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-          <span style="font-weight:700;font-size:18px">Was ist EEquityMap?</span>
-          <button onClick="{{ toggleInfoPanel }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
+          <span style="font-weight:700;font-size:20px">Was ist EEquityMap?</span>
+          <button onClick="{{ toggleInfoPanel }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <div style="font-size:14px;line-height:1.65;color:#1b2126">
           <p style="margin:0 0 16px">Der Ausbau erneuerbarer Energien muss irgendwo stattfinden. Die Frage ist nicht nur, wo er technisch möglich ist, sondern wo er als <b>fair</b> gilt — und darüber gehen die Meinungen auseinander.</p>
@@ -1350,7 +1354,7 @@
           <p style="margin:0 0 16px">Wählen Sie mehrere Prinzipien, zeigt die Karte den Zubau, den <b>alle</b> mittragen — je Fläche der jeweils niedrigste Vorschlag. So wird sichtbar, wie viel Ausbau von allen betrachteten Vorstellungen gemeinsam getragen würde.</p>
           <div style="font-weight:600;color:#1b2126;margin:0 0 5px">Beispiel</div>
           <p style="margin:0 0 16px">In einer verbrauchsstarken Region empfiehlt das Prinzip <b>Verbrauchsnah</b> viel Ausbau, das Prinzip <b>Bevölkerungsnah</b> wenig — hier sind sich die Prinzipien uneinig. In einer Region, die beide hoch bewerten, entsteht Konsens.</p>
-          <div style="background:#f0f5f4;border-radius:10px;padding:14px 15px;font-size:14px;color:#1b2126;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
+          <div style="background:#f0f5f4;border-radius:8px;padding:14px 15px;font-size:14px;color:#1b2126;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
         </div>
       </div>
     </div>
@@ -1359,12 +1363,12 @@
   <!-- Enlarged distribution overlay -->
   <sc-if value="{{ zoom }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeZoom }}" style="position:fixed;inset:0;background:rgba(20,25,30,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:20px 22px;width:min(760px,90vw)">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;padding:20px 22px;width:min(760px,90vw)">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
           <span style="width:14px;height:14px;border-radius:4px;background:{{ zoomColor }}"></span>
           <span style="font-size:16px;font-weight:600">{{ zoomName }}</span>
           <div style="flex:1"></div>
-          <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
+          <button onClick="{{ closeZoom }}" style="background:#f1f3f4;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6b7680">×</button>
         </div>
         <!-- Durchblättern ohne Schließen: Pfeile links/rechts (auch Pfeiltasten), Karte bleibt an derselben
              Stelle und in derselben Größe — so fällt auf, was sich zwischen den Prinzipien ändert. -->
@@ -1381,7 +1385,7 @@
         <!-- Welches Prinzip ist offen? Anklicken springt direkt dorthin. -->
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
           <sc-for list="{{ zoomTabs }}" as="zt" hint-placeholder-count="3">
-            <button onClick="{{ zt.onClick }}" style="{{ zt.style }}"><span style="width:10px;height:10px;border-radius:3px;flex:none;background:{{ zt.color }}"></span>{{ zt.name }}</button>
+            <button onClick="{{ zt.onClick }}" style="{{ zt.style }}"><span style="width:10px;height:10px;border-radius:4px;flex:none;background:{{ zt.color }}"></span>{{ zt.name }}</button>
           </sc-for>
         </div>
       </div>
@@ -1391,16 +1395,16 @@
   <!-- Vergleich teilen: kopierbarer Link (Prototyp: Platzhalter, keine Persistenz) -->
   <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeShare }}" style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:55;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:24px 26px;width:min(480px,92vw)">
-        <div style="font-size:17px;font-weight:700;color:#1b2126;margin-bottom:6px">Vergleich teilen</div>
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;padding:24px 26px;width:min(480px,92vw)">
+        <div style="font-size:20px;font-weight:700;color:#1b2126;margin-bottom:6px">Vergleich teilen</div>
         <div style="font-size:14px;color:#5b6672;line-height:1.5;margin-bottom:14px">Der Link teilt den aktuellen Vergleich: {{ shareSummary }}.</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-          <input readonly value="{{ shareLink }}" onFocus="{{ selectShareInput }}" style="flex:1;min-width:0;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;font-family:'IBM Plex Mono',monospace">
+          <input readonly value="{{ shareLink }}" onFocus="{{ selectShareInput }}" style="flex:1;min-width:0;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:4px;font-family:'IBM Plex Mono',monospace">
           <button onClick="{{ copyShareLink }}" style="{{ shareCopyBtnStyle }}">{{ shareCopyLabel }}</button>
         </div>
         <div style="font-size:14px;color:#6b7680;line-height:1.5;margin-bottom:18px">Prototyp: Platzhalter-Link — der Vergleich wird noch nicht gespeichert.</div>
         <div style="display:flex;justify-content:flex-end">
-          <button onClick="{{ closeShare }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Schließen</button>
+          <button onClick="{{ closeShare }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:4px;cursor:pointer">Schließen</button>
         </div>
       </div>
     </div>
@@ -1409,14 +1413,14 @@
   <!-- Szenario speichern: Auto-Name editierbar, Session-only-Hinweis (§N) -->
   <sc-if value="{{ scenarioSaveOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ cancelSaveScenario }}" style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:55;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;padding:24px 26px;width:min(440px,92vw)">
-        <div style="font-size:17px;font-weight:700;color:#1b2126;margin-bottom:14px">Szenario speichern</div>
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;padding:24px 26px;width:min(440px,92vw)">
+        <div style="font-size:20px;font-weight:700;color:#1b2126;margin-bottom:14px">Szenario speichern</div>
         <div style="font-size:14px;color:#5b6672;margin-bottom:6px">Name</div>
-        <input value="{{ scenarioNameDraft }}" onInput="{{ onScenarioNameInput }}" style="width:100%;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:7px;margin-bottom:14px">
+        <input value="{{ scenarioNameDraft }}" onInput="{{ onScenarioNameInput }}" style="width:100%;background:#f4f6f6;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:4px;margin-bottom:14px">
         <div style="font-size:14px;color:#6b7680;line-height:1.5;margin-bottom:18px">Gespeicherte Szenarien gelten nur für diese Sitzung. Neuladen verwirft sie.</div>
         <div style="display:flex;gap:9px;justify-content:flex-end">
-          <button onClick="{{ cancelSaveScenario }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer">Abbrechen</button>
-          <button onClick="{{ confirmSaveScenario }}" style="background:#1f2a33;color:#fff;border:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer">Speichern</button>
+          <button onClick="{{ cancelSaveScenario }}" style="background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:8px 14px;border-radius:4px;cursor:pointer">Abbrechen</button>
+          <button onClick="{{ confirmSaveScenario }}" style="background:#1f2a33;color:#fff;border:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:4px;cursor:pointer">Speichern</button>
         </div>
       </div>
     </div>
@@ -1444,13 +1448,13 @@
        nichts reagiert — verhindert Fehleingaben mitten in der Rechnung. -->
   <sc-if value="{{ regionComputingScrim }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;background:rgba(238,241,242,.82);z-index:54;display:flex;align-items:center;justify-content:center;padding:20px">
-      <div style="max-width:300px;width:100%;background:#fff;border:1px solid #e2e8e6;border-radius:12px;padding:22px 24px;box-shadow:0 14px 36px rgba(0,0,0,.18);text-align:center">
-        <div style="font-size:15px;color:#1b2126;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
+      <div style="max-width:300px;width:100%;background:#fff;border:1px solid #e2e8e6;border-radius:8px;padding:22px 24px;box-shadow:0 4px 16px rgba(15,30,45,.16);text-align:center">
+        <div style="font-size:16px;color:#1b2126;font-weight:600;line-height:1.4">{{ regionComputingLabel }}</div>
         <sc-if value="{{ regionComputingReassure }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:14px;color:#6b7680;margin-top:5px">{{ regionComputingReassure }}</div>
         </sc-if>
         <div class="loadbar" style="margin-top:16px"><div class="loadbar-fill" style="{{ trickleBarStyle }}"></div></div>
-        <button onClick="{{ cancelRegionCompute }}" style="margin-top:16px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer">Abbrechen</button>
+        <button onClick="{{ cancelRegionCompute }}" style="margin-top:16px;width:100%;background:#fff;border:1px solid #ccd2d7;color:#5b6672;font-size:14px;font-weight:600;padding:9px;border-radius:4px;cursor:pointer">Abbrechen</button>
       </div>
     </div>
   </sc-if>
@@ -2631,7 +2635,7 @@ class Component extends DCLogic {
       const pnorm = v => pr > 1e-9 ? (v - pmn) / pr : 1;
       const nameCol = p => isSel(p) ? '#1b2126' : '#9aa3ab';
       const hdr = p => 'font-size:14px;color:' + nameCol(p) + ';font-weight:600;display:flex;align-items:center;gap:6px;padding:6px 8px;line-height:1.25';
-      const sw = p => 'flex:none;width:10px;height:10px;border-radius:3px;background:' + this.byId[p].color + (isSel(p) ? '' : ';opacity:.3');
+      const sw = p => 'flex:none;width:10px;height:10px;border-radius:4px;background:' + this.byId[p].color + (isSel(p) ? '' : ';opacity:.3');
       const flat = 'display:contents';
       // Die erste Zeile und die letzte Spalte eines Dreiecks ohne Diagonale sind immer leer → entfallen:
       // Zeilen = Prinzip 2…n, Spalten = Prinzip 1…n−1. Werte bleiben dieselben Paare an denselben Plätzen.
@@ -2646,7 +2650,7 @@ class Component extends DCLogic {
       const headH = Math.ceil(Math.max(...colsP.map(p => labelW(p) * SIN45 + (twoLine(p) ? 30 : 16))));
       const lastP = colsP[colsP.length - 1];
       const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
-      const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:6px;background:' + bg });
+      const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:4px;background:' + bg });
       const cellsOut = [{
         text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' + this.fmt(target) + ' GW' : 'Ziel: ' + this.fmtU(target, false)) + ')',
         title: '', swatchStyle: 'display:none', innerStyle: flat,
@@ -2668,7 +2672,7 @@ class Component extends DCLogic {
           cellsOut.push({
             text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
             swatchStyle: 'display:none', innerStyle: flat,
-            style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
+            style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:4px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#1b2126')
           });
         });
       });
@@ -2787,7 +2791,7 @@ class Component extends DCLogic {
           label: this.byId[p].name, labelStyle: 'font-size:14px;color:#5b6672;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
           wrapStyle: 'display:flex;align-items:center;height:21px;max-width:260px;padding-right:6px' }));
         const pushCol = (title, n, dots) => {
-          items.push({ label: '', labelStyle: 'display:none', title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#4f5b66;border-radius:3px 3px 0 0',
+          items.push({ label: '', labelStyle: 'display:none', title, count: String(n), barStyle: 'width:100%;max-width:34px;height:' + (n/nmax*72).toFixed(0) + 'px;background:#4f5b66;border-radius:4px 3px 0 0',
             wrapStyle: 'display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:96px', dotStyle: 'display:none', countStyle: 'font-size:14px;color:#1b2126;font-weight:600' });
           dots.forEach(d => items.push({ label: '', labelStyle: 'display:none', title, count: '', barStyle: 'display:none', countStyle: 'display:none',
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
@@ -2888,7 +2892,7 @@ class Component extends DCLogic {
             tag: o.id === other ? ('bereits in ' + (k === 0 ? 'B' : 'A')) : otherKrs ? 'anderer Landkreis' : (isHere ? 'gewählt' : ''),
             tagStyle: (inOther || isHere) ? 'flex:none;font-size:12px;color:' + (isHere ? '#1f2a33' : '#6b7680') + ';margin-left:auto;padding-left:8px' : 'display:none',
             // Referenzen abgesetzt: gestrichelter Rahmen am Kennzeichen, Szenarien voll
-            markStyle: o.isRef ? 'flex:none;width:10px;height:10px;border-radius:3px;border:1.5px dashed #7a848c;background:#f4f5f6' : 'display:none',
+            markStyle: o.isRef ? 'flex:none;width:10px;height:10px;border-radius:4px;border:1.5px dashed #7a848c;background:#f4f5f6' : 'display:none',
             dots: o.isRef ? [] : dotsOf(o.regionalSel),
             dotsStyle: o.isRef ? 'display:none' : 'flex:none;display:flex;align-items:center;gap:2px;width:64px',
             rowStyle: 'display:flex;align-items:center;gap:6px;padding:0 8px 0 0;background:' + (isHere ? '#f1f3f4' : 'transparent'),
@@ -2898,7 +2902,7 @@ class Component extends DCLogic {
             infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #c2c9cf;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#6b7680;cursor:pointer;font-style:italic;flex:none' : 'display:none',
             onInfo: o.isRef ? (() => this.setState({ hubRefInfo: this.state.hubRefInfo === o.id ? null : o.id })) : (() => {}),
             info: infoOpen ? o.info : '',
-            infoStyle: infoOpen ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:2px 12px 6px;line-height:1.45' : 'display:none'
+            infoStyle: infoOpen ? 'font-size:14px;color:#5b6672;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;margin:2px 12px 6px;line-height:1.45' : 'display:none'
           };
         };
         const gs = [{ label: hubRegion ? 'Referenzen (' + refLvl.label + ')' : 'Referenzen', items: refObjs.map(item), emptyText: '', emptyStyle: 'display:none' }];
@@ -2943,11 +2947,11 @@ class Component extends DCLogic {
           nameStyle: 'flex:1;min-width:0;font-size:' + (o ? '16px;font-weight:600;color:#1b2126' : '15px;font-weight:400;color:#6b7680') + ';line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
           caret: isOpen ? '▴' : '▾',
           wrapStyle: 'position:relative;flex:1;min-width:260px;' + (isOpen ? 'z-index:31' : ''),
-          style: 'background:#fff;border:' + (isOpen ? '2px solid #1f2a33' : '1px solid #c9d0d5') + ';border-radius:10px;padding:' + (isOpen ? '9px 12px' : '10px 13px') + ';cursor:pointer',
+          style: 'background:#fff;border:' + (isOpen ? '2px solid #1f2a33' : '1px solid #c9d0d5') + ';border-radius:8px;padding:' + (isOpen ? '9px 12px' : '10px 13px') + ';cursor:pointer',
           onToggle: () => this.setState({ hubMenu: isOpen ? null : k }),
           clearStyle: o ? 'cursor:pointer;color:#6b7680;font-size:16px;line-height:1;padding:2px;flex:none' : 'display:none',
           onClear: e => { if (e && e.stopPropagation) e.stopPropagation(); const np = pair.slice(); np[k] = null; setPair(np); },
-          menuStyle: isOpen ? 'position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:32;background:#fff;border:1px solid #d2d7db;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.16);max-height:360px;overflow-y:auto;padding:4px 0' : 'display:none',
+          menuStyle: isOpen ? 'position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:32;background:#fff;border:1px solid #d2d7db;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);max-height:360px;overflow-y:auto;padding:4px 0' : 'display:none',
           groups: isOpen ? menuGroups(k) : []
         };
       });
@@ -3091,7 +3095,7 @@ class Component extends DCLogic {
       R.hubSumCards = [0, 1].map(k => {
         const o = pair[k] ? objById[pair[k]] : null;
         const card = { badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), rows: [],
-          boxStyle: 'padding:12px 13px;border-radius:10px;border:1px solid #e2e8e6;background:' + (o ? '#fff' : '#f7f8f9'),
+          boxStyle: 'padding:12px 0 0;border-top:1px solid #dfe3e6' + (o ? '' : ';color:#6b7680'),  // kein Kasten, nur Linie
           rowsStyle: 'margin-top:8px;border-top:1px solid #eef1f2;padding-top:6px' };
         if (!o) return Object.assign(card, { kind: k === 0 ? 'Ausgangspunkt' : 'Vergleichsobjekt', name: 'Noch nicht gewählt', rowsStyle: 'display:none' });
         if (o.isRef) {
@@ -3161,8 +3165,9 @@ class Component extends DCLogic {
       // Rahmen/Hintergrund der Hub-Box blau (Wind) bzw. gelb (PV)
       // Technologie kommt allein vom Umschalter links; eine gespeicherte A/B-Auswahl einer anderen Technologie
       // wird über storedOk ignoriert
-      R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;border-radius:12px;padding:14px 16px;'
-        + 'background:' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].bg + ';border:2px solid ' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].line;
+      // Kein getönter Rahmen mehr (weniger Kästen): eine Linie in der Technologiefarbe oben markiert den Vergleich
+      R.hubStyle = 'flex:none;display:flex;flex-direction:column;gap:14px;padding:14px 0 0;'
+        + 'border-top:3px solid ' + this.techColors[hubTech === 'pv' ? 'pv' : 'wind'].line;
       // Tabellen-Box unter der Hub-Box: gleiche Technologiefarbe, nur mit gespeicherten Szenarien
       R.hubTablesStyle = R.hubStyle + ';margin-top:16px';
       R.showHubTables = R.hubTables.length > 0;
@@ -3194,7 +3199,7 @@ class Component extends DCLogic {
           name: this.byId[p].name, extern: false, tag: '', tagStyle: 'display:none',
           // Name steht schon im Kartentitel — hier nur die Beschreibung, mit großem Anfangsbuchstaben
           explain: (e => e.charAt(0).toUpperCase() + e.slice(1) + '.')(shortExplain[p] || 'so verteilt sich der Ausbau'),
-          swatch: 'display:inline-block;width:11px;height:11px;border-radius:3px;background:' + this.byId[p].color,
+          swatch: 'display:inline-block;width:11px;height:11px;border-radius:4px;background:' + this.byId[p].color,
           min: this.fmtN(mn, isRegion), max: this.fmtN(mx, isRegion),
           cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(rg > 1e-9 ? (pv[i] - mn) / rg : 1, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
@@ -3365,14 +3370,14 @@ class Component extends DCLogic {
     R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen && !savePaused;
     this._saveHintVisible = R.saveHintPopup;
     R.dismissSaveHint = () => this.setState({ saveHintSeen: true });
-    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-size:14px;font-weight:600;padding:8px 13px;border-radius:7px;white-space:nowrap;'
+    R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-size:14px;font-weight:600;padding:8px 13px;border-radius:4px;white-space:nowrap;'
       + (savePaused ? 'border:1px solid #dde1e4;color:#a3abb2;background:#eef0f2;cursor:not-allowed' : 'border:1px solid #1f2a33;color:#fff;background:#1f2a33;cursor:pointer');
     R.saveBtnHover = savePaused ? '' : 'background:#33424f';
     R.saveBtnTitle = savePaused ? 'Erst neu berechnen, dann speichern: Das Ergebnis passt nicht mehr zu den Eingaben.' : '';
     // Hub: „Vergleich teilen" (rechts über der Hub-Box) → Popup mit kopierbarem Platzhalter-Link
     R.shareOpen = !!S.shareOpen && view === 'szenarien';
     R.openShare = R.shareReady ? (() => this.setState({ shareOpen: true, shareCopied: false })) : (() => {});
-    R.shareBtnStyle = 'display:flex;align-items:center;gap:6px;background:#fff;font-size:14px;font-weight:600;padding:5px 12px;border-radius:6px;white-space:nowrap;'
+    R.shareBtnStyle = 'display:flex;align-items:center;gap:6px;background:#fff;font-size:14px;font-weight:600;padding:5px 12px;border-radius:4px;white-space:nowrap;'
       + (R.shareReady ? 'border:1px solid #1f2a33;color:#1f2a33;cursor:pointer' : 'border:1px solid #dde1e4;color:#a3abb2;cursor:not-allowed');
     R.shareBtnHover = R.shareReady ? 'background:#f1f3f4' : '';
     R.shareBtnTitle = R.shareReady ? '' : 'Wählen Sie zuerst A und B.';
@@ -3390,7 +3395,7 @@ class Component extends DCLogic {
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, fallback); else fallback();
     };
     R.shareCopyLabel = S.shareCopied ? 'Kopiert ✓' : 'Link kopieren';
-    R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#1f2a33');
+    R.shareCopyBtnStyle = 'flex:none;border:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:4px;cursor:pointer;white-space:nowrap;color:#fff;background:' + (S.shareCopied ? '#2f7d5f' : '#1f2a33');
     // Auto-Name kurz halten: ab zwei Prinzipien nur die Anzahl (die Namen stehen in der rechten Spalte und in
     // den Tabellen), Landkreis ohne das Wort „Landkreis". Gleiche Namen bekommen eine laufende Nummer — zwei
     // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsberücksichtigung unterscheiden.
@@ -3453,9 +3458,9 @@ class Component extends DCLogic {
     R.scenarioToastVisible = !!(S.scenarioToastShow || S.scenarioToastMounted);
     R.undoToastVisible = !!(S.undoDelete && (S.undoShow || S.undoMounted));
     R.undoDelete = () => this.undoDeleteScenario();
-    R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#1f2a33;color:#eaecef;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);'
+    R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#1f2a33;color:#eaecef;border-radius:8px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(15,30,45,.16);'
       + (S.undoShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards;pointer-events:none');
-    R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#1f2a33;color:#eaecef;border-radius:9px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:380px;text-align:center;pointer-events:none;'
+    R.scenarioToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:#1f2a33;color:#eaecef;border-radius:8px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(15,30,45,.16);max-width:380px;text-align:center;pointer-events:none;'
       + (S.scenarioToastShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards');
 
     // ---------- STRINGS / STATE ----------
@@ -3466,12 +3471,12 @@ class Component extends DCLogic {
     R.isErweitert = isExt;
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
     R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
-    R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.45' : 'display:none';
+    R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5b6672;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;margin:0 0 8px;line-height:1.45' : 'display:none';
     R.princSublineStyle = 'height:12px';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
     // Einstiegs-Info an der Prinzipien-Überschrift (R.12) und Info an der Erklärzeile des Hubs (R.8) — zu, bis angeklickt
     const infoBtn = on => 'flex:none;width:16px;height:16px;border:1px solid ' + (on ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (on ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
-    const infoBox = 'font-size:14px;color:#5b6672;line-height:1.5;padding:8px 10px;background:#f4f6f6;border-radius:7px';
+    const infoBox = 'font-size:14px;color:#5b6672;line-height:1.5;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc';
     R.introInfoBtnStyle = infoBtn(S.introInfo);
     R.introInfoStyle = S.introInfo ? infoBox + ';margin:8px 0 0' : 'display:none';
     R.toggleIntroInfo = () => this.setState({ introInfo: !this.state.introInfo });
@@ -3480,7 +3485,7 @@ class Component extends DCLogic {
     R.toggleHubInfo = () => this.setState({ hubInfo: !this.state.hubInfo });
     // Definition „Zubaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
     R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer';
-    R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#5b6672;background:#f4f5f6;border-radius:6px;padding:7px 9px;line-height:1.45' : 'display:none';
+    R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#5b6672;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;line-height:1.45' : 'display:none';
     R.cellHeroInfoBtnStyle = 'display:none';
     R.toggleConsInfo = () => this.setState({ consInfo: !this.state.consInfo });
     R.techWindStyle = this.segTech('wind', S.tech === 'wind');
@@ -3530,7 +3535,7 @@ class Component extends DCLogic {
       const canClick = p.available;
       return {
         name: p.name,
-        rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #1f2a33;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#eef0f2' : '#f1f3f4') : 'transparent') + ';color:' + (canClick ? '#1b2126' : '#aab2b9') + ';border:1px solid ' + (on ? '#d7d9dc' : 'transparent'),
+        rowStyle: (on && S.trioHint ? 'box-shadow:inset 3px 0 0 #1f2a33;' : '') + 'display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:4px;font-size:14px;cursor:' + (canClick ? 'pointer' : 'default') + ';background:' + (on ? (S.trioHint ? '#eef0f2' : '#f1f3f4') : 'transparent') + ';color:' + (canClick ? '#1b2126' : '#aab2b9') + ';border:1px solid ' + (on ? '#d7d9dc' : 'transparent'),
         swatchStyle: 'flex:none;width:14px;height:14px;border-radius:4px;border:2px solid ' + (canClick ? (p.color || '#c4c9cd') : '#d5d9dc') + ';background:' + (on ? p.color : 'transparent'),
         tag: canClick ? '' : '(Metrik in Vorbereitung)',
         tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#6b7680;font-style:italic;margin-top:2px',
@@ -3545,7 +3550,7 @@ class Component extends DCLogic {
     // Einmaliger Hinweis nach dem CTA-Einstieg: erklärt die Vorauswahl und was Ändern bewirkt
     // Mount-Flag bleibt während der Ausblende-Transition true, damit das Fade sichtbar wird
     R.trioHint = !!(S.trioHint || S.trioHintMounted);
-    R.trioHintStyle = 'font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px;'
+    R.trioHintStyle = 'font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc;'
       + (S.trioHint ? 'opacity:1' : 'animation:fadeOutHint .5s ease forwards');
     R.hintOppo = S.hintOppo;
 
@@ -3587,7 +3592,7 @@ class Component extends DCLogic {
 
     R.accountSwitchStyle = this.switchStyle(S.account);
     R.accountKnobStyle = this.knobStyle(S.account);
-    R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:8px 10px;background:#f4f6f6;border-radius:7px';
+    R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin:4px 0 0 2px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc';
     // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
     R.scopeUnit = this.unitFor(isRegion);
     R.region = !!S.region;
@@ -3705,7 +3710,7 @@ class Component extends DCLogic {
 
     // Herleitung (R.6): Eingaben der letzten Regionsberechnung, Prinzipien in Listenreihenfolge (wie links)
     const inListOrder = ids => this.principles.map(p => p.id).filter(id => (ids || []).includes(id));
-    const chainDot = id => 'flex:none;width:9px;height:9px;border-radius:3px;background:' + this.byId[id].color;
+    const chainDot = id => 'flex:none;width:9px;height:9px;border-radius:4px;background:' + this.byId[id].color;
     R.showChain = isRegion && hasRegionResult && !regionNeedsGate && view !== 'szenarien';
     R.chainWrapStyle = 'margin:12px 0 0 5px;padding-left:14px;border-left:1px solid #c8ced3';
     if (R.showChain) {
@@ -3843,7 +3848,7 @@ class Component extends DCLogic {
           const sumSame = sumTxt.every(t => t === sumTxt[0]);
           R.sumRows = sumSame ? [] : sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
           R.sumHeadStyle = sumSame ? 'display:none' : '';
-          R.sumSameStyle = sumSame ? 'font-size:14px;color:#1b2126;line-height:1.5;padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px' : 'display:none';
+          R.sumSameStyle = sumSame ? 'font-size:14px;color:#1b2126;line-height:1.5;padding:14px 0 0;border-top:1px solid #dfe3e6' : 'display:none';
           R.sumSameText = sumTxt[0] === this.fmtU(target, isRegion)
             ? 'Jedes Prinzip verteilt ' + (isRegion ? 'das ganze Regionsbudget' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
             : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
@@ -3874,7 +3879,7 @@ class Component extends DCLogic {
               return {
                 name: isRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label, v: this.fmtU(dissens[i], isRegion),
                 pName: this.byId[top].name, pColor: this.byId[top].color,
-                style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:' + (canPick ? 'pointer' : 'default') + ';background:' + (on ? '#f2f4f5' : 'transparent'),
+                style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:4px;cursor:' + (canPick ? 'pointer' : 'default') + ';background:' + (on ? '#f2f4f5' : 'transparent'),
                 onClick: canPick ? (() => { this.setState({ hoverDiss: null }); this.selectCell(c.id); }) : (() => {}),
                 onEnter: () => { if (this.state.hoverDiss !== c.id) this.setState({ hoverDiss: c.id }); },
                 onLeave: () => { if (this.state.hoverDiss === c.id) this.setState({ hoverDiss: null }); }
@@ -3892,7 +3897,7 @@ class Component extends DCLogic {
               ? { dots: o.rec.map(p => ({ color: this.byId[p].color })), label: o.rec.map(p => this.byId[p].name).join(' + '), count: o.n }
               : { dots: [{ color: '#e4e8eb' }], label: 'keine Abweichung > 20 %', count: o.n };
             return Object.assign(row, {
-              style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:6px;cursor:default;background:' + (on ? '#f2f4f5' : 'transparent'),
+              style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #eef1f2;border-radius:4px;cursor:default;background:' + (on ? '#f2f4f5' : 'transparent'),
               onEnter: () => { if (this.state.hoverCombo !== key) this.setState({ hoverCombo: key }); },
               onLeave: () => { if (this.state.hoverCombo === key) this.setState({ hoverCombo: null }); }
             });
@@ -3912,7 +3917,7 @@ class Component extends DCLogic {
           R.anBlockers = view === 'minimum'; mkBlockers();
         }
       }
-      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px';
+      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px 0 0;border-top:1px solid #dfe3e6';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
       R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#1f2a33' : '#c8ced3') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1f2a33' : '#6b7680') + ';font-style:italic;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5b6672;margin-top:8px;line-height:1.45' : 'display:none';
@@ -3996,7 +4001,7 @@ class Component extends DCLogic {
               ix = useRight ? px + popW + gap : px - gap - infoW;
               iy = clampY(py + popH / 2 - infoH / 2);
             }
-            R.popoverInfoStyle = 'position:absolute;z-index:6;left:' + (MAP_PAD + ix).toFixed(1) + 'px;top:' + (MAP_PAD + iy).toFixed(1) + 'px;width:' + infoW + 'px;max-height:' + (proj.boxH - 8) + 'px;overflow-y:auto;box-sizing:border-box;font-size:14px;color:#5b6672;line-height:1.5;padding:10px 12px;background:#fff;border:1px solid #d7dce0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.16);cursor:default';
+            R.popoverInfoStyle = 'position:absolute;z-index:6;left:' + (MAP_PAD + ix).toFixed(1) + 'px;top:' + (MAP_PAD + iy).toFixed(1) + 'px;width:' + infoW + 'px;max-height:' + (proj.boxH - 8) + 'px;overflow-y:auto;box-sizing:border-box;font-size:14px;color:#5b6672;line-height:1.5;padding:10px 12px;background:#fff;border:1px solid #d7dce0;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);cursor:default';
           }
           R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#fff;transform:rotate(45deg);' + (growRight ? 'left:-6px;border-left:1px solid #b9c1c8;border-bottom:1px solid #b9c1c8' : 'right:-6px;border-top:1px solid #b9c1c8;border-right:1px solid #b9c1c8');
           R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
@@ -4044,9 +4049,9 @@ class Component extends DCLogic {
         ? 'Wie viel diese Rasterzelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
         : (c.kind === 'Stadt' ? 'Wie viel diese Stadt zum Ausbauziel beiträgt — ihr' : 'Wie viel dieser Landkreis zum Ausbauziel beiträgt — sein') + ' Zubaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
-      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
+      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc';
 
-      R.cellConsBox = 'padding:14px;background:#f5f7f7;border-radius:10px;border:1px solid #e2e8e6';
+      R.cellConsBox = 'padding:14px 0 0;border-top:1px solid #dfe3e6';
       R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#1b2126;margin-bottom:9px';
 
     } else {
@@ -4067,7 +4072,7 @@ class Component extends DCLogic {
       R.showCellPopover = false;
       R.cellShowConflictHint = false;
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
-      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:9px 10px;background:#f4f6f6;border-radius:7px';
+      R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5b6672;line-height:1.5;margin-top:2px;padding:2px 0 2px 12px;border-left:2px solid #d3d8dc';
       R.cellHasConsensus = stufe >= 2;
       R.cellStufe1 = stufe === 1;
       // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
@@ -4153,7 +4158,7 @@ class Component extends DCLogic {
       this._zoomOrder = sel.slice();
       const zStep = dir => () => { const o = this._zoomOrder, k = o.indexOf(this.state.zoom); if (k >= 0) this.setState({ zoom: o[(k + dir + o.length) % o.length] }); };
       R.zoomPrev = zStep(-1); R.zoomNext = zStep(1);
-      R.zoomNavStyle = sel.length > 1 ? 'flex:none;width:36px;height:56px;border:1px solid #d7dce0;border-radius:9px;background:#fff;color:#5b6672;font-size:26px;line-height:1;cursor:pointer' : 'display:none';
+      R.zoomNavStyle = sel.length > 1 ? 'flex:none;width:36px;height:56px;border:1px solid #d7dce0;border-radius:8px;background:#fff;color:#5b6672;font-size:26px;line-height:1;cursor:pointer' : 'display:none';
       R.zoomTabs = sel.map(q => ({ name: this.byId[q].name, color: this.byId[q].color, onClick: () => this.setState({ zoom: q }),
         style: 'display:flex;align-items:center;gap:6px;font-size:14px;padding:4px 10px;border-radius:999px;cursor:pointer;border:1px solid ' + (q === p ? '#44505a' : '#dfe3e6') + ';background:' + (q === p ? '#f1f3f4' : '#fff') + ';color:' + (q === p ? '#1b2126' : '#5b6672') + ';font-weight:' + (q === p ? '600' : '500') }));
     } else R.zoom = false;
@@ -4217,7 +4222,7 @@ class Component extends DCLogic {
     R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'regionGate');
     R.regionDetailInfoBtnStyle = infoCircle(S.regionDetailInfo, false) + ';margin-top:6px';
     R.toggleRegionDetailInfo = () => this.setState({ regionDetailInfo: !this.state.regionDetailInfo });
-    R.regionDetailInfoStyle = R.showRegionDetailInfoBtn && S.regionDetailInfo ? 'flex:none;font-size:14px;color:#5b6672;line-height:1.5;padding:8px 10px;background:#fff;border:1px solid #e2e5e8;border-radius:7px;margin:-2px 2px 12px' : 'display:none';
+    R.regionDetailInfoStyle = R.showRegionDetailInfoBtn && S.regionDetailInfo ? 'flex:none;font-size:14px;color:#5b6672;line-height:1.5;padding:8px 10px;background:#fff;border:1px solid #e2e5e8;border-radius:4px;margin:-2px 2px 12px' : 'display:none';
 
     // Titel der Ergebnis-Box nennt in der Region die Einheit (R.6): Rasterzelle bzw. Gemeinde [Name]
     if (isRegion && R.showCell && ZUBAU_AS_HERO) {
@@ -4404,13 +4409,13 @@ class Component extends DCLogic {
   }
 
   // style helpers
-  segBtn(on) { return 'border:none;border-radius:5px;font-size:14px;font-weight:' + (on ? '600' : '500') + ';padding:5px 13px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
+  segBtn(on) { return 'border:none;border-radius:4px;font-size:14px;font-weight:' + (on ? '600' : '500') + ';padding:5px 13px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? 'inset 0 0 0 1px #d3d8dc' : 'none'); }
   // Technologie-Schalter: aktive Hälfte in der Technologiefarbe (blau = Wind, gelb = PV) statt neutral weiß
   segTech(tech, on) { const c = this.techColors[tech]; return this.segLight(on) + (on ? ';background:' + c.seg + ';box-shadow:inset 0 0 0 1px ' + c.line : ''); }
-  segLight(on) { return 'flex:1;border:none;border-radius:5px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? '0 1px 2px rgba(0,0,0,.12)' : 'none'); }
-  chip(on) { return 'flex:1;border:1px solid ' + (on ? '#1f2a33' : '#d2d7db') + ';border-radius:7px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#1f2a33' : '#fff') + ';color:' + (on ? '#fff' : '#5b6672'); }
+  segLight(on) { return 'flex:1;border:none;border-radius:4px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:6px 8px;cursor:pointer;background:' + (on ? '#fff' : 'transparent') + ';color:' + (on ? '#1b2126' : '#6b7680') + ';box-shadow:' + (on ? 'inset 0 0 0 1px #d3d8dc' : 'none'); }
+  chip(on) { return 'flex:1;border:1px solid ' + (on ? '#1f2a33' : '#d2d7db') + ';border-radius:4px;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:7px 4px;cursor:pointer;background:' + (on ? '#1f2a33' : '#fff') + ';color:' + (on ? '#fff' : '#5b6672'); }
   tabBtn(on) { return 'white-space:nowrap;border:none;background:none;font-size:14px;font-weight:' + (on?'600':'500') + ';padding:8px 11px;cursor:pointer;color:' + (on ? '#1f2a33' : '#6b7680') + ';border-bottom:2px solid ' + (on ? '#1f2a33' : 'transparent') + ';margin-bottom:-1px'; }
-  switchStyle(on) { return 'width:34px;height:19px;border-radius:10px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#1f2a33' : '#c7ccd1'); }
+  switchStyle(on) { return 'width:34px;height:19px;border-radius:8px;border:none;padding:0;cursor:pointer;position:relative;background:' + (on ? '#1f2a33' : '#c7ccd1'); }
   knobStyle(on) { return 'position:absolute;top:2px;left:' + (on ? '17px' : '2px') + ';width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s'; }
 
   toggleP(id) {

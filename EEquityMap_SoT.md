@@ -2030,3 +2030,28 @@ Kleine Korrekturen nach einem heuristischen Review der Live-Version:
 - **Erweitert bleibt im Kopf:** Der Schalter ändert nicht nur die Karte
   (auch mehr Prinzipien in Liste und Galerie, Paarmatrix, Rohdaten in
   Bestand), daher kein Umzug an die Karte.
+
+## T. Gestaltung „weniger generisch" (Session 2026-10-22)
+
+Erster Durchgang nach der Rückmeldung „wirkt KI-gemacht" (Punkte 1, 2, 4):
+
+- **Weniger Kästen:** Kennzahlen in der rechten Spalte, Bestand-Zahlen,
+  Hub-Karten A/B und die „Nächster Schritt"-Karte stehen ohne grauen Kasten,
+  getrennt durch eine Linie oben (`1px #dfe3e6`) und Weißraum. Info-Texte
+  (hinter „i") und Hinweise sind Text mit dünner Linie links (`2px #d3d8dc`;
+  der Kontrafaktische Satz „Ohne … stiege …" mit Akzentlinie `#1f2a33`). Die
+  Vergleichsbox in „Szenarien vergleichen" hat keinen getönten Rahmen mehr,
+  sondern oben eine 3-px-Linie in der Technologiefarbe. Der Warnhinweis
+  „Ergebnis veraltet" bleibt als (gelber) Kasten — er ist ein Zustand.
+- **Schriftgrößen-Skala:** 12 (Versal-Labels, Badges) · 14 (Text) · 16
+  (Zwischentitel) · 20 (Spaltentitel, Dialoge) · 24 (Headline) · 32
+  (Kennzahl). Labels über Kennzahlen und Spaltentiteln („BESTAND HEUTE",
+  „ZUBAUKONSENS GESAMT") in Versalien 12 px, gesperrt — wie die Unter-Reiter
+  eine Ausnahme zur 14-px-Regel (§K), die für Fließ- und Infotext gilt.
+- **Details:** zwei Radien (4 px Bedienelemente, 8 px Rahmen/Popups/Dialoge),
+  zwei Schatten (Popups `0 4px 16px rgba(15,30,45,.16)`, Dialoge
+  `0 16px 48px rgba(15,30,45,.22)`), aktive Segmente mit Haarlinie statt
+  Schatten. Pfeile „→" nur auf Knöpfen, die woandershin führen.
+
+Offen (mit Team): Texte kürzen (3), Onboarding-Ebenen reduzieren (7),
+Daten direkt beschriften/Quellen (5), eigene Markenfarbe/Schrift/Illustration (6).
