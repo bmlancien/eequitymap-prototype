@@ -1046,6 +1046,8 @@ die falsche Einheit.
 >   darunter — vorher standen sie zugeklappt und aufgeklappt doppelt. Der
 >   Hinweis „Startet mit denselben Prinzipien wie national. …" bleibt
 >   unverändert sichtbar (wichtig für das Zwei-Ebenen-Verständnis).
+>   → Geändert 2026-10-22: kein fester Kasten mehr, sondern ein einmaliges
+>   Popup an der Prinzipien-Überschrift (s. R.4, Nachtrag).
 > - **Einzelverteilungen in der Region zeigen Gemeinden** (Session 2026-10-12):
 >   Die kleinen Karten der Galerie und die Vergrößerung („Einzeln ansehen")
 >   zeigen in der Region Gemeinden statt des Rasters, mit derselben Einstellung
@@ -1585,6 +1587,20 @@ Landkreises (Regional).
   > Auch das Regionsbudget lässt sich ändern. Weicht es vom Ergebnis der
   > Deutschlandrechnung ab, wird das gekennzeichnet: Es entspricht dann nicht
   > mehr der bundesweiten Empfehlung.
+
+**Nachtrag (Session 2026-10-22):**
+- **Popover als Karte mit Knopf:** Der dunkle Chip, dessen zweite Zeile wie Text
+  aussah, ist jetzt eine weiße Karte (Zeiger zum Landkreis) mit dem
+  Landkreisnamen und darunter einem gefüllten Knopf „Im Detail auswerten →" in
+  der Akzentfarbe. Die ganze Karte bleibt klickbar; das „i" oben rechts öffnet
+  weiter die Info.
+- **Hinweis zu den regionalen Prinzipien als Popup:** „Startet mit denselben
+  Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu
+  verteilen." steht nicht mehr als Kasten in der linken Spalte. Beim ersten
+  Betreten einer Region (nach der ersten Berechnung) erscheint er einmal als
+  kleines dunkles Popup direkt unter der Prinzipien-Überschrift, über der
+  Liste. Es schließt per Klick darauf oder beim ersten Klick irgendwo in der
+  Oberfläche und kommt in der Sitzung nicht wieder (K: einmalige Lehre).
 
 ### R.5 Regionsmodus: linke Spalte und Regionalziel
 

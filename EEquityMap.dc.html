@@ -125,21 +125,23 @@
 
       <!-- Prominent: das aktive Steuerelement (im Gegensatz zum zurückgenommenen Kontext-Kasten oben) —
            Akzentbalken in der Markenfarbe, kräftigere Type. -->
-      <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;position:relative">
         <span style="width:4px;height:16px;border-radius:2px;background:#1f2a33;flex:none"></span>
         <span style="font-size:15px;font-weight:700;color:#1b2126;flex:1;min-width:0">{{ princHeading }}</span>
         <span onClick="{{ toggleIntroInfo }}" style="{{ introInfoBtnStyle }}">i</span>
+        <!-- Erst-Hinweis beim ersten Betreten einer Region: kleines Popup unter der Überschrift, über der Liste.
+             Schließt per Klick darauf oder bei jedem Klick irgendwo in der Oberfläche (s. pointerdown-Listener). -->
+        <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
+          <div role="button" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:absolute;top:calc(100% + 10px);left:0;right:0;z-index:5;cursor:pointer;background:#1f2a33;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 14px rgba(15,30,45,.25)">
+            <span style="position:absolute;top:-5px;left:14px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg)"></span>
+            Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.
+            <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
+          </div>
+        </sc-if>
       </div>
       <!-- Einstiegs-Info hinter dem „i" an der Überschrift (zu, bis angeklickt; ersetzt die frühere Unterzeile, R.12) -->
       <div style="{{ introInfoStyle }}"><b style="color:#1b2126">Was kann ich hier tun?</b><br>Wählen Sie ein Gerechtigkeitsprinzip, um zu sehen, wie es den Ausbau verteilt. Wählen Sie mehrere, um zu sehen, wo sie übereinstimmen, wo sie voneinander abweichen und was den Konsens begrenzt.</div>
       <div style="{{ princSublineStyle }}"></div>
-
-      <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#1b2126;line-height:1.5;margin:0 0 12px;padding:10px 12px;background:#f2f4f5;border:1px solid #d7dce0;border-radius:8px">
-          <span style="flex:1">Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.</span>
-          <span onClick="{{ dismissRegionListHint }}" style="cursor:pointer;color:#6b7680;font-size:14px;line-height:1;padding:2px;flex:none">×</span>
-        </div>
-      </sc-if>
 
       <sc-if value="{{ trioHint }}" hint-placeholder-val="{{ false }}">
         <div style="{{ trioHintStyle }}">Dieser Konsens beruht auf drei Prinzipien. Ändern Sie die Auswahl, um zu sehen, wie er sich verschiebt.</div>
@@ -698,10 +700,11 @@
             <sc-if value="{{ showCellPopover }}" hint-placeholder-val="{{ false }}">
               <div style="{{ cellPopoverBoxStyle }}">
                 <span style="{{ cellPopoverTailStyle }}"></span>
-                <!-- Gefüllter Knopf in der Akzentfarbe (R.4); das „i" liegt im Knopf, stoppt aber den Klick -->
-                <div role="button" onClick="{{ evaluateRegionPopover }}" style="position:relative;box-sizing:border-box;width:100%;height:100%;background:#1f2a33;border:1px solid #1f2a33;color:#fff;font-size:14px;padding:7px 30px 7px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(15,30,45,.22);text-align:left;line-height:1.35" style-hover="background:#2c3a46">
-                  <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word">{{ cellPopoverLine1 }}</span>
-                  <span style="display:block">{{ cellPopoverLine2 }}</span>
+                <!-- Weiße Karte mit Landkreisname und gefülltem Knopf (R.4); die ganze Karte ist klickbar, das „i" stoppt den Klick -->
+                <div onClick="{{ evaluateRegionPopover }}" style="position:relative;box-sizing:border-box;width:100%;height:100%;background:#fff;border:1px solid #b9c1c8;color:#1b2126;font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 3px 12px rgba(15,30,45,.18);text-align:left;line-height:1.35;display:flex;flex-direction:column">
+                  <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;padding-right:22px">{{ cellPopoverLine1 }}</span>
+                  <!-- Eigener, gefüllter Knopf: als Aktion erkennbar (vorher sah die zweite Zeile wie Text aus) -->
+                  <button style="margin-top:auto;width:100%;background:#1f2a33;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:14px;font-weight:600;cursor:pointer;text-align:center" style-hover="background:#33424f">{{ cellPopoverLine2 }}</button>
                   <span onClick="{{ togglePopoverInfo }}" title="Was passiert in der Detailauswertung?" style="{{ popoverInfoBtnStyle }}">i</span>
                 </div>
               </div>
@@ -1680,6 +1683,11 @@ class Component extends DCLogic {
     this._scenarioSeq = 0;
     // Vergrößerte Einzelverteilung: Pfeiltasten blättern, Esc schließt (nur solange sie offen ist)
     this._zoomOrder = [];
+    // Erst-Hinweis an der regionalen Prinzipienliste: verschwindet beim ersten Klick irgendwo in der Oberfläche
+    document.addEventListener('pointerdown', () => {
+      const S = this.state;
+      if (S && S.level === 'region' && S.region && !S.regionHintSeen && !S.regionComputing) this.setState({ regionHintSeen: true });
+    }, true);
     document.addEventListener('keydown', e => {
       const z = this.state && this.state.zoom, o = this._zoomOrder;
       if (e.key === 'Escape' && this.state && (this.state.methodOpen || this.state.aboutOpen)) { this.setState({ methodOpen: false, aboutOpen: false }); return; }
@@ -3443,7 +3451,7 @@ class Component extends DCLogic {
     R.natCountText = natSelForBreadcrumb.length === 0 ? '—' : natSelForBreadcrumb.length === 1 ? '1 Prinzip' : natSelForBreadcrumb.length + ' Prinzipien';
 
     // Erst-Hinweis an der regionalen Liste — macht die Opt-in-Natur des zweiten Prinzipiensatzes sichtbar (§M)
-    R.regionListHint = isRegion && !S.regionHintSeen;
+    R.regionListHint = isRegion && !S.regionHintSeen && !S.regionComputing;
     R.dismissRegionListHint = () => this.setState({ regionHintSeen: true });
 
     // Mode-Transition-Text lebt jetzt im Ladezustand statt als eigenes dauerhaftes Band (§M) — dadurch
@@ -3878,7 +3886,7 @@ class Component extends DCLogic {
           // Textmessung im Prototyp — grobe Zeichen-Heuristik statt dessen (Umbruch passiert ohnehin per
           // CSS; die Schätzung entscheidet nur die Boxhöhe, lieber zu hoch als zu eng).
           // 14 px (R.4) statt vorher 13 px: Höhen je um 4 px angehoben, Breite unverändert
-          const popH = nameText.length > 20 ? 76 : 58;
+          const popH = nameText.length > 20 ? 92 : 73;
           // Zellrand in der gewählten Richtung, aus Kartenraum in Bildschirm-Pixel projiziert (relativ zur
           // SVG-eigenen Box); der Zeigerabstand wird erst danach als fester Pixelwert addiert.
           const edgeXs = this.toScreenX(proj, c.cx + vx), edgeYs = this.toScreenY(proj, c.cy + vy);
@@ -3896,7 +3904,7 @@ class Component extends DCLogic {
           R.showCellPopover = true;
           R.cellPopoverBoxStyle = 'position:absolute;left:' + (MAP_PAD + px).toFixed(1) + 'px;top:' + (MAP_PAD + py).toFixed(1) + 'px;width:' + popW + 'px;height:' + popH + 'px';
           R.cellPopoverLine1 = nameText;
-          R.cellPopoverLine2 = 'im Detail auswerten →';
+          R.cellPopoverLine2 = 'Im Detail auswerten →';
           // Info-Fläche am Popover, ohne es zu verdecken: darunter, sonst darüber, sonst auf der breiteren Seite
           // daneben (dann schmaler). Höhe aus der Breite geschätzt (≈ 7,2 px je Zeichen, 21 px je Zeile, großzügig);
           // passt sie nicht in die Karte, scrollt die Fläche.
@@ -3918,7 +3926,7 @@ class Component extends DCLogic {
             }
             R.popoverInfoStyle = 'position:absolute;z-index:6;left:' + (MAP_PAD + ix).toFixed(1) + 'px;top:' + (MAP_PAD + iy).toFixed(1) + 'px;width:' + infoW + 'px;max-height:' + (proj.boxH - 8) + 'px;overflow-y:auto;box-sizing:border-box;font-size:14px;color:#5b6672;line-height:1.5;padding:10px 12px;background:#fff;border:1px solid #d7dce0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.16);cursor:default';
           }
-          R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#1f2a33;transform:rotate(45deg);' + (growRight ? 'left:-5px' : 'right:-5px');
+          R.cellPopoverTailStyle = 'position:absolute;top:' + tailY.toFixed(1) + 'px;width:10px;height:10px;background:#fff;transform:rotate(45deg);' + (growRight ? 'left:-6px;border-left:1px solid #b9c1c8;border-bottom:1px solid #b9c1c8' : 'right:-6px;border-top:1px solid #b9c1c8;border-right:1px solid #b9c1c8');
           R.evaluateRegionPopover = e => { if (e && e.stopPropagation) e.stopPropagation(); this.enterRegion(c.id, c.kind + ' ' + c.label); };
         } else R.showCellPopover = false;
       } else R.showCellPopover = false;
@@ -4127,7 +4135,7 @@ class Component extends DCLogic {
     // „Was passiert in der Detailauswertung?" — gleicher Text am Popover und an der Regions-Headline (R.4)
     R.detailInfoText = 'Die Deutschlandrechnung legt fest, wie viel Ausbau nach den bundesweit gewählten Gerechtigkeitsprinzipien auf diesen Landkreis entfällt (Regionsbudget). In der Detailauswertung wird dieses Regionsbudget innerhalb des Landkreises auf einem 5 × 5-km-Raster neu verteilt. Ausgangspunkt sind dieselben Gerechtigkeitsprinzipien wie bundesweit. Sie können sie ändern und prüfen, wie sich dasselbe Regionsbudget nach anderen Prinzipien verteilen würde. Auch das Regionsbudget lässt sich ändern. Weicht es vom Ergebnis der Deutschlandrechnung ab, wird das gekennzeichnet: Es entspricht dann nicht mehr der bundesweiten Empfehlung.';
     const infoCircle = (on, dark) => 'flex:none;width:16px;height:16px;border:1px solid ' + (dark ? (on ? '#fff' : 'rgba(255,255,255,.6)') : (on ? '#1f2a33' : '#c8ced3')) + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (dark ? '#fff' : (on ? '#1f2a33' : '#6b7680')) + ';font-style:italic;cursor:pointer;line-height:1';
-    R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, true) + ';position:absolute;top:8px;right:8px;background:' + (S.popoverInfo ? 'rgba(255,255,255,.18)' : 'transparent');
+    R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, false) + ';position:absolute;top:9px;right:8px;background:#fff';
     R.togglePopoverInfo = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ popoverInfo: !this.state.popoverInfo }); };
     R.popoverInfoStyle = R.popoverInfoStyle || 'display:none';
     // nur an den Headlines, die das Regionsbudget nennen (Konsens bzw. noch nicht berechnet)
