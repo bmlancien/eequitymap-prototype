@@ -2077,3 +2077,37 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
 - **Schriften:** Bricolage Grotesque (variabel, OFL, lokal in `fonts/`) für
   Headlines, Spaltentitel, Dialogtitel und Kennzahlen; IBM Plex Sans bleibt
   für Text und Bedienelemente.
+
+## V. Inhalt und Kartengestaltung (Session 2026-10-22)
+
+- **Eine Zeile je Ansicht** unter den Reitern; sie sagt, was die Headline
+  nicht sagt:
+  - Konsens: „Diesen Zubau tragen alle gewählten Prinzipien mit — das heißt
+    nicht, dass eine Fläche genehmigungsfähig ist." (der frühere zweite
+    Hinweis unter der Legende entfällt)
+  - Was begrenzt?: „Begrenzend ist das Prinzip, das dort am wenigsten Zubau
+    vorsieht. Ohne es wäre dort mehr Konsens möglich."
+  - Dissens · Wie stark?: „Gemessen am größten Abstand eines gewählten
+    Prinzips zum Konsens." · Welche Prinzipien?: „Eingefärbt ist das Prinzip,
+    das dort um mehr als 20 % über dem Konsens liegt. Ohne es wäre dort mehr
+    Konsens möglich."
+  - Einzelverteilung: Erklärsatz des Prinzips; der kursive Zusatz
+    „Einzelverteilung eines Prinzips — nicht der Konsens" entfällt (die
+    Headline nennt das Prinzip).
+  - Bestand & Potenziale: bei „Bestand heute" keine Zeile (Headline und
+    Legende sagen es); Potenzial-/Planungsflächen je eine kurze Zeile. Der
+    wiederholende Satz in der rechten Spalte entfällt.
+- **Legende mit Werten:** Farbbalken (260 px) mit fünf gleichmäßig verteilten
+  Werten darunter statt nur Min/Max; Titel mit Einheit rechts („Zubaukonsens
+  je Landkreis, in GW").
+- **Galerie als Small Multiples:** keine Kartenrahmen mehr, gemeinsames Raster
+  mit mehr Abstand, Karten größer (170 px); beim Überfahren ein leichter
+  Hintergrund.
+- **Quellenzeile unter jeder Karte:** „Geometrie: © GeoBasis-DE / BKG (VG250) ·
+  Werte: Platzhalter des Prototyps · Stand: Oktober 2026" (12 px).
+  **[Offen]** Jahr der VG250-Ausgabe für den BKG-Vermerk ergänzen; sobald echte
+  Daten da sind, Quelle je Kennzahl (z. B. MaStR für den Bestand).
+- **Startdialog:** Illustration entfernt. Zwischen jeder der drei Karten und
+  ihrem Text ein Symbol in der Prinzipfarbe (Blitz = Verbrauch, Personen =
+  Bevölkerung, Euro = Kosten; Linienpfade nach Lucide, ISC-Lizenz). Die Datei
+  `illustration-prinzipien.png` wird nicht mehr verwendet.
