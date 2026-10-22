@@ -1573,6 +1573,11 @@ Landkreises (Regional).
 - **Suchfeld je Tab** **[Annahme]**: Deutschland — wählt den Landkreis aus
   (Popover, wie bisher); Regional — wechselt in diesen Landkreis; Bestand &
   Potenziale — zoomt auf den Landkreis.
+  **Geändert (UX-Review 2026-10-22):** In „Regional" wechselt die Suche nicht
+  mehr direkt in einen anderen Landkreis (ein Enter startete sonst eine
+  Berechnung). Anderer Landkreis → Bereich „Deutschland" mit diesem Landkreis
+  ausgewählt; „Im Detail auswerten" startet dort die Auswertung. Derselbe
+  Landkreis → keine Aktion.
 
 **Nachtrag (Session 2026-10-19, nach Umsetzung):**
 - **Start im Bereich „Bestand & Potenziale"** (statt „Deutschland"). Folgt dem

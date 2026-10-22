@@ -4510,8 +4510,13 @@ class Component extends DCLogic {
     const area = this.state.area || 'de';
     // Bestand & Potenziale: zoomt auf den Landkreis und wählt ihn aus
     if (area === 'bestand') { this.setState({ bpSel: { kind: 'krs', id: best.id }, search: '' }); this.bzZoomToKrs(best); return; }
-    // Regional: wechselt direkt in diesen Landkreis (anderer Landkreis = Voreinstellungen + erste Berechnung)
-    if (area === 'region') { this.enterRegion(best.id, best.kind + ' ' + best.label); this.setState({ search: '' }); return; }
+    // Regional: kein direkter Wechsel mehr (UX-Review) — ein Enter startete sonst eine Berechnung. Derselbe Landkreis:
+    // nichts tun. Ein anderer: in „Deutschland" auswählen; „Im Detail auswerten" startet dort die Auswertung.
+    if (area === 'region') {
+      if (this.state.region && this.state.region.krsId === best.id) { this.setState({ search: '' }); return; }
+      this.switchArea('de', { cell: best.id, deCell: best.id, gemeinde: null, search: '', seenKrsHint: true });
+      return;
+    }
     // Deutschland: wie ein Kartenklick — der Landkreis wird nur ausgewählt, das Popover
     // „im Detail auswerten →" startet erst die Regionsauswertung (kein Auto-Drill aus der Suche).
     this.setState(this.dismissTrioHint({ gemeinde: null, cell: best.id, search: '', seenKrsHint: true, tab: this.state.tab === 'szenarien' ? 'konsens' : this.state.tab }));
