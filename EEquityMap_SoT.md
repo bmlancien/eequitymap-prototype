@@ -1532,9 +1532,10 @@ Landkreises (Regional).
   den Daten).
 - **Landkreisname** im Regional-Tab: „Regional · [Landkreis]". **[Annahme]**
 - **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
-- **Regional ohne gewählten Landkreis** (direkt auf den Tab geklickt):
-  Leerzustand „Wählen Sie einen Landkreis — über die Suche oder auf der
-  Deutschlandkarte."
+- **Regional ohne ausgewerteten Landkreis:** Der Tab ist gesperrt (ausgegraut,
+  nicht klickbar). Beim Hovern erklärt ein Hinweis, dass zuerst ein Landkreis
+  ausgewertet werden muss (in „Deutschland" wählen, dann „im Detail
+  auswerten"). Ersetzt den früheren Leerzustand „Wählen Sie einen Landkreis …".
 - **Zustand bleibt erhalten:** Wer zwischen den Tabs wechselt, findet die
   Region so wieder, wie er sie verlassen hat (regionale Prinzipien,
   Regionalziel, berechnetes Ergebnis, Ansicht). Wird ein **anderer**

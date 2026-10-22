@@ -322,7 +322,6 @@
           <div style="font-size:14px;color:#5b6672;margin:10px 2px 0">{{ bpRawLegend }}</div>
         </sc-if>
       </sc-if>
-      <!-- Bereich „Regional" ohne gewählten Landkreis: Leerzustand, keine Karte, keine Unter-Reiter -->
       <!-- Bereich „Regional" ohne bundesweites Prinzip: erst in „Deutschland" wählen -->
       <sc-if value="{{ areaRegionNoPrinc }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:300px">
@@ -330,11 +329,6 @@
             <div style="font-size:16px;color:#5b6672;line-height:1.5">Wählen Sie zuerst im Bereich „Deutschland" mindestens ein Gerechtigkeitsprinzip. Daraus ergibt sich, wie viel Ausbau auf einen Landkreis entfällt.</div>
             <button onClick="{{ gotoDE }}" style="margin-top:16px;background:#1f2a33;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Zum Bereich Deutschland</button>
           </div>
-        </div>
-      </sc-if>
-      <sc-if value="{{ areaRegionEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:300px">
-          <div style="font-size:16px;color:#5b6672;text-align:center;max-width:420px;line-height:1.5">Wählen Sie einen Landkreis — über die Suche oder auf der Deutschlandkarte.</div>
         </div>
       </sc-if>
       <sc-if value="{{ areaMain }}" hint-placeholder-val="{{ true }}">
@@ -4081,7 +4075,6 @@ class Component extends DCLogic {
     // „Regional" braucht mindestens ein bundesweites Prinzip — ohne gibt es kein Regionsbudget (Hinweis statt Region)
     const natCount = S.selected.filter(avail).length;
     R.areaRegionNoPrinc = area === 'region' && natCount === 0;
-    R.areaRegionEmpty = area === 'region' && !S.region && natCount > 0;
     R.areaMain = area === 'de' || (area === 'region' && !!S.region && natCount > 0);
     R.gotoDE = () => this.switchArea('de');
     const regionTabLabel = S.region ? 'Regional · ' + S.region.label : 'Regional';
@@ -4091,6 +4084,12 @@ class Component extends DCLogic {
       { id: 'region', label: regionTabLabel }
     ].map(t => {
       const on = t.id === area;
+      // „Regional" ist erst wählbar, wenn ein Landkreis ausgewertet wurde — davor gesperrt, Hinweis beim Hovern
+      if (t.id === 'region' && !S.region) {
+        const hint = 'Werten Sie zuerst einen Landkreis aus — im Bereich „Deutschland" auf der Karte oder über die Suche wählen, dann „im Detail auswerten".';
+        return { label: t.label, title: hint, onClick: () => {}, hover: '',
+          style: 'flex:none;white-space:nowrap;font-size:14px;border-radius:8px 8px 0 0;padding:8px 16px;font-weight:500;color:#a3abb2;background:#eceef0;border:1px solid #dde1e4;border-bottom:none;cursor:not-allowed' };
+      }
       const base = 'flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;font-size:14px;border-radius:8px 8px 0 0;padding:8px 16px;';
       const style = on
         ? base + 'font-weight:600;color:#1b2126;background:#fff;border:1px solid #b9c1c8;border-bottom-color:#fff;margin-bottom:-1px;position:relative;z-index:1;cursor:default'
