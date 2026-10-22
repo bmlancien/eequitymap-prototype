@@ -893,6 +893,8 @@
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
                 </div>
               </sc-if>
+              <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
+              <div style="{{ staleHideStyle }}">
               <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                 <div style="font-size:14px;color:#5b6672">Differenz A − B</div>
                 <div class="num" style="font-size:24px;font-weight:700;color:#1b2126;margin-top:2px">{{ hubCellDiff }}</div>
@@ -910,6 +912,7 @@
                   </div>
                 </div>
               </sc-for>
+              </div>
             </div>
           </sc-if>
           <!-- Entweder die gewählte Zelle ODER der Überblick über A und B — nie beides zugleich
@@ -929,6 +932,8 @@
                   <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
                 </div>
               </sc-if>
+              <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
+              <div style="{{ staleHideStyle }}">
               <sc-if value="{{ hubSumDiff }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:12px 13px;background:#f5f7f7;border:1px solid #e2e8e6;border-radius:10px">
                   <div style="font-size:14px;color:#5b6672">Differenz A − B gesamt</div>
@@ -957,6 +962,7 @@
                   </div>
                 </div>
               </sc-for>
+              </div>
             </div>
           </sc-if>
         </div>
@@ -976,6 +982,8 @@
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
             </div>
           </sc-if>
+          <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
+          <div style="{{ staleHideStyle }}">
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
@@ -1111,6 +1119,7 @@
           <sc-if value="{{ ovClickHint }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:14px;color:#6b7680;margin-top:16px;line-height:1.5">{{ ovClickHintText }}</div>
           </sc-if>
+          </div>
         </div>
       </sc-if>
 
@@ -1133,6 +1142,8 @@
               <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#fff;border:1px solid #d8c49a;color:#6b5726;font-size:14px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer">Neu berechnen</button>
             </div>
           </sc-if>
+          <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
+          <div style="{{ staleHideStyle }}">
           <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung; bei „nicht aktuell" abgedimmt mit Hinweiszeile. -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
@@ -1244,6 +1255,7 @@
           </div>
           </sc-if>
 
+          </div>
         </div>
       </sc-if>
       </sc-if>
@@ -2518,6 +2530,8 @@ class Component extends DCLogic {
     // „Berechnung starten" steht an der Karte (Leerzustand), „Neu berechnen" rechts unter dem Titel — nicht links:
     // eine Box in der linken Spalte verschob beim Ändern einer Eingabe die Eingaben selbst.
     R.staleBoxStyle = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;margin-top:12px';
+    // Inhalt unter „Neu berechnen" ausblenden, solange das Ergebnis veraltet ist (contents: Flex-Abstände bleiben)
+    R.staleHideStyle = R.regionStaleBar ? 'display:none' : 'display:contents';
     R.staleBoxStyleHub = 'background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px';  // Hub: Abstand kommt vom gap
 
     const singlePid = sel[0] || this.principles[0].id;

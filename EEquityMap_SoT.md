@@ -1698,6 +1698,12 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Eingaben, ein Erscheinen verschiebt also nichts unter dem Mauszeiger.
   Umrandung und Abdimmung der Karte bleiben. „Berechnung starten" bleibt im
   Leerzustand an der Karte.
+  Solange der Hinweis steht, zeigt die rechte Spalte **nur Titel und
+  Hinweis**: Herleitung, Werte, Balken und A/B-Karten darunter sind
+  ausgeblendet (sie gehörten zur letzten Berechnung und würden sonst als
+  aktuell gelesen). Nach „Neu berechnen" erscheinen sie wieder. Die frühere
+  abgedimmte Herleitung mit „Stand der letzten Berechnung" ist damit nicht
+  mehr sichtbar.
 
 ### R.8 Szenarien vergleichen: je Ebene getrennt (ändert O)
 
