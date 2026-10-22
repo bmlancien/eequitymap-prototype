@@ -1533,6 +1533,18 @@ Landkreises (Regional).
   Tab mit seinem Inhalt verbindet (Ordner-Optik). Keine Farbe (J2: Farbe gehört
   den Daten).
 - **Landkreisname** im Regional-Tab: „Regional · [Landkreis]". **[Annahme]**
+- **Schrittnummern (Session 2026-10-22):** Die Tabs tragen eine Nummer im
+  Kreis vor dem Namen: ① Bestand & Potenziale · ② Deutschland · ③ Regional.
+  Sie zeigen die Reihenfolge aus dem Grundgedanken. Neutral grau; beim aktiven
+  Tab ist der Kreis gefüllt (Akzentfarbe `#1f2a33`), beim gesperrten Tab
+  Regional blasser.
+- **„Als Nächstes" in Bestand & Potenziale (Session 2026-10-22):** In der
+  rechten Spalte unter „Deutschland gesamt" (nur ohne gewählten Ort) eine
+  ruhige Karte: „Als Nächstes · Wie ließe sich der weitere Ausbau gerecht auf
+  die Landkreise verteilen? Vergleichen Sie Gerechtigkeitsprinzipien
+  bundesweit." mit dem Knopf „Zum Bereich Deutschland →". Immer da, kein
+  einmaliger Hinweis, nicht wegklickbar. Grund: Nach dem Start in Bestand war
+  unklar, wie es weitergeht.
 - **„← Deutschland" entfällt**; zurück geht es über den Tab „Deutschland".
 - **Regional ohne ausgewerteten Landkreis:** Der Tab ist gesperrt (ausgegraut,
   nicht klickbar). Beim Hovern erklärt ein Hinweis, dass zuerst ein Landkreis

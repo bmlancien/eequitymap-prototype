@@ -78,7 +78,7 @@
        Rechts das Suchfeld (Wirkung je Bereich, s. doSearch). -->
   <div style="display:flex;align-items:flex-end;gap:4px;padding:10px 14px 0;flex:none;position:relative;z-index:2">
     <sc-for list="{{ areaTabs }}" as="at" hint-placeholder-count="3">
-      <button onClick="{{ at.onClick }}" title="{{ at.title }}" style="{{ at.style }}" style-hover="{{ at.hover }}">{{ at.label }}</button>
+      <button onClick="{{ at.onClick }}" title="{{ at.title }}" style="{{ at.style }}" style-hover="{{ at.hover }}"><span style="{{ at.numStyle }}">{{ at.num }}</span>{{ at.label }}</button>
     </sc-for>
     <div style="flex:1"></div>
     <input value="{{ search }}" onInput="{{ onSearchInput }}" onKeyDown="{{ onSearchKey }}" placeholder="Landkreis oder Stadt…" style="width:250px;margin-bottom:6px;background:#fff;border:1px solid #d2d7db;color:#1b2126;font-size:14px;padding:6px 10px;border-radius:6px">
@@ -868,6 +868,14 @@
         </sc-if>
         <sc-if value="{{ bpRHint }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:14px;color:#6b7680;line-height:1.45;margin-top:16px">{{ bpRHint }}</div>
+        </sc-if>
+        <!-- Nächster Schritt: von heute (Bestand) zur gerechten Verteilung (Deutschland) — leise, immer da, kein Erst-Hinweis -->
+        <sc-if value="{{ bpNextStep }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:22px;padding:13px 14px;border:1px solid #d7dce0;border-radius:10px;background:#fff">
+            <div style="font-size:14px;color:#6b7680">Als Nächstes</div>
+            <div style="font-size:14px;color:#1b2126;line-height:1.5;margin-top:4px">Wie ließe sich der weitere Ausbau gerecht auf die Landkreise verteilen? Vergleichen Sie Gerechtigkeitsprinzipien bundesweit.</div>
+            <button onClick="{{ gotoDEFromBestand }}" style="margin-top:10px;width:100%;background:#1f2a33;color:#fff;border:none;padding:8px 12px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#33424f">Zum Bereich Deutschland →</button>
+          </div>
         </sc-if>
       </sc-if>
       <sc-if value="{{ areaMain }}" hint-placeholder-val="{{ true }}">
@@ -4165,19 +4173,21 @@ class Component extends DCLogic {
       { id: 'bestand', label: 'Bestand & Potenziale' },
       { id: 'de', label: 'Deutschland' },
       { id: 'region', label: regionTabLabel }
-    ].map(t => {
+    ].map((t, i) => {
       const on = t.id === area;
+      // Schrittnummer (1 → 2 → 3): die Tabs sind eine Reihenfolge, nicht nur Ablagen — neutral grau (J2)
+      const numStyle = (c, b) => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;margin-right:7px;font-size:12px;font-weight:600;vertical-align:1px;color:' + c + ';border:1px solid ' + b;
       // „Regional" ist erst wählbar, wenn ein Landkreis ausgewertet wurde — davor gesperrt, Hinweis beim Hovern
       if (t.id === 'region' && !S.region) {
         const hint = 'Werten Sie zuerst einen Landkreis aus — im Bereich „Deutschland" auf der Karte oder über die Suche wählen, dann „im Detail auswerten".';
-        return { label: t.label, title: hint, onClick: () => {}, hover: '',
+        return { label: t.label, num: i + 1, numStyle: numStyle('#a3abb2', '#d3d8dc'), title: hint, onClick: () => {}, hover: '',
           style: 'flex:none;white-space:nowrap;font-size:14px;border-radius:8px 8px 0 0;padding:8px 16px;font-weight:500;color:#a3abb2;background:#eceef0;border:1px solid #dde1e4;border-bottom:none;cursor:not-allowed' };
       }
       const base = 'flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;font-size:14px;border-radius:8px 8px 0 0;padding:8px 16px;';
       const style = on
         ? base + 'font-weight:600;color:#1b2126;background:#fff;border:1px solid #b9c1c8;border-bottom-color:#fff;margin-bottom:-1px;position:relative;z-index:1;cursor:default'
         : base + 'font-weight:500;color:#5b6672;background:#e3e6e9;border:1px solid #d3d8dc;border-bottom:none;cursor:pointer';
-      return { label: t.label, title: t.label, style, hover: on ? 'background:#fff' : 'background:#d6dade;color:#1b2126', onClick: () => this.switchArea(t.id) };
+      return { label: t.label, num: i + 1, numStyle: on ? numStyle('#fff', '#1f2a33') + ';background:#1f2a33' : numStyle('#5b6672', '#b9c1c8'), title: t.label, style, hover: on ? 'background:#fff' : 'background:#d6dade;color:#1b2126', onClick: () => this.switchArea(t.id) };
     });
     // Einmaliger Hinweis über der Deutschlandkarte — nur dort, wo die Landkreiskarte klickbar ist
     R.showKrsClickHint = area === 'de' && !isRegion && !S.seenKrsHint && ['konsens', 'minimum', 'konflikt', 'single'].includes(view);
@@ -4361,6 +4371,9 @@ class Component extends DCLogic {
       R.bpRSub = tab === 'bestand' ? 'Heute installierte Leistung.' : tab === 'planung' ? 'Offiziell ausgewiesene Windgebiete.' : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
       R.bpRHint = 'Klicken Sie auf einen Landkreis bzw. eine Gemeinde, um die Zahlen für diesen Ort zu sehen.';
     }
+    // „Als Nächstes" (Schritt 2): nur in der Deutschland-Übersicht, nicht bei einem gewählten Ort
+    R.bpNextStep = !shown;
+    R.gotoDEFromBestand = () => this.switchArea('de');
     R.bpRClose = () => this.setState({ bpSel: null });
   }
 
