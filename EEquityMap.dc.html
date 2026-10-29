@@ -356,7 +356,7 @@
                 <span style="{{ lt.style }}">{{ lt.label }}</span>
               </sc-for>
             </div>
-            <span style="font-size:14px;color:#5c5451;line-height:10px;padding-top:1px">{{ bpLegendTitle }}, in MW</span>
+            <span style="font-size:14px;color:#5c5451;line-height:10px;padding-top:1px">{{ bpLegendTitle }}, in GW</span>
           </div>
         </sc-if>
         <div style="font-size:12px;color:#8f8782;margin:4px 2px 0">{{ sourceNote }}</div>
@@ -623,13 +623,13 @@
 
           </div>
 
-          <!-- Tabellen je Ebene: Deutschland (GW) und je Landkreis (MW) getrennt — nicht direkt vergleichbar.
+          <!-- Tabellen je Ebene: Deutschland und Regionen getrennt (beide GW) — nicht direkt vergleichbar.
                Eigene Box unter „Vergleich A − B", gleiche Wind-/PV-Farbe; nur wenn Szenarien gespeichert sind. -->
           <sc-if value="{{ showHubTables }}" hint-placeholder-val="{{ false }}">
             <div style="{{ hubTablesStyle }}">
               <div style="font-size:16px;font-weight:600;color:#2e2927">Gespeicherte Szenarien</div>
               <div style="font-size:14px;color:#5c5451;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Regionen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
-              <!-- Zwei Gruppen: Deutschland (GW) und Regionen (MW) — getrennte Tabellen, gleiche Spalten und Sortierung -->
+              <!-- Zwei Gruppen: Deutschland · GW und Regionen · GW — getrennte Tabellen, gleiche Spalten und Sortierung -->
               <sc-for list="{{ hubRowGroups }}" as="hg" hint-placeholder-count="1">
               <div>
               <div style="font-size:14px;font-weight:600;color:#5c5451;margin-bottom:6px">{{ hg.title }}</div>
@@ -2360,17 +2360,20 @@ class Component extends DCLogic {
   }
 
   // ---- helpers ----
-  // GW: ab 10 GW eine Nachkommastelle („160,0 GW"), darunter zwei („0,35 GW") — keine Scheingenauigkeit (UX-Review)
-  fmt(n) { return Math.abs(n) >= 10 ? (Math.round(n * 10) / 10).toFixed(1).replace('.', ',') : (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
+  // Alle Leistungsangaben in GW, auch in der Region (löst §L „Region in MW" ab). Stellen nach Ebene:
+  // 2 für einen Landkreis und mehr, 3 für Gemeinden und Rasterzellen. Bei 2 Stellen ab 10 GW nur eine
+  // („160,0 GW", UX-Review). Größer als 0, aber auf 0 gerundet: „< 0,01" bzw. „< 0,001" statt „0,00".
+  fmtGW(n, d) {
+    if (d == null) d = 2;
+    if (d === 2 && Math.abs(n) >= 9.995) d = 1;  // ab dem, was gerundet „10,00" wäre
+    const f = Math.pow(10, d), r = Math.round(n * f) / f;
+    if (r === 0 && n > 0) return '< ' + (1 / f).toFixed(d).replace('.', ',');
+    return (r === 0 ? 0 : r).toFixed(d).replace('.', ',');
+  }
+  fmt(n) { return this.fmtGW(n, 2); }
+  // Wert einer Karteneinheit: Landkreis (Deutschland) bzw. Gemeinde/Rasterzelle (Region)
+  fmtUnit(n, region) { return this.fmtGW(n, region ? 3 : 2); }
   pct(n, d) { return (n * 100).toFixed(d == null ? 1 : d).replace('.', ',') + ' %'; }
-  // Regionsansicht rechnet in MW statt GW (Zellwerte sind sonst durchgängig „0,00 GW") — fest nach
-  // Modus, nicht adaptiv je Wert. MW folgt einer eigenen, gröberen Rundung (ganze Zahl oder eine
-  // Nachkommastelle, kein erzwungenes „,0") statt der GW-Zwei-Nachkommastellen-Regel.
-  // MW immer mit genau einer Nachkommastelle („1,0 MW", nicht „1 MW" neben „0,7 MW")
-  fmtMW(n) { return (Math.round(n * 1000 * 10) / 10).toFixed(1).replace('.', ','); }
-  fmtN(n, region) { return region ? this.fmtMW(n) : this.fmt(n); }
-  unitFor(region) { return region ? 'MW' : 'GW'; }
-  fmtU(n, region) { return this.fmtN(n, region) + ' ' + this.unitFor(region); }
   hx(h) { h = h.replace('#', ''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
   mix(a, b, t) { const A = this.hx(a), B = this.hx(b); t = Math.max(0, Math.min(1, t)); return 'rgb(' + A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',') + ')'; }
   // helles Ende sichtbar getönt (grau-neutraler Grund), damit niedrige Werte auf weißem Kartengrund nicht verschwinden
@@ -2698,7 +2701,7 @@ class Component extends DCLogic {
       const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
       const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:4px;background:' + bg });
       const cellsOut = [{
-        text: 'Zubaukonsens in ' + this.unitFor(isRegion) + ' (' + (isRegion ? 'Regionsbudget: ' + this.fmt(target) + ' GW' : 'Ziel: ' + this.fmtU(target, false)) + ')',
+        text: 'Zubaukonsens in GW (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmt(target) + ' GW)',
         title: '', swatchStyle: 'display:none', innerStyle: flat,
         style: 'font-size:14px;color:#5c5451;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
       }];
@@ -2716,7 +2719,7 @@ class Component extends DCLogic {
           if (!isSel(p) || !isSel(q)) { cellsOut.push(emptyCell('#e4e1dd')); return; }
           const v = pairVal[p + '|' + q], t = pnorm(v);
           cellsOut.push({
-            text: this.fmtN(v, isRegion), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmtU(v, isRegion) + ' Zubaukonsens',
+            text: this.fmt(v), title: this.byId[p].name + ' + ' + this.byId[q].name + ': ' + this.fmt(v) + ' GW Zubaukonsens',
             swatchStyle: 'display:none', innerStyle: flat,
             style: "display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:4px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;background:" + this.seq(t, this.CONS) + ';color:' + (t > 0.55 ? '#fff' : '#2e2927')
           });
@@ -2746,7 +2749,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(vals[i]), this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
-      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Empfohlener Zubau ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtN(v, isRegion));
+      R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Empfohlener Zubau ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = true;
       if (isExt) buildPairMatrix();
     } else if (view === 'konsens') {
@@ -2760,7 +2763,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(consCells[i]), this.CONS), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
-      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Zubaukonsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtN(v, isRegion));
+      R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Zubaukonsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = false;
       if (isExt) buildPairMatrix();
     } else if (view === 'minimum') {
@@ -2784,7 +2787,7 @@ class Component extends DCLogic {
       const hvDiss = KONFLIKT_TOPLIST && !S.cell && S.hoverDiss != null ? cells.findIndex(c => c.id === S.hoverDiss) : -1;
       R.mainCells = cells.map((c,i) => mkCell(i, hvDiss >= 0 && i !== hvDiss ? '#f5f2ee' : this.brown(norm(dissens[i])), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.brown(0) + ',' + this.brown(1) + ')';
-      R.legendMin = this.fmtN(mn, isRegion); R.legendMax = this.fmtN(mx, isRegion); R.legendTitle = 'Größte Abweichung vom Konsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtN(v, isRegion));
+      R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Größte Abweichung vom Konsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = false;
     } else if (view === 'konflikt') {
       // „Wer denkt anders?": Farbe der Verteilung(en), die hier > 20 % vom Konsens abweichen; mehrere = schraffiert
@@ -2843,7 +2846,7 @@ class Component extends DCLogic {
             wrapStyle: 'display:flex;align-items:center;justify-content:center;height:21px', dotStyle: d }));
         };
         rows.forEach(r => pushCol(
-          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' ' + upUnit + ' · ' + this.fmtU(r.gw, isRegion) + ' Zubaukonsens',
+          r.rec.map(p=>this.byId[p].name).join(' + ') + ' · ' + r.n + ' ' + upUnit + ' · ' + this.fmt(r.gw) + ' GW Zubaukonsens',
           r.n,
           sel.map(p => 'width:13px;height:13px;border-radius:50%;background:' + (r.rec.indexOf(p) >= 0 ? this.byId[p].color : '#e6e3df'))
         ));
@@ -3081,22 +3084,22 @@ class Component extends DCLogic {
           R.hubCellName = byGem ? (hubGem[selI].bez || 'Gemeinde') + ' ' + hubGem[selI].name
             : lvlRegion ? 'Rasterzelle ' + lvl.cells[selI].label : lvl.cells[selI].kind + ' ' + lvl.cells[selI].label;
           R.hubCellCards = [A, B].map((o, k) => ({ badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), kind: o.isRef ? 'Referenz' : 'Szenario', name: o.name,
-            k: o.isRef ? 'Verteilt' : 'Zubaukonsens', v: this.fmtU(k === 0 ? av : bv, lvlRegion) }));
-          R.hubCellDiff = this.fmtU(Math.abs(dv), lvlRegion);
+            k: o.isRef ? 'Verteilt' : 'Zubaukonsens', v: this.fmtUnit(k === 0 ? av : bv, lvlRegion) + ' GW' }));
+          R.hubCellDiff = this.fmtUnit(Math.abs(dv), lvlRegion) + ' GW';
           R.hubCellDiffWord = dv > 0 ? 'mehr in A' : 'mehr in B';
-          if (R.hubCellDiff === this.fmtU(0, lvlRegion)) R.hubCellDiffWord = 'gleich viel in A und B';
+          if (R.hubCellDiff === this.fmtUnit(0, lvlRegion) + ' GW') R.hubCellDiffWord = 'gleich viel in A und B';
         }
         R.scenDiffGrad = 'linear-gradient(90deg,' + this.div(1) + ',' + this.div(0) + ',' + this.div(-1) + ')';
-        R.scenDiffMax = this.fmtU(mxa, lvlRegion);
+        R.scenDiffMax = this.fmtUnit(mxa, lvlRegion) + ' GW';
         const sumA = va.reduce((x, y) => x + y, 0), sumB = vb.reduce((x, y) => x + y, 0);
         // Differenzen ohne Vorzeichen — die Richtung steht ausgeschrieben daneben („mehr in A" / „mehr in B")
-        const diffWord = (dv, txt) => txt === this.fmtU(0, lvlRegion) ? 'gleich viel in A und B' : (dv > 0 ? 'mehr in A' : 'mehr in B');
-        R.hubSumDiff = this.fmtU(Math.abs(sumA - sumB), lvlRegion);
+        const diffWord = (dv, txt) => txt === this.fmt(0) + ' GW' ? 'gleich viel in A und B' : (dv > 0 ? 'mehr in A' : 'mehr in B');
+        R.hubSumDiff = this.fmt(Math.abs(sumA - sumB)) + ' GW';
         R.hubSumDiffWord = diffWord(sumA - sumB, R.hubSumDiff);
         // Ein Hinweis für unterschiedliche Mengen (R.8): immer, wenn A und B verschiedene (angezeigte) Summen
         // verteilen — zwei Szenarien ebenso wie Szenario gegen Referenz. Ersetzt den früheren Referenz-Hinweis.
         const refSide = [A, B].find(o => o.isRef);
-        const aTxt = this.fmtU(sumA, lvlRegion), bTxt = this.fmtU(sumB, lvlRegion);
+        const aTxt = this.fmt(sumA) + ' GW', bTxt = this.fmt(sumB) + ' GW';
         if (aTxt !== bTxt) {
           // Text nach Vorlage des Teams (R.8), dahinter die konkreten Summen
           R.hubRefGapNote = 'A und B enthalten unterschiedliche Gesamtmengen (A ' + aTxt + ', B ' + bTxt + '). Die Karte zeigt daher sowohl Unterschiede in der räumlichen Verteilung als auch Unterschiede in der Gesamtleistung.'
@@ -3147,7 +3150,7 @@ class Component extends DCLogic {
         if (o.isRef) {
           return Object.assign(card, { kind: 'Referenz', name: o.name, rows: [
             { k: 'Ebene', v: lvlLabel, vStyle: txtCss },
-            { k: 'Verteilt', v: this.fmtU(lvlTarget, lvlRegion) + ' (volles Ziel)', vStyle: numCss }
+            { k: 'Verteilt', v: this.fmt(lvlTarget) + ' GW (volles Ziel)', vStyle: numCss }
           ] });
         }
         const rows = [{ k: 'Ebene', v: o.isRegion ? o.regionLabel : 'Deutschland', vStyle: txtCss }];
@@ -3155,8 +3158,8 @@ class Component extends DCLogic {
         else rows.push(prinzRow('Prinzipien', o.regionalSel));
         rows.push(o.isRegion
           ? { k: 'Regionalziel', v: this.fmt(o.target) + ' GW (' + (o.regionOwn ? 'eigenes Ziel' : 'DE-Empfehlung') + ')', vStyle: numCss }
-          : { k: 'Ausbauziel', v: this.fmtU(o.target, o.isRegion), vStyle: numCss });
-        rows.push({ k: 'Zubaukonsens', v: this.fmtU(o.consensusTotal, o.isRegion), vStyle: numCss });
+          : { k: 'Ausbauziel', v: this.fmt(o.target) + ' GW', vStyle: numCss });
+        rows.push({ k: 'Zubaukonsens', v: this.fmt(o.consensusTotal) + ' GW', vStyle: numCss });
         rows.push({ k: '% im Konsens', v: o.target ? this.pct(o.consensusTotal / o.target) : '—', vStyle: numCss });
         rows.push({ k: 'Begrenzend', v: o.limitingName || '—', vStyle: txtCss });
         return Object.assign(card, { kind: 'Szenario', name: o.name, rows });
@@ -3196,15 +3199,15 @@ class Component extends DCLogic {
           natLabel: sc.isRegion ? '· bundesweit' : '', natDots: sc.isRegion ? dotsOf(sc.nationalSel) : [],
           subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
           // Region: Spalte „Ausbauziel" zeigt das Regionalziel in GW (wie überall, wo es genannt wird)
-          target: sc.isRegion ? this.fmt(sc.target) + ' GW' : this.fmtU(sc.target, sc.isRegion), cons: this.fmtU(sc.consensusTotal, sc.isRegion),
+          target: this.fmt(sc.target) + ' GW', cons: this.fmt(sc.consensusTotal) + ' GW',
           pct: sc.target ? this.pct(sc.consensusTotal / sc.target) : '—', lim: sc.limitingName || '—', numStyle: numCell,
           onRemove: () => this.deleteScenario(sc.id), onRestore: () => this.restoreScenario(sc)
         };
       });
-      // Deutschland (GW) und Regionen (MW) getrennt: unterschiedliche Größenordnung, nicht direkt vergleichbar.
+      // Deutschland und Regionen getrennt (beide GW): unterschiedliche Größenordnung, nicht direkt vergleichbar.
       // Alle Landkreise stehen zusammen in „Regionen"; der Landkreis steht in der zweiten Zeile des Namens.
       // Je Hub nur die Tabelle seiner Ebene (hubScen enthält nur diese)
-      R.hubRowGroups = [{ title: hubRegion ? 'Regionen · MW' : 'Deutschland · GW', rows: mkRows(sortedScen) }].filter(g => g.rows.length);
+      R.hubRowGroups = [{ title: hubRegion ? 'Regionen · GW' : 'Deutschland · GW', rows: mkRows(sortedScen) }].filter(g => g.rows.length);
       R.hubRows = sortedScen;
       R.hubTables = R.hubRows;   // showHubTables prüft nur, ob es Zeilen gibt
 
@@ -3246,7 +3249,7 @@ class Component extends DCLogic {
           // Name steht schon im Kartentitel — hier nur die Beschreibung, mit großem Anfangsbuchstaben
           explain: (e => e.charAt(0).toUpperCase() + e.slice(1) + '.')(shortExplain[p] || 'so verteilt sich der Ausbau'),
           swatch: 'display:inline-block;width:11px;height:11px;border-radius:4px;background:' + this.byId[p].color,
-          min: this.fmtN(mn, isRegion), max: this.fmtN(mx, isRegion),
+          min: this.fmtUnit(mn, isRegion), max: this.fmtUnit(mx, isRegion),
           cells: shapes.map((cc,i) => ({ d: cc.d, fill: this.seq(rg > 1e-9 ? (pv[i] - mn) / rg : 1, this.byId[p].color) })),
           // Drill-in: Prinzip auswählen (Checkbox setzen) → Vollbild-Einzelverteilung; im Mehrfachfall Zoom
           onClick: galleryAll ? () => this.setState({ [selKey]: [p], committed: true, tab: 'konsens' }) : () => this.setState({ zoom: p })
@@ -3645,8 +3648,8 @@ class Component extends DCLogic {
     R.accountSwitchStyle = this.switchStyle(S.account);
     R.accountKnobStyle = this.knobStyle(S.account);
     R.accountInfoStyle = (S.accountInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5c5451;line-height:1.5;margin:4px 0 0 2px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3';
-    // Einheit fest nach Modus (§ MW-Vorgabe): GW national, MW regional — nicht adaptiv je Wert.
-    R.scopeUnit = this.unitFor(isRegion);
+    // Einheit überall GW (auch in der Region); die Stellenzahl folgt der Ebene (s. fmtGW)
+    R.scopeUnit = 'GW';
     R.region = !!S.region;
     R.search = S.search;
 
@@ -3654,10 +3657,10 @@ class Component extends DCLogic {
     if (view === 'empty') {
       R.kernaussage = 'Wo wäre der Ausbau fair? Beginnen Sie mit einem Gerechtigkeitsprinzip.';
     } else if (view === 'regionGate') {
-      // Die Region hat immer ein national berechnetes Budget — nie „0 MW" als wäre nichts da.
+      // Die Region hat immer ein national berechnetes Budget — nie „0,00 GW" als wäre nichts da.
       R.kernaussage = 'Regionsbudget: ' + this.fmt(liveBudget) + ' GW — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
     } else if (view === 'single') {
-      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmtU(target, isRegion) + ' so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
+      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmt(target) + ' GW so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
     } else if (view === 'minimum') {
       R.kernaussage = isRegion ? 'Die Karte zeigt, welches Prinzip den Konsens wo begrenzt.' : 'In jedem Landkreis sehen Sie, welches Prinzip den Konsens begrenzt.';
     } else if (view === 'verteilungen') {
@@ -3670,11 +3673,11 @@ class Component extends DCLogic {
       R.kernaussage = 'Wie unterscheiden sich Ihre Szenarien — untereinander und von den Referenzen?';
     } else {
       // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
-      // Regionsansicht (R.5): woher das Regionsbudget kommt, in GW (Ausnahme zu §L — Karte und Spalten bleiben MW).
+      // Regionsansicht (R.5): woher das Regionsbudget kommt.
       // Werte live: DE-Empfehlung und eingestelltes Regionalziel, auch wenn die Karte noch den alten Stand zeigt.
       R.kernaussage = isRegion
         ? 'Regionsbudget: ' + this.fmt(liveBudget) + ' GW — der Anteil ' + (/^Stadt /.test(S.region.label) ? 'dieser Stadt' : 'dieses Landkreises') + ' laut bundesweiter Verteilung.'
-        : 'Von ' + this.fmtU(target, isRegion) + ' Ausbauziel liegen ' + this.fmtU(consTotal, isRegion) + ' im Konsens aller gewählten Prinzipien.';
+        : 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
     }
 
 
@@ -3800,18 +3803,19 @@ class Component extends DCLogic {
     // Profil nur, wenn es etwas Eigenes zeigt (Bestandsaufteilung und/oder Zubaukonsens)
     R.cellShowProfile = !ZUBAU_AS_HERO && (!!S.account || stufe >= 2);
     R.cellShowDavon = !ZUBAU_AS_HERO && !!S.account;
-    // Hauptzahl + Kontextzeile. Eigene Rundung nur hier: MW immer mit einer Nachkommastelle („1,0"), und
-    // die Kontextzeile summiert die bereits gerundeten Teile, damit sie sichtbar aufgeht.
-    const heroNum = v => isRegion ? Math.round(v * 1000 * 10) / 10 : Math.round(v * 100) / 100;
-    const heroStr = n => n.toFixed(isRegion ? 1 : 2).replace('.', ',');
+    // Hauptzahl + Kontextzeile, Stellen wie die Karteneinheit (3 je Gemeinde/Zelle, 2 je Landkreis). Die
+    // Kontextzeile summiert die bereits gerundeten Teile, damit sie sichtbar aufgeht.
+    const heroD = isRegion ? 3 : 2, heroF = Math.pow(10, heroD);
+    const heroNum = v => Math.round(v * heroF) / heroF;
+    const heroStr = n => n.toFixed(heroD).replace('.', ',');
     const setHero = (zubau, cons, bestand) => {
       if (!ZUBAU_AS_HERO) { R.cellHeroLabel = 'Ausbau'; R.cellHeroValue = R.cellTotal; R.cellHeroCaption = ''; R.cellContextLine = ''; return; }
       const v = heroNum(stufe >= 2 ? cons : zubau), b = heroNum(bestand);
       R.cellHeroLabel = stufe >= 2 ? 'Zubaukonsens' : 'Zubau';
-      R.cellHeroValue = heroStr(v);
+      R.cellHeroValue = this.fmtUnit(stufe >= 2 ? cons : zubau, isRegion);  // „< 0,001" statt „0,000"
       R.cellHeroCaption = stufe >= 2 && S.consInfo ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.' : '';
       R.cellHeroInfoBtnStyle = stufe >= 2 ? R.consInfoBtnStyle : 'display:none';
-      R.cellContextLine = accEff ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' ' + this.unitFor(isRegion) + ' installierte Leistung' : '';
+      R.cellContextLine = accEff ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' GW installierte Leistung' : '';
     };
     R.cellEinordnung = '';
     R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#2e2927;margin-bottom:9px';
@@ -3822,7 +3826,7 @@ class Component extends DCLogic {
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCombos = false; R.anDissTop = false;
       let hideLead = false;
-      R.ovLeadUnit = this.unitFor(isRegion); R.ovBarShow = false; R.ovEmpty = false;
+      R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false;
 
       if (view === 'regionGate') {
         // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
@@ -3845,15 +3849,15 @@ class Component extends DCLogic {
         R.ovClickHint = false;
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
-        R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmtN(st, isRegion);
+        R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
         R.ovLeadSub = '';
       } else {
         const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
         // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
         R.ovBarCaption = isRegion
-          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmtU(consST, isRegion) + ' im Konsens der regionalen Prinzipien.'
-          : 'Vom Ausbauziel (' + this.fmtU(target, isRegion) + ') liegen ' + this.fmtU(consST, isRegion) + ' im Konsens aller gewählten Prinzipien.';
+          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
+          : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
         // Einheit der Zählung = die auf der Karte klickbare Einheit: Landkreise (Deutschland), Gemeinden (Region,
         // Ansichten mit Gemeinden) oder Rasterzellen (Region, nur Ansicht „Raster"). Begrenzendes Prinzip einer
@@ -3883,32 +3887,32 @@ class Component extends DCLogic {
         // Einheit der Karte: Landkreise (Deutschland) bzw. Rasterzellen (Region)
         const limUnit = n => limByGem ? (n === 1 ? 'Gemeinde' : 'Gemeinden') : isRegion ? (n === 1 ? 'Rasterzelle' : 'Rasterzellen') : (n === 1 ? 'Landkreis' : 'Landkreisen');
         const mkBlockers = () => { R.blockers = bl.map(b => {
-            const costTxt = this.fmtU(Math.max(0, b.cost), isRegion);
+            const costTxt = this.fmt(Math.max(0, b.cost)) + ' GW';
             // Prinzip, das nirgends begrenzt und nichts kostet: schlicht „begrenzt nirgends" statt „0,00" + leerem Balken
-            const never = b.count === 0 && costTxt === this.fmtU(0, isRegion);
+            const never = b.count === 0 && costTxt === this.fmt(0) + ' GW';
             return { name: b.name, color: b.color, valueText: never ? '' : costTxt,
               subText: b.count === 0 ? 'begrenzt nirgends' : 'begrenzt in ' + b.count + ' ' + limUnit(b.count),
               barW: (Math.max(0,b.cost)/cmax*100).toFixed(1) + '%',
               trackStyle: blockerBars && !never ? 'height:9px;background:#f2efeb;border-radius:4px;overflow:hidden;margin-left:18px' : 'display:none' };
-          }); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmtN(consTotal, isRegion) + ' auf ' + this.fmtU(consWithout(top.p), isRegion) + '.'; };
+          }); const top = bl[0]; R.counterfactual = 'Ohne ' + top.name + ' stiege der Zubaukonsens von ' + this.fmt(consTotal) + ' auf ' + this.fmt(consWithout(top.p)) + ' GW.'; };
 
         if (view === 'verteilungen') {
           R.anSums = true;
           const sums = sel.map(p => ({ name: this.byId[p].name, color: this.byId[p].color, v: scopeIdx.reduce((a,i)=>a+gwSel[p][i],0) }));
           const smax = Math.max(...sums.map(s=>s.v), 0.001);
-          const sumTxt = sums.map(s => this.fmtU(s.v, isRegion));
+          const sumTxt = sums.map(s => this.fmt(s.v) + ' GW');
           const sumSame = sumTxt.every(t => t === sumTxt[0]);
-          R.sumRows = sumSame ? [] : sums.map(s => ({ name: s.name, color: s.color, gw: this.fmtN(s.v, isRegion), w: (s.v/smax*100).toFixed(1)+'%' }));
+          R.sumRows = sumSame ? [] : sums.map(s => ({ name: s.name, color: s.color, gw: this.fmt(s.v), w: (s.v/smax*100).toFixed(1)+'%' }));
           R.sumHeadStyle = sumSame ? 'display:none' : '';
           R.sumSameStyle = sumSame ? 'font-size:14px;color:#2e2927;line-height:1.5;padding:14px 0 0;border-top:1px solid #e5e2de' : 'display:none';
-          R.sumSameText = sumTxt[0] === this.fmtU(target, isRegion)
+          R.sumSameText = sumTxt[0] === this.fmt(target) + ' GW'
             ? 'Jedes Prinzip verteilt ' + (isRegion ? 'das ganze Regionsbudget' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
             : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
           // 2) Dieser Reiter zeigt die Prinzipien einzeln — keine Konsenszahl in der rechten Spalte
           hideLead = true;
         } else if (view === 'konflikt') {
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, false) + ')';  // Budget immer in GW
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
           R.anCombos = S.konfliktMode === 'anders';
           // gezählt werden Landkreise (Deutschland) bzw. Rasterzellen (Region) — so benennen, nie pauschal „Zellen"
@@ -3929,7 +3933,7 @@ class Component extends DCLogic {
               sel.forEach(p => { const dv = Math.abs(gwSel[p][i] - consCells[i]); if (dv > tv) { tv = dv; top = p; } });
               const on = S.hoverDiss === c.id;
               return {
-                name: isRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label, v: this.fmtU(dissens[i], isRegion),
+                name: isRegion ? 'Rasterzelle ' + c.label : c.kind + ' ' + c.label, v: this.fmtUnit(dissens[i], isRegion) + ' GW',
                 pName: this.byId[top].name, pColor: this.byId[top].color,
                 style: 'padding:8px 8px;margin:0 -8px;border-bottom:1px solid #f3f0ec;border-radius:4px;cursor:' + (canPick ? 'pointer' : 'default') + ';background:' + (on ? '#f6f3ef' : 'transparent'),
                 onClick: canPick ? (() => { this.setState({ hoverDiss: null }); this.selectCell(c.id); }) : (() => {}),
@@ -3963,8 +3967,8 @@ class Component extends DCLogic {
           R.toggleCombos = () => this.setState({ combosOpen: !S.combosOpen });
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmtN(consST, isRegion); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmtU(target, false) + ')';  // Budget immer in GW
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Im Reiter „Konsens" nicht doppelt: dafür gibt es den Reiter „Was begrenzt?" (UX-Review)
           R.anBlockers = view === 'minimum'; mkBlockers();
         }
@@ -4064,23 +4068,23 @@ class Component extends DCLogic {
       R.cellStufe1 = stufe === 1;
       if (stufe >= 2) {
         // Konsens dieser Zelle == Minimum über die gewählten Prinzipien == Wert des begrenzenden Prinzips
-        R.cellConsensus = this.fmtN(Math.min.apply(null, sel.map(p => gwSel[p][i])), isRegion);
+        R.cellConsensus = this.fmtUnit(Math.min.apply(null, sel.map(p => gwSel[p][i])), isRegion);
         const mx = Math.max(...sel.map(p => gwSel[p][i]));
         R.cellBars = sel.map(p => {
           const isLim = limiting[i] === p;
-          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSel[p][i], isRegion), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1d6b4c;background:#efece8;padding:1px 6px;border-radius:4px' : 'display:none' };
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtUnit(gwSel[p][i], isRegion), w: (mx ? gwSel[p][i]/mx*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1d6b4c;background:#efece8;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
       }
       R.cellPrincipleName = this.byId[singlePid].name;
       R.cellPrincipleColor = this.byId[singlePid].color;
-      R.cellRecommend = this.fmtN(gwSel[singlePid][i], isRegion);
+      R.cellRecommend = this.fmtUnit(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
       R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
       // Zubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Zubau ≤ Ausbau.
       const neu = neuOf(i);
       const total = bestOf(i) + neu;
-      R.cellTotal = this.fmtN(total, isRegion); R.cellBestand = this.fmtN(c.bestandGW, isRegion); R.cellNew = this.fmtN(neu, isRegion);
+      R.cellTotal = this.fmtUnit(total, isRegion); R.cellBestand = this.fmtUnit(c.bestandGW, isRegion); R.cellNew = this.fmtUnit(neu, isRegion);
       setHero(neu, stufe >= 2 ? consCells[i] : 0, c.bestandGW || 0);
       R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
       R.cellEinordnung = einordnungFor(neu, areaOf(i));
@@ -4132,7 +4136,7 @@ class Component extends DCLogic {
       const gBest = gAgg(cells.map(c => c.bestandGW || 0));
       const gTotal = (accEff ? gBest : 0) + gNeu;
       const gKm2 = covWeight * CELL_KM2;
-      R.cellTotal = this.fmtN(gTotal, isRegion); R.cellBestand = this.fmtN(gBest, isRegion); R.cellNew = this.fmtN(gNeu, isRegion);
+      R.cellTotal = this.fmtUnit(gTotal, isRegion); R.cellBestand = this.fmtUnit(gBest, isRegion); R.cellNew = this.fmtUnit(gNeu, isRegion);
       setHero(gNeu, stufe >= 2 ? gAgg(consCells) : 0, gBest);
       R.cellAreaPct = pctArea(gKm2 / DE_KM2);
       R.cellEinordnung = einordnungFor(gNeu, gKm2);
@@ -4140,12 +4144,12 @@ class Component extends DCLogic {
       if (stufe >= 2) {
         const gwSelAgg = {}; sel.forEach(p => gwSelAgg[p] = gAgg(gwSel[p]));
         const consAgg = gAgg(consCells);
-        R.cellConsensus = this.fmtN(consAgg, isRegion);
+        R.cellConsensus = this.fmtUnit(consAgg, isRegion);
         const mxAgg = Math.max(...sel.map(p => gwSelAgg[p]));
         const limP = sel.reduce((best, p) => gwSelAgg[p] < gwSelAgg[best] - 1e-9 ? p : best, sel[0]);
         R.cellBars = sel.map(p => {
           const isLim = p === limP;
-          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtN(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1d6b4c;background:#efece8;padding:1px 6px;border-radius:4px' : 'display:none' };
+          return { name: this.byId[p].name, color: this.byId[p].color, gw: this.fmtUnit(gwSelAgg[p], isRegion), w: (mxAgg ? gwSelAgg[p]/mxAgg*100 : 0).toFixed(1) + '%', op: isLim ? 1 : 0.5, tag: isLim ? 'begrenzend' : '', tagStyle: isLim ? 'font-size:14px;font-weight:600;color:#1d6b4c;background:#efece8;padding:1px 6px;border-radius:4px' : 'display:none' };
         });
 
         const neu = gNeu;
@@ -4158,7 +4162,7 @@ class Component extends DCLogic {
         const gRec = gAgg(gwSel[singlePid]);
         R.cellPrincipleName = this.byId[singlePid].name;
         R.cellPrincipleColor = this.byId[singlePid].color;
-        R.cellRecommend = this.fmtN(gRec, isRegion);
+        R.cellRecommend = this.fmtUnit(gRec, isRegion);
         R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
         R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
         R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
@@ -4205,7 +4209,7 @@ class Component extends DCLogic {
       const zByGem = !!(zGem && zGemW);
       const pv = zByGem ? zGem.map((gm, gi) => (zGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
       const mx = Math.max(...pv), mn = Math.min(...pv), rg = mx - mn;
-      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtN(mx, isRegion); R.zoomMin = this.fmtN(mn, isRegion);
+      R.zoom = true; R.zoomName = this.byId[p].name; R.zoomColor = this.byId[p].color; R.zoomMax = this.fmtUnit(mx, isRegion); R.zoomMin = this.fmtUnit(mn, isRegion);
       R.zoomUnit = !isRegion ? 'je Landkreis' : (zByGem ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
       R.zoomCells = (zByGem ? zGem : cells).map((c,i) => ({ d: c.d, fill: this.seq(rg > 1e-9 ? (pv[i] - mn) / rg : 1, this.byId[p].color) }));
       // Blättern: Reihenfolge wie in der Galerie (sel); am Ende geht es vorn weiter
@@ -4332,7 +4336,10 @@ class Component extends DCLogic {
     const field = tab === 'bestand' ? 'bestandMW' : tab === 'planung' ? 'planLeistungMW' : 'potLeistungMW';
     const sel = S.bpSel || null;
     const nf = (v, d) => v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+    // Werte liegen in MW vor; angezeigt in GW — je Landkreis 2, je Gemeinde und Einzelfläche 3 Stellen. Nur einzelne
+    // Anlagen bleiben in MW („0,004 GW" wäre für ein Windrad nicht lesbar).
     const mwTxt = v => nf(v, 1) + ' MW';
+    const gwTxt = (v, d) => this.fmtGW(v / 1000, d) + ' GW';
     // dunkle Enden der Technologiefarben (Palette: Wind #5CC7DB → #14697a, PV #DC825D → #93421f)
     const dark = tech === 'pv' ? '#93421f' : '#14697a';
     const col = t => this.mix('#f4f1ed', dark, 0.08 + 0.92 * Math.max(0, Math.min(1, t)));
@@ -4381,22 +4388,23 @@ class Component extends DCLogic {
     const vmin = Math.min(...vals), vmax = Math.max(...vals), vr = vmax - vmin || 1;
     const unitWord = gemLevel && groups.length ? 'je Gemeinde' : 'je Landkreis';
     R.bpLegendTitle = (tab === 'bestand' ? 'Installierte Leistung ' : 'Leistungspotenzial ') + unitWord;
-    R.bpLegendMin = nf(vmin, 1); R.bpLegendMax = nf(vmax, 1) + ' MW';
-    R.bpLegendTicks = this.legendTicks(vmin, vmax, v => nf(v, vmax >= 100 ? 0 : 1));
+    const legD = gemLevel && groups.length ? 3 : 2;
+    R.bpLegendMin = this.fmtGW(vmin / 1000, legD); R.bpLegendMax = this.fmtGW(vmax / 1000, legD) + ' GW';
+    R.bpLegendTicks = this.legendTicks(vmin, vmax, v => this.fmtGW(v / 1000, legD));
     R.bpLegendGrad = 'linear-gradient(90deg,' + col(0) + ',' + col(1) + ')';
     R.bpShowLegend = !raw;
     R.bpRawHint = raw && !gemLevel ? (tab === 'bestand' ? 'Zoomen Sie hinein, um die einzelnen Anlagen zu sehen.' : 'Zoomen Sie hinein, um die einzelnen Flächen zu sehen.') : '';
     R.bpRawLegend = raw && gemLevel ? (tab === 'bestand' ? 'Ein Punkt je Anlage bzw. Solarpark · Größe nach installierter Leistung'
       : tab === 'planung' ? 'Dunkel: Planungsflächen · hell: Potenzialflächen' : 'Je Fläche eine Form · Platzhalter') : '';
 
-    const tipFor = (name, v) => name + ' · ' + mwTxt(v);
+    const tipFor = (name, v, d) => name + ' · ' + gwTxt(v, d);
     R.bpKrs = this.krs.map(k => {
       const v = krsVal(k), covered = gemLevel && loaded.has(k.id);
       // Unter geladenen Gemeinden: Farbe der mittleren Gemeinde — die vereinfachten Gemeindeumrisse lassen kleine
       // Lücken, die so nicht als weiße Risse auffallen
       const nGem = covered ? (this._gemCache[k.id] || []).length || 1 : 1;
       const fill = raw ? (gemLevel ? '#f8f5f1' : '#ece9e5') : covered ? col((v / nGem - vmin) / vr) : (gemLevel ? '#eeebe7' : col((v - vmin) / vr));
-      return { d: k.d, fill, tip: covered ? '' : tipFor(k.kind + ' ' + k.label, v), onClick: pick({ kind: 'krs', id: k.id }) };
+      return { d: k.d, fill, tip: covered ? '' : tipFor(k.kind + ' ' + k.label, v, 2), onClick: pick({ kind: 'krs', id: k.id }) };
     });
     // Landkreisgrenzen über den Gemeinden (dunkler); auf Landkreisebene nur die weißen Trennlinien der Flächen
     R.bpKrsBorders = gemLevel ? this.krs.filter(k => loaded.has(k.id)).map(k => ({ d: k.d })) : [];
@@ -4408,7 +4416,7 @@ class Component extends DCLogic {
       const gems = list.map(g => {
         const f = gd[g.id][tech] || {}, v = f[field] || 0;
         return { d: g.d, fill: raw ? '#f8f5f1' : col((v - vmin) / vr), stroke: raw ? '#cbc8c4' : '#ffffff', sw: raw ? '0.7' : '0.6',
-          tip: raw ? (g.bez || 'Gemeinde') + ' ' + g.name : tipFor((g.bez || 'Gemeinde') + ' ' + g.name, v), onClick: pick({ kind: 'gem', krsId: k.id, id: g.id }) };
+          tip: raw ? (g.bez || 'Gemeinde') + ' ' + g.name : tipFor((g.bez || 'Gemeinde') + ' ' + g.name, v, 3), onClick: pick({ kind: 'gem', krsId: k.id, id: g.id }) };
       });
       const shapes = [], pts = [];
       // Ausdünnen: Rohdaten nur für Gemeinden, deren Mittelpunkt im sichtbaren Ausschnitt (+ 25 % Rand) liegt
@@ -4422,7 +4430,7 @@ class Component extends DCLogic {
         else {
           const objs = tab === 'planung' ? rw.plan : rw.pot;
           if (tab === 'planung') rw.pot.forEach(o => shapes.push({ d: o.d, fill: col(0.25), op: '1', tip: '', onClick: () => {} }));
-          objs.forEach((o, i) => shapes.push({ d: o.d, fill: col(0.85), op: '0.9', tip: (tab === 'planung' ? 'Planungsfläche' : 'Potenzialfläche') + ' · ' + nf(o.ha, 1) + ' ha · ' + mwTxt(o.ha * f.dens),
+          objs.forEach((o, i) => shapes.push({ d: o.d, fill: col(0.85), op: '0.9', tip: (tab === 'planung' ? 'Planungsfläche' : 'Potenzialfläche') + ' · ' + nf(o.ha, 1) + ' ha · ' + gwTxt(o.ha * f.dens, 3),
             onClick: pick({ kind: 'raw', krsId: k.id, gemId: g.id, type: tab === 'planung' ? 'plan' : 'pot', idx: i }) }));
         }
       });
@@ -4445,19 +4453,19 @@ class Component extends DCLogic {
     }
 
     // Rechte Spalte
-    const rowsFor = f => tab === 'bestand'
-      ? [{ k: 'Installierte Leistung', v: mwTxt(f.bestandMW || 0) }]
+    const rowsFor = (f, d) => tab === 'bestand'
+      ? [{ k: 'Installierte Leistung', v: gwTxt(f.bestandMW || 0, d) }]
       : tab === 'planung'
-        ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.planLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh/a' }]
-        : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(f.potLeistungMW || 0) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh/a' }];
+        ? [{ k: 'Fläche', v: nf(f.planFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: gwTxt(f.planLeistungMW || 0, d) }, { k: 'Energetisches Potenzial', v: nf(f.planEnergieGWh || 0, 0) + ' GWh/a' }]
+        : [{ k: 'Fläche', v: nf(f.potFlaecheHa || 0, 0) + ' ha' }, { k: 'Leistungspotenzial', v: gwTxt(f.potLeistungMW || 0, d) }, { k: 'Energetisches Potenzial', v: nf(f.potEnergieGWh || 0, 0) + ' GWh/a' }];
     R.bpRSub = ''; R.bpRScope = ''; R.bpRShowClose = !!sel;
     let shown = false, selKrs = null;  // selKrs: Landkreis der Auswahl (auch bei Gemeinde/Objekt) für den nächsten Schritt
     if (sel && sel.kind === 'krs') {
       const k = this.krs.find(x => x.id === sel.id), f = k && PotentialData.forKrs(k.id, tech);
-      if (k && f) { R.bpRTitle = k.kind + ' ' + k.label; R.bpRows = rowsFor(f); shown = true; selKrs = k; }
+      if (k && f) { R.bpRTitle = k.kind + ' ' + k.label; R.bpRows = rowsFor(f, 2); shown = true; selKrs = k; }
     } else if (sel && sel.kind === 'gem') {
       const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.id), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
-      if (k && g && gd) { R.bpRTitle = (g.bez || 'Gemeinde') + ' ' + g.name; R.bpRScope = k.kind + ' ' + k.label; R.bpRows = rowsFor(gd[g.id][tech]); shown = true; selKrs = k; }
+      if (k && g && gd) { R.bpRTitle = (g.bez || 'Gemeinde') + ' ' + g.name; R.bpRScope = k.kind + ' ' + k.label; R.bpRows = rowsFor(gd[g.id][tech], 3); shown = true; selKrs = k; }
     } else if (sel && sel.kind === 'raw') {
       const k = this.krs.find(x => x.id === sel.krsId), g = gemOf(sel.krsId, sel.gemId), gd = k && PotentialData.gemFor(k.id, this._gemCache[k.id]);
       const f = gd && g ? gd[g.id][tech] : null, rw = f ? this.bpRawFor(g, tech, f) : null, o = rw ? rw[sel.type][sel.idx] : null;
@@ -4465,7 +4473,7 @@ class Component extends DCLogic {
         R.bpRTitle = sel.type === 'best' ? 'Anlage' : 'Fläche';
         R.bpRScope = (g.bez || 'Gemeinde') + ' ' + g.name;
         R.bpRows = sel.type === 'best' ? [{ k: 'Installierte Leistung', v: mwTxt(o.mw) }]
-          : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: mwTxt(o.ha * f.dens) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh/a' }];
+          : [{ k: 'Fläche', v: nf(o.ha, 1) + ' ha' }, { k: 'Leistungspotenzial', v: gwTxt(o.ha * f.dens, 3) }, { k: 'Energetisches Potenzial', v: nf(o.ha * f.dens * f.flh / 1000, 1) + ' GWh/a' }];
         shown = true; selKrs = k;
       }
     }
@@ -4475,10 +4483,10 @@ class Component extends DCLogic {
       R.bpRTitle = 'Deutschland gesamt';
       const T = fld => PotentialData.total(tech, fld);
       R.bpRows = tab === 'bestand'
-        ? [{ k: 'Installierte Leistung', v: nf(T('bestandMW') / 1000, 1) + ' GW' }]
+        ? [{ k: 'Installierte Leistung', v: gwTxt(T('bestandMW'), 2) }]
         : tab === 'planung'
-          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('planLeistungMW') / 1000, 1) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh/a' }]
-          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: nf(T('potLeistungMW') / 1000, 1) + ' GW' }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh/a' }];
+          ? [{ k: 'Fläche', v: nf(T('planFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: gwTxt(T('planLeistungMW'), 2) }, { k: 'Energetisches Potenzial', v: nf(T('planEnergieGWh') / 1000, 0) + ' TWh/a' }]
+          : [{ k: 'Fläche', v: nf(T('potFlaecheHa'), 0) + ' ha' }, { k: 'Leistungspotenzial', v: gwTxt(T('potLeistungMW'), 2) }, { k: 'Energetisches Potenzial', v: nf(T('potEnergieGWh') / 1000, 0) + ' TWh/a' }];
       R.bpRSub = '';  // stand schon als Zeile über der Karte bzw. im Zeilennamen
     }
     // Nächster Schritt (2): nur in der Deutschland-Übersicht, nicht bei einem gewählten Ort
