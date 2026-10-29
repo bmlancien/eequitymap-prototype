@@ -323,7 +323,11 @@ wurde verworfen, s. H). Einzige tab-bezogene Ergänzung: Auf dem Differenz-Tab
 zeigt das Zelldetail zusätzlich die Differenz **dieser** Zelle — das ist ein
 fehlender Fakt, keine Hervorhebung.
 
-**Neuzubau & Zubaukonsens verschachtelt darstellen:** „Neuzubau" und
+**Neuzubau & Zubaukonsens verschachtelt darstellen:** *(Hinweis Session 2026-10-29:
+Der Block mit diesem Balken ist im Prototyp ausgeblendet, solange
+`ZUBAU_AS_HERO` gilt; Bestand steht dort in der Kontextzeile „Mit Bestand: B +
+Y = … GW". „Zubau" der gleich gewichteten Kombination rechnet mit Bestand nach
+der max-Formel: max(Durchschnitt Ausbau − Bestand, 0).)* „Neuzubau" und
 „Zubaukonsens dieser Zelle" stehen direkt untereinander (nicht durch die
 Prinzip-Aufschlüsselung getrennt) und teilen sich **einen** Balken: der volle
 Balken = Neuzubau, der gefüllte/kräftige Abschnitt = Zubaukonsens, der blasse
@@ -341,7 +345,15 @@ Teilmengen-Beziehung muss sichtbar sein, nicht nur rechnerisch stimmen.
 „Zubaukonsens gesamt" in der Deutschland-Übersicht bekommt die identische
 Darstellung — Balken = Ausbauziel (z. B. 215 GW), gefüllter Abschnitt =
 Zubaukonsens gesamt (z. B. 169,29 GW), blasser Rest = Zubau außerhalb des
-Konsens. Caption: „Vom Ausbauziel liegen X GW im Konsens aller gewählten
+Konsens.
+**Mit Bestand (Session 2026-10-29) [Annahme]:** drei Abschnitte — Bestand (neutral
+hellgrau, schraffiert), Zubaukonsens (Konsensfarbe), Rest (blass). Caption
+hinter dem „i": „Vom Ausbauziel sind [B] GW schon gebaut. [Y] GW Zubau liegen im
+Konsens aller gewählten Prinzipien." Prozentwert bleibt „% des Ausbauziels"
+(Zubaukonsens / Ausbauziel). Liegt Bestand + Zubaukonsens über dem Ausbauziel
+(möglich, weil Bestand nicht zurückgebaut wird), reicht der Balken bis zur
+Summe und das Ausbauziel ist eine Marke. Ohne Bestand unverändert; in der
+Region unverändert (Balken = Ausbaumenge). Caption: „Vom Ausbauziel liegen X GW im Konsens aller gewählten
 Prinzipien." Seit Session 2026-10-12 steht diese Caption hinter einem „i" neben
 dem Label „Zubaukonsens gesamt" (zu, bis angeklickt; gleiches Muster wie die
 Prinzip-Infos links) — ebenso die Regions-Variante „Von der Ausbaumenge der Region …" (vor
@@ -1526,6 +1538,27 @@ Abschnitte tragen oben einen Verweis hierher; Reject-Log (H) und offene Fragen
 - Hinweis zur Formel der Vorlage („Ausbau = Bestand + Zubau"): stimmt nur, wo
   der Bestand den Ausbau nicht übersteigt. Deshalb steht in den Texten die
   max-Formel. **[Annahme — bestätigen]**
+- **Gilt in beiden Bereichen gleich (Session 2026-10-29).** Mit berücksichtigtem
+  Bestand, je Landkreis (Deutschland) bzw. Rasterzelle (Region) und Prinzip:
+  `Ausbau_p = Greenfield-Anteil_p × Ausbauziel` (in der Region × Ausbaumenge),
+  `Zubau_p = max(Ausbau_p − Bestand, 0)`, `Zubaukonsens = min_p Zubau_p`. Bestand
+  = Bestand der gewählten Technologie (bei PV das PV-Muster). Die Anteile hängen
+  nicht vom Bestand ab. Folge: je Landkreis Zubaukonsens = max(Ausbaumenge im
+  DE-Konsens − Bestand, 0) (R.5); mit Bestand ist er nie größer als ohne.
+  Gilt für Konsens-Karte, „Was begrenzt?", Dissens, Konfliktflächen,
+  Einzelverteilungen (zeigen den Zubau je Prinzip), Paar-Matrix, rechte Spalte,
+  Zelldetail und Szenarien. Die Referenzen im Hub verteilen weiter das ganze
+  Ausbauziel (ohne Bestand).
+  *Vorher (bis Session 2026-10-29):* Deutschland gewichtete mit Bestand nur die
+  Anteile um (× (1 − 0,6 · Bestandsanteil), bei PV mit dem Wind-Muster) und
+  verteilte das ganze Ausbauziel als Zubau. Kleves Konsens stieg dadurch mit
+  Bestand (0,39 → 0,43 GW, Wind); Deutschland und Region passten nicht zusammen.
+  Jetzt (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah): Kleve 0,27 GW,
+  Deutschland gesamt 84,2 GW statt 145,6 GW.
+- **Gesamtsumme mit einem Prinzip:** Der Zubau eines Prinzips summiert sich mit
+  Bestand auf mehr als „Ausbauziel − Bestand" (Wind: 99,2 GW statt 98 GW), weil
+  Bestand über dem Ausbau eines Landkreises stehen bleibt. **Offen:** ob das
+  einen erklärenden Satz braucht.
 
 **Offen (Team):** Bestandsberücksichtigung standardmäßig an? Aktuell aus
 (Greenfield). Für „aus": die Frage des Werkzeugs ist „wo wäre der Ausbau

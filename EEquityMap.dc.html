@@ -1074,8 +1074,13 @@
               <div style="font-size:14px;color:#6e6662;margin-top:4px;line-height:1.45">{{ ovLeadWhy }}</div>
             </sc-if>
             <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:11px;height:14px;border-radius:4px;background:#e9e6e2;overflow:hidden">
-                <div style="height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:4px"></div>
+              <!-- Deutschland mit Bestand: Bestand (schraffiert) · Zubaukonsens · Rest; Marke = Ausbauziel, wenn die Summe darüber liegt -->
+              <div style="position:relative;margin-top:11px">
+                <div style="height:14px;border-radius:4px;background:#e9e6e2;overflow:hidden;display:flex">
+                  <div style="{{ ovBarBestStyle }}"></div>
+                  <div style="flex:none;height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:{{ ovBarConsRadius }}"></div>
+                </div>
+                <div style="{{ ovBarMarkStyle }}"></div>
               </div>
               <div style="{{ ovBarCaptionStyle }}">{{ ovBarCaption }}</div>
             </sc-if>
@@ -2477,7 +2482,8 @@ class Component extends DCLogic {
     cellset = cellset || this.krs;
     let s = cellset.map(c => Math.max(1, this.baseS(c, pid) + 5 * c.noise));
     if (S.tech === 'pv') { const m = s.reduce((a,b)=>a+b,0) / s.length; s = s.map(v => m + 0.18 * (v - m)); }
-    if (S.account) s = s.map((v,i) => v * (1 - 0.6 * cellset[i].bestFrac));
+    // Greenfield-Anteile, unabhängig vom Bestand: der Bestand wird erst danach je Zelle abgezogen (R.1, build()).
+    // Früher gewichtete S.account hier die Anteile um (× (1 − 0,6 · bestFrac)) und verteilte das ganze Ziel als Zubau.
     const sum = s.reduce((a,b)=>a+b,0);
     return s.map(v => v / sum);
   }
@@ -2521,11 +2527,10 @@ class Component extends DCLogic {
     const regionStale = hasRegionResult && S.regionComputedSig !== liveSig;
     const regionNeedsGate = isRegion && (!hasRegionResult || S.regionComputing);
 
-    // Regionsansicht (R.5): die Karte zeigt den Stand der letzten Berechnung — Technologie und Bestands-
-    // berücksichtigung kommen von dort, nicht live von links. Die Ausbaumenge wird als AUSBAU verteilt
-    // (Greenfield-Anteile, ohne Bestandsgewichtung); mit Bestandsberücksichtigung gilt je Zelle
-    // Zubau = max(Ausbau − Bestand, 0). Alle Karten/Zahlen der Region rechnen mit dem Zubau.
-    // Deutschland bleibt unverändert (Anteile mit Bestandsgewichtung, Ziel = Zubau).
+    // Beide Ebenen nach R.1: verteilt wird AUSBAU (Greenfield-Anteile × Ausbauziel bzw. Ausbaumenge); mit
+    // Bestandsberücksichtigung gilt je Landkreis bzw. Zelle Zubau = max(Ausbau − Bestand, 0), Bestand der
+    // gewählten Technologie. Alle Karten/Zahlen rechnen mit dem Zubau. Regionsansicht (R.5): die Karte zeigt den
+    // Stand der letzten Berechnung — Technologie und Bestandsberücksichtigung kommen von dort, nicht live von links.
     const calcTech = isRegion && hasRegionResult ? S.regionComputedTech : S.tech;
     const accEff = isRegion ? (hasRegionResult && !!S.regionComputedAccount) : !!S.account;
     if (isRegion) {
@@ -2534,13 +2539,15 @@ class Component extends DCLogic {
       const bsum = cells.reduce((a, c) => a + c.bestRaw, 0) || 1;
       cells.forEach(c => { c.bestandGW = pot ? pot.bestandMW / 1000 * c.bestRaw / bsum : 0; });
     }
+    // Bestand je Zelle (GW) für die gerechnete Technologie: Region aus den Rasterzellen (oben gesetzt), Deutschland
+    // aus dem Datenmodul je Landkreis — bei PV das PV-Muster (krs.bestandGW ist das Wind-Muster)
+    const bestGW = isRegion ? cells.map(c => c.bestandGW || 0)
+      : cells.map(c => { const f = PotentialData.forKrs(c.id, calcTech); return f ? f.bestandMW / 1000 : 0; });
     const shareCache = {}, gwCache = {}, ausbauCache = {};
-    const shr = pid => shareCache[pid] || (shareCache[pid] = isRegion
-      ? this.sharesFor(pid, { tech: calcTech, account: false }, cells)
-      : this.sharesFor(pid, S, cells));
+    const shr = pid => shareCache[pid] || (shareCache[pid] = this.sharesFor(pid, { tech: calcTech, account: false }, cells));
     const ausbauArr = pid => ausbauCache[pid] || (ausbauCache[pid] = shr(pid).map(a => a * target));
-    const gwArr = pid => gwCache[pid] || (gwCache[pid] = isRegion && accEff
-      ? ausbauArr(pid).map((a, i) => Math.max(a - (cells[i].bestandGW || 0), 0))
+    const gwArr = pid => gwCache[pid] || (gwCache[pid] = accEff
+      ? ausbauArr(pid).map((a, i) => Math.max(a - bestGW[i], 0))
       : ausbauArr(pid));
     const gwSel = {}; sel.forEach(p => gwSel[p] = gwArr(p));
 
@@ -2683,7 +2690,7 @@ class Component extends DCLogic {
       // Null-Zustand: blasses Raster als Andeutung, keine Einfärbung
       R.emptyCells = cells.map(c => ({ d: c.d }));
     }
-    const planVal = i => effPlan === 'bestand' ? cells[i].bestandGW : effPlan === 'gesamt' ? cells[i].bestandGW + gwSel[singlePid][i] : gwSel[singlePid][i];
+    const planVal = i => effPlan === 'bestand' ? bestGW[i] : effPlan === 'gesamt' ? bestGW[i] + gwSel[singlePid][i] : gwSel[singlePid][i];
 
     // Metrik für Konflikt-Ausblenden + Reveal-Animation
     let metric;
@@ -3296,7 +3303,7 @@ class Component extends DCLogic {
       const galByGem = !!(galGem && galGemW);
       R.smallMaps = galleryIds.map(p => {
         const g = gwArr(p);
-        const pvCells = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + g[i] : g[i]);
+        const pvCells = cells.map((c,i) => effPlan === 'bestand' ? bestGW[i] : effPlan === 'gesamt' ? bestGW[i] + g[i] : g[i]);
         // Gemeinde-Wert = flächengewichtete Summe der Zellwerte (wie in der Regionsansicht)
         const pv = galByGem ? galGem.map((gm, gi) => (galGemW[gi] || []).reduce((a, w) => a + pvCells[w.i] * w.w, 0)) : pvCells;
         const shapes = galByGem ? galGem : cells;
@@ -3908,8 +3915,11 @@ class Component extends DCLogic {
     // gegenüber dem Durchschnitt aller Landkreise (= Ausbauziel / Fläche Deutschlands).
     const DE_KM2 = this._deKm2 || (this._deKm2 = this.krs.reduce((a, k) => a + (k.kfl || 0), 0) || 357588);
     const CELL_KM2 = 25;
-    const neuOf = i => stufe >= 2 ? sel.reduce((a, p) => a + gwSel[p][i], 0) / sel.length : (stufe === 1 ? gwSel[singlePid][i] : 0);
-    const bestOf = i => accEff ? (cells[i].bestandGW || 0) : 0;
+    // Zubau der gleich gewichteten Kombination: mit Bestand max(Kombination des Ausbaus − Bestand, 0) (R.1)
+    const neuOf = i => stufe >= 2
+      ? (accEff ? Math.max(sel.reduce((a, p) => a + ausbauArr(p)[i], 0) / sel.length - bestGW[i], 0) : sel.reduce((a, p) => a + gwSel[p][i], 0) / sel.length)
+      : (stufe === 1 ? gwSel[singlePid][i] : 0);
+    const bestOf = i => accEff ? bestGW[i] : 0;
     const areaOf = i => isRegion ? CELL_KM2 : (cells[i].kfl || 0);
     const natZubauPerKm2 = S.targetGW / DE_KM2;
     const einordnungFor = (neu, km2) => {
@@ -3956,6 +3966,7 @@ class Component extends DCLogic {
         return accEff ? 'Kleiner als die Ausbaumenge, weil ein Teil schon gebaut ist.' : '';
       };
       R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false;
+      R.ovBarBestStyle = 'display:none'; R.ovBarConsRadius = '4px'; R.ovBarMarkStyle = 'display:none';
 
       if (view === 'regionGate') {
         // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
@@ -3987,6 +3998,18 @@ class Component extends DCLogic {
         R.ovBarCaption = isRegion
           ? 'Von der Ausbaumenge der Region (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
           : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
+        // Deutschland mit Bestand: drei Abschnitte — Bestand (schraffiert), Zubaukonsens, Rest. Der Bestand wird nie
+        // zurückgebaut; liegt Bestand + Zubaukonsens über dem Ausbauziel, reicht der Balken bis zur Summe und das
+        // Ausbauziel ist eine Marke.
+        if (!isRegion && accEff) {
+          const bTot = bestGW.reduce((a, b) => a + b, 0), full = Math.max(target, bTot + consST) || 1;
+          R.ovBarBestStyle = 'flex:none;height:100%;width:' + (bTot / full * 100).toFixed(1) + '%;background:repeating-linear-gradient(45deg,#cfccc8 0 2px,#e9e6e2 2px 5px)';
+          R.ovBarFill = (consST / full * 100).toFixed(1) + '%';
+          R.ovBarConsRadius = '0';
+          R.ovBarMarkStyle = bTot + consST > target
+            ? 'position:absolute;top:-3px;height:20px;left:' + (target / full * 100).toFixed(1) + '%;border-left:2px solid #2e2927;transform:translateX(-1px)' : 'display:none';
+          R.ovBarCaption = 'Vom Ausbauziel sind ' + this.fmt(bTot) + ' GW schon gebaut. ' + this.fmt(consST) + ' GW Zubau liegen im Konsens aller gewählten Prinzipien.';
+        }
         // Blocker-Daten (für konsens & minimum)
         // Einheit der Zählung = die auf der Karte klickbare Einheit: Landkreise (Deutschland), Gemeinden (Region,
         // Ansichten mit Gemeinden) oder Rasterzellen (Region, nur Ansicht „Raster"). Begrenzendes Prinzip einer
@@ -4219,8 +4242,8 @@ class Component extends DCLogic {
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Zubau ≤ Ausbau.
       const neu = neuOf(i);
       const total = bestOf(i) + neu;
-      R.cellTotal = this.fmtUnit(total, isRegion); R.cellBestand = this.fmtUnit(c.bestandGW, isRegion); R.cellNew = this.fmtUnit(neu, isRegion);
-      setHero(neu, stufe >= 2 ? consCells[i] : 0, c.bestandGW || 0);
+      R.cellTotal = this.fmtUnit(total, isRegion); R.cellBestand = this.fmtUnit(bestGW[i], isRegion); R.cellNew = this.fmtUnit(neu, isRegion);
+      setHero(neu, stufe >= 2 ? consCells[i] : 0, bestGW[i]);
       R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
       R.cellEinordnung = einordnungFor(neu, areaOf(i));
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
@@ -4267,7 +4290,7 @@ class Component extends DCLogic {
       R.cellStufe1 = stufe === 1;
       // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
       const gNeu = gAgg(cells.map((c, i) => neuOf(i)));
-      const gBest = gAgg(cells.map(c => c.bestandGW || 0));
+      const gBest = gAgg(bestGW);
       if (isRegion && accEff && R.showChain) R.chainSteps = R.chainSteps.concat([{ label: 'Bestand in dieser Gemeinde', items: [],
         value: this.fmtUnit(gBest, true) + ' GW', tag: '', tagStyle: 'display:none', sub: '' }]);
       const gTotal = (accEff ? gBest : 0) + gNeu;
@@ -4337,7 +4360,7 @@ class Component extends DCLogic {
     // zoom overlay
     if (S.zoom && sel.includes(S.zoom)) {
       const p = S.zoom;
-      const pvCells = cells.map((c,i) => effPlan === 'bestand' ? c.bestandGW : effPlan === 'gesamt' ? c.bestandGW + gwSel[p][i] : gwSel[p][i]);
+      const pvCells = cells.map((c,i) => effPlan === 'bestand' ? bestGW[i] : effPlan === 'gesamt' ? bestGW[i] + gwSel[p][i] : gwSel[p][i]);
       // wie die Galerie: in der Region Gemeinden statt Raster, außer in der Ansicht „Raster"
       const zMode = isRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
       const zGem = isRegion && zMode !== 'raster' ? (this._gemCache[S.region.krsId] || null) : null;
