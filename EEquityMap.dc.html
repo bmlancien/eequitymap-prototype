@@ -226,30 +226,47 @@
       </div>
       </sc-if>
 
-      <!-- Regionsansicht (R.5): Ausbauziel des Landkreises in GW, 0 … Leistungspotenzial; Voreinstellung und Marke
-           = DE-Empfehlung. Keine Zieljahre, kein „Bei … liegen …"-Satz. -->
+      <!-- Regionsansicht: Ausbaumenge des Landkreises in GW, 0 … max(Leistungspotenzial, größte Marke). Startwert
+           = DE-Konsens (bei einem Prinzip dessen Wert). Marken je bundesweitem Prinzip + DE-Konsens, nur zur Orientierung. -->
       <sc-if value="{{ showRegionTarget }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5c5451;margin:8px 0 6px">
-          <span>Ausbauziel für den Landkreis</span>
+        <div style="display:flex;align-items:center;gap:7px;font-size:14px;color:#5c5451;margin:8px 0 2px">
+          <span>Ausbaumenge</span>
           <span style="margin-left:auto;display:flex;align-items:center;gap:5px">
-            <input class="numfield" type="text" inputMode="decimal" aria-label="Ausbauziel für den Landkreis in GW" value="{{ rtField.value }}" onInput="{{ rtField.onInput }}" onKeyDown="{{ rtField.onKey }}" onBlur="{{ rtField.onBlur }}">GW
+            <input class="numfield" type="text" inputMode="decimal" aria-label="Ausbaumenge in GW" value="{{ rtField.value }}" onInput="{{ rtField.onInput }}" onKeyDown="{{ rtField.onKey }}" onBlur="{{ rtField.onBlur }}">GW
           </span>
         </div>
+        <div style="font-size:14px;color:#6e6662;line-height:1.45;margin-bottom:4px">{{ rtSub }}</div>
         <div style="margin:4px 0 4px">
-          <!-- Gestrichelte Linie vom Dreieck der Marke bis auf die Reglerspur (liegt unter dem Griff) -->
-          <div style="position:relative">
-            <div style="position:relative;height:18px;margin-bottom:3px">
-              <div title="{{ rtMarkTitle }}" style="{{ rtMarkStyle }}">{{ rtMarkText }}</div>
-            </div>
-            <div style="{{ rtLineStyle }}"></div>
-            <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative">
+          <!-- Etikett über der Spur (DE-Konsens bzw. das eine Prinzip) -->
+          <div style="position:relative;height:24px">
+            <sc-if value="{{ rtHeadShow }}" hint-placeholder-val="{{ true }}">
+              <span class="num" title="{{ rtHeadTitle }}" style="{{ rtHeadStyle }}">{{ rtHeadText }}</span>
+            </sc-if>
+          </div>
+          <!-- Striche liegen unter dem Griff: der Regler kommt danach und liegt darüber. Mittig zur Spur über top:50% —
+               die Spur sitzt nicht dort, wo Höhe + Rand des Reglers es vermuten lassen -->
+          <div style="position:relative;padding:6px 0">
+            <sc-for list="{{ rtMarks }}" as="rm" hint-placeholder-count="3">
+              <span title="{{ rm.title }}" style="{{ rm.style }}"></span>
+            </sc-for>
+            <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative;margin:0;display:block">
+          </div>
+          <div class="num" style="position:relative;height:19px;margin-top:2px">
+            <sc-for list="{{ rtValues }}" as="rv" hint-placeholder-count="2">
+              <span title="{{ rv.title }}" style="{{ rv.style }}">{{ rv.text }}</span>
+            </sc-for>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:14px;color:#6e6662;margin-top:2px" class="num"><span>0 GW</span><span title="{{ rtMaxTitle }}" style="cursor:help">{{ rtMaxLabel }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:6px">
+            <sc-for list="{{ rtLegend }}" as="rl" hint-placeholder-count="3">
+              <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#5c5451"><span style="{{ rl.dotStyle }}"></span>{{ rl.name }}</span>
+            </sc-for>
+          </div>
           <sc-if value="{{ rtOverPotential }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:14px;color:#5c5451;line-height:1.45;margin-top:6px">Die DE-Empfehlung liegt über dem Leistungspotenzial dieses Landkreises.</div>
+            <div style="font-size:14px;color:#5c5451;line-height:1.45;margin-top:6px">{{ rtOverText }}</div>
           </sc-if>
           <sc-if value="{{ rtIsOwn }}" hint-placeholder-val="{{ false }}">
-            <span onClick="{{ resetRegionTarget }}" style="display:inline-block;margin-top:7px;font-size:14px;color:#1d6b4c;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Auf DE-Empfehlung zurücksetzen</span>
+            <span onClick="{{ resetRegionTarget }}" style="display:inline-block;margin-top:7px;font-size:14px;color:#1d6b4c;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ rtResetLabel }}</span>
           </sc-if>
         </div>
       </sc-if>
@@ -381,7 +398,7 @@
       <sc-if value="{{ kernaussage }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex;align-items:flex-start;gap:10px;margin:4px 2px 10px">
           <sc-if value="{{ headTwo }}" hint-placeholder-val="{{ false }}">
-            <!-- Eigenes Regionalziel (R.5): zweizeilig, als Abweichung von der DE-Empfehlung gekennzeichnet -->
+            <!-- Eigener Wert: zweizeilig, als Abweichung vom Startwert gekennzeichnet -->
             <div style="flex:1;display:flex;gap:12px;align-items:stretch">
               <span style="flex:none;width:4px;border-radius:2px;background:#1d6b4c"></span>
               <div style="font-family:var(--display);font-size:24px;line-height:1.25;color:#2e2927;letter-spacing:-.2px">
@@ -393,13 +410,13 @@
           <sc-if value="{{ headOne }}" hint-placeholder-val="{{ true }}">
             <div style="flex:1;font-family:var(--display);font-size:24px;font-weight:600;line-height:1.25;color:#2e2927;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
           </sc-if>
-          <!-- „i" neben der Regions-Headline: Was passiert in der Detailauswertung? (R.4) -->
+          <!-- „i" neben der Regions-Headline: woher die Ausbaumenge kommt -->
           <sc-if value="{{ showRegionDetailInfoBtn }}" hint-placeholder-val="{{ false }}">
             <span onClick="{{ toggleRegionDetailInfo }}" style="{{ regionDetailInfoBtnStyle }}">i</span>
           </sc-if>
         </div>
       </sc-if>
-      <div style="{{ regionDetailInfoStyle }}"><b style="color:#2e2927">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#2e2927">wie viel Ausbau nach der gewählten Verteilung auf diesen Landkreis entfällt</b>. Diese Ausbaumenge (<b style="color:#2e2927">Regionsbudget</b>) wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#2e2927">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#2e2927">wie sich dieselbe regionale Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#2e2927">Ausbaumenge des Landkreises</b> kann verändert werden. Weicht sie vom Ergebnis der Deutschlandrechnung ab, wird dies gekennzeichnet: Die gewählte Menge entspricht dann nicht mehr der DE-Empfehlung.</div>
+      <div style="{{ regionDetailInfoStyle }}">{{ regionBudgetInfo }}<sc-if value="{{ regionBudgetInfoExtra }}" hint-placeholder-val="{{ false }}"><br>{{ regionBudgetInfoExtra }}</sc-if></div>
 
       <!-- Tab-Reihe (nur Reiter). „Zum Vergleich speichern" steht links unter den Prinzipien,
            „Vergleich teilen" rechts oben über der Hub-Box. -->
@@ -557,7 +574,7 @@
                   </div>
                 </sc-for>
               </div>
-              <!-- Referenzen auf ein eigenes Regionalziel skaliert (nur Regional, nur bei eigenem Ziel) -->
+              <!-- Referenzen auf einen eigenen Wert der Ausbaumenge skaliert (nur Regional, nur bei eigenem Wert) -->
               <sc-if value="{{ hubScaleNote }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:14px;color:#5c5451;line-height:1.45;margin:0 2px">{{ hubScaleNote }}</div>
               </sc-if>
@@ -746,13 +763,15 @@
                 <!-- Weiße Karte mit Landkreisname und gefülltem Knopf (R.4); die ganze Karte ist klickbar, das „i" stoppt den Klick -->
                 <div onClick="{{ evaluateRegionPopover }}" style="position:relative;box-sizing:border-box;width:100%;height:100%;background:#fff;border:1px solid #c3c0bc;color:#2e2927;font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 4px 16px rgba(15,30,45,.16);text-align:left;line-height:1.35;display:flex;flex-direction:column">
                   <span style="display:-webkit-box;font-weight:700;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;padding-right:22px">{{ cellPopoverLine1 }}</span>
+                  <!-- Was die Detailauswertung übernimmt (Startwert der Ausbaumenge) -->
+                  <span class="num" style="color:#5c5451;margin-top:2px">{{ cellPopoverAmount }}</span>
                   <!-- Eigener, gefüllter Knopf: als Aktion erkennbar (vorher sah die zweite Zeile wie Text aus) -->
                   <button style="margin-top:auto;width:100%;background:#1d6b4c;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:14px;font-weight:600;cursor:pointer;text-align:center" style-hover="background:#175a3f">{{ cellPopoverLine2 }}</button>
                   <span onClick="{{ togglePopoverInfo }}" title="Was passiert in der Detailauswertung?" style="{{ popoverInfoBtnStyle }}">i</span>
                 </div>
               </div>
               <!-- Info zur Detailauswertung: eigene Fläche neben dem Popover, damit das Popover seine Größe behält -->
-              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#2e2927">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#2e2927">wie viel Ausbau nach der gewählten Verteilung auf diesen Landkreis entfällt</b>. Diese Ausbaumenge (<b style="color:#2e2927">Regionsbudget</b>) wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#2e2927">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#2e2927">wie sich dieselbe regionale Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#2e2927">Ausbaumenge des Landkreises</b> kann verändert werden. Weicht sie vom Ergebnis der Deutschlandrechnung ab, wird dies gekennzeichnet: Die gewählte Menge entspricht dann nicht mehr der DE-Empfehlung.</div>
+              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#2e2927">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#2e2927">wie viel Ausbau auf diesen Landkreis entfällt</b>: bei mehreren Prinzipien der Teil, den alle gemeinsam tragen (<b style="color:#2e2927">DE-Konsens</b>), bei einem Prinzip dessen Verteilung. Diese <b style="color:#2e2927">Ausbaumenge der Region</b> wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#2e2927">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#2e2927">wie sich dieselbe Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#2e2927">Ausbaumenge</b> kann verändert werden. Weicht sie vom Startwert ab, wird dies gekennzeichnet.</div>
             </sc-if>
 
             <!-- Regionsansicht, noch nicht berechnet (Idle) — mittig auf der Karte. Der „läuft"-Zustand hat
@@ -1016,7 +1035,7 @@
           </sc-if>
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
           <div style="{{ staleHideStyle }}">
-          <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
+          <!-- Herleitung (R.6): Prinzipien bundesweit → Ausbaumenge → Prinzipien regional → Bestand → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung (bei „nicht aktuell" ausgeblendet, s. staleHideStyle). -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
             <div style="{{ chainWrapStyle }}">
@@ -1051,6 +1070,9 @@
             </div>
             <div class="num" style="font-family:var(--display);font-size:32px; font-weight: 700; color: var(--cons); line-height: 1.1; margin-top: 3px">{{ ovLeadValue }} <span style="font-size:16px;color:#5c5451;font-weight:500">{{ ovLeadUnit }}</span></div>
             <div style="font-size:14px;color:#5c5451;margin-top:4px">{{ ovLeadSub }}</div>
+            <sc-if value="{{ ovLeadWhy }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:#6e6662;margin-top:4px;line-height:1.45">{{ ovLeadWhy }}</div>
+            </sc-if>
             <sc-if value="{{ ovBarShow }}" hint-placeholder-val="{{ false }}">
               <div style="margin-top:11px;height:14px;border-radius:4px;background:#e9e6e2;overflow:hidden">
                 <div style="height:100%;width:{{ ovBarFill }};background:var(--cons);border-radius:4px"></div>
@@ -1176,7 +1198,7 @@
           </sc-if>
           <!-- Solange das Ergebnis veraltet ist, keine Werte darunter (nur Titel + „Neu berechnen") -->
           <div style="{{ staleHideStyle }}">
-          <!-- Herleitung (R.6): Prinzipien bundesweit → Regionsbudget → Prinzipien regional → mündet in die Box darunter.
+          <!-- Herleitung (R.6): Prinzipien bundesweit → Ausbaumenge → Prinzipien regional → Bestand → mündet in die Box darunter.
                Zeigt die Eingaben der letzten Berechnung (bei „nicht aktuell" ausgeblendet, s. staleHideStyle). -->
           <sc-if value="{{ showChain }}" hint-placeholder-val="{{ false }}">
             <div style="{{ chainWrapStyle }}">
@@ -1223,6 +1245,10 @@
               <div style="font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
             <div style="font-size:14px;color:#5c5451;margin-top:1px">{{ cellAreaPct }} der Fläche Deutschlands</div>
+            <!-- Deutschland mit Bestand: Ausbaumenge, die die Detailauswertung übernimmt -->
+            <sc-if value="{{ cellBudgetLine }}" hint-placeholder-val="{{ false }}">
+              <div class="num" style="font-size:14px;color:#5c5451;margin-top:7px">{{ cellBudgetLine }}</div>
+            </sc-if>
             <!-- Kontextzeile nur bei Bestandsberücksichtigung: Bestand + Hauptzahl = installierte Leistung -->
             <sc-if value="{{ cellContextLine }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:14px;color:#6e6662;margin-top:7px;line-height:1.45">{{ cellContextLine }}</div>
@@ -1373,7 +1399,7 @@
           <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f5f2ee;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6e6662">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#2e2927">
-          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Regionsbudget:</b> der Ausbau, den die bundesweite Verteilung (Kombination der bundesweit gewählten Prinzipien) dem Landkreis zuweist — die DE-Empfehlung. Es lässt sich als eigenes Regionalziel ändern; dann ist es als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Dieses Budget wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge der Region:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1529,7 +1555,7 @@ const POT_PARAMS = {
 const PotentialData = {
   krs: {},  // krsId → { wind: Felder, pv: Felder }
   gem: {},  // gemeindeId → { wind, pv } (folgt mit R.13)
-  // krsList: Landkreise aus buildKrs; needMW(krs, tech): höchste plausible DE-Empfehlung (MW) — das Potenzial
+  // krsList: Landkreise aus buildKrs; needMW(krs, tech): höchster plausibler Wert eines einzelnen Prinzips (MW) — das Potenzial
   // wird so angelegt, dass es in aller Regel deutlich darüber liegt (höchstens bis 25 % der Kreisfläche).
   build(krsList, needMW) {
     const frac = v => { const r = Math.sin(v) * 43758.5453; return r - Math.floor(r); };
@@ -1547,7 +1573,7 @@ const PotentialData = {
         const potT = Math.max(0, Math.min(1, (k.potential - 0.45) / 0.95));
         let areaHa = totalHa * (P.areaFrac[0] + (P.areaFrac[1] - P.areaFrac[0]) * (0.7 * potT + 0.3 * r2));
         const bestandMW = tech === 'wind' ? k.bestandGW * 1000 : P.bestandGW * 1000 * pvRaw[ix] / pvSum;
-        // Untergrenzen: 1,3 × höchste DE-Empfehlung und 1,3 × Bestand — aber nie mehr als 25 % der Fläche
+        // Untergrenzen: 1,3 × höchster Prinzip-Wert und 1,3 × Bestand — aber nie mehr als 25 % der Fläche
         // (kleine kreisfreie Städte bleiben deshalb teils darunter: dort erscheint der Hinweis am Regler)
         const floorMW = Math.max(1.3 * needMW(k, tech), 1.3 * bestandMW);
         areaHa = Math.min(0.25 * totalHa, Math.max(areaHa, floorMW / dens));
@@ -1626,7 +1652,7 @@ class Component extends DCLogic {
     seenKrsHint: false,       // einmaliger Hinweis „Klicken Sie auf einen Landkreis …" (R.4)
     popoverInfo: false,       // „i" im Landkreis-Popover
     regionDetailInfo: false,  // „i" an der Regions-Headline
-    // Regionalziel (R.5): null = DE-Empfehlung, sonst eigenes Ziel in GW (bleibt bei Änderungen in „Deutschland")
+    // Ausbaumenge der Region: null = Startwert (DE-Konsens), sonst eigener Wert in GW (bleibt bei Änderungen in „Deutschland")
     regionOwnTarget: null,
     // Bestand & Potenziale (R.13): Unter-Reiter, Darstellung, Auswahl; bzTick stößt nach Zoom-Gesten ein Re-Render an
     bpTab: 'bestand', bpMode: 'admin', bpSel: null, bzTick: 0,
@@ -1640,7 +1666,7 @@ class Component extends DCLogic {
     gemeinde: null,                // AGS der ausgewählten Gemeinde (nur im Modus 'gemeinden')
     selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
     regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
-    regionComputedTarget: null,   // Regionsbudget, mit dem zuletzt gerechnet wurde (eingefroren)
+    regionComputedTarget: null,   // Ausbaumenge, mit der zuletzt gerechnet wurde (eingefroren)
     regionComputedSig: null,      // Signatur des letzten Rechenlaufs — zum Erkennen von „veraltet"
     regionComputing: false,
     regionProgress: 0,
@@ -1732,7 +1758,7 @@ class Component extends DCLogic {
     this.principles.forEach(p => this.byId[p.id] = p);
     this.buildKrs();
     // Platzhalterdaten Bestand & Potenziale: Potenzial je Landkreis deutlich über der höchsten denkbaren
-    // DE-Empfehlung (größter Anteil eines einzelnen Prinzips beim höchsten Ausbauziel des Reglers, 260 GW)
+    // Höchster Prinzip-Wert (größter Anteil eines einzelnen Prinzips beim höchsten Ausbauziel des Reglers, 260 GW)
     PotentialData.build(this.krs, (k, tech) => {
       const idx = this.krs.indexOf(k);
       return Math.max(...this.principles.filter(p => p.available).map(p => this.natSharesFor(p.id, tech)[idx])) * 260 * 1000;
@@ -2260,20 +2286,48 @@ class Component extends DCLogic {
     return this._natShareCache[key] || (this._natShareCache[key] = this.sharesFor(pid, { tech, account: false }, this.krs));
   }
 
-  // DE-Empfehlung (R.5): der Ausbau, den die bundesweite Verteilung diesem Landkreis zuweist — gewichtete
-  // (hier: gleich gewichtete) Kombination der bundesweit gewählten Prinzipien, angewandt auf das bundesweite
-  // Ausbauziel. Greenfield-Anteile: Ausbau ist unabhängig vom Bestand (Bestand mindert nur den Zubau, R.1).
-  // Früher: Minimum über die Prinzipien = Anteil des Landkreises am bundesweiten Zubaukonsens.
-  natBudgetFor(krsId, over) {
+  // Greenfield-Ausbau, den jedes bundesweit gewählte Prinzip allein diesem Landkreis zuweist (Anteil × Ausbauziel),
+  // in der Reihenfolge der Prinzipienliste — die Marken am Regler der Region.
+  natValuesFor(krsId, over) {
     const S = Object.assign({}, this.state, over || {});
     const idx = this.krs.findIndex(k => k.id === krsId);
-    if (idx < 0) return 0;
-    const sel = S.selected.filter(id => this.byId[id] && this.byId[id].available);
-    if (!sel.length) return 0;
-    return sel.reduce((a, p) => a + this.natSharesFor(p, S.tech)[idx], 0) / sel.length * S.targetGW;
+    if (idx < 0) return [];
+    return this.principles.filter(p => p.available && S.selected.includes(p.id))
+      .map(p => ({ pid: p.id, v: this.natSharesFor(p.id, S.tech)[idx] * S.targetGW }));
   }
 
-  // Regionalziel (GW) des offenen Landkreises: eigenes Ziel, sonst die DE-Empfehlung
+  // Startwert der Ausbaumenge der Region (DE-Konsens): Minimum der bundesweiten Greenfield-Werte über die
+  // bundesweit gewählten Prinzipien, bei einem Prinzip dessen Wert — dasselbe Minimum, das die Deutschlandkarte
+  // ohne Bestand als Zubaukonsens zeigt. Ein Ausbau-Wert: unabhängig vom Schalter „Bestandsanlagen
+  // berücksichtigen" (der Bestand steckt darin und wird in der Regionsrechnung einmal je Zelle abgezogen, R.1).
+  // Früher: Mittelwert über die Prinzipien — die Region übernahm dann mehr, als die Karte vorher zeigte.
+  natBudgetFor(krsId, over) {
+    const vals = this.natValuesFor(krsId, over);
+    return vals.length ? Math.min(...vals.map(o => o.v)) : 0;
+  }
+
+  // Name des Startwerts zu einer bundesweiten Auswahl: „DE-Konsens", bei einem Prinzip dessen Name
+  startNameOf(natSel) {
+    const ids = (natSel || []).filter(id => this.byId[id]);
+    return ids.length === 1 ? this.byId[ids[0]].name : 'DE-Konsens';
+  }
+
+  // Eigener Wert nur, wenn er auf 0,01 GW gerundet vom Startwert abweicht — sonst gilt wieder der Startwert
+  setRegionOwnTarget(v) {
+    const r2 = x => Math.round(x * 100) / 100;
+    const start = this.state.region ? this.natBudgetFor(this.state.region.krsId) : 0;
+    this.setState({ regionOwnTarget: r2(v) === r2(start) ? null : r2(v) });
+  }
+
+  // Kurzname eines Landkreises (Tab, Szenario-Auto-Name): ohne Art. Gibt es den Namen auch als kreisfreie Stadt,
+  // behält der Landkreis das Wort „Landkreis" (München / Landkreis München); die Stadt bleibt ohne Zusatz.
+  regionShortName(label) {
+    const bare = label.replace(/^(Landkreis|Stadt) /, '');
+    if (!/^Landkreis /.test(label)) return bare;
+    return this.krs.some(k => k.kind === 'Stadt' && k.label === bare) ? 'Landkreis ' + bare : bare;
+  }
+
+  // Ausbaumenge (GW) des offenen Landkreises: eigener Wert, sonst der Startwert (DE-Konsens)
   regionTargetFor(krsId, over) {
     const S = Object.assign({}, this.state, over || {});
     return S.regionOwnTarget != null ? S.regionOwnTarget : this.natBudgetFor(krsId, over);
@@ -2293,7 +2347,7 @@ class Component extends DCLogic {
   enterRegion(krsId, label) {
     const S = this.state;
     const avail = id => this.byId[id] && this.byId[id].available;
-    // ohne bundesweites Prinzip kein Regionsbudget — der Bereich „Regional" zeigt dann den Hinweis
+    // ohne bundesweites Prinzip keine Ausbaumenge — der Bereich „Regional" zeigt dann den Hinweis
     if (!S.selected.some(avail)) { this.setState({ search: '' }); this.switchArea('region'); return; }
     // Derselbe Landkreis wie zuletzt: nur in den Bereich „Regional" wechseln, Zustand bleibt (R.3).
     if (S.region && S.region.krsId === krsId && S.regionComputedSel != null) {
@@ -2457,15 +2511,18 @@ class Component extends DCLogic {
     const stufe = sel.length;
 
     // Region-Berechnungs-Gate: fehlender/veralteter Rechenlauf
-    // DE-Empfehlung (live) und aktuell eingestelltes Regionalziel; die Karte rechnet mit dem Stand der letzten Berechnung
+    // Startwert (DE-Konsens, live) und aktuell eingestellte Ausbaumenge; die Karte rechnet mit dem Stand der letzten Berechnung
     const liveDeRec = isRegion ? this.natBudgetFor(S.region.krsId) : 0;
+    // Startwert heißt bei zwei oder mehr bundesweiten Prinzipien „DE-Konsens", bei einem „Ziel" (Wortlaut des Teams)
+    const natMany = S.selected.filter(avail).length >= 2;
+    const startLabel = natMany ? 'Ausbaumenge im DE-Konsens' : 'Ausbaumenge Ziel';
     const liveBudget = isRegion ? this.regionTargetFor(S.region.krsId) : 0;
     const liveSig = isRegion ? this.regionSigFrom(S.region.krsId, uiSelRegional, liveBudget) : null;
     const regionStale = hasRegionResult && S.regionComputedSig !== liveSig;
     const regionNeedsGate = isRegion && (!hasRegionResult || S.regionComputing);
 
     // Regionsansicht (R.5): die Karte zeigt den Stand der letzten Berechnung — Technologie und Bestands-
-    // berücksichtigung kommen von dort, nicht live von links. Das Regionsbudget wird als AUSBAU verteilt
+    // berücksichtigung kommen von dort, nicht live von links. Die Ausbaumenge wird als AUSBAU verteilt
     // (Greenfield-Anteile, ohne Bestandsgewichtung); mit Bestandsberücksichtigung gilt je Zelle
     // Zubau = max(Ausbau − Bestand, 0). Alle Karten/Zahlen der Region rechnen mit dem Zubau.
     // Deutschland bleibt unverändert (Anteile mit Bestandsgewichtung, Ziel = Zubau).
@@ -2589,14 +2646,14 @@ class Component extends DCLogic {
       : regionNatChanged ? 'Die bundesweiten Prinzipien oder das Ausbauziel haben sich geändert. Aktualisieren Sie die Karte.'
       : 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.';
     // „Änderungen verwerfen" (R.7): ein Schritt zurück auf die Eingaben der letzten Berechnung — nur wenn alle
-    // Änderungen aus „Regional" stammen (regionale Prinzipien, Regionalziel, Technologie, Bestand)
+    // Änderungen aus „Regional" stammen (regionale Prinzipien, Ausbaumenge, Technologie, Bestand)
     R.regionCanUndo = R.regionStaleBar && !regionNatChanged;
-    // Der Link nennt, was er zurücksetzt („Regionalziel zurücksetzen", „Prinzipien und Regionalziel zurücksetzen")
+    // Der Link nennt, was er zurücksetzt („Ausbaumenge zurücksetzen", „Prinzipien und Ausbaumenge zurücksetzen")
     if (R.regionCanUndo) {
       const ownNow = S.regionOwnTarget != null;
       const changed = [
         sortedKey(uiSelRegional) !== sortedKey(S.regionComputedSel) && 'Prinzipien',
-        (ownNow !== !!S.regionComputedOwn || (ownNow && S.regionOwnTarget !== S.regionComputedTarget)) && 'Regionalziel',
+        (ownNow !== !!S.regionComputedOwn || (ownNow && S.regionOwnTarget !== S.regionComputedTarget)) && 'Ausbaumenge',
         S.tech !== S.regionComputedTech && 'Technologie',
         !!S.account !== !!S.regionComputedAccount && 'Bestand'
       ].filter(Boolean);
@@ -2701,7 +2758,7 @@ class Component extends DCLogic {
       const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
       const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:4px;background:' + bg });
       const cellsOut = [{
-        text: 'Zubaukonsens in GW (' + (isRegion ? 'Regionsbudget: ' : 'Ziel: ') + this.fmt(target) + ' GW)',
+        text: 'Zubaukonsens in GW (' + (isRegion ? 'Ausbaumenge der Region: ' : 'Ziel: ') + this.fmt(target) + ' GW)',
         title: '', swatchStyle: 'display:none', innerStyle: flat,
         style: 'font-size:14px;color:#5c5451;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
       }];
@@ -2918,8 +2975,8 @@ class Component extends DCLogic {
       // Farbpunkte der Prinzipien eines Szenarios (Dropdowns und Tabelle)
       const dotsOf = ids => (ids || []).map(id => ({ color: this.byId[id] ? this.byId[id].color : '#cbc8c4' }));
       const openMenu = S.hubMenu === 0 || S.hubMenu === 1 ? S.hubMenu : null;
-      // Ebene und Ziel der Referenzen (R.8): ein Szenario in A oder B gibt Landkreis und Regionalziel vor (Regel aus
-      // O); sonst der aktuelle Landkreis und das aktuell untersuchte Regionalziel (DE-Empfehlung oder eigenes Ziel).
+      // Ebene und Ziel der Referenzen (R.8): ein Szenario in A oder B gibt Landkreis und Ausbaumenge vor (Regel aus
+      // O); sonst der aktuelle Landkreis und die aktuell untersuchte Ausbaumenge (Startwert oder eigener Wert).
       // Deutschland: bundesweites Ausbauziel bzw. das Ziel des Szenarios.
       const scenInPair = pair.map(id => id ? objById[id] : null).filter(o => o && !o.isRef);
       const refLvl = scenInPair.length
@@ -2982,7 +3039,7 @@ class Component extends DCLogic {
         } else if (!same(me.regionalSel, other.regionalSel)) parts.push('Prinzipien: ' + setTxt(me.regionalSel, other.regionalSel));
         if (this.fmt(me.targetGW) !== this.fmt(other.targetGW)) parts.push('Ausbauziel: ' + this.fmt(me.targetGW) + ' GW');
         if (me.isRegion && other.isRegion && (this.fmt(me.target) !== this.fmt(other.target) || !!me.regionOwn !== !!other.regionOwn))
-          parts.push('Regionalziel: ' + this.fmt(me.target) + ' GW (' + (me.regionOwn ? 'eigenes Ziel' : 'DE-Empfehlung') + ')');
+          parts.push('Ausbaumenge: ' + this.fmt(me.target) + ' GW (' + (me.regionOwn ? 'eigener Wert' : this.startNameOf(me.nationalSel)) + ')');
         if (!!me.account !== !!other.account) parts.push(me.account ? 'Bestand berücksichtigt' : 'Bestand nicht berücksichtigt');
         return parts.length ? parts.join(' · ') : 'Gleiche Einstellungen wie ' + (k === 0 ? 'B' : 'A');
       };
@@ -3020,9 +3077,9 @@ class Component extends DCLogic {
       if (scenSide.length === 2) {
         lvlOk = lvlOk && A.isRegion === B.isRegion && (!A.isRegion || A.regionKrsId === B.regionKrsId) && A.cellCons.length === B.cellCons.length;
       }
-      // Hinweis bei eigenem Regionalziel, sobald eine Referenz im Spiel ist (bei DE-Empfehlung kein Hinweis)
+      // Hinweis bei eigenem Wert der Ausbaumenge, sobald eine Referenz im Spiel ist (beim Startwert kein Hinweis)
       R.hubScaleNote = lvlRegion && refLvl.own && [A, B].some(o => o && o.isRef) && refLvl.deRec != null
-        ? 'Die Referenzen sind auf das Regionalziel ' + this.fmt(lvlTarget) + ' GW (eigenes Ziel) skaliert, nicht auf die DE-Empfehlung (' + this.fmt(refLvl.deRec) + ' GW).' : '';
+        ? 'Die Referenzen sind auf die Ausbaumenge ' + this.fmt(lvlTarget) + ' GW (eigener Wert) skaliert, nicht auf den Startwert (' + this.fmt(refLvl.deRec) + ' GW).' : '';
       // Dachzeile der rechten Spalte: Ebene des Vergleichs („Deutschland" bzw. der Landkreis)
       R.hubScopeLabel = lvlLabel;
       // Regionsvergleich: Landkreis im Kartentitel nennen (die Karte zeigt dann sein 5 × 5-km-Raster)
@@ -3103,7 +3160,7 @@ class Component extends DCLogic {
         if (aTxt !== bTxt) {
           // Text nach Vorlage des Teams (R.8), dahinter die konkreten Summen
           R.hubRefGapNote = 'A und B enthalten unterschiedliche Gesamtmengen (A ' + aTxt + ', B ' + bTxt + '). Die Karte zeigt daher sowohl Unterschiede in der räumlichen Verteilung als auch Unterschiede in der Gesamtleistung.'
-            + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt das ganze ' + (lvlRegion ? 'Regionalziel' : 'Ausbauziel') + ', das Szenario nur seinen Zubaukonsens.' : '');
+            + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt ' + (lvlRegion ? 'die ganze Ausbaumenge' : 'das ganze Ausbauziel') + ', das Szenario nur seinen Zubaukonsens.' : '');
         }
         // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Zubaukonsens +
         // Konfliktflächen des Szenarios. „Im Konsens" = konfliktfreie Zelle über 35 % des Zellmaximums.
@@ -3157,7 +3214,7 @@ class Component extends DCLogic {
         if (o.isRegion) { rows.push(prinzRow('Prinzipien bundesweit', o.nationalSel)); rows.push(prinzRow('Prinzipien regional', o.regionalSel)); }
         else rows.push(prinzRow('Prinzipien', o.regionalSel));
         rows.push(o.isRegion
-          ? { k: 'Regionalziel', v: this.fmt(o.target) + ' GW (' + (o.regionOwn ? 'eigenes Ziel' : 'DE-Empfehlung') + ')', vStyle: numCss }
+          ? { k: 'Ausbaumenge', v: this.fmt(o.target) + ' GW (' + (o.regionOwn ? 'eigener Wert' : this.startNameOf(o.nationalSel)) + ')', vStyle: numCss }
           : { k: 'Ausbauziel', v: this.fmt(o.target) + ' GW', vStyle: numCss });
         rows.push({ k: 'Zubaukonsens', v: this.fmt(o.consensusTotal) + ' GW', vStyle: numCss });
         rows.push({ k: '% im Konsens', v: o.target ? this.pct(o.consensusTotal / o.target) : '—', vStyle: numCss });
@@ -3198,7 +3255,7 @@ class Component extends DCLogic {
           level: sc.isRegion ? sc.regionLabel : '',
           natLabel: sc.isRegion ? '· bundesweit' : '', natDots: sc.isRegion ? dotsOf(sc.nationalSel) : [],
           subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
-          // Region: Spalte „Ausbauziel" zeigt das Regionalziel in GW (wie überall, wo es genannt wird)
+          // Region: Spalte „Ausbauziel" zeigt die Ausbaumenge der Region in GW (wie überall, wo sie genannt wird)
           target: this.fmt(sc.target) + ' GW', cons: this.fmt(sc.consensusTotal) + ' GW',
           pct: sc.target ? this.pct(sc.consensusTotal / sc.target) : '—', lim: sc.limitingName || '—', numStyle: numCell,
           onRemove: () => this.deleteScenario(sc.id), onRestore: () => this.restoreScenario(sc)
@@ -3401,13 +3458,19 @@ class Component extends DCLogic {
     // stattdessen ganz ausgeblendet (steuert auch showTabRow weiter unten).
     // Nur zeigen, wenn die aktuelle Konfiguration noch nicht als Szenario gespeichert ist — Vergleich über
     // dieselbe Signatur (Ebene, Prinzipien DE + regional, Technologie, Ausbauziel, Bestandsberücksichtigung).
-    // Region: das Regionalziel (Wert + eigenes Ziel / DE-Empfehlung) gehört zur Signatur (R.5)
+    // Region: die Ausbaumenge (Wert + eigener Wert / Startwert) gehört zur Signatur (R.5)
     const scenarioSig = sc => [sc.isRegion ? 'r:' + sc.regionKrsId : 'de', (sc.nationalSel || []).slice().sort().join(','),
       sc.isRegion ? (sc.regionalSel || []).slice().sort().join(',') : '', sc.tech, this.fmt(sc.targetGW), sc.account ? 1 : 0,
       sc.isRegion ? this.fmt(sc.target) + (sc.regionOwn ? 'e' : 'd') : ''].join('|');
+    // Region: Einstellungen und Ergebnis aus derselben Berechnung — alles vom Stand der letzten Berechnung, nicht live
+    // (sel/target sind dort ohnehin eingefroren). So passen gespeicherte Einstellungen immer zu den Zellwerten.
+    const snap = isRegion
+      ? { nationalSel: (S.regionComputedNatSel || []).slice(), tech: S.regionComputedTech, targetGW: S.regionComputedTargetGW,
+          account: !!S.regionComputedAccount, regionOwn: !!S.regionComputedOwn }
+      : { nationalSel: S.selected.filter(avail), tech: S.tech, targetGW: S.targetGW, account: S.account, regionOwn: false };
     const currentSig = scenarioSig({ isRegion, regionKrsId: isRegion && S.region ? S.region.krsId : null,
-      nationalSel: S.selected.filter(avail), regionalSel: sel, tech: S.tech, targetGW: S.targetGW, account: S.account,
-      target: liveBudget, regionOwn: S.regionOwnTarget != null });
+      nationalSel: snap.nationalSel, regionalSel: sel, tech: snap.tech, targetGW: snap.targetGW, account: snap.account,
+      target, regionOwn: snap.regionOwn });
     const alreadySaved = (S.scenarios || []).some(sc => scenarioSig(sc) === currentSig);
     R.showSaveScenario = scenarioReady && !alreadySaved;
     // angeheftete Fußzeile der linken Spalte (negative Ränder: volle Spaltenbreite, über dem scrollenden Inhalt)
@@ -3451,10 +3514,10 @@ class Component extends DCLogic {
     // Szenarien können sich z. B. nur in den bundesweiten Prinzipien oder der Bestandsberücksichtigung unterscheiden.
     const scenarioAutoName = () => {
       const names = sel.length === 0 ? 'Kein Prinzip' : sel.length === 1 ? this.byId[sel[0]].name : sel.length + ' Prinzipien';
-      const scopeName = isRegion && S.region ? S.region.label.replace(/^Landkreis /, '') : 'Deutschland';
-      // Region: statt Zieljahr das Regionalziel, z. B. „0,50 GW (eigenes Ziel)"
+      const scopeName = isRegion && S.region ? this.regionShortName(S.region.label) : 'Deutschland';
+      // Region: statt Zieljahr die Ausbaumenge, z. B. „0,50 GW (eigener Wert)"
       const period = isRegion
-        ? this.fmt(target) + ' GW (' + (S.regionComputedOwn ? 'eigenes Ziel' : 'DE-Empfehlung') + ')'
+        ? this.fmt(target) + ' GW (' + (S.regionComputedOwn ? 'eigener Wert' : this.startNameOf(S.regionComputedNatSel)) + ')'
         : (S.targetKey && !S.freeTarget && this.targetLabels[S.targetKey])
           ? S.targetKey.replace('z', '')
           : this.fmt(S.targetGW) + ' GW';
@@ -3465,11 +3528,13 @@ class Component extends DCLogic {
       return base + ' (' + n + ')';
     };
     R.openSaveScenario = scenarioReady && !savePaused ? (() => this.setState({ scenarioSaveOpen: true, scenarioNameDraft: scenarioAutoName() })) : (() => {});
-    R.scenarioSaveOpen = !!S.scenarioSaveOpen;
+    // Wird das Ergebnis veraltet, während der Dialog offen ist, schließt er (Speichern nur mit aktuellem Ergebnis, R.7)
+    R.scenarioSaveOpen = !!S.scenarioSaveOpen && !savePaused;
     R.scenarioNameDraft = S.scenarioNameDraft || '';
     R.onScenarioNameInput = e => this.setState({ scenarioNameDraft: e.target.value });
     R.cancelSaveScenario = () => this.setState({ scenarioSaveOpen: false });
     R.confirmSaveScenario = () => {
+      if (!scenarioReady || savePaused) { this.setState({ scenarioSaveOpen: false }); return; }
       const name = (this.state.scenarioNameDraft || '').trim() || scenarioAutoName();
       // Begrenzendes Prinzip = größter Konsensverlust ohne dieses Prinzip — dieselbe Logik wie „Was begrenzt den Konsens?"
       let limitingName = '—';
@@ -3485,13 +3550,14 @@ class Component extends DCLogic {
         isRegion,
         regionKrsId: isRegion && S.region ? S.region.krsId : null,
         regionLabel: isRegion && S.region ? S.region.label : null,
-        nationalSel: S.selected.filter(avail),
+        nationalSel: snap.nationalSel,
         regionalSel: sel.slice(),
-        tech: S.tech, targetKey: S.targetKey, targetGW: S.targetGW, freeTarget: S.freeTarget, account: S.account,
+        tech: snap.tech, // Zieljahr-Knopf nur übernehmen, wenn das Ausbauziel seit der Berechnung nicht geändert wurde
+        targetKey: snap.targetGW === S.targetGW ? S.targetKey : null, targetGW: snap.targetGW, freeTarget: snap.targetGW === S.targetGW ? S.freeTarget : true, account: snap.account,
         target, consensusTotal, limitingName,
-        // Region: Regionalziel (= target, GW) und ob es ein eigenes Ziel oder die DE-Empfehlung war
+        // Region: Ausbaumenge (= target, GW) und ob es ein eigener Wert oder der Startwert war
         regionOwn: isRegion ? !!S.regionComputedOwn : false,
-        // DE-Empfehlung zum Zeitpunkt der Berechnung — für den Skalierungshinweis der Referenzen im Hub (R.8)
+        // Startwert (DE-Konsens) zum Zeitpunkt der Berechnung — für den Skalierungshinweis der Referenzen im Hub (R.8)
         regionDeRec: isRegion ? S.regionComputedDeRec : null,
         cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice(),
         cellConflict: isConflict.slice()
@@ -3619,28 +3685,70 @@ class Component extends DCLogic {
     if (isRegion) {
       const potR = PotentialData.forKrs(S.region.krsId, S.tech);
       const potGW = potR ? potR.potLeistungMW / 1000 : 0;
-      // Bereich 0 … Leistungspotenzial; liegt die DE-Empfehlung ausnahmsweise darüber, reicht er bis zu ihr
-      const maxGW = Math.ceil(Math.max(potGW, liveDeRec) * 100) / 100;
+      // Marken (C): je bundesweit gewähltem Prinzip dessen Greenfield-Ausbau für den Landkreis, dazu der DE-Konsens
+      // (= kleinste Marke, s. natBudgetFor). Nur zur Orientierung: nicht anklickbar, kein Einrasten.
+      const natVals = this.natValuesFor(S.region.krsId), many = natVals.length >= 2;
+      const maxMark = natVals.length ? Math.max(...natVals.map(o => o.v)) : 0;
+      // Bereich 0 … größerer Wert aus Leistungspotenzial und größter Marke
+      const maxGW = Math.ceil(Math.max(potGW, maxMark) * 100) / 100;
       R.rtMax = maxGW;
       R.rtValue = Math.min(liveBudget, maxGW);
       R.rtOverPotential = liveDeRec > potGW;
+      R.rtOverText = (many ? 'Der DE-Konsens' : 'Der Startwert') + ' liegt über dem Leistungspotenzial dieses Landkreises.';
       // Bereichsende benennen: sonst wirkt es wie eine beliebige Skala (Quelle sind die Potenzialflächen, nicht „Deutschland")
-      R.rtMaxLabel = this.fmt(maxGW) + ' GW' + (R.rtOverPotential ? '' : ' Potenzial');
-      R.rtMaxTitle = R.rtOverPotential
-        ? 'Bereichsende = DE-Empfehlung. Das Leistungspotenzial der Potenzialflächen dieses Landkreises liegt mit ' + this.fmt(potGW) + ' GW darunter.'
+      const overPot = maxMark > potGW;
+      R.rtMaxLabel = this.fmt(maxGW) + ' GW' + (overPot ? '' : ' Potenzial');
+      R.rtMaxTitle = overPot
+        ? 'Bereichsende = größte Marke. Das Leistungspotenzial der Potenzialflächen dieses Landkreises liegt mit ' + this.fmt(potGW) + ' GW darunter.'
         : 'Leistungspotenzial der Potenzialflächen dieses Landkreises (wie in „Bestand & Potenziale").';
-      // Marke an der DE-Empfehlung: das Dreieck zeigt auf den Wert, der Text läuft zur freien Seite
-      const pos = maxGW ? liveDeRec / maxGW * 100 : 0, flip = pos > 55;
-      R.rtMarkText = flip ? 'DE-Empfehlung ▲' : '▲ DE-Empfehlung';
-      R.rtMarkTitle = 'DE-Empfehlung: ' + this.fmt(liveDeRec) + ' GW';
+      R.rtSub = many
+        ? 'Startwert aus dem bundesweiten Konsens von ' + natVals.length + ' Gerechtigkeitsprinzipien.'
+        : natVals.length ? 'Startwert aus der bundesweiten Verteilung nach ' + this.byId[natVals[0].pid].name + '.' : '';
       // Position wie die Griffmitte: der 16-px-Griff läuft von 8 px bis Breite − 8 px
-      const left = 'calc(8px + (100% - 16px) * ' + (pos / 100).toFixed(4) + ')';
-      R.rtMarkStyle = 'position:absolute;left:' + left + ';transform:translateX(' + (flip ? 'calc(-100% + 6px)' : '-6px') + ');font-size:14px;color:#6e6662;white-space:nowrap';
-      R.rtLineStyle = 'position:absolute;left:' + left + ';top:16px;height:13px;border-left:1px dashed #96938f;transform:translateX(-0.5px);pointer-events:none';
+      const TRACK_PX = 280 - 16;  // linke Spalte 312 px − Innenabstand; nur für das Ausblenden überlappender Werte
+      const tOf = v => maxGW ? Math.max(0, Math.min(1, v / maxGW)) : 0;
+      const leftOf = v => 'calc(8px + (100% - 16px) * ' + tOf(v).toFixed(4) + ')';
+      // Text an den Rändern nach innen schieben, sonst mittig über bzw. unter dem Strich
+      const shiftOf = v => tOf(v) < 0.08 ? 'translateX(-8px)' : tOf(v) > 0.92 ? 'translateX(calc(-100% + 8px))' : 'translateX(-50%)';
+      const consName = 'DE-Konsens (' + natVals.length + ' Prinzipien)';
+      const marks = natVals.map(o => ({ name: this.byId[o.pid].name, color: this.byId[o.pid].color, v: o.v }));
+      if (many) marks.unshift({ name: consName, color: this.CONS, v: liveDeRec, cons: true });
+      // Tooltip: alle Marken an derselben Stelle (auf 0,01 GW gleich oder < 4 px auseinander)
+      const samePlace = (a, b) => this.fmt(a.v) === this.fmt(b.v) || Math.abs(tOf(a.v) - tOf(b.v)) * TRACK_PX < 4;
+      const tipOf = m => marks.filter(o => samePlace(o, m)).map(o => o.name + ': ' + this.fmt(o.v) + ' GW').join('\n');
+      // Werte unter der Spur: von rechts nach links, überlappende ausblenden (≈ 34 px je Wert bei 13 px). Von rechts,
+      // weil der kleinste Wert ohnehin im Konsens-Etikett über der Spur steht.
+      let lastX = Infinity;
+      const shown = new Set();
+      marks.filter(m => !m.cons).slice().sort((a, b) => b.v - a.v).forEach(m => {
+        const x = tOf(m.v) * TRACK_PX;
+        if (lastX - x >= 34) { shown.add(m); lastX = x; }
+      });
+      // Etikett über der Spur: DE-Konsens, bei einem Prinzip dessen Strich — wird nie ausgeblendet
+      const head = marks[0] || null;
+      if (!many && head) shown.delete(head);
+      R.rtMarks = marks.map(m => ({
+        title: tipOf(m),
+        style: 'position:absolute;left:' + leftOf(m.v) + ';top:50%;width:10px;height:16px;transform:translate(-5px,-50%);cursor:default;'
+          + 'background:linear-gradient(' + m.color + ',' + m.color + ') center/2px 100% no-repeat'
+      }));
+      R.rtValues = marks.filter(m => shown.has(m)).map(m => ({
+        text: this.fmt(m.v), title: tipOf(m),
+        style: 'position:absolute;left:' + leftOf(m.v) + ';top:0;transform:' + shiftOf(m.v) + ';font-size:13px;color:#6e6662;white-space:nowrap;cursor:default'
+      }));
+      R.rtHeadShow = !!head;
+      R.rtHeadText = head ? (many ? 'Konsens' : head.name) + ' ' + this.fmt(head.v) : '';
+      R.rtHeadTitle = head ? tipOf(head) : '';
+      R.rtHeadStyle = head ? 'position:absolute;left:' + leftOf(head.v) + ';bottom:4px;transform:' + shiftOf(head.v)
+        + ';font-size:14px;font-weight:600;line-height:1.3;color:#fff;background:var(--cons);padding:1px 6px;border-radius:4px;white-space:nowrap;cursor:default' : '';
+      // Legende: zuerst DE-Konsens, dann die Prinzipien in der Reihenfolge der linken Liste
+      R.rtLegend = marks.map(m => ({ name: m.cons ? 'DE-Konsens' : m.name,
+        dotStyle: 'flex:none;width:9px;height:9px;border-radius:' + (m.cons ? '2px' : '4px') + ';background:' + m.color }));
       R.rtIsOwn = S.regionOwnTarget != null;
-      R.onRegionSlider = e => this.setState({ regionOwnTarget: Math.round(+e.target.value * 100) / 100 });
+      R.rtResetLabel = 'Auf ' + (many ? 'DE-Konsens' : natVals.length ? this.byId[natVals[0].pid].name : 'Startwert') + ' zurücksetzen';
+      R.onRegionSlider = e => this.setRegionOwnTarget(+e.target.value);
       // Übernahme erst bei Enter/Verlassen — jede Übernahme macht das Regionsergebnis „veraltet" (R.7)
-      R.rtField = this.numField(liveBudget, 0, maxGW, 'rtDraft', v => this.setState({ regionOwnTarget: v }));
+      R.rtField = this.numField(liveBudget, 0, maxGW, 'rtDraft', v => this.setRegionOwnTarget(v));
       R.resetRegionTarget = () => this.setState({ regionOwnTarget: null });
     }
     // Kein Satz „Bei [X] liegen [Y] im Konsens" unter dem Regler (R.5, Nachtrag): die Headline über der Karte nennt beides
@@ -3658,9 +3766,11 @@ class Component extends DCLogic {
       R.kernaussage = 'Wo wäre der Ausbau fair? Beginnen Sie mit einem Gerechtigkeitsprinzip.';
     } else if (view === 'regionGate') {
       // Die Region hat immer ein national berechnetes Budget — nie „0,00 GW" als wäre nichts da.
-      R.kernaussage = 'Regionsbudget: ' + this.fmt(liveBudget) + ' GW — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
+      R.kernaussage = startLabel + ': ' + this.fmt(liveBudget) + ' GW — ' + (S.regionComputing ? 'wird verteilt …' : 'noch nicht verteilt.');
     } else if (view === 'single') {
-      R.kernaussage = 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmt(target) + ' GW so über ' + (isRegion ? S.region.label : 'Deutschland') + '.';
+      // Region: auch mit einem regionalen Prinzip nennt die Headline die Ausbaumenge (wie in „Konsens")
+      R.kernaussage = isRegion ? startLabel + ': ' + this.fmt(liveBudget) + ' GW'
+        : 'Nach dem Prinzip ' + this.byId[singlePid].name + ' verteilen sich ' + this.fmt(target) + ' GW so über Deutschland.';
     } else if (view === 'minimum') {
       R.kernaussage = isRegion ? 'Die Karte zeigt, welches Prinzip den Konsens wo begrenzt.' : 'In jedem Landkreis sehen Sie, welches Prinzip den Konsens begrenzt.';
     } else if (view === 'verteilungen') {
@@ -3672,22 +3782,26 @@ class Component extends DCLogic {
     } else if (view === 'szenarien') {
       R.kernaussage = 'Wie unterscheiden sich Ihre Szenarien — untereinander und von den Referenzen?';
     } else {
-      // Regionsansicht: Regionsbudget, nicht das nationale Ausbauziel.
-      // Regionsansicht (R.5): woher das Regionsbudget kommt.
-      // Werte live: DE-Empfehlung und eingestelltes Regionalziel, auch wenn die Karte noch den alten Stand zeigt.
+      // Regionsansicht: die Ausbaumenge der Region, nicht das nationale Ausbauziel. Werte live (Startwert und
+      // eingestellte Ausbaumenge), auch wenn die Karte noch den alten Stand zeigt.
       R.kernaussage = isRegion
-        ? 'Regionsbudget: ' + this.fmt(liveBudget) + ' GW — der Anteil ' + (/^Stadt /.test(S.region.label) ? 'dieser Stadt' : 'dieses Landkreises') + ' laut bundesweiter Verteilung.'
+        ? startLabel + ': ' + this.fmt(liveBudget) + ' GW'
         : 'Von ' + this.fmt(target) + ' GW Ausbauziel liegen ' + this.fmt(consTotal) + ' GW im Konsens aller gewählten Prinzipien.';
     }
 
 
-    // Eigenes Regionalziel: Headline zweizeilig (in den Ansichten mit der Budget-Headline)
-    R.headTwo = isRegion && S.regionOwnTarget != null && (view === 'konsens' || view === 'regionGate');
+    // Eigener Wert: Headline zweizeilig, als Abweichung vom Startwert erkennbar (in den Ansichten mit der Mengen-Headline)
+    R.headTwo = isRegion && S.regionOwnTarget != null && (view === 'konsens' || view === 'single' || view === 'regionGate');
     R.headOne = !R.headTwo;
-    R.headL1 = R.headTwo ? 'DE-Empfehlung für ' + (/^Stadt /.test(S.region.label) ? 'die Stadt' : 'den Landkreis') + ': ' + this.fmt(liveDeRec) + ' GW' : '';
+    R.headL1 = R.headTwo ? startLabel + ': ' + this.fmt(liveDeRec) + ' GW' : '';
     R.headL2 = !R.headTwo ? '' : regionStale && !S.regionComputing
-      ? 'Eingestelltes Regionalziel: ' + this.fmt(liveBudget) + ' GW (noch nicht berechnet)'
-      : 'Aktuell untersuchtes Regionalziel: ' + this.fmt(liveBudget) + ' GW';
+      ? 'Eingestellte Ausbaumenge: ' + this.fmt(liveBudget) + ' GW (noch nicht berechnet)'
+      : 'Aktuell untersuchte Ausbaumenge: ' + this.fmt(liveBudget) + ' GW';
+    // „i" an der Headline: woher die Ausbaumenge kommt (Text je nach Zahl der bundesweiten Prinzipien)
+    R.regionBudgetInfo = natMany
+      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen. Wie diese Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
+      : 'Diese Ausbaumenge entspricht dem Anteil der Region am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Regionen wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.';
+    R.regionBudgetInfoExtra = S.account ? 'Die Ausbaumenge enthält auch die Anlagen, die schon stehen. Der Bestand wird in der Detailauswertung abgezogen.' : '';
 
     // Reiter: Konsens → Was begrenzt? → Dissens → Einzelverteilungen → Szenarien vergleichen.
     // „Szenarien vergleichen" ist der einzige Vergleichs-Hub und immer sichtbar (Referenzen sind immer da);
@@ -3763,7 +3877,9 @@ class Component extends DCLogic {
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
     const scopeWord = isRegion ? 'der Region' : 'gesamt';
 
-    // Herleitung (R.6): Eingaben der letzten Regionsberechnung, Prinzipien in Listenreihenfolge (wie links)
+    // Herleitung (R.6): Eingaben der letzten Regionsberechnung, Prinzipien in Listenreihenfolge (wie links).
+    // Kette: Prinzipien bundesweit → Ausbaumenge der Region → Prinzipien regional → Bestand (nur wenn berücksichtigt)
+    // → Box Zubaukonsens. Alle Zahlen sind gerechnete Werte, keine Differenzen (Bestand wird nie zurückgebaut, R.1).
     const inListOrder = ids => this.principles.map(p => p.id).filter(id => (ids || []).includes(id));
     const chainDot = id => 'flex:none;width:9px;height:9px;border-radius:4px;background:' + this.byId[id].color;
     R.showChain = isRegion && hasRegionResult && !regionNeedsGate && view !== 'szenarien';
@@ -3772,12 +3888,17 @@ class Component extends DCLogic {
       const own = !!S.regionComputedOwn;
       const princItems = ids => inListOrder(ids).map(id => ({ name: this.byId[id].name, dotStyle: chainDot(id) }));
       const tagCss = 'font-size:14px;font-weight:600;color:#1d6b4c;background:#efece8;padding:1px 7px;border-radius:4px';
+      const compNat = inListOrder(S.regionComputedNatSel);
+      const compStart = compNat.length >= 2 ? 'DE-Konsens' : compNat.length ? this.byId[compNat[0]].name : 'Startwert';
       R.chainSteps = [
         { label: 'Prinzipien bundesweit', items: princItems(S.regionComputedNatSel), value: '' },
-        { label: 'Regionsbudget', items: [], value: this.fmt(S.regionComputedTarget) + ' GW', tag: own ? 'eigenes Ziel' : 'DE-Empfehlung', tagStyle: tagCss,
-          sub: own ? 'DE-Empfehlung: ' + this.fmt(S.regionComputedDeRec || 0) + ' GW' : '' },
+        { label: 'Ausbaumenge der Region', items: [], value: this.fmt(S.regionComputedTarget) + ' GW', tag: own ? 'eigener Wert' : compStart, tagStyle: tagCss,
+          sub: own ? compStart + ': ' + this.fmt(S.regionComputedDeRec || 0) + ' GW' : '' },
         { label: 'Prinzipien regional', items: princItems(S.regionComputedSel), value: '' }
       ];
+      // Bestand im Landkreis (Summe der Zellen = PotentialData.bestandMW der gerechneten Technologie)
+      if (accEff) R.chainSteps.push({ label: 'Bestand im Landkreis', items: [], value: this.fmt(cells.reduce((a, c) => a + (c.bestandGW || 0), 0)) + ' GW',
+        tag: '', tagStyle: 'display:none', sub: '' });
       // In „Einzelverteilungen" gibt es keine Konsenszahl — dort endet die Kette ohne Übergang in eine Box
       if (view === 'verteilungen') R.chainWrapStyle += ';border-left-color:transparent';
     } else R.chainSteps = [];
@@ -3817,7 +3938,7 @@ class Component extends DCLogic {
       R.cellHeroInfoBtnStyle = stufe >= 2 ? R.consInfoBtnStyle : 'display:none';
       R.cellContextLine = accEff ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' GW installierte Leistung' : '';
     };
-    R.cellEinordnung = '';
+    R.cellEinordnung = ''; R.cellBudgetLine = '';
     R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#2e2927;margin-bottom:9px';
 
     if (!selectedCell && !selectedGemeinde) {
@@ -3826,6 +3947,14 @@ class Component extends DCLogic {
       // analysis-block flags default off; skeleton (Kennzahl oben + Block unten) bleibt konstant
       R.anBlockers = false; R.anSums = false; R.anCombos = false; R.anDissTop = false;
       let hideLead = false;
+      // Region: warum der Wert kleiner ist als die Ausbaumenge — entfällt, wenn beide (gerundet) gleich sind
+      R.ovLeadWhy = '';
+      const leadWhy = (v, many) => {
+        if (!isRegion || !(v < target) || this.fmt(v) === this.fmt(target)) return '';
+        if (many) return accEff ? 'Kleiner als die Ausbaumenge, weil die regionalen Prinzipien nur einen Teil gemeinsam tragen und ein Teil schon gebaut ist.'
+          : 'Kleiner als die Ausbaumenge, weil die regionalen Prinzipien nur einen Teil gemeinsam tragen.';
+        return accEff ? 'Kleiner als die Ausbaumenge, weil ein Teil schon gebaut ist.' : '';
+      };
       R.ovLeadUnit = 'GW'; R.ovBarShow = false; R.ovEmpty = false;
 
       if (view === 'regionGate') {
@@ -3850,13 +3979,13 @@ class Component extends DCLogic {
       } else if (stufe === 1) {
         const st = scopeIdx.reduce((a,i)=>a+gwSel[singlePid][i],0);
         R.ovLeadLabel = 'Empfohlener Zubau ' + scopeWord + ' (' + this.byId[singlePid].name + ')'; R.ovLeadValue = this.fmt(st);
-        R.ovLeadSub = '';
+        R.ovLeadSub = ''; R.ovLeadWhy = leadWhy(st, false);
       } else {
         const consST = scopeIdx.reduce((a,i)=>a+consCells[i],0);
-        // verschachtelter Balken: Ausbauziel/Regionsbudget = volle Länge, Konsens = gefüllt, Rest = blass
+        // verschachtelter Balken: Ausbauziel/Ausbaumenge = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
         R.ovBarCaption = isRegion
-          ? 'Vom Regionsbudget (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
+          ? 'Von der Ausbaumenge der Region (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
           : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
         // Blocker-Daten (für konsens & minimum)
         // Einheit der Zählung = die auf der Karte klickbare Einheit: Landkreise (Deutschland), Gemeinden (Region,
@@ -3906,13 +4035,13 @@ class Component extends DCLogic {
           R.sumHeadStyle = sumSame ? 'display:none' : '';
           R.sumSameStyle = sumSame ? 'font-size:14px;color:#2e2927;line-height:1.5;padding:14px 0 0;border-top:1px solid #e5e2de' : 'display:none';
           R.sumSameText = sumTxt[0] === this.fmt(target) + ' GW'
-            ? 'Jedes Prinzip verteilt ' + (isRegion ? 'das ganze Regionsbudget' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
+            ? 'Jedes Prinzip verteilt ' + (isRegion ? 'die ganze Ausbaumenge der Region' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
             : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
           // 2) Dieser Reiter zeigt die Prinzipien einzeln — keine Konsenszahl in der rechten Spalte
           hideLead = true;
         } else if (view === 'konflikt') {
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true; R.ovLeadWhy = leadWhy(consST, true);
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge der Region (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
           R.anCombos = S.konfliktMode === 'anders';
           // gezählt werden Landkreise (Deutschland) bzw. Rasterzellen (Region) — so benennen, nie pauschal „Zellen"
@@ -3967,8 +4096,8 @@ class Component extends DCLogic {
           R.toggleCombos = () => this.setState({ combosOpen: !S.combosOpen });
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
-          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true;
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' des Regionsbudgets (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true; R.ovLeadWhy = leadWhy(consST, true);
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge der Region (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Im Reiter „Konsens" nicht doppelt: dafür gibt es den Reiter „Was begrenzt?" (UX-Review)
           R.anBlockers = view === 'minimum'; mkBlockers();
         }
@@ -3986,7 +4115,10 @@ class Component extends DCLogic {
       const i = cells.indexOf(selectedCell), c = selectedCell;
       R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : '';
       R.cellKindLabel = isRegion ? 'Rasterzelle' : c.kind;
-      R.cellConsensusScopeLabel = isRegion ? 'Zubaukonsens dieser Zelle in der Region' : 'Budget dieser Region';
+      // Deutschland, nur mit Bestand: was die Detailauswertung übernimmt (ohne Bestand ist das der Zubaukonsens selbst)
+      if (isRegion && accEff && R.showChain) R.chainSteps = R.chainSteps.concat([{ label: 'Bestand in dieser Rasterzelle', items: [],
+        value: this.fmtUnit(c.bestandGW || 0, true) + ' GW', tag: '', tagStyle: 'display:none', sub: '' }]);
+      R.cellBudgetLine = !isRegion && accEff && stufe >= 1 ? startLabel + ': ' + this.fmt(this.natBudgetFor(c.id)) + ' GW' : '';
 
       // Popover an der Zelle: kompakter Chip mit Zeiger, der aus der Zelle „herauswächst" — seitlich
       // platziert (bevorzugt eine freie Nachbarrichtung des Sechsecks), nie über der Zelle selbst (§M).
@@ -4019,7 +4151,9 @@ class Component extends DCLogic {
           // Textmessung im Prototyp — grobe Zeichen-Heuristik statt dessen (Umbruch passiert ohnehin per
           // CSS; die Schätzung entscheidet nur die Boxhöhe, lieber zu hoch als zu eng).
           // 14 px (R.4) statt vorher 13 px: Höhen je um 4 px angehoben, Breite unverändert
-          const popH = nameText.length > 20 ? 92 : 73;
+          // Zeile mit der Ausbaumenge darunter: bei ≈ 7,2 px je Zeichen und 176 px Innenbreite eine oder zwei Zeilen
+          const amountText = startLabel + ': ' + this.fmt(this.natBudgetFor(c.id)) + ' GW';
+          const popH = (nameText.length > 20 ? 92 : 73) + (amountText.length * 7.2 > 176 ? 40 : 21);
           // Zellrand in der gewählten Richtung, aus Kartenraum in Bildschirm-Pixel projiziert (relativ zur
           // SVG-eigenen Box); der Zeigerabstand wird erst danach als fester Pixelwert addiert.
           const edgeXs = this.toScreenX(proj, c.cx + vx), edgeYs = this.toScreenY(proj, c.cy + vy);
@@ -4038,11 +4172,12 @@ class Component extends DCLogic {
           R.cellPopoverBoxStyle = 'position:absolute;left:' + (MAP_PAD + px).toFixed(1) + 'px;top:' + (MAP_PAD + py).toFixed(1) + 'px;width:' + popW + 'px;height:' + popH + 'px';
           R.cellPopoverLine1 = nameText;
           R.cellPopoverLine2 = 'Im Detail auswerten →';
+          R.cellPopoverAmount = amountText;
           // Info-Fläche am Popover, ohne es zu verdecken: darunter, sonst darüber, sonst auf der breiteren Seite
           // daneben (dann schmaler). Höhe aus der Breite geschätzt (≈ 7,2 px je Zeichen, 21 px je Zeile, großzügig);
           // passt sie nicht in die Karte, scrollt die Fläche.
           if (S.popoverInfo) {
-            const gap = 8, TEXT_CH = 742;  // Länge des Info-Texts (ohne Markup), für die Höhenschätzung
+            const gap = 8, TEXT_CH = 707;  // Länge des Info-Texts (ohne Markup), für die Höhenschätzung
             const estH = w => Math.ceil(TEXT_CH / ((w - 24) / 7.2) + 2) * 21 + 22;
             let infoW = Math.min(400, proj.boxW - 8), infoH = estH(infoW), ix, iy;
             const clampX = x => Math.max(4, Math.min(proj.boxW - infoW - 4, x));
@@ -4079,7 +4214,7 @@ class Component extends DCLogic {
       R.cellPrincipleColor = this.byId[singlePid].color;
       R.cellRecommend = this.fmtUnit(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
-      R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
+      R.cellSharePctOf = isRegion ? 'der Ausbaumenge der Region' : 'des deutschen Zubaus';
       // Zubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Zubau ≤ Ausbau.
       const neu = neuOf(i);
@@ -4102,7 +4237,7 @@ class Component extends DCLogic {
       // erweitert
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
       R.goalInfoText = isRegion
-        ? 'Wie viel diese Rasterzelle zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.'
+        ? 'Wie viel diese Rasterzelle zur Ausbaumenge der Region beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.'
         : (c.kind === 'Stadt' ? 'Wie viel diese Stadt zum Ausbauziel beiträgt — ihr' : 'Wie viel dieser Landkreis zum Ausbauziel beiträgt — sein') + ' Zubaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5c5451;line-height:1.5;margin-top:2px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3';
@@ -4124,7 +4259,6 @@ class Component extends DCLogic {
       R.cellScope = '';
       R.cellKindLabel = g.bez || 'Gemeinde';
       R.cellLabel = g.name;
-      R.cellConsensusScopeLabel = 'Zubaukonsens dieser Gemeinde in der Region';
       R.showCellPopover = false;
       R.cellShowConflictHint = false;
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
@@ -4134,6 +4268,8 @@ class Component extends DCLogic {
       // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
       const gNeu = gAgg(cells.map((c, i) => neuOf(i)));
       const gBest = gAgg(cells.map(c => c.bestandGW || 0));
+      if (isRegion && accEff && R.showChain) R.chainSteps = R.chainSteps.concat([{ label: 'Bestand in dieser Gemeinde', items: [],
+        value: this.fmtUnit(gBest, true) + ' GW', tag: '', tagStyle: 'display:none', sub: '' }]);
       const gTotal = (accEff ? gBest : 0) + gNeu;
       const gKm2 = covWeight * CELL_KM2;
       R.cellTotal = this.fmtUnit(gTotal, isRegion); R.cellBestand = this.fmtUnit(gBest, isRegion); R.cellNew = this.fmtUnit(gNeu, isRegion);
@@ -4156,7 +4292,7 @@ class Component extends DCLogic {
         R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
 
         R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt — ihr Zubaukonsens geteilt durch das gesamte Regionsbudget.';
+        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge der Region beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.';
 
       } else if (stufe === 1) {
         const gRec = gAgg(gwSel[singlePid]);
@@ -4164,9 +4300,9 @@ class Component extends DCLogic {
         R.cellPrincipleColor = this.byId[singlePid].color;
         R.cellRecommend = this.fmtUnit(gRec, isRegion);
         R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
-        R.cellSharePctOf = isRegion ? 'des Regionsbudgets' : 'des deutschen Zubaus';
+        R.cellSharePctOf = isRegion ? 'der Ausbaumenge der Region' : 'des deutschen Zubaus';
         R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zum Regionsbudget beiträgt.';
+        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge der Region beiträgt.';
       }
     }
 
@@ -4272,15 +4408,15 @@ class Component extends DCLogic {
     R.areaBestand = area === 'bestand';
     // Bestand & Potenziale: links steht nur der Technologie-Schalter — schmale Spalte, mehr Platz für die Karte
     R.leftColWidth = R.areaBestand ? 'width:280px' : 'width:312px';
-    // „Regional" braucht mindestens ein bundesweites Prinzip — ohne gibt es kein Regionsbudget (Hinweis statt Region)
+    // „Regional" braucht mindestens ein bundesweites Prinzip — ohne gibt es keine Ausbaumenge (Hinweis statt Region)
     const natCount = S.selected.filter(avail).length;
     R.areaRegionNoPrinc = area === 'region' && natCount === 0;
     R.areaMain = area === 'de' || (area === 'region' && !!S.region && natCount > 0);
     R.gotoDE = () => this.switchArea('de');
     R.appVersionLine = 'Version ' + APP_VERSION + ' · Stand ' + APP_STAND;
-    // Name ohne Art („Landkreis"/„Stadt"), wie im Szenario-Auto-Namen; lange Namen kürzt der Tab mit „…",
-    // der Tooltip nennt den vollen Namen mit Art (unterscheidet z. B. Landkreis Rostock / Stadt Rostock)
-    const regionTabLabel = S.region ? 'Verteilung – ' + S.region.label.replace(/^(Landkreis|Stadt) /, '') : 'Verteilung – Regional';
+    // Kurzname wie im Szenario-Auto-Namen (regionShortName); lange Namen kürzt der Tab mit „…",
+    // der Tooltip nennt den vollen Namen mit Art
+    const regionTabLabel = S.region ? 'Verteilung – ' + this.regionShortName(S.region.label) : 'Verteilung – Regional';
     R.areaTabs = [
       { id: 'bestand', label: 'Bestand & Potenziale' },
       { id: 'de', label: 'Verteilung – Deutschland' },
@@ -4310,8 +4446,8 @@ class Component extends DCLogic {
     R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, false) + ';position:absolute;top:9px;right:8px;background:#fff';
     R.togglePopoverInfo = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ popoverInfo: !this.state.popoverInfo }); };
     R.popoverInfoStyle = R.popoverInfoStyle || 'display:none';
-    // nur an den Headlines, die das Regionsbudget nennen (Konsens bzw. noch nicht berechnet)
-    R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'regionGate');
+    // nur an den Headlines, die die Ausbaumenge nennen (Konsens, Einzelverteilung bzw. noch nicht berechnet)
+    R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'single' || view === 'regionGate');
     R.regionDetailInfoBtnStyle = infoCircle(S.regionDetailInfo, false) + ';margin-top:6px';
     R.toggleRegionDetailInfo = () => this.setState({ regionDetailInfo: !this.state.regionDetailInfo });
     R.regionDetailInfoStyle = R.showRegionDetailInfoBtn && S.regionDetailInfo ? 'flex:none;font-size:14px;color:#5c5451;line-height:1.5;padding:8px 10px;background:#fff;border:1px solid #e8e5e1;border-radius:4px;margin:-2px 2px 12px' : 'display:none';
