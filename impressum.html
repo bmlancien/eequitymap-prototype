@@ -20,7 +20,8 @@
   p{margin:0 0 10px}
   .draft{background:#fbf3e8;border:1px solid #ead9bf;border-radius:8px;padding:10px 12px;color:#6b5726;margin:0 0 6px}
   .ph{background:#fbf3e8;border:1px dashed #d8c49a;border-radius:4px;padding:0 5px;color:#6b5726}
-  footer{max-width:760px;margin:0 auto 40px;padding:0 4px;font-size:14px;color:#5b6672}
+  footer{max-width:760px;margin:0 auto 40px;padding:0 4px;font-size:14px;color:#5b6672;display:flex;flex-wrap:wrap;gap:4px 14px}
+  footer .ver{color:#6b7680;margin-right:auto}
   footer a{color:#1b2126}
   @media (max-width:820px){main{margin:16px;padding:22px 20px}}
 </style>
@@ -52,6 +53,8 @@
 <h2>Hinweise zu Inhalten und Links</h2>
 <p><span class="ph">[Platzhalter: Haftungs- und Urheberrechtshinweise nach Vorgabe der verantwortlichen Stelle]</span></p>
 </main>
-<footer><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="EEquityMap.dc.html">Zum Werkzeug</a></footer>
+<footer><span class="ver" id="app-version"></span><span><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="EEquityMap.dc.html">Zum Werkzeug</a></span></footer>
+<script src="version.js"></script>
+<script>document.getElementById('app-version').textContent = 'Version ' + APP_VERSION + ' · Stand ' + APP_STAND;</script>
 </body>
 </html>
