@@ -2303,9 +2303,13 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
 
 - **Eine Zeile je Ansicht** unter den Reitern; sie sagt, was die Headline
   nicht sagt:
-  - Konsens: „Diesen Zubau tragen alle gewählten Prinzipien mit — das heißt
-    nicht, dass eine Fläche genehmigungsfähig ist." (der frühere zweite
-    Hinweis unter der Legende entfällt)
+  - Konsens: „In jedem Landkreis zählt der niedrigste Vorschlag der gewählten
+    Prinzipien: Diesen Zubau tragen alle mit. Das heißt nicht, dass eine Fläche
+    genehmigungsfähig ist." Regional: „Auf jeder 5 × 5-km-Fläche zählt …", denn
+    dort gilt die Minimum-Regel je Rasterzelle (Session 2026-11-02, Persona-Test;
+    vorher „Diesen Zubau tragen alle gewählten Prinzipien mit — das heißt nicht,
+    …"). Das „i" am Zubaukonsens ergänzt: „… mittragen: der jeweils niedrigste
+    Vorschlag." (der frühere zweite Hinweis unter der Legende entfällt)
   - Was begrenzt?: „Begrenzend ist das Prinzip, das dort am wenigsten Zubau
     vorsieht. Ohne es wäre dort mehr Konsens möglich."
   - Dissens · Wie stark?: „Gemessen am größten Abstand eines gewählten

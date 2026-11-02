@@ -1325,7 +1325,7 @@
                 <div style="height:8px;border-radius:4px;background:#e9e6e2;overflow:hidden">
                   <div style="height:100%;width:{{ cellConsFill }};background:var(--cons);border-radius:4px"></div>
                 </div>
-                <div style="{{ consInfoStyle }}">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.</div>
+                <div style="{{ consInfoStyle }}">Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen: der jeweils niedrigste Vorschlag.</div>
               </sc-if>
             </div>
           </div>
@@ -3493,7 +3493,8 @@ class Component extends DCLogic {
       single: this.byId[singlePid].explain ? this.byId[singlePid].explain.split(' — ')[0].replace(/\.?$/, '.') : 'Die Karte zeigt die Verteilung nach diesem einen Prinzip.',
       // Eine Zeile je Ansicht (UX-Review): sagt, was die Headline nicht sagt. Der Konsens-Hinweis („nicht
       // genehmigungsfähig") steht jetzt hier statt als zweite Zeile unter der Legende.
-      konsens: 'Diesen Zubau tragen alle gewählten Prinzipien mit — das heißt nicht, dass eine Fläche genehmigungsfähig ist.',
+      // Die Minimum-Regel gilt in der Region je Rasterzelle, nicht je Gemeinde (Gemeinde-Wert = Summe der Zellminima)
+      konsens: (isRegion ? 'Auf jeder 5 × 5-km-Fläche' : 'In jedem Landkreis') + ' zählt der niedrigste Vorschlag der gewählten Prinzipien: Diesen Zubau tragen alle mit. Das heißt nicht, dass eine Fläche genehmigungsfähig ist.',
       konflikt: S.konfliktMode === 'anders'
         ? 'Eingefärbt ist das Prinzip, das dort um mehr als 20 % über dem Konsens liegt. Ohne es wäre dort mehr Konsens möglich.'
         : 'Gemessen am größten Abstand eines gewählten Prinzips zum Konsens.',
@@ -4017,7 +4018,7 @@ class Component extends DCLogic {
       const v = heroNum(stufe >= 2 ? cons : zubau), b = heroNum(bestand);
       R.cellHeroLabel = stufe >= 2 ? 'Zubaukonsens' : 'Zubau';
       R.cellHeroValue = this.fmtUnit(stufe >= 2 ? cons : zubau, isRegion);  // „< 0,001" statt „0,000"
-      R.cellHeroCaption = stufe >= 2 && S.consInfo ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen.' : '';
+      R.cellHeroCaption = stufe >= 2 && S.consInfo ? 'Zubaukonsens = der Anteil des Zubaus, den alle gewählten Prinzipien mittragen: der jeweils niedrigste Vorschlag.' : '';
       R.cellHeroInfoBtnStyle = stufe >= 2 ? R.consInfoBtnStyle : 'display:none';
       R.cellContextLine = accEff ? 'Mit Bestand: ' + heroStr(b) + ' + ' + heroStr(v) + ' = ' + heroStr(b + v) + ' GW installierte Leistung' : '';
     };
