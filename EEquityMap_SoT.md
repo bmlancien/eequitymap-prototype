@@ -33,10 +33,21 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
   blendet die ≈0-Zellen aus.~~ → Switch entfernt (s. O).
 - **Mindestens ein Prinzip** ist immer ausgewählt; das letzte Häkchen lässt sich
   nicht abwählen. Der 0-Prinzipien-Fall existiert nicht mehr.
-- **Ausbauziel-Mechanik (Zeitstrahl).** Zellen werden in absteigender
+- **Ausbauziel-Mechanik (Zeitstrahl).** ~~Zellen werden in absteigender
   Konsens-Reihenfolge rekrutiert, bis das Ziel erreicht ist. Der Zähler „Zellen
   im Konsens" bleibt vom Ausbauziel unberührt; die Ziel-Abhängigkeit wird über
-  den **Konsensanteil des Zubaus** ausgedrückt (fällt mit steigendem Ziel).
+  den **Konsensanteil des Zubaus** ausgedrückt (fällt mit steigendem Ziel).~~
+
+  > **Korrigiert (Session 2026-11-02, Persona-Test Aufgabe 4):** Der Prototyp
+  > rekrutiert keine Zellen und hat in dieser Rechnung keine Potenzialgrenze.
+  > Jedes Prinzip verteilt `Anteil × Ausbauziel`. Daher gilt:
+  > - **Ohne Bestand** bleibt der Konsensanteil bei jedem Ziel gleich; die
+  >   Menge im Konsens wächst proportional mit dem Ziel.
+  > - **Mit Bestand** (Zubau = max(Ausbau − Bestand, 0), R.1) bleibt der Anteil
+  >   gleich oder steigt mit dem Ziel; er fällt nicht.
+  >
+  > Ob das Modell später Grenzen enthält, die erst bei hohen Zielen greifen, ist
+  > offen (I.13).
 - **Blocker ist ein echtes Feature.** Blocker = Prinzip mit dem niedrigsten Wert
   (= Bestimmer des Minimums). Speist Minimumkarte und „Was begrenzt den
   Konsens?". Nicht mehr „illustrativ".
@@ -743,6 +754,15 @@ nicht über die volle Breite laufen lassen.
 11. **Zoomschwelle Landkreis → Gemeinde** im Reiter „Bestand & Potenziale"
     (R.13).
 12. **Alle in R mit [Annahme] markierten Punkte bestätigen.**
+13. **Soll der Konsensanteil mit steigendem Ziel fallen?** (Session 2026-11-02,
+    s. A) Der Prototyp verteilt proportional: Ohne Bestand bleibt der Anteil
+    gleich, mit Bestand fällt er nicht. Enthält das echte Modell Grenzen, die
+    erst bei hohen Zielen greifen (z. B. Potenzialgrenzen, kostenoptimierte
+    Verteilung)? Falls ja, ist der fallende Anteil beabsichtigt, aber zu prüfen
+    und im Prototyp noch nicht abgebildet; falls nein, entfällt die Aussage auch
+    im Studienziel `target`. Unabhängig davon ist das Erfolgskriterium von
+    Aufgabe 4 in `tasks.yaml` mit dem Prototyp nicht erfüllbar. Mit dem
+    Modellierungsteam klären.
 
 ---
 
