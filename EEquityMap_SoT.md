@@ -1780,7 +1780,10 @@ Landkreises (Regional).
     nur einem Prinzip keine eigene Konsens-Marke; dessen Strich trägt das
     Etikett „Verbrauchsnah 0,47" (gleicher Stil).
   - Hover: „Verbrauchsnah: 0,47 GW" bzw. „DE-Konsens (2 Prinzipien): 0,39 GW";
-    mehrere Marken an derselben Stelle nennt der Tooltip zusammen.
+    mehrere Marken an derselben Stelle nennt der Tooltip zusammen. Eigener
+    Tooltip ohne Verzögerung (Session 2026-11-02), auf Etikett, Spur und Werten;
+    bei Touch zeigt ihn ein Tipp 2,5 s lang. Das Etikett trägt bei einem Prinzip
+    dessen Farbe.
   - Überlappende Werte unter der Spur werden ausgeblendet (Strich und Tooltip
     bleiben); bevorzugt bleibt der größere Wert sichtbar, weil der kleinste im
     Konsens-Etikett steht. Das Konsens-Etikett wird nie ausgeblendet.
@@ -1822,8 +1825,10 @@ Berechnung; ersetzt die Regions-Headline aus M):
   > alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist
   > kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und
   > kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau
-  > dienen. Wie diese Ausbaumenge innerhalb der Region verteilt wird, kann nach
-  > den vor Ort relevanten Prinzipien neu bestimmt werden.
+  > dienen, mit dessen Umsetzung begonnen werden könnte. Sie ist nicht der
+  > vollständige Beitrag des Landkreises zum Ausbauziel. Wie diese Ausbaumenge
+  > innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten
+  > Prinzipien neu bestimmt werden.
 
   *Zusatz, nur bei berücksichtigtem Bestand* **[Annahme]**:
   > Die Ausbaumenge enthält auch die Anlagen, die schon stehen. Der Bestand

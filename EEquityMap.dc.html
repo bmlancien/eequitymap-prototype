@@ -237,24 +237,31 @@
         </div>
         <div style="font-size:14px;color:#6e6662;line-height:1.45;margin-bottom:4px">{{ rtSub }}</div>
         <div style="margin:4px 0 4px">
+          <!-- Etikett, Spur und Werte: Tooltip der Marken hier, nicht an den Strichen — der Regler liegt über ihnen
+               und fängt ihre Maus- und Touch-Ereignisse ab -->
+          <div onPointerMove="{{ rtPointer }}" onPointerDown="{{ rtPointer }}" onPointerLeave="{{ rtPointerLeave }}" style="position:relative">
+          <sc-if value="{{ rtTipShow }}" hint-placeholder-val="{{ false }}">
+            <div class="num" role="tooltip" style="{{ rtTipStyle }}">{{ rtTipText }}</div>
+          </sc-if>
           <!-- Etikett über der Spur (DE-Konsens bzw. das eine Prinzip) -->
           <div style="position:relative;height:24px">
             <sc-if value="{{ rtHeadShow }}" hint-placeholder-val="{{ true }}">
-              <span class="num" title="{{ rtHeadTitle }}" style="{{ rtHeadStyle }}">{{ rtHeadText }}</span>
+              <span class="num" style="{{ rtHeadStyle }}">{{ rtHeadText }}</span>
             </sc-if>
           </div>
           <!-- Striche liegen unter dem Griff: der Regler kommt danach und liegt darüber. Mittig zur Spur über top:50% —
                die Spur sitzt nicht dort, wo Höhe + Rand des Reglers es vermuten lassen -->
           <div style="position:relative;padding:6px 0">
             <sc-for list="{{ rtMarks }}" as="rm" hint-placeholder-count="3">
-              <span title="{{ rm.title }}" style="{{ rm.style }}"></span>
+              <span style="{{ rm.style }}"></span>
             </sc-for>
             <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative;margin:0;display:block">
           </div>
           <div class="num" style="position:relative;height:19px;margin-top:2px">
             <sc-for list="{{ rtValues }}" as="rv" hint-placeholder-count="2">
-              <span title="{{ rv.title }}" style="{{ rv.style }}">{{ rv.text }}</span>
+              <span style="{{ rv.style }}">{{ rv.text }}</span>
             </sc-for>
+          </div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:14px;color:#6e6662;margin-top:2px" class="num"><span>0 GW</span><span title="{{ rtMaxTitle }}" style="cursor:help">{{ rtMaxLabel }}</span></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:6px">
@@ -1682,6 +1689,7 @@ class Component extends DCLogic {
     searchOpen: false,   // Vorschlagsliste der Suche offen?
     searchActive: -1,    // per ↑/↓ markierter Vorschlag (-1 = keiner)
     targetDraft: null,   // Zahlenfeld am Regler „Ausbauziel": getippter, noch nicht übernommener Text
+    rtTip: null,         // Name der Marke am Regler des Landkreises, deren Tooltip offen ist
     rtDraft: null,       // dasselbe für den Regler des Landkreises
     hintOppo: false, seenOppo: false,
     intro: true,
@@ -2309,6 +2317,14 @@ class Component extends DCLogic {
   natBudgetFor(krsId, over) {
     const vals = this.natValuesFor(krsId, over);
     return vals.length ? Math.min(...vals.map(o => o.v)) : 0;
+  }
+
+  // Besser lesbare Schrift (hell oder dunkel) auf einer Prinzipfarbe
+  textOn(hex) {
+    const lum = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    const L = 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+    return 1.05 / (L + 0.05) >= (L + 0.05) / 0.0313 ? '#fff' : '#2e2927';
   }
 
   // Name des Startwerts zu einer bundesweiten Auswahl: „DE-Konsens", bei einem Prinzip dessen Name
@@ -3735,19 +3751,37 @@ class Component extends DCLogic {
       const head = marks[0] || null;
       if (!many && head) shown.delete(head);
       R.rtMarks = marks.map(m => ({
-        title: tipOf(m),
         style: 'position:absolute;left:' + leftOf(m.v) + ';top:50%;width:10px;height:16px;transform:translate(-5px,-50%);cursor:default;'
           + 'background:linear-gradient(' + m.color + ',' + m.color + ') center/2px 100% no-repeat'
       }));
       R.rtValues = marks.filter(m => shown.has(m)).map(m => ({
-        text: this.fmt(m.v), title: tipOf(m),
+        text: this.fmt(m.v),
         style: 'position:absolute;left:' + leftOf(m.v) + ';top:0;transform:' + shiftOf(m.v) + ';font-size:13px;color:#6e6662;white-space:nowrap;cursor:default'
       }));
       R.rtHeadShow = !!head;
       R.rtHeadText = head ? (many ? 'Konsens' : head.name) + ' ' + this.fmt(head.v) : '';
-      R.rtHeadTitle = head ? tipOf(head) : '';
-      R.rtHeadStyle = head ? 'position:absolute;left:' + leftOf(head.v) + ';bottom:4px;transform:' + shiftOf(head.v)
-        + ';font-size:14px;font-weight:600;line-height:1.3;color:#fff;background:var(--cons);padding:1px 6px;border-radius:4px;white-space:nowrap;cursor:default' : '';
+      // Breite Beschriftungen (Tooltip, Prinzipname) am Rand der Spalte ausrichten, sonst schneidet die Spalte sie ab
+      const wideAt = v => tOf(v) < 0.4 ? 'left:0' : tOf(v) > 0.6 ? 'right:0' : 'left:' + leftOf(v) + ';transform:translateX(-50%)';
+      R.rtHeadStyle = head ? 'position:absolute;' + (many ? 'left:' + leftOf(head.v) + ';transform:' + shiftOf(head.v) : wideAt(head.v)) + ';bottom:4px'
+        + ';font-size:14px;font-weight:600;line-height:1.3;color:' + (many ? '#fff' : this.textOn(head.color)) + ';background:' + (many ? 'var(--cons)' : head.color) + ';padding:1px 6px;border-radius:4px;white-space:nowrap;cursor:default' : '';
+      // Tooltip: nächste Marke zum Zeiger, auf Etikett, Spur und Werten. Maus: bis der Zeiger den Bereich verlässt;
+      // Touch: ein Tipp zeigt ihn kurz (beim Abheben käme sonst sofort pointerleave).
+      const tipMark = marks.find(m => m.name === S.rtTip);
+      R.rtTipShow = !!tipMark;
+      R.rtTipText = tipMark ? tipOf(tipMark) : '';
+      R.rtTipStyle = tipMark ? 'position:absolute;' + wideAt(tipMark.v) + ';bottom:calc(100% + 4px)'
+        + ';z-index:40;pointer-events:none;background:#2e2927;color:#fff;font-size:14px;line-height:1.4;padding:4px 8px;border-radius:4px;white-space:pre;box-shadow:0 2px 6px rgba(0,0,0,.25)' : '';
+      R.rtPointer = e => {
+        const touch = e.pointerType !== 'mouse', box = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - box.left - 8, scale = box.width - 16, reach = touch ? 16 : 8;
+        let near = null, best = reach;
+        marks.forEach(m => { const d = Math.abs(tOf(m.v) * scale - x); if (d <= best) { near = m; best = d; } });
+        const name = near ? near.name : null;
+        if (name !== this.state.rtTip) this.setState({ rtTip: name });
+        clearTimeout(this._rtTipT);
+        if (touch && name) this._rtTipT = setTimeout(() => this.setState({ rtTip: null }), 2500);
+      };
+      R.rtPointerLeave = e => { if (e.pointerType === 'mouse' && this.state.rtTip) this.setState({ rtTip: null }); };
       // Legende: zuerst DE-Konsens, dann die Prinzipien in der Reihenfolge der linken Liste
       R.rtLegend = marks.map(m => ({ name: m.cons ? 'DE-Konsens' : m.name,
         dotStyle: 'flex:none;width:9px;height:9px;border-radius:' + (m.cons ? '2px' : '4px') + ';background:' + m.color }));
@@ -3806,7 +3840,7 @@ class Component extends DCLogic {
       : 'Aktuell untersuchte Ausbaumenge: ' + this.fmt(liveBudget) + ' GW';
     // „i" an der Headline: woher die Ausbaumenge kommt (Text je nach Zahl der bundesweiten Prinzipien)
     R.regionBudgetInfo = natMany
-      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen. Wie diese Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
+      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen, mit dessen Umsetzung begonnen werden könnte. Sie ist nicht der vollständige Beitrag des Landkreises zum Ausbauziel. Wie diese Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
       : 'Diese Ausbaumenge entspricht dem Anteil des Landkreises am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Landkreise wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.';
     R.regionBudgetInfoExtra = S.account ? 'Die Ausbaumenge enthält auch die Anlagen, die schon stehen. Der Bestand wird in der Detailauswertung abgezogen.' : '';
 
