@@ -164,7 +164,7 @@
         <sc-if value="{{ regionListHint }}" hint-placeholder-val="{{ false }}">
           <div role="button" data-anchor-popup="[data-princ-row]" data-anchor-align="top" onClick="{{ dismissRegionListHint }}" title="Hinweis schließen" style="position:fixed;left:-9999px;top:0;width:260px;visibility:hidden;z-index:50;cursor:pointer;background:#b4552f;color:#fff;font-size:14px;line-height:1.45;padding:9px 30px 9px 12px;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
             <span style="position:absolute;left:-5px;top:14px;width:10px;height:10px;background:#b4552f;transform:rotate(45deg)"></span>
-            Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb der Region anders zu verteilen.
+            Startet mit denselben Prinzipien wie bundesweit. Ändern Sie sie, um innerhalb des Landkreises anders zu verteilen.
             <span aria-hidden="true" style="position:absolute;top:7px;right:10px;color:rgba(255,255,255,.75);font-size:16px;line-height:1">×</span>
           </div>
         </sc-if>
@@ -276,7 +276,7 @@
         <span style="font-size:14px;color:#2e2927;flex:1">Bestandsanlagen berücksichtigen</span>
         <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #cbc8c4;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6e6662;cursor:pointer;font-style:italic">i</span>
       </div>
-      <div style="{{ accountInfoStyle }}"><b style="color:#2e2927">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Standardmäßig zeigt EEquityMap eine <b style="color:#2e2927">Greenfield-Verteilung</b>: Der Ausbau wird so verteilt, als würde die räumliche Verteilung neu geplant – unabhängig davon, wo heute bereits Anlagen stehen.<br>Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst bestehen. Für jede Region bzw. Zelle wird geprüft:<ul style="margin:4px 0;padding-left:18px"><li>liegt der berechnete Ausbau <b style="color:#2e2927">unterhalb des Bestands</b>, erfolgt kein zusätzlicher Zubau;</li><li>liegt sie <b style="color:#2e2927">oberhalb des Bestands</b>, entspricht die Differenz dem erforderlichen Zubau.</li></ul>Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel zusätzliche Leistung noch erforderlich ist.</div>
+      <div style="{{ accountInfoStyle }}"><b style="color:#2e2927">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Standardmäßig zeigt EEquityMap eine <b style="color:#2e2927">Greenfield-Verteilung</b>: Der Ausbau wird so verteilt, als würde die räumliche Verteilung neu geplant – unabhängig davon, wo heute bereits Anlagen stehen.<br>Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst bestehen. Für jeden Landkreis bzw. jede Zelle wird geprüft:<ul style="margin:4px 0;padding-left:18px"><li>liegt der berechnete Ausbau <b style="color:#2e2927">unterhalb des Bestands</b>, erfolgt kein zusätzlicher Zubau;</li><li>liegt sie <b style="color:#2e2927">oberhalb des Bestands</b>, entspricht die Differenz dem erforderlichen Zubau.</li></ul>Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel zusätzliche Leistung noch erforderlich ist.</div>
 
       <!-- „Zum Vergleich speichern": am unteren Rand der Spalte angeheftet — NACH allem, was gespeichert wird
            (Prinzipien + Rahmen). Sichtbar, sobald es etwas zu speichern gibt und die Konfiguration noch nicht
@@ -522,7 +522,7 @@
                 <div style="flex:1;font-size:14px;color:#5c5451;line-height:1.45;text-wrap:pretty">Wählen Sie zwei Szenarien oder Referenzen als A und B. Die Karte zeigt, wo A und wo B mehr Zubau vorsieht.</div>
                 <span onClick="{{ toggleHubInfo }}" style="{{ hubInfoBtnStyle }}">i</span>
               </div>
-              <div style="{{ hubInfoStyle }}"><b style="color:#2e2927">Was kann ich hier vergleichen?</b><br>Sie können gespeicherte Szenarien miteinander vergleichen — auf Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den ausgewiesenen Planungsflächen (nur Wind).<br><b style="color:#2e2927">Wichtig:</b> A und B können unterschiedlich viel Leistung verteilen. Die Karte zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen. Deutschland- und Regionsszenarien sowie Wind und PV werden <b style="color:#2e2927">nicht miteinander</b> verglichen.</div>
+              <div style="{{ hubInfoStyle }}"><b style="color:#2e2927">Was kann ich hier vergleichen?</b><br>Sie können gespeicherte Szenarien miteinander vergleichen — auf Deutschlandebene oder innerhalb desselben Landkreises. Zusätzlich lassen sich Szenarien mit Referenzen vergleichen: dem historischen Ausbau oder den ausgewiesenen Planungsflächen (nur Wind).<br><b style="color:#2e2927">Wichtig:</b> A und B können unterschiedlich viel Leistung verteilen. Die Karte zeigt dann zugleich Unterschiede in der räumlichen Verteilung und in der Menge. Am aussagekräftigsten ist der Vergleich bei ähnlichen Ausbauzielen. Deutschland- und Landkreisszenarien sowie Wind und PV werden <b style="color:#2e2927">nicht miteinander</b> verglichen.</div>
               <!-- Keine passenden Szenarien: A/B leer, nur Referenzen wählbar (R.8) -->
               <sc-if value="{{ hubNoScenNote }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:14px;color:#2e2927;line-height:1.45;margin:0 2px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3">{{ hubNoScenNote }}</div>
@@ -640,13 +640,13 @@
 
           </div>
 
-          <!-- Tabellen je Ebene: Deutschland und Regionen getrennt (beide GW) — nicht direkt vergleichbar.
+          <!-- Tabellen je Ebene: Deutschland und Landkreise getrennt (beide GW) — nicht direkt vergleichbar.
                Eigene Box unter „Vergleich A − B", gleiche Wind-/PV-Farbe; nur wenn Szenarien gespeichert sind. -->
           <sc-if value="{{ showHubTables }}" hint-placeholder-val="{{ false }}">
             <div style="{{ hubTablesStyle }}">
               <div style="font-size:16px;font-weight:600;color:#2e2927">Gespeicherte Szenarien</div>
-              <div style="font-size:14px;color:#5c5451;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Regionen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
-              <!-- Zwei Gruppen: Deutschland · GW und Regionen · GW — getrennte Tabellen, gleiche Spalten und Sortierung -->
+              <div style="font-size:14px;color:#5c5451;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Landkreisen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
+              <!-- Zwei Gruppen: Deutschland · GW und Landkreise · GW — getrennte Tabellen, gleiche Spalten und Sortierung -->
               <sc-for list="{{ hubRowGroups }}" as="hg" hint-placeholder-count="1">
               <div>
               <div style="font-size:14px;font-weight:600;color:#5c5451;margin-bottom:6px">{{ hg.title }}</div>
@@ -771,7 +771,7 @@
                 </div>
               </div>
               <!-- Info zur Detailauswertung: eigene Fläche neben dem Popover, damit das Popover seine Größe behält -->
-              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#2e2927">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#2e2927">wie viel Ausbau auf diesen Landkreis entfällt</b>: bei mehreren Prinzipien der Teil, den alle gemeinsam tragen (<b style="color:#2e2927">DE-Konsens</b>), bei einem Prinzip dessen Verteilung. Diese <b style="color:#2e2927">Ausbaumenge der Region</b> wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#2e2927">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#2e2927">wie sich dieselbe Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#2e2927">Ausbaumenge</b> kann verändert werden. Weicht sie vom Startwert ab, wird dies gekennzeichnet.</div>
+              <div onClick="{{ stop }}" style="{{ popoverInfoStyle }}"><b style="color:#2e2927">Was passiert in der Detailauswertung?</b><br>Die Deutschlandrechnung legt zunächst fest, <b style="color:#2e2927">wie viel Ausbau auf diesen Landkreis entfällt</b>: bei mehreren Prinzipien der Teil, den alle gemeinsam tragen (<b style="color:#2e2927">DE-Konsens</b>), bei einem Prinzip dessen Verteilung. Diese <b style="color:#2e2927">Ausbaumenge des Landkreises</b> wird in der Detailauswertung übernommen und innerhalb des Landkreises auf einem <b style="color:#2e2927">5 × 5-km-Raster</b> neu verteilt.<br>Als Ausgangspunkt gelten dieselben Gerechtigkeitsprinzipien wie in der Deutschlandrechnung. Sie können diese aber variieren und prüfen, <b style="color:#2e2927">wie sich dieselbe Ausbaumenge nach anderen Prinzipien innerhalb des Landkreises verteilen würde</b>.<br>Auch die <b style="color:#2e2927">Ausbaumenge</b> kann verändert werden. Weicht sie vom Startwert ab, wird dies gekennzeichnet.</div>
             </sc-if>
 
             <!-- Regionsansicht, noch nicht berechnet (Idle) — mittig auf der Karte. Der „läuft"-Zustand hat
@@ -1245,7 +1245,7 @@
               <span onClick="{{ toggleConsInfo }}" style="{{ cellHeroInfoBtnStyle }}">i</span>
             </div>
             <div class="num" style="font-family:var(--display);font-size:32px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ cellHeroValue }} <span style="font-size:16px;color:#5c5451;font-weight:500">{{ scopeUnit }}</span></div>
-            <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Regionsprofil -->
+            <!-- Erklärung zur Hauptzahl „Zubaukonsens" (≥ 2 Prinzipien) — ersetzt die Zeile im Landkreisprofil -->
             <sc-if value="{{ cellHeroCaption }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;margin-top:7px;line-height:1.45">{{ cellHeroCaption }}</div>
             </sc-if>
@@ -1293,11 +1293,11 @@
             </div>
           </sc-if>
 
-          <!-- Regionsprofil: mit ZUBAU_AS_HERO ausgeblendet (Bestand/Zubau stehen in der Kontextzeile, der
+          <!-- Landkreisprofil: mit ZUBAU_AS_HERO ausgeblendet (Bestand/Zubau stehen in der Kontextzeile, der
                Zubaukonsens ist die Hauptzahl). Ohne Flag adaptiv: Bestand an → davon Bestand · davon Zubau · Zubaukonsens. -->
           <sc-if value="{{ cellShowProfile }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:16px;padding-top:13px;border-top:1px solid #ebe8e4">
-            <div style="font-size:14px;font-weight:600;color:#2e2927;margin-bottom:9px">Regionsprofil</div>
+            <div style="font-size:14px;font-weight:600;color:#2e2927;margin-bottom:9px">Landkreisprofil</div>
             <div style="display:flex;flex-direction:column;gap:7px">
               <sc-if value="{{ cellShowDavon }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#5c5451">davon Bestand</span><span class="num" style="color:#2e2927">{{ cellBestand }} {{ scopeUnit }}</span></div>
@@ -1404,7 +1404,7 @@
           <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f5f2ee;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6e6662">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#2e2927">
-          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge der Region:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge des Landkreises:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1657,7 +1657,7 @@ class Component extends DCLogic {
     seenKrsHint: false,       // einmaliger Hinweis „Klicken Sie auf einen Landkreis …" (R.4)
     popoverInfo: false,       // „i" im Landkreis-Popover
     regionDetailInfo: false,  // „i" an der Regions-Headline
-    // Ausbaumenge der Region: null = Startwert (DE-Konsens), sonst eigener Wert in GW (bleibt bei Änderungen in „Deutschland")
+    // Ausbaumenge des Landkreises: null = Startwert (DE-Konsens), sonst eigener Wert in GW (bleibt bei Änderungen in „Deutschland")
     regionOwnTarget: null,
     // Bestand & Potenziale (R.13): Unter-Reiter, Darstellung, Auswahl; bzTick stößt nach Zoom-Gesten ein Re-Render an
     bpTab: 'bestand', bpMode: 'admin', bpSel: null, bzTick: 0,
@@ -2301,7 +2301,7 @@ class Component extends DCLogic {
       .map(p => ({ pid: p.id, v: this.natSharesFor(p.id, S.tech)[idx] * S.targetGW }));
   }
 
-  // Startwert der Ausbaumenge der Region (DE-Konsens): Minimum der bundesweiten Greenfield-Werte über die
+  // Startwert der Ausbaumenge des Landkreises (DE-Konsens): Minimum der bundesweiten Greenfield-Werte über die
   // bundesweit gewählten Prinzipien, bei einem Prinzip dessen Wert — dasselbe Minimum, das die Deutschlandkarte
   // ohne Bestand als Zubaukonsens zeigt. Ein Ausbau-Wert: unabhängig vom Schalter „Bestandsanlagen
   // berücksichtigen" (der Bestand steckt darin und wird in der Regionsrechnung einmal je Zelle abgezogen, R.1).
@@ -2338,7 +2338,7 @@ class Component extends DCLogic {
     return S.regionOwnTarget != null ? S.regionOwnTarget : this.natBudgetFor(krsId, over);
   }
 
-  // Signatur aller Eingaben, die das Regionsergebnis ändern — weicht sie vom letzten Rechenlauf ab, ist das
+  // Signatur aller Eingaben, die das Landkreisergebnis ändern — weicht sie vom letzten Rechenlauf ab, ist das
   // Ergebnis „veraltet". Das Budget geht ungerundet ein: vorher stand hier fmt(budget) (GW, zwei Nachkommastellen),
   // und eine Reglerbewegung um einige GW verschob das Budget eines Landkreises oft nur um < 0,005 GW — die
   // Signatur blieb gleich, die Box erschien nicht. Bundesweite Prinzipien und Ausbauziel stehen zusätzlich
@@ -2618,7 +2618,7 @@ class Component extends DCLogic {
     R.isEmpty = isEmpty;
 
     // Regionsansicht: Berechnungs-Gate / veraltet-Hinweis — die Aktion selbst hat ihren
-    // festen Platz unten an der Liste „Verteilung innerhalb der Region" (linke Spalte, §M).
+    // festen Platz unten an der Liste „Verteilung innerhalb des Landkreises" (linke Spalte, §M).
     // Karte + rechte Spalte zeigen hier nur den „nicht aktuell"-Zustand, keinen eigenen Button.
     R.regionComputing = !!S.regionComputing;
     R.regionGateIdle = regionNeedsGate && !S.regionComputing;
@@ -2649,7 +2649,7 @@ class Component extends DCLogic {
     const sortedKey = a => (a || []).slice().sort().join(',');
     const regionNatChanged = hasRegionResult && (sortedKey(S.selected.filter(avail)) !== sortedKey(S.regionComputedNatSel)
       || S.regionComputedTargetGW == null || S.targetGW !== S.regionComputedTargetGW);
-    R.regionGateSub = !hasRegionResult ? 'Das Regionsergebnis ist noch nicht berechnet.'
+    R.regionGateSub = !hasRegionResult ? 'Das Landkreisergebnis ist noch nicht berechnet.'
       : regionNatChanged ? 'Die bundesweiten Prinzipien oder das Ausbauziel haben sich geändert. Aktualisieren Sie die Karte.'
       : 'Die Eingaben haben sich geändert. Aktualisieren Sie die Karte.';
     // „Änderungen verwerfen" (R.7): ein Schritt zurück auf die Eingaben der letzten Berechnung — nur wenn alle
@@ -2765,7 +2765,7 @@ class Component extends DCLogic {
       const overhang = Math.max(0, Math.ceil(labelW(lastP) * SIN45) + (twoLine(lastP) ? 14 : 0) - PAIR_COL_W / 2);
       const emptyCell = bg => ({ text: '', title: '', swatchStyle: 'display:none', innerStyle: flat, style: 'min-height:40px;border-radius:4px;background:' + bg });
       const cellsOut = [{
-        text: 'Zubaukonsens in GW (' + (isRegion ? 'Ausbaumenge der Region: ' : 'Ziel: ') + this.fmt(target) + ' GW)',
+        text: 'Zubaukonsens in GW (' + (isRegion ? 'Ausbaumenge des Landkreises: ' : 'Ziel: ') + this.fmt(target) + ' GW)',
         title: '', swatchStyle: 'display:none', innerStyle: flat,
         style: 'font-size:14px;color:#5c5451;padding:6px 8px;line-height:1.3;display:flex;align-items:flex-end'
       }];
@@ -3262,16 +3262,16 @@ class Component extends DCLogic {
           level: sc.isRegion ? sc.regionLabel : '',
           natLabel: sc.isRegion ? '· bundesweit' : '', natDots: sc.isRegion ? dotsOf(sc.nationalSel) : [],
           subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
-          // Region: Spalte „Ausbauziel" zeigt die Ausbaumenge der Region in GW (wie überall, wo sie genannt wird)
+          // Region: Spalte „Ausbauziel" zeigt die Ausbaumenge des Landkreises in GW (wie überall, wo sie genannt wird)
           target: this.fmt(sc.target) + ' GW', cons: this.fmt(sc.consensusTotal) + ' GW',
           pct: sc.target ? this.pct(sc.consensusTotal / sc.target) : '—', lim: sc.limitingName || '—', numStyle: numCell,
           onRemove: () => this.deleteScenario(sc.id), onRestore: () => this.restoreScenario(sc)
         };
       });
-      // Deutschland und Regionen getrennt (beide GW): unterschiedliche Größenordnung, nicht direkt vergleichbar.
-      // Alle Landkreise stehen zusammen in „Regionen"; der Landkreis steht in der zweiten Zeile des Namens.
+      // Deutschland und Landkreise getrennt (beide GW): unterschiedliche Größenordnung, nicht direkt vergleichbar.
+      // Alle Landkreise stehen zusammen in „Landkreise"; der Landkreis steht in der zweiten Zeile des Namens.
       // Je Hub nur die Tabelle seiner Ebene (hubScen enthält nur diese)
-      R.hubRowGroups = [{ title: hubRegion ? 'Regionen · GW' : 'Deutschland · GW', rows: mkRows(sortedScen) }].filter(g => g.rows.length);
+      R.hubRowGroups = [{ title: hubRegion ? 'Landkreise · GW' : 'Deutschland · GW', rows: mkRows(sortedScen) }].filter(g => g.rows.length);
       R.hubRows = sortedScen;
       R.hubTables = R.hubRows;   // showHubTables prüft nur, ob es Zeilen gibt
 
@@ -3485,7 +3485,7 @@ class Component extends DCLogic {
       ? 'position:sticky;bottom:0;z-index:3;background:#fff;margin:22px -16px 0;padding:12px 16px 14px;border-top:1px solid #e8e5e1;box-shadow:0 -6px 12px rgba(255,255,255,.9)'
       : 'height:40px';
     // Erst-Hinweis als Popup über dem Knopf, einmal pro Sitzung (R.9); Knopf immer gefüllt in der Akzentfarbe
-    // Solange das Regionsergebnis veraltet ist, ist Speichern pausiert: „Neu berechnen" ist dann die Hauptaktion (R.7)
+    // Solange das Landkreisergebnis veraltet ist, ist Speichern pausiert: „Neu berechnen" ist dann die Hauptaktion (R.7)
     const savePaused = !!R.regionStaleBar;
     R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen && !savePaused;
     this._saveHintVisible = R.saveHintPopup;
@@ -3626,7 +3626,7 @@ class Component extends DCLogic {
     // in der Regionsansicht bleibt der nationale Satz als eingeklappter, nicht editierbarer Breadcrumb sichtbar.
     // Strukturell parallel zum Breadcrumb: „[Skala] verteilt nach:" — nur das Skalen-Wort wechselt (§M)
     // Einführung des Begriffs: hier einmal das volle Wort „Gerechtigkeitsprinzipien", danach „Prinzip" (R.2)
-    R.princHeading = isRegion ? 'Innerhalb der Region verteilt nach Gerechtigkeitsprinzipien:' : 'Bundesweit verteilt nach Gerechtigkeitsprinzipien:';
+    R.princHeading = isRegion ? 'Innerhalb des Landkreises verteilt nach Gerechtigkeitsprinzipien:' : 'Bundesweit verteilt nach Gerechtigkeitsprinzipien:';
     R.showNatBreadcrumb = isRegion;
     // Listenreihenfolge (nicht Klickreihenfolge) — identisch mit der regionalen Liste und der Herleitung rechts (R.6)
     const natSelForBreadcrumb = this.principles.map(p => p.id).filter(id => S.selected.includes(id) && avail(id));
@@ -3754,7 +3754,7 @@ class Component extends DCLogic {
       R.rtIsOwn = S.regionOwnTarget != null;
       R.rtResetLabel = 'Auf ' + (many ? 'DE-Konsens' : natVals.length ? this.byId[natVals[0].pid].name : 'Startwert') + ' zurücksetzen';
       R.onRegionSlider = e => this.setRegionOwnTarget(+e.target.value);
-      // Übernahme erst bei Enter/Verlassen — jede Übernahme macht das Regionsergebnis „veraltet" (R.7)
+      // Übernahme erst bei Enter/Verlassen — jede Übernahme macht das Landkreisergebnis „veraltet" (R.7)
       R.rtField = this.numField(liveBudget, 0, maxGW, 'rtDraft', v => this.setRegionOwnTarget(v));
       R.resetRegionTarget = () => this.setState({ regionOwnTarget: null });
     }
@@ -3789,7 +3789,7 @@ class Component extends DCLogic {
     } else if (view === 'szenarien') {
       R.kernaussage = 'Wie unterscheiden sich Ihre Szenarien — untereinander und von den Referenzen?';
     } else {
-      // Regionsansicht: die Ausbaumenge der Region, nicht das nationale Ausbauziel. Werte live (Startwert und
+      // Regionsansicht: die Ausbaumenge des Landkreises, nicht das nationale Ausbauziel. Werte live (Startwert und
       // eingestellte Ausbaumenge), auch wenn die Karte noch den alten Stand zeigt.
       R.kernaussage = isRegion
         ? startLabel + ': ' + this.fmt(liveBudget) + ' GW'
@@ -3806,8 +3806,8 @@ class Component extends DCLogic {
       : 'Aktuell untersuchte Ausbaumenge: ' + this.fmt(liveBudget) + ' GW';
     // „i" an der Headline: woher die Ausbaumenge kommt (Text je nach Zahl der bundesweiten Prinzipien)
     R.regionBudgetInfo = natMany
-      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen. Wie diese Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
-      : 'Diese Ausbaumenge entspricht dem Anteil der Region am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Regionen wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.';
+      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen. Wie diese Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
+      : 'Diese Ausbaumenge entspricht dem Anteil des Landkreises am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Landkreise wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.';
     R.regionBudgetInfoExtra = S.account ? 'Die Ausbaumenge enthält auch die Anlagen, die schon stehen. Der Bestand wird in der Detailauswertung abgezogen.' : '';
 
     // Reiter: Konsens → Was begrenzt? → Dissens → Einzelverteilungen → Szenarien vergleichen.
@@ -3882,10 +3882,10 @@ class Component extends DCLogic {
     R.showCell = !R.showHubSummary && (!!selectedCell || !!selectedGemeinde);
 
     // Zubaukonsens bezeichnet zwei Zahlen auf zwei Skalen — immer scope-beschriftet halten (§M)
-    const scopeWord = isRegion ? 'der Region' : 'gesamt';
+    const scopeWord = isRegion ? 'des Landkreises' : 'gesamt';
 
     // Herleitung (R.6): Eingaben der letzten Regionsberechnung, Prinzipien in Listenreihenfolge (wie links).
-    // Kette: Prinzipien bundesweit → Ausbaumenge der Region → Prinzipien regional → Bestand (nur wenn berücksichtigt)
+    // Kette: Prinzipien bundesweit → Ausbaumenge des Landkreises → Prinzipien regional → Bestand (nur wenn berücksichtigt)
     // → Box Zubaukonsens. Alle Zahlen sind gerechnete Werte, keine Differenzen (Bestand wird nie zurückgebaut, R.1).
     const inListOrder = ids => this.principles.map(p => p.id).filter(id => (ids || []).includes(id));
     const chainDot = id => 'flex:none;width:9px;height:9px;border-radius:4px;background:' + this.byId[id].color;
@@ -3899,7 +3899,7 @@ class Component extends DCLogic {
       const compStart = compNat.length >= 2 ? 'DE-Konsens' : compNat.length ? this.byId[compNat[0]].name : 'Startwert';
       R.chainSteps = [
         { label: 'Prinzipien bundesweit', items: princItems(S.regionComputedNatSel), value: '' },
-        { label: 'Ausbaumenge der Region', items: [], value: this.fmt(S.regionComputedTarget) + ' GW', tag: own ? 'eigener Wert' : compStart, tagStyle: tagCss,
+        { label: 'Ausbaumenge des Landkreises', items: [], value: this.fmt(S.regionComputedTarget) + ' GW', tag: own ? 'eigener Wert' : compStart, tagStyle: tagCss,
           sub: own ? compStart + ': ' + this.fmt(S.regionComputedDeRec || 0) + ' GW' : '' },
         { label: 'Prinzipien regional', items: princItems(S.regionComputedSel), value: '' }
       ];
@@ -3971,7 +3971,7 @@ class Component extends DCLogic {
       if (view === 'regionGate') {
         // Meldung erscheint bereits an der Kartenmitte — hier keine zweite, wortgleiche Meldung.
         R.ovEmpty = true;
-        R.ovLeadLabel = 'Regionsergebnis'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
+        R.ovLeadLabel = 'Landkreisergebnis'; R.ovLeadValue = '—'; R.ovLeadUnit = '';
         R.ovLeadSub = '';
         R.ovClickHint = false;
       } else if (isEmpty) {
@@ -3996,7 +3996,7 @@ class Component extends DCLogic {
         // verschachtelter Balken: Ausbauziel/Ausbaumenge = volle Länge, Konsens = gefüllt, Rest = blass
         R.ovBarFill = target ? (consST / target * 100).toFixed(1) + '%' : '0%';
         R.ovBarCaption = isRegion
-          ? 'Von der Ausbaumenge der Region (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
+          ? 'Von der Ausbaumenge des Landkreises (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens der regionalen Prinzipien.'
           : 'Vom Ausbauziel (' + this.fmt(target) + ' GW) liegen ' + this.fmt(consST) + ' GW im Konsens aller gewählten Prinzipien.';
         // Deutschland mit Bestand: drei Abschnitte — Bestand (schraffiert), Zubaukonsens, Rest. Der Bestand wird nie
         // zurückgebaut; liegt Bestand + Zubaukonsens über dem Ausbauziel, reicht der Balken bis zur Summe und das
@@ -4058,13 +4058,13 @@ class Component extends DCLogic {
           R.sumHeadStyle = sumSame ? 'display:none' : '';
           R.sumSameStyle = sumSame ? 'font-size:14px;color:#2e2927;line-height:1.5;padding:14px 0 0;border-top:1px solid #e5e2de' : 'display:none';
           R.sumSameText = sumTxt[0] === this.fmt(target) + ' GW'
-            ? 'Jedes Prinzip verteilt ' + (isRegion ? 'die ganze Ausbaumenge der Region' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
+            ? 'Jedes Prinzip verteilt ' + (isRegion ? 'die ganze Ausbaumenge des Landkreises' : 'das ganze Ausbauziel') + ' (' + sumTxt[0] + '), nur räumlich anders.'
             : 'Jedes Prinzip verteilt dieselbe Menge (' + sumTxt[0] + '), nur räumlich anders.';
           // 2) Dieser Reiter zeigt die Prinzipien einzeln — keine Konsenszahl in der rechten Spalte
           hideLead = true;
         } else if (view === 'konflikt') {
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true; R.ovLeadWhy = leadWhy(consST, true);
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge der Region (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge des Landkreises (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Liste „Zellen je abweichender Verteilung" gehört nur zu „Wer denkt anders?", nicht zu Dissens
           R.anCombos = S.konfliktMode === 'anders';
           // gezählt werden Landkreise (Deutschland) bzw. Rasterzellen (Region) — so benennen, nie pauschal „Zellen"
@@ -4120,7 +4120,7 @@ class Component extends DCLogic {
         } else {
           // konsens & minimum → Was begrenzt den Konsens?
           R.ovLeadLabel = 'Zubaukonsens ' + scopeWord; R.ovLeadValue = this.fmt(consST); R.ovBarShow = true; R.ovLeadWhy = leadWhy(consST, true);
-          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge der Region (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
+          R.ovLeadSub = this.pct(consST / target) + (isRegion ? ' der Ausbaumenge des Landkreises (' : ' des Ausbauziels (') + this.fmt(target) + ' GW)';
           // Im Reiter „Konsens" nicht doppelt: dafür gibt es den Reiter „Was begrenzt?" (UX-Review)
           R.anBlockers = view === 'minimum'; mkBlockers();
         }
@@ -4237,7 +4237,7 @@ class Component extends DCLogic {
       R.cellPrincipleColor = this.byId[singlePid].color;
       R.cellRecommend = this.fmtUnit(gwSel[singlePid][i], isRegion);
       R.cellSharePct = this.pct(shr(singlePid)[i], 2);
-      R.cellSharePctOf = isRegion ? 'der Ausbaumenge der Region' : 'des deutschen Zubaus';
+      R.cellSharePctOf = isRegion ? 'der Ausbaumenge des Landkreises' : 'des deutschen Zubaus';
       // Zubau = empfohlener Zubau der gewählten Konfiguration (Mittel über die Prinzipien),
       // nicht der Wert eines einzelnen Prinzips. Konsens (Minimum) ≤ Zubau ≤ Ausbau.
       const neu = neuOf(i);
@@ -4260,7 +4260,7 @@ class Component extends DCLogic {
       // erweitert
       R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
       R.goalInfoText = isRegion
-        ? 'Wie viel diese Rasterzelle zur Ausbaumenge der Region beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.'
+        ? 'Wie viel diese Rasterzelle zur Ausbaumenge des Landkreises beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.'
         : (c.kind === 'Stadt' ? 'Wie viel diese Stadt zum Ausbauziel beiträgt — ihr' : 'Wie viel dieser Landkreis zum Ausbauziel beiträgt — sein') + ' Zubaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5c5451;line-height:1.5;margin-top:2px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3';
@@ -4315,7 +4315,7 @@ class Component extends DCLogic {
         R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
 
         R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge der Region beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.';
+        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge des Landkreises beiträgt — ihr Zubaukonsens geteilt durch die gesamte Ausbaumenge.';
 
       } else if (stufe === 1) {
         const gRec = gAgg(gwSel[singlePid]);
@@ -4323,9 +4323,9 @@ class Component extends DCLogic {
         R.cellPrincipleColor = this.byId[singlePid].color;
         R.cellRecommend = this.fmtUnit(gRec, isRegion);
         R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
-        R.cellSharePctOf = isRegion ? 'der Ausbaumenge der Region' : 'des deutschen Zubaus';
+        R.cellSharePctOf = isRegion ? 'der Ausbaumenge des Landkreises' : 'des deutschen Zubaus';
         R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge der Region beiträgt.';
+        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge des Landkreises beiträgt.';
       }
     }
 
@@ -4729,7 +4729,7 @@ class Component extends DCLogic {
   }
 
   // Bereichswechsel (R.3): Unter-Reiter und Auswahl des verlassenen Bereichs merken, die des Zielbereichs
-  // zurückholen. Keine Neuberechnung — ob das Regionsergebnis noch aktuell ist, entscheidet die Signatur.
+  // zurückholen. Keine Neuberechnung — ob das Landkreisergebnis noch aktuell ist, entscheidet die Signatur.
   switchArea(area, extra) {
     const S = this.state;
     const from = S.area || 'de';
@@ -4856,7 +4856,7 @@ class Component extends DCLogic {
     this.setState(this.dismissTrioHint({ gemeinde: null, cell: best.id, search: best.label, searchOpen: false, searchActive: -1, seenKrsHint: true, tab: this.state.tab === 'szenarien' ? 'konsens' : this.state.tab }));
   }
 
-  // Wiederherstellen lädt die gespeicherte Konfiguration inkl. eingefrorener Regionsergebnisse (kein
+  // Wiederherstellen lädt die gespeicherte Konfiguration inkl. eingefrorener Landkreisergebnisse (kein
   // erneutes Rechnen nötig) — kein In-place-Editieren: restore → ändern → als neues Szenario speichern (§N).
   restoreScenario(sc) {
     if (sc.isRegion && sc.regionKrsId) {
