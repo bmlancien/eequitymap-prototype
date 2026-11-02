@@ -75,8 +75,8 @@
       <button onClick="{{ openAbout }}" style="background:none;border:none;color:#2e2927;font-size:14px;font-weight:500;padding:6px 9px;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#f5f2ee">Über das Projekt</button>
     </nav>
     <div style="flex:1"></div>
-    <!-- Daten herunterladen: Aktion, rechts vor dem Modus-Umschalter. Prototyp: ohne Funktion. -->
-    <button style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #d4d1cd;color:#2e2927;font-size:14px;padding:5px 11px;border-radius:4px;cursor:pointer;white-space:nowrap">
+    <!-- Daten herunterladen: Aktion, rechts vor dem Modus-Umschalter. Prototyp: ohne Download, ein Klick zeigt den Hinweis. -->
+    <button onClick="{{ onDownload }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #d4d1cd;color:#2e2927;font-size:14px;padding:5px 11px;border-radius:4px;cursor:pointer;white-space:nowrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v12"></path><path d="M7 11l5 5 5-5"></path><path d="M5 21h14"></path></svg>
       Daten herunterladen
     </button>
@@ -1514,10 +1514,10 @@
     </div>
   </sc-if>
 
-  <!-- Speicher-Bestätigung als Toast: momentane Bestätigung einer bereits erfolgten Handlung, kein
+  <!-- Speicher-Bestätigung und Download-Hinweis als Toast: momentane Bestätigung einer bereits erfolgten Handlung, kein
        dauerhafter Zustand — fadet selbst aus, kein ×, belegt keinen Platz im Karten-Stack (s. SoT §K). -->
   <sc-if value="{{ scenarioToastVisible }}" hint-placeholder-val="{{ false }}">
-    <div style="{{ scenarioToastStyle }}">Gespeichert. Vergleichen Sie Ihre Szenarien im Reiter „Szenarien vergleichen".</div>
+    <div role="status" style="{{ scenarioToastStyle }}">{{ scenarioToastText }}</div>
   </sc-if>
 
   <!-- Löschen im Hub: Undo-Toast statt Dialog — stellt Szenario inkl. A/B-Zuordnung wieder her, blendet aus. -->
@@ -1730,6 +1730,7 @@ class Component extends DCLogic {
     scenarioNameDraft: '',
     konfliktMode: 'dissens',
     scenarioToastShow: false,
+    scenarioToastText: '',
     scenarioToastMounted: false,
     scenarioFirstSaveSeen: false,
     introInfo: false,   // Einstiegs-Info an der Prinzipien-Überschrift (R.12)
@@ -3622,11 +3623,17 @@ class Component extends DCLogic {
       const patch = { scenarios: this.state.scenarios.concat(scenario), scenarioSaveOpen: false };
       if (!this.state.scenarioFirstSaveSeen) {
         patch.scenarioToastShow = true; patch.scenarioToastMounted = true; patch.scenarioFirstSaveSeen = true;
+        patch.scenarioToastText = 'Gespeichert. Vergleichen Sie Ihre Szenarien im Reiter „Szenarien vergleichen".';
         this.scheduleScenarioToastDismiss();
       }
       this.setState(patch);
     };
     R.scenarioToastVisible = !!(S.scenarioToastShow || S.scenarioToastMounted);
+    R.scenarioToastText = S.scenarioToastText;
+    R.onDownload = () => {
+      this.setState({ scenarioToastShow: true, scenarioToastMounted: true, scenarioToastText: 'Der Download ist im Prototyp noch nicht verfügbar.' });
+      this.scheduleScenarioToastDismiss();
+    };
     R.undoToastVisible = !!(S.undoDelete && (S.undoShow || S.undoMounted));
     R.undoDelete = () => this.undoDeleteScenario();
     R.undoToastStyle = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:71;display:flex;align-items:center;gap:10px;background:#1d6b4c;color:#efece8;border-radius:8px;padding:11px 18px;font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(15,30,45,.16);'

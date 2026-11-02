@@ -1436,7 +1436,8 @@ Platzhalter-Link aus A/B + Technologie, keine Persistenz.
   Symbol). **Bewusst kein Dropdown** für die drei: „Was ist das?" ist der
   Einstieg für neue Besucher und soll sichtbar bleiben; bei nur drei Einträgen
   kostet ein Menü einen Klick, ohne Platz zu sparen. „Daten herunterladen" ist
-  im Prototyp noch ohne Funktion; offen ist, ob der Download die aktuelle Karte
+  im Prototyp noch ohne Funktion; ein Klick zeigt den Toast „Der Download ist im
+  Prototyp noch nicht verfügbar." (Session 2026-11-02); offen ist, ob der Download die aktuelle Karte
   oder den ganzen Datensatz liefert.
 - **Methodik-Fenster** (Session 2026-10-12): „Methodik" öffnet ein zentriertes,
   scrollbares Fenster (Esc, × oder Klick daneben schließt). Acht Abschnitte:
