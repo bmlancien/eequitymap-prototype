@@ -1954,6 +1954,13 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   aktuell gelesen). Nach „Neu berechnen" erscheinen sie wieder. Die frühere
   abgedimmte Herleitung mit „Stand der letzten Berechnung" entfällt
   (auch im Code).
+- **Nachtrag (Session 2026-11-02, Persona-Test Aufgabe 7):** „Szenarien
+  vergleichen" zeigt den Hinweis jetzt auch, in der rechten Spalte ganz oben, mit
+  eigenem Wortlaut: „**Einstellungen geändert.** Der Vergleich zeigt weiterhin
+  Ihre gespeicherten Szenarien. Um die neuen Einstellungen zu vergleichen: neu
+  berechnen und speichern. [Neu berechnen]" (ohne gespeicherte Szenarien des
+  Landkreises ohne den ersten Satz). **Abweichung von oben:** Die A/B-Karten
+  bleiben hier sichtbar, denn gespeicherte Szenarien veralten nicht.
 - **Zurücksetzen-Link (Session 2026-10-22):** Unter „Neu berechnen" ein
   unauffälliger Link (Text, unterstrichen, keine Knopf-Optik). Er nennt, was
   sich geändert hat: „[Prinzipien / Ausbaumenge / Technologie / Bestand]

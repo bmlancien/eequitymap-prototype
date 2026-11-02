@@ -950,6 +950,16 @@
            Konsenszahl neben A und B). Ohne Auswahl nur ein kurzer Hinweis. -->
       <sc-if value="{{ showHubSummary }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:12px">
+          <!-- Geänderte Einstellungen (R.7): gespeicherte Szenarien veralten nicht, A/B bleiben deshalb sichtbar -->
+          <sc-if value="{{ regionStaleBar }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ staleBoxStyle }};margin-top:0">
+              <div style="font-size:14px;color:#8a452a;line-height:1.4"><b>Einstellungen geändert.</b> {{ hubStaleSub }}</div>
+              <button onClick="{{ startRegionCompute }}" style="margin-top:8px;width:100%;background:#1d6b4c;border:1px solid #1d6b4c;color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:4px;cursor:pointer" style-hover="background:#175a3f">Neu berechnen</button>
+              <sc-if value="{{ regionCanUndo }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center;margin-top:7px"><span onClick="{{ undoRegionChanges }}" title="{{ undoRegionTitle }}" style="font-size:14px;color:#a0644a;text-decoration:underline;text-underline-offset:2px;cursor:pointer">{{ undoRegionLabel }}</span></div>
+              </sc-if>
+            </div>
+          </sc-if>
           <!-- Auf der Differenzkarte angeklickter Landkreis / Rasterzelle — gleicher Aufbau wie der Überblick
                (Dachzeile + Titel, Differenz-Box, je eine Karte für A und B), nur mit den Werten dieser Zelle. -->
           <sc-if value="{{ hubCellShow }}" hint-placeholder-val="{{ false }}">
@@ -2991,6 +3001,8 @@ class Component extends DCLogic {
       R.hubNoScenNote = krsScen.length ? '' : (hubRegion
         ? 'Für ' + S.region.label + ' sind noch keine Szenarien gespeichert. Zum Vergleich stehen nur die Referenzen zur Verfügung.'
         : 'Noch keine Szenarien gespeichert. Zum Vergleich stehen nur die Referenzen zur Verfügung.');
+      R.hubStaleSub = (krsScen.length ? 'Der Vergleich zeigt weiterhin Ihre gespeicherten Szenarien. ' : '')
+        + 'Um die neuen Einstellungen zu vergleichen: neu berechnen und speichern.';
       // A/B-Kennzeichen neutral (dunkles bzw. mittleres Grau) — nicht in den Farben der Differenzkarte
       const badgeCss = ix => 'display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:' + (ix === 0 ? '#515a5c' : '#979490') + ';color:#fff;font-size:12px;font-weight:700;flex:none';
 
