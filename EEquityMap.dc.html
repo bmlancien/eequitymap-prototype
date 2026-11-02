@@ -2269,17 +2269,20 @@ class Component extends DCLogic {
       return { x0, y0, x1, y1, area: Math.max(1e-6, (x1-x0) * (y1-y0)) };
     });
     const result = gemList.map(g => {
-      const outer = this.parseD(g.d)[0] || [];
+      // Alle Teilflächen zählen (der erste Ring ist bei Mehrfachgemeinden oft nur ein Splitter). Ein Ring, der
+      // überwiegend in einem anderen liegt, ist ein Loch (Enklave) und wird abgezogen — wie fill-rule:evenodd.
+      const rings = this.parseD(g.d).filter(ring => ring.length >= 3);
+      const isHole = rings.map(ring => rings.some(other => other !== ring
+        && ring.filter(([x, y]) => this.pointInRings(x, y, [other])).length > ring.length / 2));
       const weights = [];
-      if (outer.length >= 4) {
-        cellRects.forEach((r, ci) => {
-          const clipped = this.clipPolygonToRect(outer, r.x0, r.y0, r.x1, r.y1);
-          if (clipped.length >= 3) {
-            const a = this.polygonArea(clipped);
-            if (a > 1e-6) weights.push({ i: ci, w: a / r.area });
-          }
+      cellRects.forEach((r, ci) => {
+        let a = 0;
+        rings.forEach((ring, ri) => {
+          const clipped = this.clipPolygonToRect(ring, r.x0, r.y0, r.x1, r.y1);
+          if (clipped.length >= 3) a += (isHole[ri] ? -1 : 1) * this.polygonArea(clipped);
         });
-      }
+        if (a > 1e-6) weights.push({ i: ci, w: a / r.area });
+      });
       return weights;
     });
     // je Zellindex auf 1 renormieren (s. Kommentar oben)

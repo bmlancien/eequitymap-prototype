@@ -1105,6 +1105,9 @@ die falsche Einheit.
 >   und rechte Spalte nennen damit dieselben Werte. Große Gemeinden wirken dadurch
 >   tendenziell dunkler. Vorher: Farbe als Mischung der Zellfarben, Legende mit den
 >   Zellwerten, obwohl sie „je Gemeinde" hieß.
+>   Gemeinden aus mehreren Teilflächen zählen mit allen Teilflächen, Enklaven
+>   werden abgezogen (vorher nur der erste Ring, bundesweit 369 Gemeinden falsch,
+>   gefunden im Persona-Test).
 > - **Zähleinheit = klickbare Einheit:** In „Was begrenzt den Konsens?" zählt
 >   die Unterzeile in der Region **Gemeinden** („begrenzt in 64 Gemeinden"),
 >   solange Gemeinden gezeigt werden (Basic; Erweitert in „Gemeinden" und
