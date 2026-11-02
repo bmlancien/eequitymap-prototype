@@ -1099,6 +1099,12 @@ die falsche Einheit.
 >   Summe der Zellwerte; der Wertebereich darunter nennt die Einheit („je
 >   Gemeinde" bzw. „je 5 × 5-km-Zelle"). Die Galerie hat keinen eigenen
 >   Umschalter.
+> - **Große Karte, Ansicht „Gemeinden" (Session 2026-11-02):** Bei den Zahlenkarten
+>   (Konsens, Einzelverteilung, Dissens „Wie stark?") richten sich Farbe und
+>   Legende nach dem **Gemeinde-Wert**, nicht mehr nach den Rasterzellen. Legende
+>   und rechte Spalte nennen damit dieselben Werte. Große Gemeinden wirken dadurch
+>   tendenziell dunkler. Vorher: Farbe als Mischung der Zellfarben, Legende mit den
+>   Zellwerten, obwohl sie „je Gemeinde" hieß.
 > - **Zähleinheit = klickbare Einheit:** In „Was begrenzt den Konsens?" zählt
 >   die Unterzeile in der Region **Gemeinden** („begrenzt in 64 Gemeinden"),
 >   solange Gemeinden gezeigt werden (Basic; Erweitert in „Gemeinden" und

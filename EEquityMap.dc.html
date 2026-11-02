@@ -2812,6 +2812,9 @@ class Component extends DCLogic {
       R.showPairMatrix = true;
     };
 
+    // Zahlenkarten: Zellwerte und Farbskala — in der Ansicht „Gemeinden" rechnet der Block weiter unten daraus
+    // Gemeinde-Werte, Farben und Legende (die Gemeindedaten stehen erst dort bereit).
+    let gemScale = null;
     if (view === 'regionGate') {
       // Blasses Platzhalter-Raster, solange die Regionsansicht nicht (mehr) berechnet ist —
       // Farbe kommt erst mit dem nächsten „Berechnung starten".
@@ -2829,6 +2832,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(vals[i]), this.byId[singlePid].color)));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05, this.byId[singlePid].color) + ',' + this.seq(1, this.byId[singlePid].color) + ')';
+      gemScale = { vals, paint: t => this.seq(t, this.byId[singlePid].color) };
       R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Empfohlener Zubau ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = true;
       if (isExt) buildPairMatrix();
@@ -2843,6 +2847,7 @@ class Component extends DCLogic {
       const norm = v => range > 1e-9 ? (v - mn) / range : (mx > 1e-9 ? 1 : 0);
       R.mainCells = cells.map((c,i) => mkCell(i, this.seq(norm(consCells[i]), this.CONS), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.seq(0.05,this.CONS) + ',' + this.seq(1,this.CONS) + ')';
+      gemScale = { vals: consCells, paint: t => this.seq(t, this.CONS) };
       R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Zubaukonsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = false;
       if (isExt) buildPairMatrix();
@@ -2867,6 +2872,8 @@ class Component extends DCLogic {
       const hvDiss = KONFLIKT_TOPLIST && !S.cell && S.hoverDiss != null ? cells.findIndex(c => c.id === S.hoverDiss) : -1;
       R.mainCells = cells.map((c,i) => mkCell(i, hvDiss >= 0 && i !== hvDiss ? '#f5f2ee' : this.brown(norm(dissens[i])), { hidden: S.hideConflict && isConflict[i] }));
       R.legendSeq = true; R.legendGrad = 'linear-gradient(90deg,' + this.brown(0) + ',' + this.brown(1) + ')';
+      // Hover auf eine Listenzeile hebt eine Rasterzelle hervor: Gemeinden behalten dann die Mischung
+      gemScale = { vals: dissens, paint: t => this.brown(t), keepBlend: hvDiss >= 0 };
       R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = 'Größte Abweichung vom Konsens ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = false;
     } else if (view === 'konflikt') {
@@ -3417,7 +3424,15 @@ class Component extends DCLogic {
       // Rasterzellen dieser Ansicht (R.mainCells trägt die aktuelle Tab-Farblogik bereits) — funktioniert
       // ansichtsunabhängig, ohne jede Kartenfarblogik oben ein zweites Mal für Gemeinden nachzubauen.
       // Die tatsächlichen Zahlen im rechten Panel werden separat und korrekt aggregiert (s. u.), diese
-      // Mischung ist reine Kartenoptik.
+      // Mischung ist reine Kartenoptik. Zahlenkarten färben stattdessen nach dem Gemeinde-Wert (flächengewichtete
+      // Summe der Zellwerte, wie das rechte Panel), und die Legende nennt denselben Bereich.
+      const gemVal = gi => (gemWeights[gi] || []).reduce((a, w) => a + gemScale.vals[w.i] * w.w, 0);
+      const gemRange = gemScale ? gemList.map((g, gi) => gi).filter(gi => (gemWeights[gi] || []).length).map(gemVal) : [];
+      const gemMx = gemRange.length ? Math.max(...gemRange) : 0, gemMn = gemRange.length ? Math.min(...gemRange) : 0, gemRg = gemMx - gemMn;
+      if (gemRange.length) {
+        R.legendMin = this.fmtUnit(gemMn, isRegion); R.legendMax = this.fmtUnit(gemMx, isRegion);
+        R.legendTicks = this.legendTicks(gemMn, gemMx, v => this.fmtUnit(v, isRegion));
+      }
       R.gemCells = gemList.map((g, gi) => {
         const weights = gemWeights[gi] || [];
         let fr = 0, fg = 0, fb = 0, opSum = 0, wSum = 0;
@@ -3428,7 +3443,9 @@ class Component extends DCLogic {
           fr += rr * w; fg += gg * w; fb += bb * w;
           opSum += (mc.op != null ? mc.op : 1) * w; wSum += w;
         });
-        const fill = wSum ? 'rgb(' + [fr, fg, fb].map(v => Math.round(v / wSum)).join(',') + ')' : '#f2efeb';
+        const fill = !wSum ? '#f2efeb'
+          : gemScale && !gemScale.keepBlend ? gemScale.paint(gemRg > 1e-9 ? (gemVal(gi) - gemMn) / gemRg : (gemMx > 1e-9 ? 1 : 0))
+          : 'rgb(' + [fr, fg, fb].map(v => Math.round(v / wSum)).join(',') + ')';
         const selg = S.gemeinde === g.id;
         return {
           d: g.d, fill, fo: cellFillOp, stroke: selg ? '#231f1d' : '#ffffff', sw: selg ? 2.4 : 1, dash: '0',
