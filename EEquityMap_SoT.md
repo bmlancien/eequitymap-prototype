@@ -1605,6 +1605,9 @@ EmPowerPlan klären (offene Frage I.10).
   Prinzipienliste, erste Zeile einer Infobox, Methodik), steht einmal das
   volle Wort **„Gerechtigkeitsprinzip"**; danach genügt „Prinzip".
 - „Gerechtigkeitsvorstellung" wird nicht verwendet.
+- **Entfällt (Session 2026-11-04):** „Gerechtigkeitsvorstellung" ist erlaubt.
+  Bestehende Texte werden nicht umgeschrieben; Teamtexte werden wörtlich
+  übernommen.
 
 ### R.3 Bereichs-Tabs: Bestand & Potenziale · Deutschland · Regional
 
@@ -2341,3 +2344,36 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   regionale Prinzipien) in Terrakotta #B4552F statt Grün — abgedunkeltes
   #DC825D, damit weiße Schrift lesbar bleibt (Kontrast 4,9 : 1; #DC825D selbst
   nur 2,8 : 1).
+
+## W. Intro, Infotexte, Methodik, Vergleichs-Reiter, Regler (Session 2026-11-04)
+
+- **Frage-Link statt „i"** (neues Muster): Textlink, der die Frage der Nutzerin
+  stellt (14 px, unterstrichen, Akzentfarbe), öffnet ein Popover; Esc oder Klick
+  daneben schließt. Verwendet an der Regions-Headline („Woher kommt diese
+  Menge?") und in „Bestand & Potenziale" („Was zeigt diese Karte?", Text je
+  Unter-Reiter und Technologie, Teamtexte; bei Potenzial- und Planungsflächen
+  „Mehr erfahren" → Methodik mit Sprungmarke). Alle übrigen „i" bleiben.
+- **Startdialog zwei Seiten** (●○): Seite 1 Prämisse mit den drei Karten,
+  Knöpfe „So funktioniert's →" und „Direkt zu den Potenzialflächen"; Seite 2
+  die drei Schritte (① ② ③ wie die Bereichs-Tabs), „← Zurück" und „Mit dem
+  Bestand beginnen →" (→ Bestand heute). Esc schließt. Der volle Teamtext steht
+  im Fenster „Was ist EEquityMap?" („Mehr dazu"), darunter die bisherigen
+  Abschnitte ohne Doppelungen. Ändert S (Startoverlay).
+- **Methodik:** neuer Abschnitt 2 „Potenzialflächen und Kennzahlen" (2.1 Wind,
+  2.2 Kennzahlen Wind, 2.3 Freiflächen-PV mit Tabelle Flächenbedarf, 2.4
+  Planungsflächen als Platzhalter) und 3.1 „Verteilmethodik Freiflächen-PV";
+  übrige Abschnitte eine Nummer weiter. Hinweis „Stand: Prototyp": „Die Methoden
+  sind beschrieben, wie sie im Projekt verwendet werden. Die Werte in diesem
+  Prototyp sind Platzhalter."
+- **„Szenarien vergleichen":** linke Spalte bis auf die Technologie ausgegraut
+  (Deckkraft 45 %, „not-allowed", nicht bedienbar, auch nicht per Tastatur):
+  Prinzipien, Ausbauziel/Ausbaumenge, „Bestandsanlagen berücksichtigen", „Zum
+  Vergleich speichern". Tooltip: „Diese Einstellungen gelten für die anderen
+  Reiter. Der Vergleich zeigt gespeicherte Szenarien." Erst-Hinweise dort aus.
+- **Regler „Ausbaumenge":** keine Zahlen unter den Strichen (Werte nur im
+  Tooltip); Striche über der Spur, Griff darüber. Tooltip in der Prinzipfarbe,
+  Schrift mit ≥ 4,5 : 1 (Weiß, #2E2927 oder #1C1915 — Letzteres auf
+  Verbrauchsnah und Bevölkerungsfern); Konsens-Tooltip in der Konsensfarbe.
+- **[Offen]** Platzhalterwerte vs. Methodik: PV-Potenzialfläche im Prototyp
+  991.023 ha statt rund 12 Mio. ha; Volllaststunden im Prototyp einheitlich
+  (2.000 bzw. 1.000 h) statt regional.

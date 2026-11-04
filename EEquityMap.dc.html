@@ -30,6 +30,9 @@
   @media (max-width:1360px){ .subtab{font-size:13px !important;padding-left:6px !important;padding-right:6px !important} .rightcol{width:300px !important} .techchip-sub{display:none !important} }
   input,button{font-family:inherit}
   input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#cfccc8;outline:none}
+  /* Regler Ausbaumenge: Spur separat gezeichnet, damit die Marken darüber und unter dem Griff liegen (Prompt A, 6) */
+  input[type=range].rt-range{background:transparent}
+  input[type=range].rt-range::-moz-range-track{background:transparent}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#1d6b4c;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
   @keyframes fadeUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   @keyframes fadeOutHint{from{opacity:1}to{opacity:0}}
@@ -127,6 +130,8 @@
       </sc-if>
       <!-- Bereiche „Deutschland" und „Regional" (mit Landkreis): Prinzipien + Rahmen -->
       <sc-if value="{{ areaMain }}" hint-placeholder-val="{{ true }}">
+      <!-- „Szenarien vergleichen" (Prompt A, 5): ausgegraut und gesperrt — die Einstellungen gehören zu den anderen Reitern -->
+      <div title="{{ lockTitle }}" style="{{ lockStyle }}"><div ref="{{ lockRefA }}" style="{{ lockInner }}">
       <sc-if value="{{ showNatBreadcrumb }}" hint-placeholder-val="{{ false }}">
         <!-- Zurückgenommen: Kontext, kein Bedienelement — neutrale Fläche statt farbigem Akzent, kleiner/
              leiser als die regionale Liste unten. Farb-Rhyme über die Prinzipfarben-Punkte, s. natInline. -->
@@ -193,6 +198,8 @@
 
 
 
+      </div></div>
+
       <!-- RAHMEN (früher „SZENARIO" — ein gespeichertes Szenario umfasst Prinzipien UND diesen Block) -->
       <div style="font-size:14px;font-weight:700;letter-spacing:.7px;color:#2e2927;margin:26px 0 12px">RAHMEN</div>
 
@@ -202,6 +209,8 @@
         <button onClick="{{ setPV }}" style="{{ techPVStyle }}">Freiflächen-PV</button>
       </div>
 
+      <!-- „Szenarien vergleichen" (Prompt A, 5): ausgegraut und gesperrt — die Einstellungen gehören zu den anderen Reitern -->
+      <div title="{{ lockTitle }}" style="{{ lockStyle }}"><div ref="{{ lockRefB }}" style="{{ lockInner }}">
       <!-- Deutschland: bundesweites Ausbauziel mit Zieljahren -->
       <sc-if value="{{ showNatTarget }}" hint-placeholder-val="{{ true }}">
       <!-- „i" neben „Ausbauziel" klappt den Greenfield-Hinweis zu den Jahres-Marken (2030/2035/2045) auf -->
@@ -249,18 +258,14 @@
               <span class="num" style="{{ rtHeadStyle }}">{{ rtHeadText }}</span>
             </sc-if>
           </div>
-          <!-- Striche liegen unter dem Griff: der Regler kommt danach und liegt darüber. Mittig zur Spur über top:50% —
-               die Spur sitzt nicht dort, wo Höhe + Rand des Reglers es vermuten lassen -->
+          <!-- Schichten (Prompt A, 6): eigene Spur (unten) → Striche (über der Spur) → Regler mit durchsichtiger Spur,
+               dessen Griff über den Strichen liegt. Keine Zahlen unter den Strichen; Werte nur im Tooltip. -->
           <div style="position:relative;padding:6px 0">
+            <span aria-hidden="true" style="position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:2px;background:#cfccc8;pointer-events:none"></span>
             <sc-for list="{{ rtMarks }}" as="rm" hint-placeholder-count="3">
               <span style="{{ rm.style }}"></span>
             </sc-for>
-            <input type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative;margin:0;display:block">
-          </div>
-          <div class="num" style="position:relative;height:19px;margin-top:2px">
-            <sc-for list="{{ rtValues }}" as="rv" hint-placeholder-count="2">
-              <span style="{{ rv.style }}">{{ rv.text }}</span>
-            </sc-for>
+            <input class="rt-range" type="range" min="0" max="{{ rtMax }}" step="0.01" value="{{ rtValue }}" onInput="{{ onRegionSlider }}" style="width:100%;position:relative;z-index:2;margin:0;display:block">
           </div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:14px;color:#6e6662;margin-top:2px" class="num"><span>0 GW</span><span title="{{ rtMaxTitle }}" style="cursor:help">{{ rtMaxLabel }}</span></div>
@@ -285,10 +290,12 @@
       </div>
       <div style="{{ accountInfoStyle }}"><b style="color:#2e2927">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Standardmäßig zeigt EEquityMap eine <b style="color:#2e2927">Greenfield-Verteilung</b>: Der Ausbau wird so verteilt, als würde die räumliche Verteilung neu geplant – unabhängig davon, wo heute bereits Anlagen stehen.<br>Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst bestehen. Für jeden Landkreis bzw. jede Zelle wird geprüft:<ul style="margin:4px 0;padding-left:18px"><li>liegt der berechnete Ausbau <b style="color:#2e2927">unterhalb des Bestands</b>, erfolgt kein zusätzlicher Zubau;</li><li>liegt sie <b style="color:#2e2927">oberhalb des Bestands</b>, entspricht die Differenz dem erforderlichen Zubau.</li></ul>Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel zusätzliche Leistung noch erforderlich ist.</div>
 
+      </div></div>
+
       <!-- „Zum Vergleich speichern": am unteren Rand der Spalte angeheftet — NACH allem, was gespeichert wird
            (Prinzipien + Rahmen). Sichtbar, sobald es etwas zu speichern gibt und die Konfiguration noch nicht
            gespeichert ist (auch im Hub, s. §O); sonst nur der normale Abstand am Spaltenende. -->
-      <div style="{{ saveFooterStyle }}">
+      <div style="{{ saveFooterStyle }}"><div title="{{ lockTitle }}" style="{{ lockStyle }}"><div ref="{{ lockRefC }}" style="{{ lockInner }}">
         <sc-if value="{{ showSaveScenario }}" hint-placeholder-val="{{ false }}">
           <!-- Erst-Hinweis (einmal pro Sitzung): Popup RECHTS neben dem Knopf (über der Mitte), damit es keine Eingaben
                verdeckt; Position setzt placeAnchoredPopups(). Schließt per Klick darauf oder beim ersten Klick irgendwo. -->
@@ -304,7 +311,7 @@
             Zum Vergleich speichern
           </button>
         </sc-if>
-      </div>
+      </div></div></div>
       </sc-if>
     </aside>
 
@@ -313,7 +320,22 @@
       <!-- Bereich „Bestand & Potenziale" (R.13): Ausgangspunkt — heutiger Bestand, Potenzial- und Planungsflächen.
            Die einzige zoombare Karte des Werkzeugs (Landkreise → Gemeinden nach Zoomstufe). -->
       <sc-if value="{{ areaBestand }}" hint-placeholder-val="{{ false }}">
-        <div style="font-family:var(--display);font-size:24px;font-weight:600;line-height:1.25;color:#2e2927;margin:4px 2px 10px;letter-spacing:-.2px">{{ bpHead }}</div>
+        <div style="font-family:var(--display);font-size:24px;font-weight:600;line-height:1.25;color:#2e2927;margin:4px 2px 6px;letter-spacing:-.2px">{{ bpHead }}</div>
+        <!-- Frage-Link je Unter-Reiter (Prompt A, 3): Text wechselt mit Reiter und Technologie; „Mehr erfahren" öffnet
+             die Methodik an der passenden Stelle -->
+        <div data-qpop style="position:relative;z-index:30;flex:none;margin:0 2px 10px">
+          <button type="button" onClick="{{ toggleBpQ }}" aria-expanded="{{ qBpExpanded }}" aria-controls="qpop-bp" style="background:none;border:none;padding:0;font-family:inherit;font-size:14px;line-height:1.4;color:#1d6b4c;text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left">Was zeigt diese Karte?</button>
+          <sc-if value="{{ qBpOpen }}" hint-placeholder-val="{{ false }}">
+            <div id="qpop-bp" role="dialog" aria-label="Was zeigt diese Karte?" style="position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:min(480px,100%);background:#fff;border:1px solid #e4e1dd;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);padding:12px 14px;font-size:14px;line-height:1.55;color:#5c5451;text-wrap:pretty">
+              <sc-for list="{{ bpQParas }}" as="qp" hint-placeholder-count="1">
+                <p style="{{ qp.style }}">{{ qp.text }}</p>
+              </sc-for>
+              <sc-if value="{{ bpQMore }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ bpQMoreClick }}" style="background:none;border:none;padding:0;font-family:inherit;font-size:14px;line-height:1.4;color:#1d6b4c;text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left;margin-top:8px">Mehr erfahren</button>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;border-bottom:1px solid #dedbd7;margin-bottom:10px;flex:none">
           <sc-for list="{{ bpTabs }}" as="bt" hint-placeholder-count="3">
             <button class="subtab" onClick="{{ bt.onClick }}" style="{{ bt.style }}">{{ bt.label }}</button>
@@ -417,13 +439,18 @@
           <sc-if value="{{ headOne }}" hint-placeholder-val="{{ true }}">
             <div style="flex:1;font-family:var(--display);font-size:24px;font-weight:600;line-height:1.25;color:#2e2927;letter-spacing:-.2px;text-wrap:pretty">{{ kernaussage }}</div>
           </sc-if>
-          <!-- „i" neben der Regions-Headline: woher die Ausbaumenge kommt -->
-          <sc-if value="{{ showRegionDetailInfoBtn }}" hint-placeholder-val="{{ false }}">
-            <span onClick="{{ toggleRegionDetailInfo }}" style="{{ regionDetailInfoBtnStyle }}">i</span>
+        </div>
+      </sc-if>
+      <!-- Frage-Link unter der Regions-Headline (Prompt A, 1; ersetzt das „i"): öffnet das Popover, woher die
+           Ausbaumenge kommt. Esc oder Klick daneben schließt (s. keydown-/pointerdown-Listener). -->
+      <sc-if value="{{ showRegionDetailInfoBtn }}" hint-placeholder-val="{{ false }}">
+        <div data-qpop style="position:relative;z-index:30;flex:none;margin:-4px 2px 12px">
+          <button type="button" onClick="{{ toggleRegionQ }}" aria-expanded="{{ qRegionExpanded }}" aria-controls="qpop-region" style="background:none;border:none;padding:0;font-family:inherit;font-size:14px;line-height:1.4;color:#1d6b4c;text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left">Woher kommt diese Menge?</button>
+          <sc-if value="{{ qRegionOpen }}" hint-placeholder-val="{{ false }}">
+            <div id="qpop-region" role="dialog" aria-label="Woher kommt diese Menge?" style="position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:min(480px,100%);background:#fff;border:1px solid #e4e1dd;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);padding:12px 14px;font-size:14px;line-height:1.55;color:#5c5451;text-wrap:pretty">{{ regionBudgetInfo }}<sc-if value="{{ regionBudgetInfoExtra }}" hint-placeholder-val="{{ false }}"><br>{{ regionBudgetInfoExtra }}</sc-if></div>
           </sc-if>
         </div>
       </sc-if>
-      <div style="{{ regionDetailInfoStyle }}">{{ regionBudgetInfo }}<sc-if value="{{ regionBudgetInfoExtra }}" hint-placeholder-val="{{ false }}"><br>{{ regionBudgetInfoExtra }}</sc-if></div>
 
       <!-- Tab-Reihe (nur Reiter). „Zum Vergleich speichern" steht links unter den Prinzipien,
            „Vergleich teilen" rechts oben über der Hub-Box. -->
@@ -1348,43 +1375,68 @@
     <a href="datenschutz.html" style="color:#2e2927;text-underline-offset:2px">Datenschutz</a>
   </footer>
 
-  <!-- Intro-Overlay: Prämisse -->
+  <!-- Intro-Overlay: zwei Seiten (Prompt A, 2). Seite 1 = Prämisse mit den drei Karten, Seite 2 = die drei Schritte
+       (= Bereichs-Tabs). Gekürzte Teamtexte; der volle Text steht im Fenster „Was ist EEquityMap?" („Mehr dazu").
+       Esc schließt. -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div class="scroll" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 28px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
-        <div style="font-family:var(--display);font-size:24px;font-weight:700;color:#2e2927;letter-spacing:-.3px">Wo wäre der Ausbau fair?</div>
-        <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:14px 0 18px;text-wrap:pretty">Windkraft und Solar müssen über Deutschland verteilt werden — aber was „fair" heißt, darüber gibt es verschiedene Vorstellungen. Die eine richtige Verteilung gibt es nicht.</p>
-        <div style="font-size:14px;font-weight:600;color:#2e2927;margin-bottom:8px">Deshalb: Dieselbe Aufgabe, verschiedene Antworten.</div>
-        <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
-          <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
-            <div style="background:#fff;border:1px solid #eae7e3;border-radius:8px;padding:8px">
-              <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:104px">
-                <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
-                  <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
-                </sc-for>
-              </svg>
-              <!-- Symbol links neben dem Satz (linksbündig): sagt auf einen Blick, wonach die Karte verteilt -->
-              <div style="display:flex;align-items:flex-start;gap:9px;margin-top:10px;text-align:left">
-                <div style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ im.iconBg }};display:flex;align-items:center;justify-content:center">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ im.iconColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ im.icon }}"></path></svg>
+      <div class="scroll" role="dialog" aria-modal="true" aria-label="Willkommen bei EEquityMap" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 22px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
+        <sc-if value="{{ introPage1 }}" hint-placeholder-val="{{ true }}">
+          <div style="font-family:var(--display);font-size:24px;font-weight:700;color:#2e2927;letter-spacing:-.3px;text-wrap:balance">Wo wäre der Ausbau Erneuerbarer Energien fair?</div>
+          <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:14px 0 18px;text-wrap:pretty">Wind- und Solaranlagen sollen fair über Deutschland verteilt werden. Doch was gerecht ist, sehen Menschen unterschiedlich. EEquityMap zeigt, wie sich verschiedene Gerechtigkeitsvorstellungen auf die Verteilung auswirken.</p>
+          <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+            <sc-for list="{{ introMaps }}" as="im" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #eae7e3;border-radius:8px;padding:8px">
+                <svg viewBox="{{ vbFull }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:104px">
+                  <sc-for list="{{ im.cells }}" as="c" hint-placeholder-count="20">
+                    <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="1"></path>
+                  </sc-for>
+                </svg>
+                <!-- Symbol links neben dem Satz (linksbündig): sagt auf einen Blick, wonach die Karte verteilt -->
+                <div style="display:flex;align-items:flex-start;gap:9px;margin-top:10px;text-align:left">
+                  <div style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ im.iconBg }};display:flex;align-items:center;justify-content:center">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ im.iconColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ im.icon }}"></path></svg>
+                  </div>
+                  <div style="font-size:14px;color:#5c5451;line-height:1.35;padding-top:5px">{{ im.label }}</div>
                 </div>
-                <div style="font-size:14px;color:#5c5451;line-height:1.35;padding-top:5px">{{ im.label }}</div>
               </div>
-            </div>
+            </sc-for>
+          </div>
+          <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:0 0 14px;text-wrap:pretty">Aber müssen wir uns überhaupt einigen, was gerecht ist? EEquityMap zeigt auch, wo sich die Verteilungen überschneiden – und wie viel Ausbau möglich wäre, ohne eine der Vorstellungen zurückzustellen. Im Konsens also. Damit könnten wir anfangen.</p>
+          <div style="font-family:var(--display);font-size:16px;font-weight:600;color:#1d6b4c;margin:0 0 22px">Unterschiedliche Vorstellungen. Gemeinsame Lösungen.</div>
+          <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ introNext }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">So funktioniert's →</button>
+            <button onClick="{{ introToPotenzial }}" style="background:#fff;color:#1d6b4c;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#f5f2ee">Direkt zu den Potenzialflächen</button>
+          </div>
+          <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
+        </sc-if>
+        <sc-if value="{{ introPage2 }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:var(--display);font-size:24px;font-weight:700;color:#2e2927;letter-spacing:-.3px">So funktioniert EEquityMap</div>
+          <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:14px 0 20px;text-wrap:pretty">In drei Schritten von den Grundlagen zu gerechten Ausbauverteilungen – bundesweit und für einzelne Landkreise.</p>
+          <!-- Die drei Schritte = die drei Bereichs-Tabs (R.3), nummeriert wie dort -->
+          <ol style="list-style:none;margin:0 0 24px;padding:0;text-align:left;display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ introSteps }}" as="st" hint-placeholder-count="3">
+              <li style="display:flex;gap:12px;align-items:flex-start;padding-top:14px;border-top:1px solid #e8e5e1">
+                <span class="num" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1px solid #c3c0bc;font-size:13px;font-weight:600;color:#5c5451;margin-top:1px">{{ st.num }}</span>
+                <div style="min-width:0">
+                  <div style="font-size:16px;font-weight:600;color:#2e2927;line-height:1.35">{{ st.area }} <span style="font-weight:400;color:#5c5451">– {{ st.q }}</span></div>
+                  <div style="font-size:14px;color:#5c5451;line-height:1.55;margin-top:3px">{{ st.text }}</div>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+          <div style="display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap">
+            <span onClick="{{ introPrev }}" role="button" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">← Zurück</span>
+            <button onClick="{{ introToBestand }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">Mit dem Bestand beginnen →</button>
+          </div>
+        </sc-if>
+        <!-- Seitenpunkte ●○ (anklickbar) -->
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:20px">
+          <sc-for list="{{ introDots }}" as="dt" hint-placeholder-count="2">
+            <button onClick="{{ dt.onClick }}" aria-label="{{ dt.label }}" aria-current="{{ dt.current }}" style="{{ dt.style }}"></button>
           </sc-for>
         </div>
-        <p style="font-size:14px;line-height:1.6;color:#5c5451;margin:0 0 14px;text-wrap:pretty">Jede solche Vorstellung ist ein <b>Gerechtigkeitsprinzip</b>. EEquityMap rechnet sie durch und zeigt, wo sie sich einig sind.</p>
-        <!-- Die drei Schritte = die drei Bereichs-Tabs (R.3); der Knopf führt zu Schritt 1 (UX-Review) -->
-        <div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:#2e2927;margin:0 0 22px">
-          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #c3c0bc;font-size:12px;font-weight:600;color:#5c5451;margin-right:6px;flex:none">1</span>Bestand &amp; Potenziale</span>
-          <span style="color:#a5a29e">→</span>
-          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #c3c0bc;font-size:12px;font-weight:600;color:#5c5451;margin-right:6px;flex:none">2</span>Verteilung – Deutschland</span>
-          <span style="color:#a5a29e">→</span>
-          <span style="display:flex;align-items:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid #c3c0bc;font-size:12px;font-weight:600;color:#5c5451;margin-right:6px;flex:none">3</span>Verteilung – Regional</span>
-        </div>
-        <button onClick="{{ closeIntro }}" style="background:#1d6b4c;color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Mit dem Bestand beginnen →</button>
-        <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
       </div>
     </div>
   </sc-if>
@@ -1408,8 +1460,8 @@
     </div>
   </sc-if>
 
-  <!-- Methodik: wie das Werkzeug rechnet (Kopf → „Methodik"). Inhalt beschreibt die Rechenregeln der App;
-       Datenquellen werden bewusst nicht behauptet, solange der Prototyp mit Platzhalterwerten arbeitet. -->
+  <!-- Methodik: wie das Werkzeug rechnet (Kopf → „Methodik"). Sprungmarken m-pot-wind, m-kenn-wind, m-pot-pv,
+       m-planung, m-verteil-pv (aus „Mehr erfahren" in Bestand & Potenziale, s. openMethodAt). -->
   <sc-if value="{{ methodOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeMethod }}" style="position:fixed;inset:0;background:rgba(20,25,30,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:32px">
       <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;width:min(760px,94vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(15,30,45,.22)">
@@ -1421,7 +1473,7 @@
           <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f5f2ee;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6e6662">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#2e2927">
-          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Diese Version zeigt, wie das Werkzeug rechnet und was es darstellt. Die hinterlegten Werte sind Platzhalter und noch keine Modellergebnisse — einzelne Zahlen dürfen nicht zitiert werden.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge des Landkreises:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Die Methoden sind beschrieben, wie sie im Projekt verwendet werden. Die Werte in diesem Prototyp sind Platzhalter.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Potenzialflächen und Kennzahlen</div><div id="m-pot-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.1 Potenzialflächen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Windenergieanlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise Mindestwindgeschwindigkeiten, Abstände zu Siedlungen oder naturschutzrechtliche Einschränkungen. Auch die Entscheidung, ob Wälder oder Landschaftsschutzgebiete grundsätzlich ausgeschlossen werden, beeinflusst die verfügbaren Flächen.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir für Windenergie eine vergleichsweise großzügige Potenzialfläche auf Basis des RLI-Datensatzes. Sie berücksichtigt einen Mindestabstand von 400 Metern zu Siedlungen und eine Mindestwindgeschwindigkeit von 7,0 m/s in 160 Metern Höhe. Wälder und Landschaftsschutzgebiete werden nicht pauschal ausgeschlossen, sofern keine anderen Ausschlusskriterien greifen.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><div id="m-kenn-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.2 Potenzial-Kennzahlen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und der angenommenen Leistungsdichte. In EEquityMap verwenden wir für Windenergie einen Flächenbedarf von 42 m² je kW installierter Leistung (entspricht rund 0,24 MW/ha).</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt, wie viel Strom mit dieser Leistung jährlich erzeugt werden könnte. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von COSMO-REA6-Wetterdaten für das Jahr 2012 berechnet wurden.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 2.000 Stunden pro Jahr.</p><div id="m-pot-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.3 Potenzialflächen Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Solaranlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise naturschutzrechtliche Einschränkungen, die bisherige Flächennutzung oder die landwirtschaftliche Bodengüte.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir eine vergleichsweise großzügige Potenzialfläche auf Basis der im Projekt EmPowerPlan veröffentlichten Potenzialflächenanalyse (Kohler und Wingenbach, 2024). Dabei unterscheiden wir drei PV-Technologien mit unterschiedlichen Flächenansprüchen:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Klassische Freiflächen-PV:</b> Solaranlagen auf geeigneten Offenlandflächen.</li><li style="margin-bottom:5px"><b>Bifaziale Agri-PV:</b> Senkrecht aufgestellte, beidseitig stromerzeugende Module auf Ackerflächen mit geringer bis mittlerer Bodengüte. Eine landwirtschaftliche Nutzung zwischen den Modulreihen bleibt möglich.</li><li style="margin-bottom:5px"><b>Hochaufgeständerte Agri-PV:</b> Solaranlagen über Dauerkulturen wie Obst- oder Weinbau, die eine weitere landwirtschaftliche Nutzung ermöglichen.</li></ul><p style="margin:0 0 10px">Insgesamt umfasst die Potenzialkulisse rund 12 Millionen Hektar und damit etwa 37 % der deutschen Landesfläche.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und dem angenommenen technologiespezifischen Flächenbedarf. In EEquityMap unterscheiden wir drei PV-Technologien:</p><table class="num" style="border-collapse:collapse;margin:4px 0 12px;font-size:14px;min-width:360px"><caption style="text-align:left;font-weight:600;padding-bottom:4px">Flächenbedarf je PV-Technologie</caption><thead><tr><th scope="col" style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1;text-align:left;font-weight:600;color:#5c5451">Technologie</th><th scope="col" style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap;font-weight:600;color:#5c5451">Flächenbedarf</th></tr></thead><tbody><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Klassische Freiflächen-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">10 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Bifaziale Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">34,48 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Hochaufgeständerte Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">13,51 m²/kW</td></tr></tbody></table><p style="margin:0 0 10px">Die Annahmen berücksichtigen die unterschiedlichen Anlagenkonfigurationen und Flächenansprüche der Technologien.</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt die jährlich erzeugbare Strommenge. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von ERA5-Wetterdaten für das Jahr 2012 berechnet wurden. Dabei werden auch die unterschiedlichen Modulkonfigurationen berücksichtigt.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 1.000 Stunden pro Jahr.</p><div id="m-planung" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.4 Planungsflächen</div><p style="margin:0 0 10px"><span style="background:#fbefe9;border:1px dashed #e2a98f;border-radius:4px;padding:0 5px;color:#8a452a">[Platzhalter: Text folgt vom Projektteam]</span></p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div id="m-verteil-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">3.1 Verteilmethodik Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie wird Freiflächen-PV in EEquityMap verteilt?</p><p style="margin:0 0 10px">In EEquityMap wird Freiflächen-PV als eine gemeinsame Technologie dargestellt. Im Hintergrund unterscheiden wir jedoch drei PV-Technologien: klassische Freiflächen-PV, bifaziale Agri-PV und hochaufgeständerte Agri-PV.</p><p style="margin:0 0 10px">Die gesamte vorgegebene PV-Leistung wird wie folgt aufgeteilt:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">92 % klassische Freiflächen-PV</li><li style="margin-bottom:5px">4 % bifaziale Agri-PV</li><li style="margin-bottom:5px">4 % hochaufgeständerte Agri-PV</li></ul><p style="margin:0 0 10px">Die räumliche Verteilung erfolgt anschließend schrittweise: Zuerst wird die klassische Freiflächen-PV nach der gewählten Gerechtigkeitsvorstellung verteilt, danach die bifaziale Agri-PV und schließlich die hochaufgeständerte Agri-PV. Bereits zugeordnete Flächen werden bei den folgenden Verteilungsschritten berücksichtigt, um eine mehrfache Belegung zu vermeiden.</p><p style="margin:0 0 10px">Die drei Ergebnisse werden anschließend zu einer gemeinsamen PV-Verteilung zusammengeführt, die in EEquityMap dargestellt wird.</p><p style="margin:0 0 10px">Die drei Technologien haben unterschiedliche Flächenbedarfe und Potenzialflächen. Deshalb beeinflussen sowohl der angenommene Technologiemix als auch die Reihenfolge der Verteilung das räumliche Ergebnis. Beides sind methodische Festlegungen, die neben der gewählten Gerechtigkeitsvorstellung wirken.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Zubaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Zubau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Zubaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Zubaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Zubau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge des Landkreises:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Zubaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">9. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1435,11 +1487,26 @@
           <button onClick="{{ toggleInfoPanel }}" style="background:#f5f2ee;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6e6662">×</button>
         </div>
         <div style="font-size:14px;line-height:1.65;color:#2e2927">
-          <p style="margin:0 0 16px">Der Ausbau erneuerbarer Energien muss irgendwo stattfinden. Die Frage ist nicht nur, wo er technisch möglich ist, sondern wo er als <b>fair</b> gilt — und darüber gehen die Meinungen auseinander.</p>
+          <!-- Voller Teamtext zum Startdialog (Seite 1 und 2 dort gekürzt), Prompt A 2.3 -->
+          <div style="font-family:var(--display);font-weight:600;font-size:16px;color:#2e2927;margin:0 0 8px">Wo wäre der Ausbau Erneuerbarer Energien fair?</div>
+          <p style="margin:0 0 12px">Wind- und Solaranlagen müssen fair über Deutschland verteilt werden. Doch was eine Verteilung gerecht macht, darüber gibt es unterschiedliche Vorstellungen. EEquityMap macht diese Unterschiede sichtbar: Das Tool zeigt, wie sich verschiedene Gerechtigkeitsvorstellungen auf die räumliche Verteilung von Wind- und Solaranlagen auswirken.</p>
+          <p style="margin:0 0 12px">Aber müssen wir uns überhaupt darauf einigen, was gerecht ist? Oder gibt es Flächen, auf denen der Ausbau ganz unterschiedlichen Gerechtigkeitsvorstellungen gleichermaßen entspricht?</p>
+          <p style="margin:0 0 12px">Auch das zeigt EEquityMap: Das Tool macht sichtbar, wo sich unterschiedliche ausgewählte Verteilungen überschneiden – und wie viel Ausbau möglich wäre, ohne dass eine der berücksichtigten Gerechtigkeitsvorstellungen zurückgestellt werden muss – im Konsens also.</p>
+          <p style="margin:0 0 12px">Damit könnten wir anfangen.</p>
+          <p style="margin:0 0 4px;font-weight:600;color:#1d6b4c">Unterschiedliche Vorstellungen. Gemeinsame Lösungen.</p>
+          <div style="font-family:var(--display);font-weight:600;font-size:16px;color:#2e2927;margin:24px 0 8px">So funktioniert EEquityMap</div>
+          <p style="margin:0 0 12px">EEquityMap führt in drei Schritten von den Grundlagen zu möglichen gerechten Ausbauverteilungen – für ganz Deutschland und für einzelne Regionen.</p>
+          <div style="font-weight:600;color:#2e2927;margin:0 0 4px">1. Bestand &amp; Potenziale – Wo können wir ausbauen?</div>
+          <p style="margin:0 0 12px">Zunächst schauen wir, wo bereits Wind- und Solaranlagen stehen und wo weitere Anlagen grundsätzlich möglich wären. Die verfügbaren Potenzialflächen bilden die Grundlage für alle folgenden Berechnungen. Je größer der Spielraum bei der Flächenwahl, desto stärker können unterschiedliche Gerechtigkeitsvorstellungen die Verteilung beeinflussen.</p>
+          <div style="font-weight:600;color:#2e2927;margin:0 0 4px">2. Verteilung Deutschland – Was wäre bundesweit gerecht?</div>
+          <p style="margin:0 0 12px">Wie ließe sich ein vorgegebenes Ausbauziel für Deutschland nach unterschiedlichen Gerechtigkeitsvorstellungen räumlich verteilen? Wir berechnen verschiedene Verteilungen und untersuchen, wo sie übereinstimmen. So wird sichtbar, wie viel des Ausbaus auch im Konsens zwischen mehreren Gerechtigkeitsvorstellungen möglich wäre.</p>
+          <div style="font-weight:600;color:#2e2927;margin:0 0 4px">3. Verteilung Regional – Was wäre vor Ort gerecht?</div>
+          <p style="margin:0 0 12px">Aus der bundesweiten Verteilung oder dem bundesweiten Konsens ergibt sich eine Ausbaumenge für die gewählte Region. Diese kann nun genauer untersucht werden: Wie verteilt sich der Ausbau nach der bundesweiten Gerechtigkeitsvorstellung, wie nach den vor Ort relevanten Vorstellungen? Was verändert sich, wenn die Ausbaumenge angepasst wird? Und wo entstehen Gemeinsamkeiten, wenn mehrere regionale Gerechtigkeitsvorstellungen berücksichtigt werden?</p>
+          <p style="margin:0 0 24px">So lassen sich unterschiedliche Ausbauoptionen vergleichen und regionale Konsensräume identifizieren.</p>
           <div style="font-weight:600;color:#2e2927;margin:0 0 5px">Gerechtigkeitsprinzip</div>
           <p style="margin:0 0 16px">Ein Gerechtigkeitsprinzip ist eine Regel, nach der sich der Ausbau verteilen ließe — etwa nah am Verbrauch, fern der Bevölkerung oder nach dem besten Ertrag. Jede Vorstellung führt zu einer anderen Landkarte.</p>
           <div style="font-weight:600;color:#2e2927;margin:0 0 5px">Zubaukonsens</div>
-          <p style="margin:0 0 16px">Wählen Sie mehrere Prinzipien, zeigt die Karte den Zubau, den <b>alle</b> mittragen — je Fläche der jeweils niedrigste Vorschlag. So wird sichtbar, wie viel Ausbau von allen betrachteten Vorstellungen gemeinsam getragen würde.</p>
+          <p style="margin:0 0 16px">Wählen Sie mehrere Prinzipien, zeigt die Karte den Zubau, den <b>alle</b> mittragen — je Fläche der jeweils niedrigste Vorschlag.</p>
           <div style="font-weight:600;color:#2e2927;margin:0 0 5px">Beispiel</div>
           <p style="margin:0 0 16px">In einer verbrauchsstarken Region empfiehlt das Prinzip <b>Verbrauchsnah</b> viel Ausbau, das Prinzip <b>Bevölkerungsnah</b> wenig — hier sind sich die Prinzipien uneinig. In einer Region, die beide hoch bewerten, entsteht Konsens.</p>
           <div style="background:#f6f3ef;border-radius:8px;padding:14px 15px;font-size:14px;color:#2e2927;line-height:1.55">Das Tool sagt, <b>wo der Ausbau fair wäre</b>, nicht, wo er möglich ist. Ein Konsens bedeutet nicht, dass eine Fläche genehmigungsfähig ist.</div>
@@ -1673,7 +1740,6 @@ class Component extends DCLogic {
     regionTab: 'konsens', regionCell: null, regionGemeinde: null,
     seenKrsHint: false,       // einmaliger Hinweis „Klicken Sie auf einen Landkreis …" (R.4)
     popoverInfo: false,       // „i" im Landkreis-Popover
-    regionDetailInfo: false,  // „i" an der Regions-Headline
     // Ausbaumenge des Landkreises: null = Startwert (DE-Konsens), sonst eigener Wert in GW (bleibt bei Änderungen in „Deutschland")
     regionOwnTarget: null,
     // Bestand & Potenziale (R.13): Unter-Reiter, Darstellung, Auswahl; bzTick stößt nach Zoom-Gesten ein Re-Render an
@@ -1703,6 +1769,8 @@ class Component extends DCLogic {
     rtDraft: null,       // dasselbe für den Regler des Landkreises
     hintOppo: false, seenOppo: false,
     intro: true,
+    introPage: 1,       // Startdialog: Seite 1 (Prämisse) oder 2 (So funktioniert's)
+    qPop: null,         // offenes Frage-Popover: 'region' | 'bp' | null (Prompt A, 1)
     showMore: false,
     infoPanel: false,
     infoPrinc: null,
@@ -1792,8 +1860,10 @@ class Component extends DCLogic {
     // Vergrößerte Einzelverteilung: Pfeiltasten blättern, Esc schließt (nur solange sie offen ist)
     this._zoomOrder = [];
     // Erst-Hinweise (regionale Prinzipienliste, Speichern-Knopf): verschwinden beim ersten Klick irgendwo in der Oberfläche
-    document.addEventListener('pointerdown', () => {
+    document.addEventListener('pointerdown', e => {
       const S = this.state;
+      // Frage-Popover (Prompt A, 1): Klick daneben schließt
+      if (S && S.qPop && !(e.target && e.target.closest && e.target.closest('[data-qpop]'))) this.setState({ qPop: null });
       if (S && S.level === 'region' && S.region && !S.regionHintSeen && !S.regionComputing) this.setState({ regionHintSeen: true });
       // Erst-Hinweis am Speichern-Knopf: nur wenn er gerade zu sehen ist (sonst schlösse ihn schon der Klick, der ihn auslöst)
       if (S && this._saveHintVisible && !S.saveHintSeen) this.setState({ saveHintSeen: true });
@@ -1803,7 +1873,10 @@ class Component extends DCLogic {
     window.addEventListener('resize', () => this.placeAnchoredPopups());
     document.addEventListener('keydown', e => {
       const z = this.state && this.state.zoom, o = this._zoomOrder;
+      if (e.key === 'Escape' && this.state && this.state.qPop) { this.setState({ qPop: null }); return; }
       if (e.key === 'Escape' && this.state && (this.state.methodOpen || this.state.aboutOpen)) { this.setState({ methodOpen: false, aboutOpen: false }); return; }
+      if (e.key === 'Escape' && this.state && this.state.infoPanel) { this.setState({ infoPanel: false }); return; }
+      if (e.key === 'Escape' && this.state && this.state.intro) { this.setState({ intro: false }); return; }
       if (!z) return;
       if (e.key === 'Escape') { this.setState({ zoom: null }); return; }
       const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -2339,6 +2412,16 @@ class Component extends DCLogic {
       .map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
     const L = 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
     return 1.05 / (L + 0.05) >= (L + 0.05) / 0.0313 ? '#fff' : '#2e2927';
+  }
+
+  // Schrift auf einer Farbfläche mit mindestens 4,5 : 1 Kontrast (WCAG AA): Weiß, sonst Text dunkel (#2e2927), sonst
+  // das dunkelste Braun der Palette (#1c1915, z. B. auf Verbrauchsnah und Bevölkerungsfern) — sonst das Beste davon
+  textOnAA(hex) {
+    const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255)
+      .map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+    const L = lum(hex), cr = t => { const l = lum(t); return (Math.max(L, l) + 0.05) / (Math.min(L, l) + 0.05); };
+    const cands = ['#ffffff', '#2e2927', '#1c1915'];
+    return cands.find(t => cr(t) >= 4.5) || cands.reduce((a, b) => cr(b) > cr(a) ? b : a);
   }
 
   // Name des Startwerts zu einer bundesweiten Auswahl: „DE-Konsens", bei einem Prinzip dessen Name
@@ -3537,7 +3620,16 @@ class Component extends DCLogic {
     // Erst-Hinweis als Popup über dem Knopf, einmal pro Sitzung (R.9); Knopf immer gefüllt in der Akzentfarbe
     // Solange das Landkreisergebnis veraltet ist, ist Speichern pausiert: „Neu berechnen" ist dann die Hauptaktion (R.7)
     const savePaused = !!R.regionStaleBar;
-    R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen && !savePaused;
+    R.saveHintPopup = R.showSaveScenario && !S.saveHintSeen && !savePaused && !R.isSzenarien;
+    // „Szenarien vergleichen" (Prompt A, 5): linke Spalte bis auf die Technologie ausgegraut und nicht bedienbar —
+    // die Einstellungen gelten für die anderen Reiter, der Vergleich zeigt gespeicherte Szenarien. inert sperrt
+    // auch die Tastatur.
+    const leftLocked = !!R.isSzenarien;
+    R.lockTitle = leftLocked ? 'Diese Einstellungen gelten für die anderen Reiter. Der Vergleich zeigt gespeicherte Szenarien.' : '';
+    R.lockStyle = leftLocked ? 'opacity:.45;cursor:not-allowed' : '';
+    R.lockInner = leftLocked ? 'pointer-events:none;user-select:none' : '';
+    const lockRef = el => { if (el) el.inert = leftLocked; };
+    R.lockRefA = lockRef; R.lockRefB = el => lockRef(el); R.lockRefC = el => lockRef(el);
     this._saveHintVisible = R.saveHintPopup;
     R.dismissSaveHint = () => this.setState({ saveHintSeen: true });
     R.saveBtnStyle = 'width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-size:14px;font-weight:600;padding:8px 13px;border-radius:4px;white-space:nowrap;'
@@ -3698,7 +3790,7 @@ class Component extends DCLogic {
     R.natCountText = natSelForBreadcrumb.length === 0 ? '—' : natSelForBreadcrumb.length === 1 ? '1 Prinzip' : natSelForBreadcrumb.length + ' Prinzipien';
 
     // Erst-Hinweis an der regionalen Liste — macht die Opt-in-Natur des zweiten Prinzipiensatzes sichtbar (§M)
-    R.regionListHint = isRegion && !S.regionHintSeen && !S.regionComputing;
+    R.regionListHint = isRegion && !S.regionHintSeen && !S.regionComputing && !R.isSzenarien;
     R.dismissRegionListHint = () => this.setState({ regionHintSeen: true });
 
     // Mode-Transition-Text lebt jetzt im Ladezustand statt als eigenes dauerhaftes Band (§M) — dadurch
@@ -3768,7 +3860,7 @@ class Component extends DCLogic {
         ? 'Startwert aus dem bundesweiten Konsens von ' + natVals.length + ' Gerechtigkeitsprinzipien.'
         : natVals.length ? 'Startwert aus der bundesweiten Verteilung nach ' + this.byId[natVals[0].pid].name + '.' : '';
       // Position wie die Griffmitte: der 16-px-Griff läuft von 8 px bis Breite − 8 px
-      const TRACK_PX = 280 - 16;  // linke Spalte 312 px − Innenabstand; nur für das Ausblenden überlappender Werte
+      const TRACK_PX = 280 - 16;  // linke Spalte 312 px − Innenabstand; für „an derselben Stelle“ im Tooltip
       const tOf = v => maxGW ? Math.max(0, Math.min(1, v / maxGW)) : 0;
       const leftOf = v => 'calc(8px + (100% - 16px) * ' + tOf(v).toFixed(4) + ')';
       // Text an den Rändern nach innen schieben, sonst mittig über bzw. unter dem Strich
@@ -3779,24 +3871,11 @@ class Component extends DCLogic {
       // Tooltip: alle Marken an derselben Stelle (auf 0,01 GW gleich oder < 4 px auseinander)
       const samePlace = (a, b) => this.fmt(a.v) === this.fmt(b.v) || Math.abs(tOf(a.v) - tOf(b.v)) * TRACK_PX < 4;
       const tipOf = m => marks.filter(o => samePlace(o, m)).map(o => o.name + ': ' + this.fmt(o.v) + ' GW').join('\n');
-      // Werte unter der Spur: von rechts nach links, überlappende ausblenden (≈ 34 px je Wert bei 13 px). Von rechts,
-      // weil der kleinste Wert ohnehin im Konsens-Etikett über der Spur steht.
-      let lastX = Infinity;
-      const shown = new Set();
-      marks.filter(m => !m.cons).slice().sort((a, b) => b.v - a.v).forEach(m => {
-        const x = tOf(m.v) * TRACK_PX;
-        if (lastX - x >= 34) { shown.add(m); lastX = x; }
-      });
       // Etikett über der Spur: DE-Konsens, bei einem Prinzip dessen Strich — wird nie ausgeblendet
       const head = marks[0] || null;
-      if (!many && head) shown.delete(head);
       R.rtMarks = marks.map(m => ({
-        style: 'position:absolute;left:' + leftOf(m.v) + ';top:50%;width:10px;height:16px;transform:translate(-5px,-50%);cursor:default;'
+        style: 'position:absolute;z-index:1;pointer-events:none;left:' + leftOf(m.v) + ';top:50%;width:10px;height:16px;transform:translate(-5px,-50%);cursor:default;'
           + 'background:linear-gradient(' + m.color + ',' + m.color + ') center/2px 100% no-repeat'
-      }));
-      R.rtValues = marks.filter(m => shown.has(m)).map(m => ({
-        text: this.fmt(m.v),
-        style: 'position:absolute;left:' + leftOf(m.v) + ';top:0;transform:' + shiftOf(m.v) + ';font-size:13px;color:#6e6662;white-space:nowrap;cursor:default'
       }));
       R.rtHeadShow = !!head;
       R.rtHeadText = head ? (many ? 'Konsens' : head.name) + ' ' + this.fmt(head.v) : '';
@@ -3807,10 +3886,12 @@ class Component extends DCLogic {
       // Tooltip: nächste Marke zum Zeiger, auf Etikett, Spur und Werten. Maus: bis der Zeiger den Bereich verlässt;
       // Touch: ein Tipp zeigt ihn kurz (beim Abheben käme sonst sofort pointerleave).
       const tipMark = marks.find(m => m.name === S.rtTip);
+      // Hintergrund in der Prinzipfarbe; liegt der Konsens an derselben Stelle, bleibt er in der Konsensfarbe (Prompt A, 6)
+      const tipBg = !tipMark ? '' : (tipMark.cons || marks.some(o => o.cons && samePlace(o, tipMark))) ? this.CONS : tipMark.color;
       R.rtTipShow = !!tipMark;
       R.rtTipText = tipMark ? tipOf(tipMark) : '';
       R.rtTipStyle = tipMark ? 'position:absolute;' + wideAt(tipMark.v) + ';bottom:calc(100% + 4px)'
-        + ';z-index:40;pointer-events:none;background:#2e2927;color:#fff;font-size:14px;line-height:1.4;padding:4px 8px;border-radius:4px;white-space:pre;box-shadow:0 2px 6px rgba(0,0,0,.25)' : '';
+        + ';z-index:40;pointer-events:none;background:' + tipBg + ';color:' + this.textOnAA(tipBg) + ';font-size:14px;line-height:1.4;padding:4px 8px;border-radius:4px;white-space:pre;box-shadow:0 2px 6px rgba(0,0,0,.25)' : '';
       R.rtPointer = e => {
         const touch = e.pointerType !== 'mouse', box = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - box.left - 8, scale = box.width - 16, reach = touch ? 16 : 8;
@@ -4416,9 +4497,29 @@ class Component extends DCLogic {
       return { label: o.label, icon: o.icon, iconColor: col, iconBg: this.mix('#ffffff', col, 0.14), cells: cells.map((c,i) => ({ d: c.d, fill: this.seq(rg > 1e-9 ? (g[i] - mn) / rg : 1, this.byId[o.id].color) })) };
     });
     R.intro = S.intro;
-    R.reopenIntro = () => this.setState({ intro: true });
+    R.reopenIntro = () => this.setState({ intro: true, introPage: 1 });
     R.closeIntro = () => this.setState({ intro: false });
     R.introMore = () => this.setState({ intro: false, infoPanel: true });
+    // Startdialog, zwei Seiten (Prompt A, 2): Seite 1 Prämisse, Seite 2 die drei Schritte
+    const introPage = S.introPage === 2 ? 2 : 1;
+    R.introPage1 = introPage === 1;
+    R.introPage2 = introPage === 2;
+    R.introNext = () => this.setState({ introPage: 2 });
+    R.introPrev = () => this.setState({ introPage: 1 });
+    // Beide Ziel-Knöpfe schließen den Dialog und öffnen „Bestand & Potenziale" mit dem genannten Unter-Reiter
+    const introGo = bpTab => { this.switchArea('bestand'); this.setState({ intro: false, introPage: 1, bpTab, bpSel: null }); };
+    R.introToPotenzial = () => introGo('potenzial');
+    R.introToBestand = () => introGo('bestand');
+    R.introDots = [1, 2].map(n => ({
+      label: 'Seite ' + n + ' von 2', current: n === introPage ? 'step' : 'false',
+      onClick: () => this.setState({ introPage: n }),
+      style: 'width:9px;height:9px;padding:0;border-radius:50%;cursor:pointer;border:1px solid #1d6b4c;background:' + (n === introPage ? '#1d6b4c' : '#fff')
+    }));
+    R.introSteps = [
+      { num: 1, area: 'Bestand & Potenziale', q: 'Wo können wir ausbauen?', text: 'Wo stehen heute Anlagen, wo wären weitere möglich? Die Potenzialflächen sind die Grundlage aller Berechnungen.' },
+      { num: 2, area: 'Verteilung – Deutschland', q: 'Was wäre bundesweit gerecht?', text: 'Das Ausbauziel wird nach verschiedenen Gerechtigkeitsvorstellungen verteilt. Wo die Verteilungen übereinstimmen, entsteht Konsens.' },
+      { num: 3, area: 'Verteilung – Regional', q: 'Was wäre vor Ort gerecht?', text: 'Daraus ergibt sich eine Ausbaumenge für den Landkreis. Sie lässt sich nach den vor Ort relevanten Vorstellungen neu verteilen.' }
+    ];
     R.infoPanel = S.infoPanel;
     R.toggleInfoPanel = () => this.setState({ infoPanel: !S.infoPanel, intro: false });
     R.methodOpen = !!S.methodOpen;
@@ -4545,9 +4646,10 @@ class Component extends DCLogic {
     R.popoverInfoStyle = R.popoverInfoStyle || 'display:none';
     // nur an den Headlines, die die Ausbaumenge nennen (Konsens, Einzelverteilung bzw. noch nicht berechnet)
     R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'single' || view === 'regionGate');
-    R.regionDetailInfoBtnStyle = infoCircle(S.regionDetailInfo, false) + ';margin-top:6px';
-    R.toggleRegionDetailInfo = () => this.setState({ regionDetailInfo: !this.state.regionDetailInfo });
-    R.regionDetailInfoStyle = R.showRegionDetailInfoBtn && S.regionDetailInfo ? 'flex:none;font-size:14px;color:#5c5451;line-height:1.5;padding:8px 10px;background:#fff;border:1px solid #e8e5e1;border-radius:4px;margin:-2px 2px 12px' : 'display:none';
+    // Frage-Link „Woher kommt diese Menge?" unter der Headline (Prompt A, 1; ersetzt das „i")
+    R.qRegionOpen = R.showRegionDetailInfoBtn && S.qPop === 'region';
+    R.qRegionExpanded = R.qRegionOpen ? 'true' : 'false';
+    R.toggleRegionQ = () => this.setState({ qPop: this.state.qPop === 'region' ? null : 'region' });
 
     // Titel der Ergebnis-Box nennt in der Region die Einheit (R.6): Rasterzelle bzw. Gemeinde [Name]
     if (isRegion && R.showCell && ZUBAU_AS_HERO) {
@@ -4588,6 +4690,25 @@ class Component extends DCLogic {
     R.bpCaption = tab === 'bestand' ? ''
       : tab === 'planung' ? 'Offiziell für Windenergie ausgewiesene Flächen.'
       : 'Flächen, auf denen ' + techName + ' technisch und rechtlich möglich wäre.';
+
+    // Frage-Link „Was zeigt diese Karte?" (Prompt A, 3): Text je Unter-Reiter und Technologie, Teamtexte wörtlich.
+    // „Mehr erfahren" öffnet die Methodik an der Sprungmarke.
+    const bpQ = {
+      bestand_wind: { paras: ['Der Bestand zeigt, wo heute bereits Windenergieanlagen in Betrieb sind und wie viel Leistung dort installiert ist. Grundlage sind die Einträge im Marktstammdatenregister, in dem Anlagen zur Stromerzeugung gemeldet werden. Die heutige Verteilung ist das Ergebnis früherer Rahmenbedingungen – beispielsweise guter Windverhältnisse, verfügbarer Flächen, der Förderung oder landesrechtlicher Abstandsregeln – und wurde nicht nach Gerechtigkeitsprinzipien geplant.'] },
+      bestand_pv: { paras: ['Der Bestand zeigt, wo heute bereits Solarparks auf Freiflächen in Betrieb sind und wie viel Leistung dort installiert ist. Grundlage sind die Einträge im Marktstammdatenregister. Die heutige Verteilung spiegelt vor allem frühere Förderbedingungen wider – beispielsweise die Förderung auf Konversionsflächen oder entlang von Autobahnen und Schienenwegen – und wurde nicht nach Gerechtigkeitsprinzipien geplant.'] },
+      potenzial_wind: { more: 'm-pot-wind', paras: ['Die Potenzialflächen zeigen, wo Windenergieanlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise Mindestwindgeschwindigkeiten, Abstände zu Siedlungen oder naturschutzrechtliche Einschränkungen. Auch die Entscheidung, ob Wälder oder Landschaftsschutzgebiete grundsätzlich ausgeschlossen werden, beeinflusst die verfügbaren Flächen.'] },
+      potenzial_pv: { more: 'm-pot-pv', paras: ['Die Potenzialflächen zeigen, wo Solaranlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise naturschutzrechtliche Einschränkungen, die bisherige Flächennutzung oder die landwirtschaftliche Bodengüte.'] },
+      planung_wind: { more: 'm-planung', paras: [
+        'Die Planungsflächen („Windenergiegebiete") zeigen, wo Windenergieanlagen nach geltender oder laufender Planung entstehen sollen. Meist handelt es sich um Vorranggebiete für Windenergie in Regionalplänen, teilweise auch um Ausweisungen in kommunalen Flächennutzungsplänen.',
+        'Grundlage ist das Windenergieflächenbedarfsgesetz (WindBG), nach dem bundesweit bis Ende 2027 1,4 % und bis Ende 2032 2,0 % der Fläche für Windenergie ausgewiesen sein sollen. Wie weit die Planung fortgeschritten ist, unterscheidet sich jedoch deutlich zwischen den Regionen.',
+        'Die Karte zeigt die installierbare Leistung des derzeitigen Planungsstands der Windenergiegebiete in den Regionen.'] }
+    }[tab + '_' + tech];
+    R.bpQParas = bpQ.paras.map((text, i) => ({ text, style: 'margin:' + (i ? '8px' : '0') + ' 0 0' }));
+    R.bpQMore = !!bpQ.more;
+    R.bpQMoreClick = () => this.openMethodAt(bpQ.more);
+    R.qBpOpen = S.qPop === 'bp';
+    R.qBpExpanded = R.qBpOpen ? 'true' : 'false';
+    R.toggleBpQ = () => this.setState({ qPop: this.state.qPop === 'bp' ? null : 'bp' });
 
     // Umschalter Administrativ / Rohdaten (nur Erweitert)
     R.bpShowModeToggle = isExt;
@@ -4804,6 +4925,12 @@ class Component extends DCLogic {
 
   // Bereichswechsel (R.3): Unter-Reiter und Auswahl des verlassenen Bereichs merken, die des Zielbereichs
   // zurückholen. Keine Neuberechnung — ob das Landkreisergebnis noch aktuell ist, entscheidet die Signatur.
+  // Methodik öffnen und an eine Sprungmarke scrollen (Prompt A, 3: „Mehr erfahren")
+  openMethodAt(id) {
+    this.setState({ methodOpen: true, intro: false, infoPanel: false, qPop: null });
+    setTimeout(() => { const el = id && document.getElementById(id); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' }); }, 60);
+  }
+
   switchArea(area, extra) {
     const S = this.state;
     const from = S.area || 'de';
