@@ -725,6 +725,8 @@
                           <span style="flex:none;width:8px;height:8px;border-radius:2px;background:{{ nd.color }}"></span>
                         </sc-for>
                       </div>
+                      <!-- A/B: sagt, dass diese Zeile gerade auf der Karte verglichen wird -->
+                      <div style="{{ hr.pairNoteStyle }}">{{ hr.pairNote }}</div>
                     </div>
                     <span style="{{ hr.numStyle }}">{{ hr.target }}</span>
                     <span style="{{ hr.numStyle }}">{{ hr.cons }}</span>
@@ -3582,8 +3584,10 @@ class Component extends DCLogic {
       const mkRows = list => list.map((sc, ix) => {
         const pi = pair.indexOf(sc.id);
         return {
-          rowStyle: 'display:grid;grid-template-columns:' + HUB_COLS + ';gap:10px;align-items:center;padding:9px 12px;font-size:14px;' + (ix === list.length - 1 ? '' : 'border-bottom:1px solid #f3f0ec;') + 'background:' + (pi >= 0 ? '#fbf8f4' : '#fff'),
+          rowStyle: 'display:grid;grid-template-columns:' + HUB_COLS + ';gap:10px;align-items:center;padding:9px 12px;font-size:14px;' + (ix === list.length - 1 ? '' : 'border-bottom:1px solid #f3f0ec;') + 'background:' + (pi >= 0 ? '#f3f0ec;box-shadow:inset 4px 0 0 ' + (pi === 0 ? '#515a5c' : '#979490') : '#fff'),
           pairTag: pi === 0 ? 'A' : pi === 1 ? 'B' : '', pairTagStyle: pi >= 0 ? badgeCss(pi) : 'display:none',
+          pairNote: pi === 0 ? 'Auf der Karte als A' : pi === 1 ? 'Auf der Karte als B' : '',
+          pairNoteStyle: pi >= 0 ? 'margin-top:3px;font-size:14px;font-weight:600;color:' + (pi === 0 ? '#515a5c' : '#6e6662') : 'display:none',
           name: sc.name, dots: dotsOf(sc.regionalSel),
           // zweite Zeile: Ebene; bei Regionsszenarien zusätzlich die bundesweiten Prinzipien als Punkte
           level: sc.isRegion ? sc.regionLabel : '',
