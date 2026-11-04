@@ -242,6 +242,13 @@
         <input type="range" min="60" max="260" step="1" value="{{ targetGW }}" onInput="{{ onSlider }}" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#6e6662;margin-top:2px" class="num"><span>60 GW</span><span>260 GW</span></div>
       </div>
+      <!-- Frage-Link (Prompt C, 4): warum der Konsens mit dem Ausbauziel wächst — nur in „Verteilung – Deutschland" -->
+      <div data-qpop style="position:relative;z-index:30;margin:4px 0 2px">
+        <button type="button" onClick="{{ toggleTargetQ }}" aria-expanded="{{ qTargetExpanded }}" aria-controls="qpop-target" style="background:none;border:none;padding:0;font-family:inherit;font-size:14px;line-height:1.4;color:#1d6b4c;text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left">Warum verändert sich der Konsens mit der Ausbauleistung?</button>
+        <sc-if value="{{ qTargetOpen }}" hint-placeholder-val="{{ false }}">
+          <div id="qpop-target" role="dialog" aria-label="Warum verändert sich der Konsens mit der Ausbauleistung?" style="position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:100%;background:#fff;border:1px solid #e4e1dd;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);padding:12px 14px;font-size:14px;line-height:1.55;color:#5c5451;text-wrap:pretty">Jedes Prinzip verteilt die ganze eingestellte Menge neu. Je höher das Ausbauziel, desto mehr Fläche wird benötigt, und desto stärker überschneiden sich die Verteilungen. Der Konsens zeigt diese rechnerische Übereinstimmung. Nicht sichtbar wird, ob eine Fläche von den einzelnen Prinzipien bevorzugt oder erst bei höheren Ausbauzielen genutzt würde.</div>
+        </sc-if>
+      </div>
       </sc-if>
 
       <!-- Regionsansicht: Ausbaumenge des Landkreises in GW, 0 … max(Leistungspotenzial, größte Marke). Startwert
@@ -456,7 +463,7 @@
         <div data-qpop style="position:relative;z-index:30;flex:none;margin:-4px 2px 12px">
           <button type="button" onClick="{{ toggleRegionQ }}" aria-expanded="{{ qRegionExpanded }}" aria-controls="qpop-region" style="background:none;border:none;padding:0;font-family:inherit;font-size:14px;line-height:1.4;color:#1d6b4c;text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left">Woher kommt diese Menge?</button>
           <sc-if value="{{ qRegionOpen }}" hint-placeholder-val="{{ false }}">
-            <div id="qpop-region" role="dialog" aria-label="Woher kommt diese Menge?" style="position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:min(480px,100%);background:#fff;border:1px solid #e4e1dd;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);padding:12px 14px;font-size:14px;line-height:1.55;color:#5c5451;text-wrap:pretty">{{ regionBudgetInfo }}<sc-if value="{{ regionBudgetInfoExtra }}" hint-placeholder-val="{{ false }}"><br>{{ regionBudgetInfoExtra }}</sc-if></div>
+            <div id="qpop-region" role="dialog" aria-label="Woher kommt diese Menge?" style="position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:min(480px,100%);background:#fff;border:1px solid #e4e1dd;border-radius:8px;box-shadow:0 4px 16px rgba(15,30,45,.16);padding:12px 14px;font-size:14px;line-height:1.55;color:#5c5451;text-wrap:pretty">{{ regionBudgetInfo }}<br>{{ regionBudgetInfoSolve }}<sc-if value="{{ regionBudgetInfoExtra }}" hint-placeholder-val="{{ false }}"><br>{{ regionBudgetInfoExtra }}</sc-if></div>
           </sc-if>
         </div>
       </sc-if>
@@ -1114,6 +1121,33 @@
               </sc-for>
             </div>
           </sc-if>
+          <!-- Landkreis-Block (Prompt C, 3): Ausbaukonsens des Landkreises = K aus der Zielwertsuche; bleibt bei gewählter
+               Gemeinde bzw. Rasterzelle stehen, deren Block folgt darunter -->
+          <sc-if value="{{ showRegionKrs }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:4px;padding:14px 0 0;border-top:1px solid #e5e2de">
+              <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6e6662">{{ rkLabel }}</div>
+              <div class="num" style="font-family:var(--display);font-size:32px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ rkValue }} <span style="font-size:16px;color:#5c5451;font-weight:500">GW</span></div>
+              <sc-if value="{{ rkFlag }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#8a452a;margin-top:4px;line-height:1.45">{{ rkFlag }}</div>
+              </sc-if>
+              <div style="font-size:14px;color:#5c5451;margin-top:1px">{{ rkAreaPct }} der Fläche Deutschlands</div>
+              <div style="display:flex;flex-direction:column;gap:5px;margin-top:9px">
+                <sc-for list="{{ rkDavonRows }}" as="rd" hint-placeholder-count="0">
+                  <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span style="color:#5c5451">{{ rd.k }}</span><span class="num" style="color:#2e2927;font-weight:500;text-align:right">{{ rd.v }}</span></div>
+                </sc-for>
+              </div>
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span style="color:#5c5451">Anteil an Zielerreichung</span><span class="num" style="color:#2e2927;font-weight:500">{{ rkGoalShare }}</span></div>
+                <div style="font-size:14px">
+                  <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5c5451">Einordnung</span><span style="color:#2e2927;font-weight:500;text-align:right">{{ rkEinordnung }}</span></div>
+                  <div style="color:#6e6662;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
+                </div>
+              </div>
+              <sc-if value="{{ rkSolveLine }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#5c5451;line-height:1.45;margin-top:12px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3">{{ rkSolveLine }}</div>
+              </sc-if>
+            </div>
+          </sc-if>
 
           <div style="{{ ovLeadBoxStyle }}">
             <!-- „i" neben dem Label klappt die Balken-Erklärung („Vom Ausbauziel … liegen … im Konsens") auf -->
@@ -1288,6 +1322,33 @@
               </sc-for>
             </div>
           </sc-if>
+          <!-- Landkreis-Block (Prompt C, 3): Ausbaukonsens des Landkreises = K aus der Zielwertsuche; bleibt bei gewählter
+               Gemeinde bzw. Rasterzelle stehen, deren Block folgt darunter -->
+          <sc-if value="{{ showRegionKrs }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:4px;padding:14px 0 0;border-top:1px solid #e5e2de">
+              <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6e6662">{{ rkLabel }}</div>
+              <div class="num" style="font-family:var(--display);font-size:32px;font-weight:700;color:var(--cons);line-height:1.1;margin-top:3px">{{ rkValue }} <span style="font-size:16px;color:#5c5451;font-weight:500">GW</span></div>
+              <sc-if value="{{ rkFlag }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#8a452a;margin-top:4px;line-height:1.45">{{ rkFlag }}</div>
+              </sc-if>
+              <div style="font-size:14px;color:#5c5451;margin-top:1px">{{ rkAreaPct }} der Fläche Deutschlands</div>
+              <div style="display:flex;flex-direction:column;gap:5px;margin-top:9px">
+                <sc-for list="{{ rkDavonRows }}" as="rd" hint-placeholder-count="0">
+                  <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span style="color:#5c5451">{{ rd.k }}</span><span class="num" style="color:#2e2927;font-weight:500;text-align:right">{{ rd.v }}</span></div>
+                </sc-for>
+              </div>
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span style="color:#5c5451">Anteil an Zielerreichung</span><span class="num" style="color:#2e2927;font-weight:500">{{ rkGoalShare }}</span></div>
+                <div style="font-size:14px">
+                  <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5c5451">Einordnung</span><span style="color:#2e2927;font-weight:500;text-align:right">{{ rkEinordnung }}</span></div>
+                  <div style="color:#6e6662;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
+                </div>
+              </div>
+              <sc-if value="{{ rkSolveLine }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#5c5451;line-height:1.45;margin-top:12px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3">{{ rkSolveLine }}</div>
+              </sc-if>
+            </div>
+          </sc-if>
 
           <sc-if value="{{ cellShowConflictHint }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding:11px 12px;background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;animation:fadeUp .3s">
@@ -1328,7 +1389,7 @@
             <sc-if value="{{ cellEinordnung }}" hint-placeholder-val="{{ true }}">
               <div style="font-size:14px">
                 <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#5c5451">Einordnung</span><span style="color:#2e2927;font-weight:500;text-align:right">{{ cellEinordnung }}</span></div>
-                <div style="color:#6e6662;margin-top:2px;line-height:1.4;text-align:right">(im Vergleich zu allen Landkreisen deutschlandweit, je km²)</div>
+                <div style="color:#6e6662;margin-top:2px;line-height:1.4;text-align:right">{{ cellEinordnungNote }}</div>
               </div>
             </sc-if>
           </div>
@@ -1486,7 +1547,7 @@
           <button onClick="{{ closeMethod }}" aria-label="Schließen" style="background:#f5f2ee;border:none;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:16px;color:#6e6662">×</button>
         </div>
         <div class="scroll" style="overflow-y:auto;padding:18px 26px 26px;font-size:14px;line-height:1.6;color:#2e2927">
-          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Die Methoden sind beschrieben, wie sie im Projekt verwendet werden. Die Werte in diesem Prototyp sind Platzhalter.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Potenzialflächen und Kennzahlen</div><div id="m-pot-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.1 Potenzialflächen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Windenergieanlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise Mindestwindgeschwindigkeiten, Abstände zu Siedlungen oder naturschutzrechtliche Einschränkungen. Auch die Entscheidung, ob Wälder oder Landschaftsschutzgebiete grundsätzlich ausgeschlossen werden, beeinflusst die verfügbaren Flächen.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir für Windenergie eine vergleichsweise großzügige Potenzialfläche auf Basis des RLI-Datensatzes. Sie berücksichtigt einen Mindestabstand von 400 Metern zu Siedlungen und eine Mindestwindgeschwindigkeit von 7,0 m/s in 160 Metern Höhe. Wälder und Landschaftsschutzgebiete werden nicht pauschal ausgeschlossen, sofern keine anderen Ausschlusskriterien greifen.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><div id="m-kenn-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.2 Potenzial-Kennzahlen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und der angenommenen Leistungsdichte. In EEquityMap verwenden wir für Windenergie einen Flächenbedarf von 42 m² je kW installierter Leistung (entspricht rund 0,24 MW/ha).</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt, wie viel Strom mit dieser Leistung jährlich erzeugt werden könnte. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von COSMO-REA6-Wetterdaten für das Jahr 2012 berechnet wurden.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 2.000 Stunden pro Jahr.</p><div id="m-pot-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.3 Potenzialflächen Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Solaranlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise naturschutzrechtliche Einschränkungen, die bisherige Flächennutzung oder die landwirtschaftliche Bodengüte.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir eine vergleichsweise großzügige Potenzialfläche auf Basis der im Projekt EmPowerPlan veröffentlichten Potenzialflächenanalyse (Kohler und Wingenbach, 2024). Dabei unterscheiden wir drei PV-Technologien mit unterschiedlichen Flächenansprüchen:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Klassische Freiflächen-PV:</b> Solaranlagen auf geeigneten Offenlandflächen.</li><li style="margin-bottom:5px"><b>Bifaziale Agri-PV:</b> Senkrecht aufgestellte, beidseitig stromerzeugende Module auf Ackerflächen mit geringer bis mittlerer Bodengüte. Eine landwirtschaftliche Nutzung zwischen den Modulreihen bleibt möglich.</li><li style="margin-bottom:5px"><b>Hochaufgeständerte Agri-PV:</b> Solaranlagen über Dauerkulturen wie Obst- oder Weinbau, die eine weitere landwirtschaftliche Nutzung ermöglichen.</li></ul><p style="margin:0 0 10px">Insgesamt umfasst die Potenzialkulisse rund 12 Millionen Hektar und damit etwa 37 % der deutschen Landesfläche.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und dem angenommenen technologiespezifischen Flächenbedarf. In EEquityMap unterscheiden wir drei PV-Technologien:</p><table class="num" style="border-collapse:collapse;margin:4px 0 12px;font-size:14px;min-width:360px"><caption style="text-align:left;font-weight:600;padding-bottom:4px">Flächenbedarf je PV-Technologie</caption><thead><tr><th scope="col" style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1;text-align:left;font-weight:600;color:#5c5451">Technologie</th><th scope="col" style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap;font-weight:600;color:#5c5451">Flächenbedarf</th></tr></thead><tbody><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Klassische Freiflächen-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">10 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Bifaziale Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">34,48 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Hochaufgeständerte Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">13,51 m²/kW</td></tr></tbody></table><p style="margin:0 0 10px">Die Annahmen berücksichtigen die unterschiedlichen Anlagenkonfigurationen und Flächenansprüche der Technologien.</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt die jährlich erzeugbare Strommenge. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von ERA5-Wetterdaten für das Jahr 2012 berechnet wurden. Dabei werden auch die unterschiedlichen Modulkonfigurationen berücksichtigt.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 1.000 Stunden pro Jahr.</p><div id="m-planung" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.4 Planungsflächen</div><p style="margin:0 0 10px"><span style="background:#fbefe9;border:1px dashed #e2a98f;border-radius:4px;padding:0 5px;color:#8a452a">[Platzhalter: Text folgt vom Projektteam]</span></p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Jedes Prinzip verteilt deshalb das ganze Ausbauziel. Die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen.</p><div id="m-verteil-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">3.1 Verteilmethodik Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie wird Freiflächen-PV in EEquityMap verteilt?</p><p style="margin:0 0 10px">In EEquityMap wird Freiflächen-PV als eine gemeinsame Technologie dargestellt. Im Hintergrund unterscheiden wir jedoch drei PV-Technologien: klassische Freiflächen-PV, bifaziale Agri-PV und hochaufgeständerte Agri-PV.</p><p style="margin:0 0 10px">Die gesamte vorgegebene PV-Leistung wird wie folgt aufgeteilt:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">92 % klassische Freiflächen-PV</li><li style="margin-bottom:5px">4 % bifaziale Agri-PV</li><li style="margin-bottom:5px">4 % hochaufgeständerte Agri-PV</li></ul><p style="margin:0 0 10px">Die räumliche Verteilung erfolgt anschließend schrittweise: Zuerst wird die klassische Freiflächen-PV nach der gewählten Gerechtigkeitsvorstellung verteilt, danach die bifaziale Agri-PV und schließlich die hochaufgeständerte Agri-PV. Bereits zugeordnete Flächen werden bei den folgenden Verteilungsschritten berücksichtigt, um eine mehrfache Belegung zu vermeiden.</p><p style="margin:0 0 10px">Die drei Ergebnisse werden anschließend zu einer gemeinsamen PV-Verteilung zusammengeführt, die in EEquityMap dargestellt wird.</p><p style="margin:0 0 10px">Die drei Technologien haben unterschiedliche Flächenbedarfe und Potenzialflächen. Deshalb beeinflussen sowohl der angenommene Technologiemix als auch die Reihenfolge der Verteilung das räumliche Ergebnis. Beides sind methodische Festlegungen, die neben der gewählten Gerechtigkeitsvorstellung wirken.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Ausbaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Ausbau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Ausbaukonsens gesamt</b>.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Ausbaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Ausbau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li><li style="margin-bottom:5px">Der Ausbaukonsens hängt nicht vom Bestand ab. Wird der Bestand berücksichtigt, teilt er sich je Landkreis bzw. Rasterzelle in <b>davon Bestand</b> = min(Ausbaukonsens, Bestand) und <b>Zubaubedarf</b> = max(Ausbaukonsens − Bestand, 0).</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge des Landkreises:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Diese Ausbaumenge wird nach den regionalen Prinzipien auf ein Raster aus 5 × 5 km großen Zellen verteilt. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Ausbaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">9. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
+          <div style="background:#fbefe9;border:1px solid #efcdbd;border-radius:8px;padding:10px 12px;color:#8a452a;margin-bottom:6px"><b>Stand: Prototyp.</b> Die Methoden sind beschrieben, wie sie im Projekt verwendet werden. Die Werte in diesem Prototyp sind Platzhalter.</div><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">1. Die Frage</div><p style="margin:0 0 10px">EEquityMap fragt nicht, wo Wind- und Solaranlagen technisch möglich sind, sondern wo ihr Ausbau als fair gelten würde. Darauf gibt es mehrere begründbare Antworten. Das Werkzeug rechnet sie einzeln durch und zeigt, wo sie übereinstimmen.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">2. Potenzialflächen und Kennzahlen</div><div id="m-pot-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.1 Potenzialflächen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Windenergieanlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise Mindestwindgeschwindigkeiten, Abstände zu Siedlungen oder naturschutzrechtliche Einschränkungen. Auch die Entscheidung, ob Wälder oder Landschaftsschutzgebiete grundsätzlich ausgeschlossen werden, beeinflusst die verfügbaren Flächen.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir für Windenergie eine vergleichsweise großzügige Potenzialfläche auf Basis des RLI-Datensatzes. Sie berücksichtigt einen Mindestabstand von 400 Metern zu Siedlungen und eine Mindestwindgeschwindigkeit von 7,0 m/s in 160 Metern Höhe. Wälder und Landschaftsschutzgebiete werden nicht pauschal ausgeschlossen, sofern keine anderen Ausschlusskriterien greifen.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><div id="m-kenn-wind" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.2 Potenzial-Kennzahlen Windenergie</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und der angenommenen Leistungsdichte. In EEquityMap verwenden wir für Windenergie einen Flächenbedarf von 42 m² je kW installierter Leistung (entspricht rund 0,24 MW/ha).</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt, wie viel Strom mit dieser Leistung jährlich erzeugt werden könnte. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von COSMO-REA6-Wetterdaten für das Jahr 2012 berechnet wurden.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 2.000 Stunden pro Jahr.</p><div id="m-pot-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.3 Potenzialflächen Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Warum sind die Potenzialflächen so wichtig?</p><p style="margin:0 0 10px">Die Potenzialflächen zeigen, wo Solaranlagen grundsätzlich gebaut werden könnten. Bei ihrer Ermittlung werden bereits technische, wirtschaftliche und rechtliche Kriterien berücksichtigt – beispielsweise naturschutzrechtliche Einschränkungen, die bisherige Flächennutzung oder die landwirtschaftliche Bodengüte.</p><p style="margin:0 0 10px">Welche Flächen als Potenzialflächen gelten, ist somit selbst schon eine Frage der Abwägung.</p><p style="margin:0 0 10px">In EEquityMap verwenden wir eine vergleichsweise großzügige Potenzialfläche auf Basis der im Projekt EmPowerPlan veröffentlichten Potenzialflächenanalyse (Kohler und Wingenbach, 2024). Dabei unterscheiden wir drei PV-Technologien mit unterschiedlichen Flächenansprüchen:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Klassische Freiflächen-PV:</b> Solaranlagen auf geeigneten Offenlandflächen.</li><li style="margin-bottom:5px"><b>Bifaziale Agri-PV:</b> Senkrecht aufgestellte, beidseitig stromerzeugende Module auf Ackerflächen mit geringer bis mittlerer Bodengüte. Eine landwirtschaftliche Nutzung zwischen den Modulreihen bleibt möglich.</li><li style="margin-bottom:5px"><b>Hochaufgeständerte Agri-PV:</b> Solaranlagen über Dauerkulturen wie Obst- oder Weinbau, die eine weitere landwirtschaftliche Nutzung ermöglichen.</li></ul><p style="margin:0 0 10px">Insgesamt umfasst die Potenzialkulisse rund 12 Millionen Hektar und damit etwa 37 % der deutschen Landesfläche.</p><p style="margin:0 0 10px">Diese großzügige Flächenauswahl ist bewusst gewählt: Wir wollen untersuchen, wie sich der Ausbau nach unterschiedlichen Gerechtigkeitsvorstellungen verteilen ließe, ohne die Ergebnisse bereits durch eine enge Vorauswahl weitgehend vorwegzunehmen.</p><p style="margin:0 0 10px">Je größer die verfügbare Potenzialfläche im Verhältnis zum Ausbauziel, desto mehr Spielraum bleibt für unterschiedliche gerechte Verteilungen. Müssen dagegen nahezu alle Potenzialflächen genutzt werden, führen selbst unterschiedliche Gerechtigkeitsvorstellungen zu ähnlichen Ergebnissen.</p><p style="margin:0 0 10px">Das bedeutet nicht, dass auf allen Potenzialflächen gebaut werden sollte. Die berechneten Verteilungen zeigen mögliche räumliche Ausbauoptionen, keine konkreten Standortentscheidungen. Ob einzelne Flächen tatsächlich genutzt werden können und sollen, muss anschließend unter Berücksichtigung weiterer ökologischer, gesellschaftlicher und planerischer Kriterien entschieden werden.</p><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie werden die Potenziale berechnet?</p><p style="margin:0 0 10px">Das Leistungspotenzial ergibt sich aus der verfügbaren Potenzialfläche und dem angenommenen technologiespezifischen Flächenbedarf. In EEquityMap unterscheiden wir drei PV-Technologien:</p><table class="num" style="border-collapse:collapse;margin:4px 0 12px;font-size:14px;min-width:360px"><caption style="text-align:left;font-weight:600;padding-bottom:4px">Flächenbedarf je PV-Technologie</caption><thead><tr><th scope="col" style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1;text-align:left;font-weight:600;color:#5c5451">Technologie</th><th scope="col" style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap;font-weight:600;color:#5c5451">Flächenbedarf</th></tr></thead><tbody><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Klassische Freiflächen-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">10 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Bifaziale Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">34,48 m²/kW</td></tr><tr><td style="padding:5px 10px 5px 0;border-bottom:1px solid #e8e5e1">Hochaufgeständerte Agri-PV</td><td style="padding:5px 0 5px 10px;border-bottom:1px solid #e8e5e1;text-align:right;white-space:nowrap">13,51 m²/kW</td></tr></tbody></table><p style="margin:0 0 10px">Die Annahmen berücksichtigen die unterschiedlichen Anlagenkonfigurationen und Flächenansprüche der Technologien.</p><p style="margin:0 0 10px">Das energetische Potenzial beschreibt die jährlich erzeugbare Strommenge. Dafür werden regional unterschiedliche Volllaststunden verwendet, die auf Basis von ERA5-Wetterdaten für das Jahr 2012 berechnet wurden. Dabei werden auch die unterschiedlichen Modulkonfigurationen berücksichtigt.</p><p style="margin:0 0 10px">Für Deutschland ergeben sich durchschnittliche Volllaststunden von rund 1.000 Stunden pro Jahr.</p><div id="m-planung" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">2.4 Planungsflächen</div><p style="margin:0 0 10px"><span style="background:#fbefe9;border:1px dashed #e2a98f;border-radius:4px;padding:0 5px;color:#8a452a">[Platzhalter: Text folgt vom Projektteam]</span></p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">3. Wie ein Prinzip den Ausbau verteilt</div><p style="margin:0 0 10px">Ein Gerechtigkeitsprinzip ist eine Regel, die jedem Landkreis einen Anteil am Ausbauziel zuweist — zum Beispiel nach Stromverbrauch, nach Bevölkerungsdichte oder nach verfügbarer Potenzialfläche. Die Anteile aller Landkreise ergeben zusammen 100 %.</p><p style="margin:0 0 10px">Verteilt wird nur bis zur Potenzialgrenze: Kein Landkreis erhält mehr als sein Leistungspotenzial. Ist eine Einheit voll, geht ihr Rest an die übrigen, im Verhältnis ihrer Anteile. Jedes Prinzip verteilt so das ganze Ausbauziel; die Prinzipien unterscheiden sich nicht in der Menge, sondern nur darin, wohin sie sie legen. Übersteigt das Ziel das gesamte Potenzial, wird nur das Potenzial verteilt.</p><p style="margin:0 0 10px">Der Prototyp rechnet bundesweit je Landkreis, die Anwendung auf einem 10 × 10-km-Raster.</p><div id="m-verteil-pv" style="font-weight:600;font-size:14px;color:#2e2927;margin:18px 0 4px;scroll-margin-top:12px">3.1 Verteilmethodik Freiflächen-PV</div><p style="margin:0 0 8px;font-style:italic;color:#5c5451">Wie wird Freiflächen-PV in EEquityMap verteilt?</p><p style="margin:0 0 10px">In EEquityMap wird Freiflächen-PV als eine gemeinsame Technologie dargestellt. Im Hintergrund unterscheiden wir jedoch drei PV-Technologien: klassische Freiflächen-PV, bifaziale Agri-PV und hochaufgeständerte Agri-PV.</p><p style="margin:0 0 10px">Die gesamte vorgegebene PV-Leistung wird wie folgt aufgeteilt:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">92 % klassische Freiflächen-PV</li><li style="margin-bottom:5px">4 % bifaziale Agri-PV</li><li style="margin-bottom:5px">4 % hochaufgeständerte Agri-PV</li></ul><p style="margin:0 0 10px">Die räumliche Verteilung erfolgt anschließend schrittweise: Zuerst wird die klassische Freiflächen-PV nach der gewählten Gerechtigkeitsvorstellung verteilt, danach die bifaziale Agri-PV und schließlich die hochaufgeständerte Agri-PV. Bereits zugeordnete Flächen werden bei den folgenden Verteilungsschritten berücksichtigt, um eine mehrfache Belegung zu vermeiden.</p><p style="margin:0 0 10px">Die drei Ergebnisse werden anschließend zu einer gemeinsamen PV-Verteilung zusammengeführt, die in EEquityMap dargestellt wird.</p><p style="margin:0 0 10px">Die drei Technologien haben unterschiedliche Flächenbedarfe und Potenzialflächen. Deshalb beeinflussen sowohl der angenommene Technologiemix als auch die Reihenfolge der Verteilung das räumliche Ergebnis. Beides sind methodische Festlegungen, die neben der gewählten Gerechtigkeitsvorstellung wirken.</p><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">4. Ausbaukonsens</div><p style="margin:0 0 10px">Sind mehrere Prinzipien gewählt, gilt je Landkreis der kleinste Wert, den eines dieser Prinzipien dort vorsieht. So viel Ausbau tragen alle gewählten Prinzipien mit. Die Summe über alle Landkreise ist der <b>Ausbaukonsens gesamt</b>.</p><p style="margin:0 0 10px">Mit steigender Menge wächst der Konsens: Je mehr Fläche gebraucht wird, desto stärker überschneiden sich die Verteilungen. Ist das Potenzial voll ausgeschöpft, verteilen alle Prinzipien gleich, und der Konsens liegt bei 100 %. Konsens ist eine rechnerische Überschneidung, kein gesellschaftlicher Konsens.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Der Ausbaukonsens ist immer kleiner als das Ausbauziel oder gleich groß. Der Rest ist Ausbau, über dessen Ort sich die Prinzipien nicht einig sind.</li><li style="margin-bottom:5px">Je mehr und je unterschiedlichere Prinzipien gewählt sind, desto kleiner wird der Konsens.</li><li style="margin-bottom:5px">Konsens heißt nicht, dass eine Fläche geeignet oder genehmigungsfähig ist.</li><li style="margin-bottom:5px">Der Ausbaukonsens hängt nicht vom Bestand ab. Wird der Bestand berücksichtigt, teilt er sich je Landkreis bzw. Rasterzelle in <b>davon Bestand</b> = min(Ausbaukonsens, Bestand) und <b>Zubaubedarf</b> = max(Ausbaukonsens − Bestand, 0).</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">5. Was den Konsens begrenzt und wo Prinzipien abweichen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Begrenzendes Prinzip:</b> das Prinzip mit dem kleinsten Wert in einem Landkreis. Es bestimmt dort den Konsens.</li><li style="margin-bottom:5px"><b>„So viel käme hinzu":</b> Für jedes Prinzip wird der Konsens noch einmal ohne dieses Prinzip berechnet. Die Differenz zeigt, wie stark es den Konsens insgesamt begrenzt.</li><li style="margin-bottom:5px"><b>Abweichung („Wie stark?"):</b> der größte Abstand, den eines der gewählten Prinzipien in einem Landkreis zum Konsens hat.</li><li style="margin-bottom:5px"><b>„Welche Prinzipien?":</b> Ein Prinzip gilt als abweichend, wenn es mehr als 20 % über dem Konsens liegt.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">6. Zwei Ebenen: Deutschland und Landkreis</div><p style="margin:0 0 10px">Bundesweit ist der Landkreis die kleinste Einheit. Für einen einzelnen Landkreis lässt sich die Verteilung verfeinern:</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbaumenge des Landkreises:</b> der Ausbau, den die bundesweit gewählten Prinzipien dem Landkreis gemeinsam zuweisen — das Minimum ihrer Greenfield-Verteilungen (<b>DE-Konsens</b>), bei einem Prinzip dessen Wert. Sie ist ein Ausbau-Wert: Der Bestand steckt darin und wird erst in der Verteilung im Landkreis einmal je Rasterzelle abgezogen. Sie lässt sich ändern; ein eigener Wert ist als Abweichung gekennzeichnet.</li><li style="margin-bottom:5px"><b>Verteilung im Landkreis:</b> Die Ausbaumenge T gibt vor, wie viel im Konsens der regionalen Prinzipien liegen soll. Die Rechnung sucht dafür die Menge A*, die die Prinzipien insgesamt auf ein Raster aus 5 × 5 km großen Zellen verteilen (bis zur Potenzialgrenze je Zelle), sodass ihr Konsens T erreicht. Bei einem regionalen Prinzip ist A* = T. Die regionalen Prinzipien starten mit der bundesweiten Auswahl und lassen sich getrennt ändern.</li><li style="margin-bottom:5px"><b>Gemeinden:</b> Gerechnet wird auf dem Raster. Der Wert einer Gemeinde ist die flächengewichtete Summe der Zellen, die sie überdeckt, und damit eine Schätzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">7. Rahmen</div><p style="margin:0 0 10px"><b>Ausbau, Bestand, Zubau</b><br><b>Ausbau</b> bezeichnet die insgesamt vorgesehene installierte Leistung nach der Verteilung.<br><b>Bestand</b> ist die bereits vorhandene Leistung.<br><b>Zubau</b> ist die zusätzlich erforderliche Leistung: <b>Zubau = max(Ausbau − Bestand, 0)</b><br>Wird der Bestand nicht berücksichtigt, entspricht der Ausbau dem Zubau.</p><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Ausbauziel:</b> hinterlegt sind 115 GW (2030), 160 GW (2035) und 215 GW (2045); der Regler erlaubt Werte dazwischen.</li><li style="margin-bottom:5px"><b>Kein Ausbaupfad:</b> Jedes Ziel wird für sich von Grund auf verteilt. Das Ergebnis für 2035 baut nicht auf dem für 2030 auf.</li><li style="margin-bottom:5px"><b>Technologie:</b> Wind und Freiflächen-PV werden getrennt gerechnet. Bei PV liegen die Prinzipien näher beieinander.</li><li style="margin-bottom:5px"><b>Bestandsanlagen berücksichtigen:</b> Der Bestand bleibt stehen und wird nicht zurückgebaut; er verringert nur, wie viel noch zugebaut werden muss.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">8. Referenzen und Szenarien</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px"><b>Historischer Ausbau:</b> die heutige Verteilung des Bestands, auf das gewählte Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Planungsflächen:</b> Verteilung nach dem Anteil offiziell ausgewiesener Flächen, ebenfalls auf das Ausbauziel hochgerechnet.</li><li style="margin-bottom:5px"><b>Vergleich A − B:</b> Die Karte zeigt je Landkreis die Differenz der beiden Seiten. Eine Referenz verteilt das ganze Ausbauziel, ein Szenario nur seinen Ausbaukonsens — ein Teil der Differenz ist deshalb dieser Mengenunterschied und nicht nur die räumliche Verteilung.</li><li style="margin-bottom:5px"><b>Szenarien</b> speichern Prinzipien, Rahmen und Ergebnis. Sie gelten nur für die laufende Sitzung.</li></ul><div style="font-weight:600;font-size:16px;color:#2e2927;margin:22px 0 6px">9. Grenzen</div><ul style="margin:0 0 10px;padding-left:20px"><li style="margin-bottom:5px">Das Werkzeug macht Aussagen über Verteilungsgerechtigkeit, nicht über Eignung, Genehmigung, Netzanschluss oder Wirtschaftlichkeit einzelner Flächen.</li><li style="margin-bottom:5px">Die Prinzipien sind Modellannahmen. Keines ist objektiv richtig; andere Formulierungen desselben Prinzips führen zu anderen Karten.</li><li style="margin-bottom:5px">Karten in GW bevorzugen große Landkreise: Ein großer Landkreis kann dunkel erscheinen, weil er groß ist.</li><li style="margin-bottom:5px">Jede Einzelkarte hat ihre eigene Farbskala. Die Farbtiefe ist zwischen zwei Karten nicht direkt vergleichbar.</li></ul>
         </div>
       </div>
     </div>
@@ -1650,6 +1711,38 @@ const KRS_GEO = [{"id":"01001","name":"Flensburg","bez":"Kreisfreie Stadt","ewz"
 // Leistungspotenzial = Fläche × Leistungsdichte, Energie = Leistung × Volllaststunden / 1000; das
 // Leistungspotenzial gilt als Gesamtpotenzial inklusive Bestand. Gemeinden (R.13) kommen unter gem dazu,
 // mit denselben Feldern; ihre Summe soll den Landkreis ergeben.
+// ============ VERTEILUNG MIT POTENZIALGRENZE (Prompt C, 1) ============
+// Je Prinzip und Menge A: x_i = min(c_i, λ · w_i) mit dem λ, für das Σ x_i = A gilt (w = Greenfield-Anteile,
+// c = Leistungspotenzial je Einheit). λ wird exakt bestimmt (Einheiten nach c_i / w_i sortiert auffüllen) —
+// dasselbe Ergebnis wie eine Bisektion über λ, ohne Toleranz. Rückfall: Sind alle Einheiten mit w_i > 0 voll,
+// geht der Rest im Verhältnis des freien Potenzials an die übrigen. A ≥ Σ c: jede Einheit bekommt c_i.
+function capFill(w, c, A) {
+  const n = w.length, x = new Array(n).fill(0);
+  if (!(A > 0)) return x;
+  let C = 0; for (let i = 0; i < n; i++) C += c[i] > 0 ? c[i] : 0;
+  if (A >= C) return c.map(v => Math.max(0, v));
+  const idx = []; let Cw = 0, Wsum = 0;
+  for (let i = 0; i < n; i++) if (w[i] > 0 && c[i] > 0) { idx.push(i); Cw += c[i]; Wsum += w[i]; }
+  if (A <= Cw) {
+    idx.sort((a, b) => c[a] / w[a] - c[b] / w[b]);
+    let rest = A, wRest = Wsum, k = 0;
+    while (k < idx.length) {
+      const i = idx[k];
+      if (c[i] / w[i] <= rest / wRest) { x[i] = c[i]; rest -= c[i]; wRest -= w[i]; k++; } else break;
+    }
+    const lam = wRest > 0 ? rest / wRest : 0;
+    for (; k < idx.length; k++) x[idx[k]] = lam * w[idx[k]];
+    return x;
+  }
+  idx.forEach(i => { x[i] = c[i]; });
+  let F = 0; const free = [];
+  for (let i = 0; i < n; i++) if (!(w[i] > 0) && c[i] > 0) { free.push(i); F += c[i]; }
+  free.forEach(i => { x[i] = c[i] * (A - Cw) / F; });
+  return x;
+}
+// Toleranz der Zielwertsuche in der Region (GW)
+const REGION_SOLVE_TOL = 0.0005;
+
 const POT_PARAMS = {
   wind: { mwPerHa: [0.2, 0.3], flh: 2000, areaFrac: [0.04, 0.12], bestandGW: null },
   pv:   { mwPerHa: [0.8, 1.0], flh: 1000, areaFrac: [0.012, 0.04], bestandGW: 25 }
@@ -1819,7 +1912,12 @@ class Component extends DCLogic {
   };
 
   // Referenzwerte einer Hub-Referenz auf beliebigen Zellen (Landkreise oder 5×5-km-Raster), auf ein Ziel skaliert.
-  refValsFor(rid, cells, target) { const r = this.hubRefs.find(x => x.id === rid); const raw = cells.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0); return raw.map(v => v/su*target); }
+  // Mit Potenzialgrenze wie die Prinzipien (Prompt C, Annahme): Deutschland je Landkreis, Region je Rasterzelle.
+  refValsFor(rid, cells, target, tech, krsId) {
+    const r = this.hubRefs.find(x => x.id === rid); const raw = cells.map(c => Math.max(0.01, r.field(c))); const su = raw.reduce((a,b)=>a+b,0);
+    const caps = cells === this.krs ? this.natCapsFor(tech) : this.regionCapsFor(krsId, tech);
+    return capFill(raw.map(v => v / su), caps, target);
+  }
 
   startReveal() {
     if (this._raf) cancelAnimationFrame(this._raf);
@@ -2399,14 +2497,75 @@ class Component extends DCLogic {
     return this._natShareCache[key] || (this._natShareCache[key] = this.sharesFor(pid, { tech, account: false }, this.krs));
   }
 
-  // Greenfield-Ausbau, den jedes bundesweit gewählte Prinzip allein diesem Landkreis zuweist (Anteil × Ausbauziel),
+  // Leistungspotenzial je Landkreis (GW) aus „Bestand & Potenziale" — volles Potenzial, der Bestand gehört zum Ausbau
+  natCapsFor(tech) {
+    this._natCaps = this._natCaps || {};
+    return this._natCaps[tech] || (this._natCaps[tech] = this.krs.map(k => { const f = PotentialData.forKrs(k.id, tech); return f ? f.potLeistungMW / 1000 : 0; }));
+  }
+  // Bundesweiter Ausbau eines Prinzips je Landkreis mit Potenzialgrenze (capFill), gecacht je Prinzip/Technologie/Menge
+  natAusbauFor(pid, tech, A) {
+    const key = pid + '|' + tech + '|' + A;
+    this._natFill = this._natFill || new Map();
+    if (this._natFill.has(key)) return this._natFill.get(key);
+    if (this._natFill.size > 400) this._natFill.clear();
+    const x = capFill(this.natSharesFor(pid, tech), this.natCapsFor(tech), A);
+    this._natFill.set(key, x);
+    return x;
+  }
+  // Leistungspotenzial je 5 × 5-km-Zelle (GW): Es gibt keine Zelldaten — das Potenzial des Landkreises wird nach dem
+  // Potenzialmuster der Zellen (Feld „potential", dasselbe wie im Prinzip „Gleicher Anteil an Potenzialfläche")
+  // aufgeteilt; die Summe ist das Potenzial des Landkreises.
+  regionCapsFor(krsId, tech) {
+    const key = krsId + '|' + tech;
+    this._regionCaps = this._regionCaps || {};
+    if (this._regionCaps[key]) return this._regionCaps[key];
+    const cells = this.regionCellsFor(krsId).cells, f = PotentialData.forKrs(krsId, tech);
+    const tot = f ? f.potLeistungMW / 1000 : 0, sp = cells.reduce((a, c) => a + c.potential, 0) || 1;
+    return (this._regionCaps[key] = cells.map(c => tot * c.potential / sp));
+  }
+  // Ausbau eines Prinzips je Rasterzelle des Landkreises mit Potenzialgrenze (Menge A)
+  regionAusbauFor(krsId, pid, tech, A) {
+    const cells = this.regionCellsFor(krsId).cells;
+    return capFill(this.sharesFor(pid, { tech }, cells), this.regionCapsFor(krsId, tech), A);
+  }
+  // Zielwertsuche in der Region (Prompt C, 2): T = Menge, die im Konsens der regionalen Prinzipien liegen soll.
+  // Ein Prinzip: A* = T. Mehrere: A* in [T, Σc] per Bisektion, bis K(A*) − T ≤ REGION_SOLVE_TOL. K(A) steigt mit A
+  // nicht fallend und ist ≤ A, deshalb liegt die Lösung in diesem Intervall. T > Σc: nicht erreichbar.
+  regionSolve(krsId, sel, T, tech) {
+    const key = [krsId, tech, sel.slice().sort().join(','), T].join('|');
+    this._solveCache = this._solveCache || new Map();
+    if (this._solveCache.has(key)) return this._solveCache.get(key);
+    if (this._solveCache.size > 200) this._solveCache.clear();
+    const cells = this.regionCellsFor(krsId).cells, caps = this.regionCapsFor(krsId, tech);
+    const C = caps.reduce((a, b) => a + b, 0);
+    // Rundung von Feld/Regler (0,01 GW) darf das Potenzial nicht scheinbar überschreiten
+    if (T > C && T - C <= 0.005) T = C;
+    const Kof = A => { const xs = sel.map(p => this.regionAusbauFor(krsId, p, tech, A)); let K = 0; for (let i = 0; i < caps.length; i++) { let m = Infinity; xs.forEach(x => { if (x[i] < m) m = x[i]; }); K += m === Infinity ? 0 : m; } return K; };
+    let out;
+    if (!sel.length || !(T > 0)) out = { Astar: Math.max(0, T || 0), K: 0, C, reachable: true };
+    else if (T > C + 1e-9) out = { Astar: C, K: Kof(C), C, reachable: false };
+    else if (sel.length === 1) out = { Astar: T, K: T, C, reachable: true };
+    else {
+      let lo = T, hi = C, Khi = Kof(hi), Klo = Kof(lo);
+      if (Klo >= T - REGION_SOLVE_TOL) { hi = lo; Khi = Klo; }
+      for (let it = 0; it < 80 && Khi - T > REGION_SOLVE_TOL * 0.5 && hi - lo > 1e-9; it++) {
+        const mid = (lo + hi) / 2, Km = Kof(mid);
+        if (Km < T) lo = mid; else { hi = mid; Khi = Km; }
+      }
+      out = { Astar: hi, K: Khi, C, reachable: true };
+    }
+    this._solveCache.set(key, out);
+    return out;
+  }
+
+  // Ausbau, den jedes bundesweit gewählte Prinzip allein diesem Landkreis zuweist (mit Potenzialgrenze, Prompt C),
   // in der Reihenfolge der Prinzipienliste — die Marken am Regler der Region.
   natValuesFor(krsId, over) {
     const S = Object.assign({}, this.state, over || {});
     const idx = this.krs.findIndex(k => k.id === krsId);
     if (idx < 0) return [];
     return this.principles.filter(p => p.available && S.selected.includes(p.id))
-      .map(p => ({ pid: p.id, v: this.natSharesFor(p.id, S.tech)[idx] * S.targetGW }));
+      .map(p => ({ pid: p.id, v: this.natAusbauFor(p.id, S.tech, S.targetGW)[idx] }));
   }
 
   // Startwert der Ausbaumenge des Landkreises (DE-Konsens): Minimum der bundesweiten Greenfield-Werte über die
@@ -2681,7 +2840,13 @@ class Component extends DCLogic {
       : cells.map(c => { const f = PotentialData.forKrs(c.id, calcTech); return f ? f.bestandMW / 1000 : 0; });
     const shareCache = {}, gwCache = {}, ausbauCache = {};
     const shr = pid => shareCache[pid] || (shareCache[pid] = this.sharesFor(pid, { tech: calcTech, account: false }, cells));
-    const ausbauArr = pid => ausbauCache[pid] || (ausbauCache[pid] = shr(pid).map(a => a * target));
+    // Verteilung mit Potenzialgrenze (Prompt C, 1). Deutschland: Menge = Ausbauziel, Potenzial je Landkreis.
+    // Region: Zielwertsuche — target ist T (soll im Konsens liegen), verteilt wird A* (regionSolve).
+    const caps = isRegion ? this.regionCapsFor(S.region.krsId, calcTech) : this.natCapsFor(calcTech);
+    const capSum = caps.reduce((a, b) => a + b, 0);
+    const solve = isRegion && hasRegionResult ? this.regionSolve(S.region.krsId, sel, target, calcTech) : null;
+    const distA = isRegion ? (solve ? solve.Astar : 0) : target;
+    const ausbauArr = pid => ausbauCache[pid] || (ausbauCache[pid] = isRegion ? this.regionAusbauFor(S.region.krsId, pid, calcTech, distA) : this.natAusbauFor(pid, calcTech, distA));
     // gwArr = Ausbau je Prinzip (Grundlage aller Konsenszahlen); zubauArr = Zubau je Prinzip (nur für die Kartenebene
     // „Zubau" der Einzelverteilung, sonst identisch mit dem Ausbau)
     const gwArr = ausbauArr;
@@ -2774,6 +2939,8 @@ class Component extends DCLogic {
     // „nicht aktuell" (R.7): Karte wirkt deaktiviert — Region stark durchscheinend, grauer Grund um die Region,
     // dazu eine graue gestrichelte Umrandung
     R.mapOpacity = regionNeedsGate ? '0.3' : (R.regionStaleBar ? '0.35' : '1');
+    // Nicht erreichbare Ausbaumenge (T > Potenzial): keine Karte, die Erfolg vorgibt (Prompt C, 2)
+    if (solve && !solve.reachable) R.mapOpacity = '0.35';
     R.mapStaleOutline = R.regionStaleBar ? 'background:#ece9e5;outline:2px dashed #a5a29e;outline-offset:3px' : '';
     R.startRegionCompute = () => this.startRegionCompute();
     R.cancelRegionCompute = () => this.cancelRegionCompute();
@@ -3255,7 +3422,7 @@ class Component extends DCLogic {
         R.scenDiffHint = 'Kartenvergleich nur für zwei Szenarien derselben Ebene möglich.';
       } else {
         const lvl = lvlRegion ? this.regionCellsFor(lvlKrs) : { cells: this.krs, vb: this.krsVb, outlineD: '' };
-        const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget) : o.cellCons;
+        const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget, hubTech, lvlKrs) : o.cellCons;
         const va = valsOf(A), vb = valsOf(B);
         const d = va.map((v, i) => v - vb[i]);
         R.showScenDiffMap = true;
@@ -3381,7 +3548,9 @@ class Component extends DCLogic {
           ? { k: 'Ausbaumenge', v: this.fmt(o.target) + ' GW (' + (o.regionOwn ? 'eigener Wert' : this.startNameOf(o.nationalSel)) + ')', vStyle: numCss }
           : { k: 'Ausbauziel', v: this.fmt(o.target) + ' GW', vStyle: numCss });
         rows.push({ k: 'Ausbaukonsens', v: this.fmt(o.consensusTotal) + ' GW', vStyle: numCss });
-        rows.push({ k: '% im Konsens', v: o.target ? this.pct(o.consensusTotal / o.target) : '—', vStyle: numCss });
+        // Region: Konsensanteil = K / A* (gegen T wäre er immer 100 %)
+        const pctBase = o.isRegion && o.regionAstar ? o.regionAstar : o.target;
+        rows.push({ k: '% im Konsens', v: pctBase ? this.pct(o.consensusTotal / pctBase) : '—', vStyle: numCss });
         rows.push({ k: 'Begrenzend', v: o.limitingName || '—', vStyle: txtCss });
         return Object.assign(card, { kind: 'Szenario', name: o.name, rows });
       });
@@ -3739,6 +3908,8 @@ class Component extends DCLogic {
         tech: snap.tech, // Zieljahr-Knopf nur übernehmen, wenn das Ausbauziel seit der Berechnung nicht geändert wurde
         targetKey: snap.targetGW === S.targetGW ? S.targetKey : null, targetGW: snap.targetGW, freeTarget: snap.targetGW === S.targetGW ? S.freeTarget : true, account: snap.account,
         target, consensusTotal, limitingName,
+        // Region (Prompt C, 2): target = T (soll im Konsens liegen), regionAstar = verteilte Rechenmenge A*, consensusTotal = K
+        regionAstar: isRegion ? distA : null,
         // Region: Ausbaumenge (= target, GW) und ob es ein eigener Wert oder der Startwert war
         regionOwn: isRegion ? !!S.regionComputedOwn : false,
         // Startwert (DE-Konsens) zum Zeitpunkt der Berechnung — für den Skalierungshinweis der Referenzen im Hub (R.8)
@@ -3879,18 +4050,15 @@ class Component extends DCLogic {
       // (= kleinste Marke, s. natBudgetFor). Nur zur Orientierung: nicht anklickbar, kein Einrasten.
       const natVals = this.natValuesFor(S.region.krsId), many = natVals.length >= 2;
       const maxMark = natVals.length ? Math.max(...natVals.map(o => o.v)) : 0;
-      // Bereich 0 … größerer Wert aus Leistungspotenzial und größter Marke
-      const maxGW = Math.ceil(Math.max(potGW, maxMark) * 100) / 100;
+      // Bereich immer 0 … Leistungspotenzial des Landkreises (Prompt C, 1): Mit der Potenzialgrenze liegen die Marken nie
+      // darüber; die frühere Sonderbeschriftung (Bereichsende = größte Marke) entfällt
+      const maxGW = potGW;
       R.rtMax = maxGW;
       R.rtValue = Math.min(liveBudget, maxGW);
-      R.rtOverPotential = liveDeRec > potGW;
-      R.rtOverText = (many ? 'Der DE-Konsens' : 'Der Startwert') + ' liegt über dem Leistungspotenzial dieses Landkreises.';
-      // Bereichsende benennen: sonst wirkt es wie eine beliebige Skala (Quelle sind die Potenzialflächen, nicht „Deutschland")
-      const overPot = maxMark > potGW;
-      R.rtMaxLabel = this.fmt(maxGW) + ' GW' + (overPot ? '' : ' Potenzial');
-      R.rtMaxTitle = overPot
-        ? 'Bereichsende = größte Marke. Das Leistungspotenzial der Potenzialflächen dieses Landkreises liegt mit ' + this.fmt(potGW) + ' GW darunter.'
-        : 'Leistungspotenzial der Potenzialflächen dieses Landkreises (wie in „Bestand & Potenziale").';
+      R.rtOverPotential = false;
+      R.rtOverText = '';
+      R.rtMaxLabel = this.fmt(maxGW) + ' GW Potenzial';
+      R.rtMaxTitle = 'Leistungspotenzial der Potenzialflächen dieses Landkreises (wie in „Bestand & Potenziale").';
       R.rtSub = many
         ? 'Startwert aus dem bundesweiten Konsens von ' + natVals.length + ' Gerechtigkeitsprinzipien.'
         : natVals.length ? 'Startwert aus der bundesweiten Verteilung nach ' + this.byId[natVals[0].pid].name + '.' : '';
@@ -3996,8 +4164,10 @@ class Component extends DCLogic {
       : 'Aktuell untersuchte Ausbaumenge: ' + this.fmt(liveBudget) + ' GW';
     // „i" an der Headline: woher die Ausbaumenge kommt (Text je nach Zahl der bundesweiten Prinzipien)
     R.regionBudgetInfo = natMany
-      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsprinzipien einigen. Sie ist kleiner oder gleich den Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen, mit dessen Umsetzung begonnen werden könnte. Sie ist nicht der vollständige Beitrag des Landkreises zum Ausbauziel. Wie diese Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.'
-      : 'Diese Ausbaumenge entspricht dem Anteil des Landkreises am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Landkreise wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb des Landkreises verteilt wird, kann nach den vor Ort relevanten Prinzipien neu bestimmt werden.';
+      ? 'Diese Ausbaumenge entspricht dem Teil des regionalen Ausbaus, auf den sich alle ausgewählten bundesweiten Gerechtigkeitsvorstellungen einigen. Sie ist kleiner als die Ausbauempfehlungen der einzelnen Verteilungen und kann als gemeinsam getragener Ausgangspunkt für den regionalen Ausbau dienen. Wie diese Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Gerechtigkeitsvorstellungen neu bestimmt werden.'
+      : 'Diese Ausbaumenge entspricht dem Anteil der Region am bundesweiten Ausbauziel nach dem gewählten Gerechtigkeitsprinzip. Zusammen mit den Ausbauempfehlungen für alle anderen Regionen wird das bundesweite Ausbauziel erreicht. Wie die Ausbaumenge innerhalb der Region verteilt wird, kann nach den vor Ort relevanten Gerechtigkeitsvorstellungen neu bestimmt werden.';
+    // Zusatz (Prompt C, 3, Annahme): was die Detailauswertung mit der Menge macht
+    R.regionBudgetInfoSolve = 'Die Detailauswertung verteilt so, dass diese Menge im Konsens der regionalen Prinzipien liegt.';
     R.regionBudgetInfoExtra = S.account ? 'Die Ausbaumenge enthält auch die Anlagen, die schon stehen. Der Bestand wird in der Detailauswertung abgezogen.' : '';
 
     // Reiter: Konsens → Was begrenzt? → Dissens → Einzelverteilungen → Szenarien vergleichen.
@@ -4150,6 +4320,39 @@ class Component extends DCLogic {
     };
     R.cellDavonRows = [];
     R.cellEinordnung = ''; R.cellBudgetLine = '';
+    R.cellEinordnungNote = '(im Vergleich zu allen Landkreisen deutschlandweit, je km²)';
+
+    // ---- Region: Landkreis-Block (Prompt C, 3) — ersetzt die frühere Regionsübersicht (Kennzahl, Balken, „Kleiner als …") ----
+    // K = Ausbaukonsens aus der Zielwertsuche (bei einem Prinzip dessen Ausbau, = T). Anteil an Zielerreichung am
+    // bundesweiten Ausbauziel der Berechnung; Einordnung wie in Deutschland (je km², gegenüber allen Landkreisen).
+    const natTargetCalc = isRegion ? (S.regionComputedTargetGW || S.targetGW) : S.targetGW;
+    const krsMainArr = stufe >= 2 ? consCells : (stufe === 1 ? gwSel[singlePid] : null);
+    const regionK = krsMainArr ? krsMainArr.reduce((a, b) => a + b, 0) : 0;
+    R.showRegionKrs = !!(isRegion && R.showChain && solve && stufe >= 1);
+    if (R.showRegionKrs) {
+      const krsObj = this.krs.find(k => k.id === S.region.krsId) || {};
+      R.rkLabel = stufe >= 2 ? 'Ausbaukonsens des Landkreises' : 'Ausbau des Landkreises (' + this.byId[singlePid].name + ')';
+      R.rkValue = this.fmt(regionK);
+      R.rkFlag = !solve.reachable
+        ? 'Diese Menge lässt sich im Landkreis nicht im Konsens verorten. Höchstens ' + this.fmt(solve.C) + ' GW.'
+        : regionK - target > REGION_SOLVE_TOL ? 'Die Rechnung erreicht ' + this.fmt(regionK) + ' GW statt ' + this.fmt(target) + ' GW.' : '';
+      R.rkAreaPct = pctArea((krsObj.kfl || 0) / DE_KM2);
+      R.rkGoalShare = natTargetCalc ? this.pct(regionK / natTargetCalc, 2) : '—';
+      R.rkEinordnung = einordnungFor(regionK, krsObj.kfl || 0);
+      R.rkDavonRows = [];
+      if (accEff) {
+        const bFull = bestGW.reduce((a, b) => a + b, 0);
+        const bIn = krsMainArr.reduce((a, v, i) => a + Math.min(v, bestGW[i]), 0);
+        const need = krsMainArr.reduce((a, v, i) => a + Math.max(v - bestGW[i], 0), 0);
+        const over = bFull > regionK + 1e-12 && need < 1e-12, dv = this.davonFmt(regionK, bIn, 2);
+        R.rkDavonRows = [{ k: over ? 'Bestand' : 'davon Bestand', v: (over ? this.fmt(bFull) : dv.b) + ' GW' },
+          { k: stufe >= 2 ? 'Zubaubedarf' : 'Zubau', v: (over ? this.davonFmt(regionK, regionK, 2).n : dv.n) + ' GW' }];
+      }
+      // Annahme (Prompt C, 3): wie viel die Rechnung insgesamt verteilt, damit alle diese Menge mittragen
+      R.rkSolveLine = stufe >= 2 && solve.reachable
+        ? 'Damit alle regionalen Prinzipien diese Menge mittragen, verteilt die Rechnung insgesamt ' + this.fmt(solve.Astar) + ' GW (Konsensanteil ' + (solve.Astar > 0 ? this.pct(regionK / solve.Astar, 1) : '—') + ').'
+        : '';
+    }
     R.cellBarsHeadStyle = 'font-size:14px;font-weight:600;color:#2e2927;margin-bottom:9px';
 
     if (!selectedCell && !selectedGemeinde) {
@@ -4326,7 +4529,10 @@ class Component extends DCLogic {
           R.anBlockers = view === 'minimum'; mkBlockers();
         }
       }
-      R.ovLeadBoxStyle = hideLead ? 'display:none' : 'margin-top:16px;padding:14px 0 0;border-top:1px solid #e5e2de';
+      // Region: Kennzahl, Balken und „% der Ausbaumenge" entfallen — der Landkreis-Block steht darüber (Prompt C, 3)
+      // Deutschland: Ziel über dem gesamten Potenzial — verteilt wird nur Σc (Prompt C, 1)
+      if (!isRegion && target > capSum + 1e-9 && R.ovLeadValue) R.ovLeadWhy = 'Das Ziel übersteigt das Potenzial dieses Gebiets (' + this.fmt(capSum) + ' GW).';
+      R.ovLeadBoxStyle = hideLead || isRegion ? 'display:none' : 'margin-top:16px;padding:14px 0 0;border-top:1px solid #e5e2de';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
       R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#1d6b4c' : '#d0cdc9') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1d6b4c' : '#6e6662') + ';font-style:italic;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5c5451;margin-top:8px;line-height:1.45' : 'display:none';
@@ -4340,8 +4546,7 @@ class Component extends DCLogic {
       R.cellScope = isRegion ? (S.region.label + ' · 5 × 5 km Raster') : '';
       R.cellKindLabel = isRegion ? 'Rasterzelle' : c.kind;
       // Deutschland, nur mit Bestand: was die Detailauswertung übernimmt (ohne Bestand ist das der Ausbaukonsens selbst)
-      if (isRegion && accEff && R.showChain) R.chainSteps = R.chainSteps.concat([{ label: 'Bestand in dieser Rasterzelle', items: [],
-        value: this.fmtUnit(c.bestandGW || 0, true) + ' GW', tag: '', tagStyle: 'display:none', sub: '' }]);
+      // Bestand der Rasterzelle steht im Zellblock („davon Bestand“), nicht mehr in der Herleitung (Prompt C, 3)
       // Zeile „Ausbaumenge im DE-Konsens" entfällt: sie ist jetzt derselbe Wert wie der Ausbaukonsens (Prompt B, 4)
       R.cellBudgetLine = '';
 
@@ -4448,7 +4653,8 @@ class Component extends DCLogic {
       const mainI = stufe >= 2 ? consCells[i] : gwSel[singlePid][i];
       setHero(mainI, Math.min(mainI, bestGW[i]), Math.max(mainI - bestGW[i], 0), bestGW[i]);
       R.cellAreaPct = pctArea(areaOf(i) / DE_KM2);
-      R.cellEinordnung = einordnungFor(mainI, areaOf(i));
+      // Rasterzelle (Region): keine Einordnung (Annahme, Prompt C, 3)
+      R.cellEinordnung = isRegion ? '' : einordnungFor(mainI, areaOf(i));
       // Invarianten (bei jedem Zellklick/Tabwechsel neu berechnet, nichts zwischengespeichert):
       // Ausbaukonsens ≤ Zubau ≤ Ausbau; gefüllter Anteil ≤ voller Balken.
       R.cellConsFill = (neu && consCells) ? (Math.min(consCells[i], neu) / neu * 100).toFixed(1) + '%' : '0%';
@@ -4461,9 +4667,10 @@ class Component extends DCLogic {
         R.dismissConflictHint = () => this.setState({ seenConflictHint: true });
       } else R.cellShowConflictHint = false;
       // erweitert
-      R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / target, 2);
+      // Region: Anteil am bundesweiten Ausbauziel (Prompt C, 3)
+      R.cellGoalShare = this.pct((stufe>=2?consCells[i]:gwSel[singlePid][i]) / (isRegion ? natTargetCalc : target), 2);
       R.goalInfoText = isRegion
-        ? 'Wie viel diese Rasterzelle zur Ausbaumenge des Landkreises beiträgt — ihr Ausbaukonsens geteilt durch die gesamte Ausbaumenge.'
+        ? 'Wie viel diese Rasterzelle zum bundesweiten Ausbauziel beiträgt — ihr Ausbaukonsens geteilt durch das bundesweite Ausbauziel.'
         : (c.kind === 'Stadt' ? 'Wie viel diese Stadt zum Ausbauziel beiträgt — ihr' : 'Wie viel dieser Landkreis zum Ausbauziel beiträgt — sein') + ' Ausbaukonsens geteilt durch das gesamte Ausbauziel.';
       R.toggleGoalInfo = () => this.setState({ goalInfo: !S.goalInfo });
       R.goalInfoStyle = (S.goalInfo ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5c5451;line-height:1.5;margin-top:2px;padding:2px 0 2px 12px;border-left:2px solid #dad7d3';
@@ -4494,8 +4701,7 @@ class Component extends DCLogic {
       // Hauptzahl/Anteile/Einordnung aus den flächengewichteten Zellwerten (Fläche ≈ Zellanteile × 25 km²)
       const gNeu = gAgg(cells.map((c, i) => neuOf(i)));
       const gBest = gAgg(bestGW);
-      if (isRegion && accEff && R.showChain) R.chainSteps = R.chainSteps.concat([{ label: 'Bestand in dieser Gemeinde', items: [],
-        value: this.fmtUnit(gBest, true) + ' GW', tag: '', tagStyle: 'display:none', sub: '' }]);
+      // Bestand der Gemeinde steht im Gemeindeblock („davon Bestand“), nicht mehr in der Herleitung (Prompt C, 3)
       const gTotal = (accEff ? gBest : 0) + gNeu;
       const gKm2 = covWeight * CELL_KM2;
       R.cellTotal = this.fmtUnit(gTotal, isRegion); R.cellBestand = this.fmtUnit(gBest, isRegion); R.cellNew = this.fmtUnit(gNeu, isRegion);
@@ -4504,7 +4710,13 @@ class Component extends DCLogic {
       const gMain = gAgg(gMainArr);
       setHero(gMain, gAgg(gMainArr.map((v, i) => Math.min(v, bestGW[i]))), gAgg(gMainArr.map((v, i) => Math.max(v - bestGW[i], 0))), gBest);
       R.cellAreaPct = pctArea(gKm2 / DE_KM2);
-      R.cellEinordnung = einordnungFor(gMain, gKm2);
+      // Einordnung gegenüber allen Gemeinden des Landkreises (Annahme, Prompt C, 3): Wert je km² der Gemeinde gegenüber
+      // dem Landkreis insgesamt (Ausbaukonsens / Rasterfläche), mit denselben Schwellen wie bundesweit
+      if (isRegion) {
+        const krsPerKm2 = regionK / (cells.length * CELL_KM2), r = gKm2 && krsPerKm2 ? (gMain / gKm2) / krsPerKm2 : 0;
+        R.cellEinordnung = stufe >= 1 && gKm2 && krsPerKm2 ? 'Ausbau ' + (r > 1.15 ? 'überdurchschnittlich' : r < 0.85 ? 'unterdurchschnittlich' : 'durchschnittlich') : '';
+        R.cellEinordnungNote = '(im Vergleich zu allen Gemeinden des Landkreises, je km²)';
+      } else R.cellEinordnung = einordnungFor(gMain, gKm2);
 
       if (stufe >= 2) {
         const gwSelAgg = {}; sel.forEach(p => gwSelAgg[p] = gAgg(gwSel[p]));
@@ -4520,8 +4732,8 @@ class Component extends DCLogic {
         const neu = gNeu;
         R.cellConsFill = neu ? (Math.min(consAgg, neu) / neu * 100).toFixed(1) + '%' : '0%';
 
-        R.cellGoalShare = this.pct(target ? consAgg / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge des Landkreises beiträgt — ihr Ausbaukonsens geteilt durch die gesamte Ausbaumenge.';
+        R.cellGoalShare = this.pct(natTargetCalc ? consAgg / natTargetCalc : 0, 2);
+        R.goalInfoText = 'Wie viel diese Gemeinde zum bundesweiten Ausbauziel beiträgt — ihr Ausbaukonsens geteilt durch das bundesweite Ausbauziel.';
 
       } else if (stufe === 1) {
         const gRec = gAgg(gwSel[singlePid]);
@@ -4530,8 +4742,8 @@ class Component extends DCLogic {
         R.cellRecommend = this.fmtUnit(gRec, isRegion);
         R.cellSharePct = this.pct(gAgg(shr(singlePid)), 2);
         R.cellSharePctOf = isRegion ? 'der Ausbaumenge des Landkreises' : 'des deutschen Ausbaus';
-        R.cellGoalShare = this.pct(target ? gRec / target : 0, 2);
-        R.goalInfoText = 'Wie viel diese Gemeinde zur Ausbaumenge des Landkreises beiträgt.';
+        R.cellGoalShare = this.pct(natTargetCalc ? gRec / natTargetCalc : 0, 2);
+        R.goalInfoText = 'Wie viel diese Gemeinde zum bundesweiten Ausbauziel beiträgt.';
       }
     }
 
@@ -4700,6 +4912,9 @@ class Component extends DCLogic {
     R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'single' || view === 'regionGate');
     // Frage-Link „Woher kommt diese Menge?" unter der Headline (Prompt A, 1; ersetzt das „i")
     R.qRegionOpen = R.showRegionDetailInfoBtn && S.qPop === 'region';
+    R.qTargetOpen = S.qPop === 'target';
+    R.qTargetExpanded = R.qTargetOpen ? 'true' : 'false';
+    R.toggleTargetQ = () => this.setState({ qPop: this.state.qPop === 'target' ? null : 'target' });
     R.qRegionExpanded = R.qRegionOpen ? 'true' : 'false';
     R.toggleRegionQ = () => this.setState({ qPop: this.state.qPop === 'region' ? null : 'region' });
 

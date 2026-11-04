@@ -2422,3 +2422,52 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   Leistungspotenzial = max(Potenzial − Bestand, 0), Fläche und Energie im
   selben Verhältnis; Beschriftung „Noch nutzbare(s) …". Rohdaten unverändert.
   Der Regler „Ausbaumenge" behält das volle Potenzial als Bereich.
+
+## W3. Rechenmodell mit Potenzialgrenzen, Zielwertsuche in der Region (Session 2026-11-04, Prompt C)
+
+- **Vorher:** Jedes Prinzip verteilte `Anteil_p × Ziel` ohne Grenze
+  (`sharesFor` → `build()`; `natValuesFor` für Marken und Startwert;
+  `refValsFor` für die Hub-Referenzen). Der Konsensanteil war bei jedem Ziel
+  gleich; die Potenziale begrenzten nur den Reglerbereich der Region.
+- **Jetzt (beide Ebenen):** `x_i = min(c_i, λ · w_i)` mit Σ x_i = A
+  (λ exakt über sortierte c_i / w_i statt Bisektion, gleiches Ergebnis);
+  Rückfall auf Einheiten mit w_i = 0 nach freiem Potenzial; A ≥ Σc → x = c
+  mit Hinweis „Das Ziel übersteigt das Potenzial dieses Gebiets ([Σc] GW)."
+  Konsens `k_i = min_p x_i,p`; er steigt mit A nicht fallend und erreicht bei
+  A = Σc 100 %. Einheiten: Deutschland Landkreise (Anwendung: 10 × 10-km-Raster),
+  Region 5 × 5-km-Zellen. c = volles Leistungspotenzial (Bestand gehört zum
+  Ausbau). Gilt für alle Reiter, Galerie, Paar-Matrix, Szenarien,
+  Hub-Referenzen (Annahme), Marken und Startwert der Ausbaumenge.
+- **Potenzial je Rasterzelle:** keine Zelldaten; das Potenzial des Landkreises
+  wird nach dem Zellmuster „potential" aufgeteilt (dasselbe Feld wie im
+  Prinzip „Gleicher Anteil an Potenzialfläche"), Summe = Landkreis.
+  **[Offen, Datenteam]** echte Zellpotenziale.
+- **Zielwertsuche (Region, einziger Modus):** Feld/Regler „Ausbaumenge" = T
+  (soll im Konsens der regionalen Prinzipien liegen). Ein Prinzip: A* = T.
+  Mehrere: A* in [T, Σc] per Bisektion bis |K − T| ≤ 0,0005 GW; angezeigt
+  wird K. K über Toleranz über T → „Die Rechnung erreicht [K] GW statt [T] GW."
+  T > Σc → „Diese Menge lässt sich im Landkreis nicht im Konsens verorten.
+  Höchstens [Σc] GW." (Karte abgedimmt). Rundung bis 0,005 GW über Σc gilt
+  als Σc. Szenarien speichern T, A* (regionAstar) und K; „% im Konsens" der
+  Region = K / A*. Referenzen im Regionsvergleich auf T skaliert.
+- **Regler der Region:** immer 0 … Leistungspotenzial des Landkreises
+  („[X] GW Potenzial"); die Sonderbeschriftung entfällt.
+- **Rechte Spalte Region (ersetzt R.6-Box):** Herleitung → Landkreis-Block
+  (Ausbaukonsens des Landkreises = K, % Fläche, Anteil an Zielerreichung am
+  bundesweiten Ausbauziel, Einordnung gegenüber allen Landkreisen, davon
+  Bestand / Zubaubedarf, ab zwei Prinzipien „Damit alle regionalen Prinzipien
+  diese Menge mittragen, verteilt die Rechnung insgesamt [A*] GW
+  (Konsensanteil [q] %).") → bei Auswahl Gemeinde- bzw. Zellblock (Anteil am
+  bundesweiten Ziel; Gemeinde mit Einordnung gegenüber den Gemeinden des
+  Landkreises, Rasterzelle ohne). Entfallen: „Kleiner als die Ausbaumenge,
+  weil …", „% der Ausbaumenge" mit Balken, „Bestand in dieser
+  Gemeinde/Rasterzelle" in der Herleitung.
+- **Popover „Woher kommt diese Menge?":** neue Teamtexte (ein / mehrere
+  Prinzipien) + Zusatz „Die Detailauswertung verteilt so, dass diese Menge im
+  Konsens der regionalen Prinzipien liegt." (Annahme).
+- **Deutschland, Ausbauziel:** Frage-Link „Warum verändert sich der Konsens mit
+  der Ausbauleistung?" (Teamtext), nur in „Verteilung – Deutschland".
+- **Methodik:** Potenzialgrenze, Wachstum des Konsens bis 100 %, „rechnerische
+  Überschneidung, kein gesellschaftlicher Konsens", Zielwertsuche, Satz zum
+  10 × 10-km-Raster. Beantwortet die offene Frage I.13 (Grenzen, die erst bei
+  hohen Zielen greifen, s. A) für den Prototyp; Abschnitt A gilt insoweit nicht mehr.
