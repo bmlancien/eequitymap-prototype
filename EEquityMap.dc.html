@@ -5249,7 +5249,8 @@ class Component extends DCLogic {
   // getippt ist. Übernommen wird bei Enter oder beim Verlassen, nicht je Tastendruck; Esc stellt den alten Wert her.
   // Außerhalb des Bereichs → Rand; ungültig (leer, Buchstaben) → alter Wert. Unveränderter Wert → keine Übernahme.
   numField(value, min, max, draftKey, apply) {
-    const two = v => (Math.round(v * 100) / 100).toFixed(2).replace('.', ',');
+    // Anzeige wie S: ab 10 GW eine Nachkommastelle („170,5"), darunter zwei („0,40") — ohne „< 0,01" (Eingabefeld)
+    const two = v => { const d = Math.abs(v) >= 9.995 ? 1 : 2, f = Math.pow(10, d); return (Math.round(v * f) / f).toFixed(d).replace('.', ','); };
     const draft = this.state[draftKey];
     const commit = () => {
       const raw = this.state[draftKey];

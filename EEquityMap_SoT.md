@@ -1,4 +1,4 @@
-# EEquityMap — Source of Truth · Update (Session 2026-08-17)
+# EEquityMap — Source of Truth · Stand 2026-11-04
 
 **Status:** Patch zum Einpflegen in das bestehende Source-of-Truth-Dokument.
 Vorschlag Versionssprung **v2.2 → v2.3** (bei Bedarf v3.0 — der Wegfall des
@@ -17,7 +17,23 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 
 ---
 
+> **Lesehinweis (Session 2026-11-04):** Abschnitte vor W2 verwenden
+> „Zubaukonsens". Gemeint ist jetzt **„Ausbaukonsens"** (Minimum der
+> Ausbauwerte, unabhängig vom Bestand, W2). „Zubau" bzw. „Zubaubedarf" steht
+> nur noch dort, wo der Bestand berücksichtigt ist. Die Bereichs-Tabs heißen
+> „Verteilung – Deutschland" und „Verteilung – [Landkreis]" (X); ältere Stellen
+> mit „Deutschland" / „Regional" meinen diese Tabs. Farben: maßgeblich ist U,
+> nicht J2.
+
+---
+
 ## A. Kernentscheidungen — bestätigt / präzisiert
+
+> **Geändert (Session 2026-11-04, W2/W3):** Konsens = Minimum der
+> **Ausbau**werte („Ausbaukonsens"), unabhängig vom Bestand. Verteilt wird bis
+> zur Potenzialgrenze jeder Einheit; der Konsens steigt mit dem Ziel nicht
+> fallend und erreicht bei voller Ausschöpfung 100 %. Der Block „Korrigiert
+> (Session 2026-11-02)" unter „Ausbauziel-Mechanik" gilt nicht mehr.
 
 > **Geändert durch R (Session 2026-10-19):** „Neuzubau" heißt jetzt „Zubau", „Ausbau gesamt" heißt „Ausbau"; Zubau = max(Ausbau − Bestand, 0). Die Teilmengen-Regel gilt weiter (R.1).
 
@@ -122,6 +138,23 @@ durchziehen.
   Reihenfolge" samt Hinweis „Die Zubaureihenfolge wird noch nicht berechnet."
   ist aus dem Detail entfernt, bis es eine berechnete Reihenfolge gibt (zuvor
   ein Jahr mit dem Zusatz „(nicht berechnet)").
+
+
+> **Gesperrt (Session 2026-11-04):**
+>
+> | Begriff | Bedeutung |
+> |---|---|
+> | **Ausbaukonsens** | Minimum der Ausbauwerte der gewählten Prinzipien je Einheit; Leitbegriff (löst die „offene Inkonsistenz Konsens/Zubaukonsens" oben). Kurzform „Konsens" bleibt erlaubt. |
+> | **Ausbaumenge** | Menge eines Landkreises: Startwert aus Deutschland, in der Region der Zielwert T |
+> | **Bestand** | heute installierte Leistung |
+> | **davon Bestand** | min(Ausbaukonsens, Bestand) |
+> | **Zubaubedarf** | max(Ausbaukonsens − Bestand, 0) |
+> | **Zubau** | je Prinzip: max(Ausbau − Bestand, 0) |
+>
+> Nicht verwenden: „Konsensausbau", „Ausbauempfehlung für den Landkreis"
+> (Team-Folien; gleiche Bedeutung wie Ausbaukonsens bzw. Ausbaumenge),
+> „Regionsbudget", „DE-Empfehlung".
+> „Gerechtigkeitsvorstellung" ist erlaubt (R.2 entfällt).
 
 ---
 
@@ -313,6 +346,12 @@ ausgegrauten Elemente in Basic.
 
 ## E. Rechte Spalte — Hybrid-Verhalten (neu)
 
+> **Geändert (Session 2026-11-04, W2):** Übersicht „Ausbaukonsens gesamt": Balken
+> = Ausbauziel, gefüllt = Ausbaukonsens, „davon Bestand" darin schraffiert; die
+> drei Abschnitte „Mit Bestand (Session 2026-10-29)" entfallen. Landkreis-Detail:
+> Ausbaukonsens · % Fläche · Anteil an Zielerreichung · Einordnung · (mit
+> Bestand) davon Bestand · Zubaubedarf.
+
 > **Geändert durch R (Session 2026-10-19):** „Neuzubau" → „Zubau", „Ausbau gesamt" → „Ausbau" (R.1). Im Tab „Regional" zeigt die rechte Spalte oben die Herleitungskette (R.6).
 
 > **Abgelöst durch O:** Zeilen „Konsens vs. Planung" und „Konsens vs. Referenz" sowie
@@ -471,6 +510,9 @@ seiner Bausteine übertreffen) und damit informationslos. Daher:
 ---
 
 ## G. Verständlichkeit / Erststart (geändert)
+
+> **Aktueller Stand des Startdialogs: W** (zwei Seiten). Die Beschreibungen des
+> Prämissen-Overlays in diesem Abschnitt und in S sind Vorstufen.
 
 > **Geändert durch R (Session 2026-10-19):** Neue Infobox-Texte für Einstieg, Bestand und Begriffe (R.12); einmaliger Kartenhinweis zur Detailauswertung (R.4); Speicher-Hinweise (R.9). Das Werkzeug startet im Bereich „Bestand & Potenziale"; der Knopf des Prämissen-Overlays heißt „Los geht's →" (R.3, Nachtrag).
 
@@ -702,6 +744,28 @@ nicht über die volle Breite laufen lassen.
 - **A/B ohne gespeicherte Szenarien mit zwei Referenzen vorbelegt** — verworfen.
   A/B bleiben leer, die Referenzen sind wählbar (R.8).
 
+- **Zubaukonsens als Leitgröße mit Bestand** (`min_p max(Ausbau_p − Bestand,
+  0)`) — abgelöst (W2). Grund: Das Team will Konsens und Bestand begrifflich und
+  rechnerisch getrennt. Der Wert lebt als Summe „Zubaubedarf" weiter.
+- **Proportionale Verteilung ohne Potenzialgrenze** — abgelöst (W3). Grund: Der
+  Konsensanteil blieb bei jedem Ziel gleich, was der Spezifikation des Teams
+  widerspricht; die Zielwertsuche wäre trivial gewesen.
+- **Zwei Rechenmodi in der Region** (Konsens untersuchen / Menge verorten) —
+  nicht umgesetzt; die Zielwertsuche ist der einzige Modus (Entscheidung
+  2026-11-04).
+- **Rechenmenge A* im Feld zeigen** — verworfen. Das Feld zeigt T. Grund: Die
+  Marken sind bundesweite Werte und würden neben einer hochgerechneten Menge
+  falsch wirken; A* steht nur in einem Satz in der rechten Spalte.
+- **Bundesweiter Konsens auf einem 10 × 10-km-Raster** (wie in der Anwendung) —
+  im Prototyp bewusst nicht; Minimum je Landkreis (Entscheidung 2026-11-04).
+- **Zahlen unter den Reglermarken** — entfernt (W). Grund: zu viel; Werte im
+  Tooltip.
+- **„i" an der Regions-Headline** — ersetzt durch einen Frage-Link (W). Grund:
+  wurde nicht gefunden.
+- **Linke Spalte bedienbar im Reiter „Szenarien vergleichen"** — abgelöst (W).
+  Grund: Die Einstellungen gehören nicht zum Vergleich.
+- **Verbot „Gerechtigkeitsvorstellung" (R.2)** — aufgehoben.
+
 ---
 
 ## I. Offene Fragen — für den Open-Questions-Log
@@ -754,15 +818,37 @@ nicht über die volle Breite laufen lassen.
 11. **Zoomschwelle Landkreis → Gemeinde** im Reiter „Bestand & Potenziale"
     (R.13).
 12. **Alle in R mit [Annahme] markierten Punkte bestätigen.**
-13. **Soll der Konsensanteil mit steigendem Ziel fallen?** (Session 2026-11-02,
-    s. A) Der Prototyp verteilt proportional: Ohne Bestand bleibt der Anteil
-    gleich, mit Bestand fällt er nicht. Enthält das echte Modell Grenzen, die
-    erst bei hohen Zielen greifen (z. B. Potenzialgrenzen, kostenoptimierte
-    Verteilung)? Falls ja, ist der fallende Anteil beabsichtigt, aber zu prüfen
-    und im Prototyp noch nicht abgebildet; falls nein, entfällt die Aussage auch
-    im Studienziel `target`. Unabhängig davon ist das Erfolgskriterium von
-    Aufgabe 4 in `tasks.yaml` mit dem Prototyp nicht erfüllbar. Mit dem
-    Modellierungsteam klären.
+13. *(Erledigt für den Prototyp, Session 2026-11-04, W3.)* Der Konsensanteil
+    steigt jetzt mit dem Ziel. **Neu offen:** Im Prototyp ist der Effekt kaum
+    sichtbar (Wind, 2 Prinzipien: 90,6 % bei 5 % des Potenzials, 93,8 % bei
+    50 %, 99 % erst nahe der Sättigung). Zwei Gründe:
+    - Die Platzhalterpotenziale liegen weit über den Zielen (Wind 776 GW,
+      Regler bis 260 GW).
+    - Die proportionale Verteilung mit Kappung nähert sich erst spät an.
+
+    Frage ans Datenteam: Verteilt euer Algorithmus nach **Rang** (beste
+    Flächen zuerst)? Dann wächst die Überschneidung gleichmäßiger, und der
+    Prototyp sollte das nachbilden. Davon hängt ab, ob der Infotext „Warum
+    verändert sich der Konsens …" im Prototyp sichtbar zutrifft.
+14. **Rechenmodell vom Datenteam bestätigen lassen** (W2, W3): proportionale
+    Verteilung mit Kappung als Nachbildung; Minimum je Landkreis statt
+    10 × 10 km; Bestandsregel (davon Bestand / Zubaubedarf; noch nutzbares
+    Potenzial = Potenzial − Bestand); Zielwertsuche mit Toleranz 0,0005 GW.
+    Die Kurzfassung für das Datenteam liegt vor (Chat 2026-11-04).
+15. **PV-Potenzialkulisse:** Prototyp 991.023 ha, Methodik rund 12 Mio. ha
+    (Faktor 12). Platzhalter anpassen? Ändert Skalen und Reglerbereiche.
+16. **Volllaststunden:** im Prototyp einheitlich (2.000 bzw. 1.000 h), in der
+    Methodik regional.
+17. **Potenziale je Rasterzelle:** im Prototyp aus dem Muster des Prinzips
+    „Gleicher Anteil an Potenzialfläche" abgeleitet (W3). Echte Daten nötig.
+18. **Potenzialgrenze für die Referenzen** „Historischer Ausbau" und
+    „Planungsflächen" (W3, Annahme) bestätigen.
+19. **PV-Technologiemix** (92/4/4 %, schrittweise, Methodik 3.1) bildet der
+    Prototyp nicht nach. Reicht der Platzhalter-Hinweis?
+20. **Texte vom Team:** Methodik 2.4 „Planungsflächen" fehlt; Freigabe des
+    Zusatzsatzes am Bestands-Schalter in „Bestand & Potenziale" (W2).
+21. **Folie „Titelleiste umbenennen":** Die Alternative nach „Oder" war
+    abgeschnitten; nachfragen.
 
 ---
 
@@ -777,6 +863,13 @@ für Score, Häkchen/Begrenzer, Kartenfarbe und Blocker-Auswertung.
 ---
 
 ## J2. Farbsystem (Session 2026-10-12) — löst offene Frage I.1 ab
+
+> **Abgelöst durch U (Session 2026-10-22, bestätigt 2026-10-29):** Akzent ist
+> Grün `#1D6B4C`, Neutraltöne warm, Konsens-Skala Schiefer `#515A5C`. „Markengrün
+> nur im Logo" und der Schiefer-Akzent `#1f2a33` gelten nicht mehr. Die Leitregel
+> „Farbe gehört den Daten" bleibt für die Karten.
+> Dasselbe gilt für die Farbwerte `#1f2a33` in R.3 (Schrittnummern), R.7
+> (Umrandung), R.9 (Speichern-Knopf) und T (Akzentlinie): dort jetzt `#1D6B4C`.
 
 > **Geändert durch R (Session 2026-10-19):** Bewusste Ausnahme: ein grüner Punkt am Reiter „Szenarien vergleichen", wenn dort Szenarien der aktuellen Ebene liegen (R.9). Die Bereichs-Tabs bleiben farblos (R.3).
 
@@ -865,6 +958,9 @@ Ebene, nicht dem Wert:
   Ausbaumenge des Landkreises, Zubaukonsens des Landkreises, Bestand, Zubau und Ausbau
   eines Landkreises, Summen, Paar-Matrix, Szenario-Tabellen, „Differenz A − B
   gesamt", Regler. Ab 10 GW eine Nachkommastelle („160,0 GW", S).
+  > **Entschieden (Session 2026-11-04):** Das Zahlenfeld am Regler folgt S: ab
+  > 10 GW eine Nachkommastelle („170,5"), darunter zwei („0,40"). Vorher zeigte
+  > es immer zwei („170,50").
 - **Drei Nachkommastellen** für einzelne Gemeinden und Rasterzellen: Karten,
   Legenden und Wertebereiche in der Region, Gemeinde- und Zelldetail, „Größte
   Abweichungen" in der Region, Differenzkarte im Regionsvergleich.
@@ -890,6 +986,13 @@ Legendenwerte), mit dem Team abstimmen.
 ---
 
 ## M. Regionale Auswertung & Zwei-Ebenen-Kriterien (neu, Research-Anforderung)
+
+> **Geändert (Session 2026-11-04, W3):** Die Ausbaumenge ist nicht mehr das
+> „feste Budget", das die Region verteilt, sondern die Menge, die **im Konsens
+> der regionalen Prinzipien** liegen soll (T). Die Rechnung sucht dafür die
+> nötige Rechenmenge A* (Zielwertsuche, einziger Modus). Der Satz „das Ergebnis
+> von Schritt 1 ist das feste Budget von Schritt 2" und „Konsens auf beiden
+> Ebenen … verteilt die feste Ausbaumenge" gelten in dieser Form nicht mehr.
 
 > **Geändert (Session 2026-10-29):** Statt „Regionsbudget" heißt es „Ausbaumenge der Region"; ihr Startwert ist wieder der Anteil am bundesweiten **Konsens** (Minimum der bundesweiten Prinzipien, Greenfield, „DE-Konsens"), nicht die Verteilung. Alle Werte in GW (L). Headline neu (R.5).
 >
@@ -1600,10 +1703,10 @@ Abschnitte tragen oben einen Verweis hierher; Reject-Log (H) und offene Fragen
   Bestand (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah: Deutschland
   Ausbaukonsens 145,0 = 60,8 davon Bestand + 84,2 Zubaubedarf; Kleve 0,39 =
   0,12 + 0,27).
-- **Gesamtsumme mit einem Prinzip:** Der Zubau eines Prinzips summiert sich mit
-  Bestand auf mehr als „Ausbauziel − Bestand" (Wind: 99,2 GW statt 98 GW), weil
-  Bestand über dem Ausbau eines Landkreises stehen bleibt. **Offen:** ob das
-  einen erklärenden Satz braucht.
+- **Zubau einer Einzelverteilung:** Die Ebene „Zubau" eines einzelnen Prinzips
+  summiert sich mit Bestand auf mehr als „Ausbauziel − Bestand", weil Bestand
+  über dem Ausbau eines Landkreises stehen bleibt. **Offen:** ob das einen
+  erklärenden Satz braucht. (Der Ausbaukonsens ist davon nicht betroffen.)
 
 **Offen (Team):** Bestandsberücksichtigung standardmäßig an? Aktuell aus
 (Greenfield). Für „aus": die Frage des Werkzeugs ist „wo wäre der Ausbau
@@ -1642,6 +1745,7 @@ Landkreises (Regional).
   Tab mit seinem Inhalt verbindet (Ordner-Optik). Keine Farbe (J2: Farbe gehört
   den Daten).
 - **Landkreisname** im Regional-Tab: „Regional · [Landkreis]". **[Annahme]**
+  > **Abgelöst (Session 2026-10-29, X):** „Verteilung – [Landkreis]".
 - **Schrittnummern (Session 2026-10-22):** Die Tabs tragen eine Nummer im
   Kreis vor dem Namen: ① Bestand & Potenziale · ② Deutschland · ③ Regional.
   Sie zeigen die Reihenfolge aus dem Grundgedanken. Neutral grau; beim aktiven
@@ -1742,6 +1846,8 @@ Landkreises (Regional).
   Ziel: X GW" (der Zubaukonsens mit Bestand ist eine andere Zahl). Ohne Bestand
   entfällt die Zeile, weil der Zubaukonsens des Landkreises derselbe Wert ist.
   Ersetzt die frühere Zeile „Budget dieser Region".
+  > **Entfällt (Session 2026-11-04, W2):** Die Zeile ist jetzt derselbe Wert wie
+  > der Ausbaukonsens. Das Popover behält sie.
 
 **Nachtrag (Session 2026-10-22):**
 - **Popover als Karte mit Knopf:** Der dunkle Chip, dessen zweite Zeile wie Text
@@ -1760,6 +1866,17 @@ Landkreises (Regional).
   (über der Mitte, Zeiger nach links), nicht über der Liste, die es erklärt.
 
 ### R.5 Regionsmodus: linke Spalte und Ausbaumenge des Landkreises
+
+> **Geändert (Session 2026-11-04, W/W3):**
+> - Startwert und Marken mit Potenzialgrenze (W3).
+> - Regler und Feld geben **T** vor (Zielwertsuche); Marken bleiben die
+>   bundesweiten Werte, ohne Zahlen unter den Strichen (W).
+> - Bereich immer 0 … Potenzial; die Sonderregel „größte Marke" entfällt.
+> - „i" an der Headline → Frage-Link „Woher kommt diese Menge?" mit neuen
+>   Teamtexten (W3).
+> - Invarianten: „Bezugswert bei % der Ausbaumenge" entfällt; „Startwert =
+>   Ausbaukonsens des Landkreises auf der Deutschlandkarte" gilt jetzt mit und
+>   ohne Bestand.
 
 > **Geändert (Session 2026-10-29):** Startwert = **Minimum** der bundesweiten
 > Prinzipien (DE-Konsens) statt ihres Mittelwerts („gewichtete Kombination");
@@ -1899,6 +2016,10 @@ auf der Deutschlandkarte. Konsens-Marke ≤ jede Prinzip-Marke.
 
 ### R.6 Rechte Spalte im Regionsmodus: Herleitung von oben nach unten
 
+> **Abgelöst durch W3 (Session 2026-11-04):** Herleitung → Landkreis-Block →
+> Gemeinde- bzw. Zellblock. Die Zeilen „Kleiner als die Ausbaumenge, weil …"
+> entfallen.
+
 Damit dauerhaft sichtbar bleibt, woher die Ausbaumenge kommt und was wo gilt,
 zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
 
@@ -2034,7 +2155,7 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Klammern sind ergänzt. Steht direkt unter der Legende der Differenzkarte.)
 
   Zusatzsatz nur bei Szenario gegen Referenz: „[Referenz] verteilt das ganze
-  Ausbauziel, das Szenario nur seinen Zubaukonsens." Offene Frage I.9 bleibt
+  Ausbauziel, das Szenario nur seinen Ausbaukonsens." Offene Frage I.9 bleibt
   offen.
 - **Infobox „Szenarien vergleichen"** („i" an der Erklärzeile des Hubs):
 
@@ -2157,6 +2278,8 @@ Infobox „Bestandsanlagen berücksichtigen" Greenfield schon erklärt.)
   Technologie) · „Planungsflächen" (nur Wind; bei PV ausgeblendet; ist er aktiv
   und wird auf PV gewechselt, springt die Ansicht auf „Potenzialflächen").
 - **Linke Spalte:** nur Technologie (Wind/PV).
+  > **Geändert (Session 2026-11-04, W2):** In „Potenzialflächen" und
+  > „Planungsflächen" zusätzlich „Bestandsanlagen berücksichtigen".
 - **Karte frei zoombar** (Reversal von M „kein Pan/Zoom" — nur für diesen
   Reiter). Verwaltungsebene nach Zoomstufe: weit = Landkreise, nah = Gemeinden.
   Umsetzung im Prototyp mit D3-Zoom auf SVG; Ziel ist, das Verhalten der echten
@@ -2471,3 +2594,44 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   Überschneidung, kein gesellschaftlicher Konsens", Zielwertsuche, Satz zum
   10 × 10-km-Raster. Beantwortet die offene Frage I.13 (Grenzen, die erst bei
   hohen Zielen greifen, s. A) für den Prototyp; Abschnitt A gilt insoweit nicht mehr.
+
+## X. Tab-Namen, Suche, Version, Zahlenfeld am Regler (Session 2026-10-29)
+
+*Umgesetzt mit Prompt 1 am 29.10., im SoT bisher nicht nachgetragen.*
+
+- **Bereichs-Tabs** (ändert R.3 und S „Tab Regional"):
+  - Namen: ① Bestand & Potenziale · ② Verteilung – Deutschland ·
+    ③ Verteilung – [Landkreis]; gesperrt: „Verteilung – Regional".
+  - Kurzname ohne „Landkreis" bzw. „Stadt"; Regel für gleiche Namen von Stadt
+    und Landkreis s. R.5 „Kurznamen".
+  - Lange Namen mit „…" gekürzt, voller Name mit Art im Tooltip.
+  - Texte nennen die Bereiche mit dem Tab-Namen in Anführungszeichen; Knöpfe
+    z. B. „Zur Verteilung – Deutschland →".
+  - „Potenziale" bleibt, obwohl die Folie „Potentiale" schreibt.
+- **Suchfeld mit Vorschlägen:**
+  - Landkreise und kreisfreie Städte, je mit Typ („Landkreis" / „Kreisfreie
+    Stadt") und Bundesland (aus den ersten zwei Stellen des Kreisschlüssels).
+    Keine Gemeinden.
+  - Abgleich ab dem ersten Zeichen, ohne Groß-/Kleinschreibung, umlautunabhängig
+    (ä = ae = a, ß = ss); Wortanfang vor Wortmitte, höchstens 8, getippter Teil
+    fett.
+  - ↑/↓, Enter (ohne Markierung: erster Vorschlag), Esc; „Kein Landkreis
+    gefunden."; Combobox mit ARIA.
+  - Aktion je Bereich wie in R.3. Nach „Im Detail auswerten" wird das Feld
+    geleert.
+- **Version und Stand:**
+  - Eine Quelle: `version.js` mit `APP_VERSION` und `APP_STAND`, von Hand
+    gesetzt.
+  - Anzeige in der Fußzeile **links** („Version 0.1 · Stand 29.10.2026") auf
+    allen drei Seiten und in „Über das Projekt › Stand". Ändert Q (dort stand
+    links nichts).
+  - `APP_STAND` bei jeder Weitergabe nachziehen. *(Erledigt Session
+    2026-11-04: auf 04.11.2026 gesetzt.)*
+- **Zahlenfeld am Regler** (Ausbauziel in Deutschland, Ausbaumenge in der
+  Region):
+  - steht rechts in der Labelzeile, Einheit GW;
+  - Komma oder Punkt; Übernahme bei Enter oder Verlassen des Feldes, Esc stellt
+    den alten Wert her;
+  - Werte außerhalb des Bereichs → Rand; ungültige Eingabe → alter Wert.
+  - Nachkommastellen wie S: ab 10 GW eine, darunter zwei (entschieden
+    2026-11-04, s. L).
