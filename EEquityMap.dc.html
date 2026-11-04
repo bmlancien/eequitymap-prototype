@@ -900,7 +900,8 @@
           <div style="flex:1"></div>
 
           <sc-if value="{{ showPlan }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;background:#f4f1ed;border-radius:4px;padding:3px;gap:2px">
+            <!-- immer rechtsbündig, auch wenn die Zeile umbricht (sonst rutschen die Reiter links unter die Legende) -->
+            <div style="display:flex;background:#f4f1ed;border-radius:4px;padding:3px;gap:2px;margin-left:auto;flex:none">
               <sc-for list="{{ planBtns }}" as="pb" hint-placeholder-count="3">
                 <button onClick="{{ pb.onClick }}" style="{{ pb.style }}">{{ pb.label }}</button>
               </sc-for>
