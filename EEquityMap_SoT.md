@@ -1249,6 +1249,17 @@ die falsche Einheit.
 > **Erweitert durch O:** „Szenarien vergleichen" ist jetzt der einzige
 > Vergleichs-Hub und immer sichtbar (nicht erst ab ≥ 2 Szenarien).
 
+> **Entschieden (Session 2026-11-04):** „Bestand berücksichtigen" gehört
+> nicht zum Szenario. Die Verteilung ist Greenfield; der Bestand teilt den
+> Ausbau nur in Bestand und Zubaubedarf. Dasselbe Szenario mit und ohne
+> Bestand ergab im Vergleich überall 0,0 GW. Darum: Der Bestand zählt nicht
+> zur Szenario-Signatur (nach dem Speichern verschwindet „Speichern" auch
+> bei umgeschaltetem Bestand), die A/B-Unterschiedszeile nennt ihn nicht
+> mehr, und „Laden" behält den aktuellen Bestand-Schalter. Ebenso in der
+> Detailauswertung: Der Bestand-Schalter wirkt dort live und macht das
+> Landkreisergebnis nicht mehr „nicht aktuell" (kein Neuberechnen; der
+> Rücksetzen-Link nennt den Bestand nicht mehr).
+
 **Konzept:** Ein Szenario = Momentaufnahme der aktuellen Konfiguration (Scope,
 Prinzipien, Technologie, Ausbauziel/-jahr) + berechnete Kernergebnisse. Verglichen
 werden **Zahlen**, nicht Karten nebeneinander (zwei Karten nebeneinander sind

@@ -1853,7 +1853,7 @@ class Component extends DCLogic {
     // Bestand & Potenziale (R.13): Unter-Reiter, Darstellung, Auswahl; bzTick stößt nach Zoom-Gesten ein Re-Render an
     bpTab: 'bestand', bpMode: 'admin', bpSel: null, bzTick: 0,
     // Eingaben der letzten Regionsberechnung — die Karte und die Herleitung rechts zeigen diesen Stand
-    regionComputedTech: null, regionComputedAccount: false, regionComputedNatSel: null,
+    regionComputedTech: null, regionComputedNatSel: null,
     regionComputedDeRec: null, regionComputedOwn: false,
     regionComputedTargetGW: null, regionComputedSelRaw: null,  // für „Änderungen verwerfen“ (R.7)
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
@@ -2634,7 +2634,7 @@ class Component extends DCLogic {
   regionSigFrom(krsId, sel, budget, over) {
     const S = Object.assign({}, this.state, over || {});
     const nat = S.selected.filter(id => this.byId[id] && this.byId[id].available).slice().sort().join(',');
-    return [krsId, sel.slice().sort().join(','), budget.toPrecision(12), nat, S.targetGW, S.tech, S.account ? 1 : 0].join('|');
+    return [krsId, sel.slice().sort().join(','), budget.toPrecision(12), nat, S.targetGW, S.tech].join('|'); // ohne Bestand: ändert die Verteilung nicht
   }
 
   enterRegion(krsId, label) {
@@ -2670,7 +2670,7 @@ class Component extends DCLogic {
     const effSel = (S.selectedRegional != null ? S.selectedRegional : S.selected).filter(avail);
     const budget = this.regionTargetFor(krsId);
     const sig = this.regionSigFrom(krsId, effSel, budget);
-    const frozen = { regionComputedTech: S.tech, regionComputedAccount: !!S.account, regionComputedNatSel: S.selected.filter(avail),
+    const frozen = { regionComputedTech: S.tech, regionComputedNatSel: S.selected.filter(avail),
       regionComputedDeRec: this.natBudgetFor(krsId), regionComputedOwn: S.regionOwnTarget != null,
       regionComputedTargetGW: S.targetGW, regionComputedSelRaw: S.selectedRegional != null ? S.selectedRegional.slice() : null };
     if (this._regionRaf) cancelAnimationFrame(this._regionRaf);
@@ -2830,7 +2830,8 @@ class Component extends DCLogic {
     // je Prinzip Zubau_p,i = max(Ausbau_p,i − Bestand_i, 0). Regionsansicht (R.5): die Karte zeigt den Stand der
     // letzten Berechnung — Technologie und Bestandsberücksichtigung kommen von dort, nicht live von links.
     const calcTech = isRegion && hasRegionResult ? S.regionComputedTech : S.tech;
-    const accEff = isRegion ? (hasRegionResult && !!S.regionComputedAccount) : !!S.account;
+    // Bestand wirkt live, auch in der Region: er teilt den Ausbau nur auf, die Verteilung bleibt (kein Neuberechnen)
+    const accEff = isRegion ? (hasRegionResult && !!S.account) : !!S.account;
     if (isRegion) {
       // Bestand der Rasterzellen aus dem Datenmodul (Technologie der Berechnung), nach dem Zell-Muster verteilt
       const pot = PotentialData.forKrs(S.region.krsId, calcTech);
@@ -2974,8 +2975,7 @@ class Component extends DCLogic {
       const changed = [
         sortedKey(uiSelRegional) !== sortedKey(S.regionComputedSel) && 'Prinzipien',
         (ownNow !== !!S.regionComputedOwn || (ownNow && S.regionOwnTarget !== S.regionComputedTarget)) && 'Ausbaumenge',
-        S.tech !== S.regionComputedTech && 'Technologie',
-        !!S.account !== !!S.regionComputedAccount && 'Bestand'
+        S.tech !== S.regionComputedTech && 'Technologie'
       ].filter(Boolean);
       const list = changed.length > 1 ? changed.slice(0, -1).join(', ') + ' und ' + changed[changed.length - 1] : (changed[0] || 'Eingaben');
       R.undoRegionLabel = list + ' zurücksetzen';
@@ -2985,7 +2985,7 @@ class Component extends DCLogic {
       const T = this.state;
       const patch = { selectedRegional: T.regionComputedSelRaw ? T.regionComputedSelRaw.slice() : null,
         regionOwnTarget: T.regionComputedOwn ? T.regionComputedTarget : null,
-        tech: T.regionComputedTech, account: T.regionComputedAccount };
+        tech: T.regionComputedTech };
       // PV hat keine Planungsflächen (wie setPV)
       if (patch.tech === 'pv' && T.bpTab === 'planung') Object.assign(patch, { bpTab: 'potenzial', bpSel: null });
       this.setState(patch);
@@ -3374,7 +3374,6 @@ class Component extends DCLogic {
         if (this.fmt(me.targetGW) !== this.fmt(other.targetGW)) parts.push('Ausbauziel: ' + this.fmt(me.targetGW) + ' GW');
         if (me.isRegion && other.isRegion && (this.fmt(me.target) !== this.fmt(other.target) || !!me.regionOwn !== !!other.regionOwn))
           parts.push('Ausbaumenge: ' + this.fmt(me.target) + ' GW (' + (me.regionOwn ? 'eigener Wert' : this.startNameOf(me.nationalSel)) + ')');
-        if (!!me.account !== !!other.account) parts.push(me.account ? 'Bestand berücksichtigt' : 'Bestand nicht berücksichtigt');
         return parts.length ? parts.join(' · ') : 'Gleiche Einstellungen wie ' + (k === 0 ? 'B' : 'A');
       };
       R.hubSlots = [0, 1].map(k => {
@@ -3808,14 +3807,16 @@ class Component extends DCLogic {
     // Nur zeigen, wenn die aktuelle Konfiguration noch nicht als Szenario gespeichert ist — Vergleich über
     // dieselbe Signatur (Ebene, Prinzipien DE + regional, Technologie, Ausbauziel, Bestandsberücksichtigung).
     // Region: die Ausbaumenge (Wert + eigener Wert / Startwert) gehört zur Signatur (R.5)
+    // Bestand gehört nicht zur Signatur: er ändert die Verteilung nicht (Greenfield), sondern teilt den Ausbau nur in
+    // Bestand und Zubaubedarf — mit und ohne Bestand wäre dasselbe Szenario (Vergleich ergäbe überall 0).
     const scenarioSig = sc => [sc.isRegion ? 'r:' + sc.regionKrsId : 'de', (sc.nationalSel || []).slice().sort().join(','),
-      sc.isRegion ? (sc.regionalSel || []).slice().sort().join(',') : '', sc.tech, this.fmt(sc.targetGW), sc.account ? 1 : 0,
+      sc.isRegion ? (sc.regionalSel || []).slice().sort().join(',') : '', sc.tech, this.fmt(sc.targetGW),
       sc.isRegion ? this.fmt(sc.target) + (sc.regionOwn ? 'e' : 'd') : ''].join('|');
     // Region: Einstellungen und Ergebnis aus derselben Berechnung — alles vom Stand der letzten Berechnung, nicht live
     // (sel/target sind dort ohnehin eingefroren). So passen gespeicherte Einstellungen immer zu den Zellwerten.
     const snap = isRegion
       ? { nationalSel: (S.regionComputedNatSel || []).slice(), tech: S.regionComputedTech, targetGW: S.regionComputedTargetGW,
-          account: !!S.regionComputedAccount, regionOwn: !!S.regionComputedOwn }
+          account: !!S.account, regionOwn: !!S.regionComputedOwn }
       : { nationalSel: S.selected.filter(avail), tech: S.tech, targetGW: S.targetGW, account: S.account, regionOwn: false };
     const currentSig = scenarioSig({ isRegion, regionKrsId: isRegion && S.region ? S.region.krsId : null,
       nationalSel: snap.nationalSel, regionalSel: sel, tech: snap.tech, targetGW: snap.targetGW, account: snap.account,
@@ -5350,7 +5351,8 @@ class Component extends DCLogic {
   // erneutes Rechnen nötig) — kein In-place-Editieren: restore → ändern → als neues Szenario speichern (§N).
   restoreScenario(sc) {
     if (sc.isRegion && sc.regionKrsId) {
-      const over = { selected: sc.nationalSel, targetGW: sc.targetGW, tech: sc.tech, account: sc.account };
+      // Bestand ist eine Anzeige-Einstellung: Laden behält den aktuellen Schalter
+      const over = { selected: sc.nationalSel, targetGW: sc.targetGW, tech: sc.tech };
       const sig = this.regionSigFrom(sc.regionKrsId, sc.regionalSel, sc.target, over);
       this.setState({
         area: 'region', level: 'region', region: { krsId: sc.regionKrsId, label: sc.regionLabel },
@@ -5358,11 +5360,11 @@ class Component extends DCLogic {
         selected: sc.nationalSel.slice(), selectedRegional: sc.regionalSel.slice(),
         regionComputedSel: sc.regionalSel.slice(), regionComputedTarget: sc.target, regionComputedSig: sig,
         regionOwnTarget: sc.regionOwn ? sc.target : null,
-        regionComputedTech: sc.tech, regionComputedAccount: !!sc.account, regionComputedNatSel: sc.nationalSel.slice(),
+        regionComputedTech: sc.tech, regionComputedNatSel: sc.nationalSel.slice(),
         regionComputedDeRec: this.natBudgetFor(sc.regionKrsId, over), regionComputedOwn: !!sc.regionOwn,
         regionComputedTargetGW: sc.targetGW, regionComputedSelRaw: sc.regionalSel.slice(),
         regionComputing: false, regionProgress: 1,
-        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
+        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget,
         cell: null, tab: 'konsens', committed: true,
         scenarioSaveOpen: false
       });
@@ -5372,7 +5374,7 @@ class Component extends DCLogic {
       this.setState({
         area: 'de', level: 'de',
         selected: sc.nationalSel.slice(),
-        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget, account: sc.account,
+        tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget,
         cell: null, tab: 'konsens', committed: true,
         scenarioSaveOpen: false
       });
