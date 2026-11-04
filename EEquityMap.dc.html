@@ -468,6 +468,15 @@
         </div>
       </sc-if>
 
+      <!-- Schritt-Hinweis (Teamfolie „Inhalt der Schritte klar machen"): sagt, worin sich Schritt 2 und 3 unterscheiden.
+           Grüner Kasten, je Schritt einzeln über × wegklickbar; kommt in der Sitzung nicht wieder. -->
+      <sc-if value="{{ showStepHint }}" hint-placeholder-val="{{ false }}">
+        <div role="note" style="flex:none;display:flex;align-items:flex-start;gap:10px;margin:0 2px 12px;padding:9px 10px 9px 14px;background:#edf4f0;border:1px solid #cfe2d7;border-radius:8px;font-size:14px;line-height:1.45;color:#2e2927">
+          <span style="flex:1;text-wrap:pretty">{{ stepHintA }}<b>{{ stepHintB }}</b>{{ stepHintC }}</span>
+          <button type="button" onClick="{{ dismissStepHint }}" aria-label="Hinweis schließen" title="Hinweis schließen" style="flex:none;background:none;border:none;padding:0 2px;font-size:18px;line-height:1;color:#1d6b4c;cursor:pointer">×</button>
+        </div>
+      </sc-if>
+
       <!-- Tab-Reihe (nur Reiter). „Zum Vergleich speichern" steht links unter den Prinzipien,
            „Vergleich teilen" rechts oben über der Hub-Box. -->
       <sc-if value="{{ showTabRow }}" hint-placeholder-val="{{ false }}">
@@ -1863,6 +1872,7 @@ class Component extends DCLogic {
     area: 'bestand',   // Start im Bereich „Bestand & Potenziale" (Ausgangspunkt: was ist heute da)
     deTab: 'konsens', deCell: null,
     regionTab: 'konsens', regionCell: null, regionGemeinde: null,
+    stepHintSeen: {},         // Schritt-Hinweis je Schritt weggeklickt? { de: true, region: true }
     seenKrsHint: false,       // einmaliger Hinweis „Klicken Sie auf einen Landkreis …" (R.4)
     popoverInfo: false,       // „i" im Landkreis-Popover
     // Ausbaumenge des Landkreises: null = Startwert (DE-Konsens), sonst eigener Wert in GW (bleibt bei Änderungen in „Deutschland")
@@ -4979,6 +4989,13 @@ class Component extends DCLogic {
     R.togglePopoverInfo = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ popoverInfo: !this.state.popoverInfo }); };
     R.popoverInfoStyle = R.popoverInfoStyle || 'display:none';
     // nur an den Headlines, die die Ausbaumenge nennen (Konsens, Einzelverteilung bzw. noch nicht berechnet)
+    // Schritt-Hinweis: Deutschland = Ziel vorgeben, sehen wie viel im Konsens liegt; Region = feste Menge vorgeben, sehen wo
+    // sie im Konsens liegt. Region erst mit Ergebnis (davor steht dort der Rechen-Hinweis). Nicht im Vergleichs-Reiter.
+    const stepKey = area === 'de' && !isRegion ? 'de' : (area === 'region' && hasRegionResult ? 'region' : null);
+    R.showStepHint = !!stepKey && R.areaMain && view !== 'szenarien' && !(S.stepHintSeen || {})[stepKey];
+    const stepTxt = stepKey === 'region' ? ['Feste Menge vorgeben – sehen, ', 'wo', ' sie im Konsens liegt.'] : ['Gewünschtes Ziel vorgeben – sehen, ', 'wie viel', ' davon im Konsens liegt.'];
+    R.stepHintA = stepTxt[0]; R.stepHintB = stepTxt[1]; R.stepHintC = stepTxt[2];
+    R.dismissStepHint = () => this.setState({ stepHintSeen: Object.assign({}, this.state.stepHintSeen, { [stepKey]: true }) });
     R.showRegionDetailInfoBtn = isRegion && (view === 'konsens' || view === 'single' || view === 'regionGate');
     // Frage-Link „Woher kommt diese Menge?" unter der Headline (Prompt A, 1; ersetzt das „i")
     R.qRegionOpen = R.showRegionDetailInfoBtn && S.qPop === 'region';

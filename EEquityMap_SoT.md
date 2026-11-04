@@ -2541,6 +2541,13 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   beiden Seiten unten angeheftet und steht an derselben Stelle (Seite 2 hält
   unter den Knöpfen den Platz von „Mehr dazu" frei). **[Offen]** Die Karten auf
   Seite 2 sind wegen der drei Textzeilen trotzdem etwas höher als auf Seite 1.
+- **Schritt-Hinweis (Session 2026-11-04, Teamfolie „Inhalt der Schritte klar
+  machen"):** Grüner Kasten unter der Headline (Regional: unter „Woher kommt
+  diese Menge?"), über der Tab-Reihe, mit × wegklickbar, je Schritt einzeln;
+  kommt in der Sitzung nicht wieder. Deutschland: „Gewünschtes Ziel vorgeben –
+  sehen, **wie viel** davon im Konsens liegt." Regional (erst mit Ergebnis):
+  „Feste Menge vorgeben – sehen, **wo** sie im Konsens liegt." Nicht im Reiter
+  „Szenarien vergleichen".
 - **Methodik:** neuer Abschnitt 2 „Potenzialflächen und Kennzahlen" (2.1 Wind,
   2.2 Kennzahlen Wind, 2.3 Freiflächen-PV mit Tabelle Flächenbedarf, 2.4
   Planungsflächen als Platzhalter) und 3.1 „Verteilmethodik Freiflächen-PV";
