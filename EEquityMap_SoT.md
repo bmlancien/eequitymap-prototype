@@ -1587,6 +1587,19 @@ Abschnitte tragen oben einen Verweis hierher; Reject-Log (H) und offene Fragen
   Bestand (0,39 → 0,43 GW, Wind); Deutschland und Region passten nicht zusammen.
   Jetzt (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah): Kleve 0,27 GW,
   Deutschland gesamt 84,2 GW statt 145,6 GW.
+- **Abgelöst (Session 2026-11-04, Prompt B):** Konsens immer über den Ausbau.
+  Je Einheit i: `Ausbaukonsens_i = min_p Ausbau_p,i` (unabhängig vom Bestand);
+  nur mit Bestand `davon Bestand_i = min(Ausbaukonsens_i, Bestand_i)` und
+  `Zubaubedarf_i = max(Ausbaukonsens_i − Bestand_i, 0)`; je Prinzip
+  `Zubau_p,i = max(Ausbau_p,i − Bestand_i, 0)`. Summen = Summen der
+  Einheitswerte. Der Schalter ändert keine Konsenszahl mehr (Karte, „Was
+  begrenzt?", Dissens, Paar-Matrix, Szenarien, Ausbaumenge des Landkreises); er
+  blendet Bestand/Zubaubedarf ein und schaltet die Kartenebenen frei (W2).
+  „Zubaukonsens" heißt **„Ausbaukonsens"**, „empfohlener Zubau" **„empfohlener
+  Ausbau"**. Die Summe „Zubaubedarf" entspricht dem bisherigen Zubaukonsens mit
+  Bestand (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah: Deutschland
+  Ausbaukonsens 145,0 = 60,8 davon Bestand + 84,2 Zubaubedarf; Kleve 0,39 =
+  0,12 + 0,27).
 - **Gesamtsumme mit einem Prinzip:** Der Zubau eines Prinzips summiert sich mit
   Bestand auf mehr als „Ausbauziel − Bestand" (Wind: 99,2 GW statt 98 GW), weil
   Bestand über dem Ausbau eines Landkreises stehen bleibt. **Offen:** ob das
@@ -2377,3 +2390,35 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
 - **[Offen]** Platzhalterwerte vs. Methodik: PV-Potenzialfläche im Prototyp
   991.023 ha statt rund 12 Mio. ha; Volllaststunden im Prototyp einheitlich
   (2.000 bzw. 1.000 h) statt regional.
+
+## W2. Ausbaukonsens, Bestand getrennt, Bestand in „Bestand & Potenziale" (Session 2026-11-04)
+
+- **Rechenregel:** s. R.1 (Abgelöst-Nachtrag). Teilmengen-Regel jetzt:
+  Ausbaukonsens ≤ Ausbau; davon Bestand + Zubaubedarf = Ausbaukonsens.
+- **Begriffe:** Zubaukonsens → Ausbaukonsens (überall), empfohlener Zubau →
+  empfohlener Ausbau, Paar-Matrix „Ausbaukonsens je Prinzipienpaar",
+  Kartenebenen „Bestand · Zubau · Ausbau" (vorher „… · Gesamt"), Caption
+  Konsens „… Diesen Ausbau tragen alle mit …" (ändert V). Prinzip-Infos „Der
+  Ausbau folgt …" statt „Der Zubau folgt …". „Zubau" bzw. „Zubaubedarf" nur
+  noch, wo der Bestand berücksichtigt ist.
+- **Kartenebenen:** Umschalter nur mit Bestand, Standard „Ausbau", auch in
+  „Verteilung – Deutschland". Konsens: Ausbau = Ausbaukonsens, Zubau =
+  Zubaubedarf, Bestand = Bestand; Einzelverteilung(en): Ausbau_p, Zubau_p,
+  Bestand. „Was begrenzt?" und Dissens ohne Umschalter. Legende „Ausbaukonsens
+  / Zubaubedarf / Bestand je Landkreis (Gemeinde, 5 × 5-km-Zelle), in GW".
+- **Rechte Spalte Deutschland:** Landkreis: Ausbaukonsens, % der Fläche,
+  Anteil an Zielerreichung, Einordnung „Ausbau über-/unterdurchschnittlich"
+  (Grundlage wie bisher, bezogen auf den Ausbaukonsens); mit Bestand „davon
+  Bestand" und „Zubaubedarf", bei Bestand über dem Ausbaukonsens „Bestand"
+  (voll) und Zubaubedarf 0. Die Zeile „Ausbaumenge im DE-Konsens" im
+  Zelldetail entfällt (Popover behält sie). Übersicht: Balken = Ausbauziel,
+  gefüllt = Ausbaukonsens, „davon Bestand" darin schraffiert, darunter zwei
+  Zeilen. Die Zeilen werden mit den Stellen des Hauptwerts gerundet und gehen
+  sichtbar auf. In der Region dieselben Zeilen im Zell-/Gemeindedetail (Folge
+  der gemeinsamen Darstellung); Umbau der Regionsspalte folgt (Prompt C).
+- **„Bestand & Potenziale":** Schalter „Bestandsanlagen berücksichtigen" in
+  Potenzial- und Planungsflächen (nicht bei „Bestand heute"), derselbe Zustand
+  wie unter „Rahmen". An: je Landkreis bzw. Gemeinde noch nutzbares
+  Leistungspotenzial = max(Potenzial − Bestand, 0), Fläche und Energie im
+  selben Verhältnis; Beschriftung „Noch nutzbare(s) …". Rohdaten unverändert.
+  Der Regler „Ausbaumenge" behält das volle Potenzial als Bereich.
