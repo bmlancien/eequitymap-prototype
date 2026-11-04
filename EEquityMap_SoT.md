@@ -2117,8 +2117,9 @@ zeigt die rechte Spalte im Tab „Regional" oben eine Herleitungskette:
   Ausbaumenge zurücksetzen"); beim Hovern „Setzt … auf den Stand der letzten
   Berechnung zurück. Die Karte ist dann wieder aktuell." Er setzt die
   Eingaben auf den Stand der letzten Berechnung zurück: regionale Prinzipien,
-  Ausbaumenge (eigener Wert bzw. Startwert), Technologie,
-  „Bestandsanlagen berücksichtigen". Damit ist das Ergebnis wieder aktuell und
+  Ausbaumenge (eigener Wert bzw. Startwert), Technologie (seit Session
+  2026-11-04 nicht mehr „Bestandsanlagen berücksichtigen": der Schalter wirkt
+  live, s. §N). Damit ist das Ergebnis wieder aktuell und
   der Hinweis verschwindet. Nur ein Schritt zurück, keine Undo-Historie.
   - **Nur wenn alle Änderungen aus „Regional" stammen.** Wurden seit der
     letzten Berechnung die bundesweiten Prinzipien oder das Ausbauziel (Bereich
