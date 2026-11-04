@@ -132,7 +132,7 @@
           <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
             <button onClick="{{ toggleAccount }}" style="{{ accountSwitchStyle }}"><span style="{{ accountKnobStyle }}"></span></button>
             <span style="font-size:14px;color:#2e2927;flex:1">Bestandsanlagen berücksichtigen</span>
-            <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #cbc8c4;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6e6662;cursor:pointer;font-style:italic">i</span>
+            <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1.5px solid #8f8782;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3f3936;cursor:pointer;font-style:italic;font-weight:600">i</span>
           </div>
           <div style="{{ accountInfoStyle }}"><b style="color:#2e2927">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Standardmäßig zeigt EEquityMap eine <b style="color:#2e2927">Greenfield-Verteilung</b>: Der Ausbau wird so verteilt, als würde die räumliche Verteilung neu geplant – unabhängig davon, wo heute bereits Anlagen stehen.<br>Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst bestehen. Für jeden Landkreis bzw. jede Zelle wird geprüft:<ul style="margin:4px 0;padding-left:18px"><li>liegt der berechnete Ausbau <b style="color:#2e2927">unterhalb des Bestands</b>, erfolgt kein zusätzlicher Zubau;</li><li>liegt sie <b style="color:#2e2927">oberhalb des Bestands</b>, entspricht die Differenz dem erforderlichen Zubau.</li></ul>Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel zusätzliche Leistung noch erforderlich ist.<br>Hier in „Bestand &amp; Potenziale" werden die Potenziale um den Bestand verringert: Wo schon Anlagen stehen, ist diese Fläche belegt.</div>
         </sc-if>
@@ -302,7 +302,7 @@
       <div style="display:flex;align-items:center;gap:9px;margin:16px 0 4px">
         <button onClick="{{ toggleAccount }}" style="{{ accountSwitchStyle }}"><span style="{{ accountKnobStyle }}"></span></button>
         <span style="font-size:14px;color:#2e2927;flex:1">Bestandsanlagen berücksichtigen</span>
-        <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1px solid #cbc8c4;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6e6662;cursor:pointer;font-style:italic">i</span>
+        <span onClick="{{ toggleAccountInfo }}" style="width:16px;height:16px;border:1.5px solid #8f8782;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3f3936;cursor:pointer;font-style:italic;font-weight:600">i</span>
       </div>
       <div style="{{ accountInfoStyle }}"><b style="color:#2e2927">Was bedeutet „Bestandsanlagen berücksichtigen"?</b><br>Standardmäßig zeigt EEquityMap eine <b style="color:#2e2927">Greenfield-Verteilung</b>: Der Ausbau wird so verteilt, als würde die räumliche Verteilung neu geplant – unabhängig davon, wo heute bereits Anlagen stehen.<br>Wird der Bestand berücksichtigt, bleibt vorhandene Leistung zunächst bestehen. Für jeden Landkreis bzw. jede Zelle wird geprüft:<ul style="margin:4px 0;padding-left:18px"><li>liegt der berechnete Ausbau <b style="color:#2e2927">unterhalb des Bestands</b>, erfolgt kein zusätzlicher Zubau;</li><li>liegt sie <b style="color:#2e2927">oberhalb des Bestands</b>, entspricht die Differenz dem erforderlichen Zubau.</li></ul>Der Bestand wird also nicht zurückgebaut, sondern begrenzt, wie viel zusätzliche Leistung noch erforderlich ist.</div>
 
@@ -694,8 +694,8 @@
                Eigene Box unter „Vergleich A − B", gleiche Wind-/PV-Farbe; nur wenn Szenarien gespeichert sind. -->
           <sc-if value="{{ showHubTables }}" hint-placeholder-val="{{ false }}">
             <div style="{{ hubTablesStyle }}">
-              <div style="font-size:16px;font-weight:600;color:#2e2927">Gespeicherte Szenarien</div>
-              <div style="font-size:14px;color:#5c5451;line-height:1.45;margin:-6px 2px 0;text-wrap:pretty">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Landkreisen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px;font-weight:600;color:#2e2927">Gespeicherte Szenarien</span><span onClick="{{ toggleHubTablesInfo }}" style="{{ hubTablesInfoBtnStyle }}">i</span></div>
+              <div style="{{ hubTablesInfoStyle }}">Alle gespeicherten Szenarien, eines je Zeile, getrennt nach Deutschland und Landkreisen. Die Farbpunkte zeigen die gewählten Prinzipien; ein Klick auf einen Spaltenkopf sortiert.</div>
               <!-- Zwei Gruppen: Deutschland · GW und Landkreise · GW — getrennte Tabellen, gleiche Spalten und Sortierung -->
               <sc-for list="{{ hubRowGroups }}" as="hg" hint-placeholder-count="1">
               <div>
@@ -1381,7 +1381,7 @@
           <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
             <sc-if value="{{ cellShowGoal }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px">
-                <span style="color:#5c5451;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1px solid #cbc8c4;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6e6662;cursor:pointer;font-style:italic;flex:none">i</span></span>
+                <span style="color:#5c5451;display:flex;align-items:center;gap:6px">Anteil an Zielerreichung<span onClick="{{ toggleGoalInfo }}" style="width:16px;height:16px;border:1.5px solid #8f8782;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3f3936;cursor:pointer;font-style:italic;font-weight:600;flex:none">i</span></span>
                 <span class="num" style="color:#2e2927;font-weight:500">{{ cellGoalShare }}</span>
               </div>
               <div style="{{ goalInfoStyle }}">{{ goalInfoText }}</div>
@@ -1908,7 +1908,8 @@ class Component extends DCLogic {
     scenarioToastMounted: false,
     scenarioFirstSaveSeen: false,
     introInfo: false,   // Einstiegs-Info an der Prinzipien-Überschrift (R.12)
-    hubInfo: false      // Info „Was kann ich hier vergleichen?" im Hub (R.8)
+    hubInfo: false,     // Info „Was kann ich hier vergleichen?" im Hub (R.8)
+    hubTablesInfo: false // Info an „Gespeicherte Szenarien"
   };
 
   // Referenzwerte einer Hub-Referenz auf beliebigen Zellen (Landkreise oder 5×5-km-Raster), auf ein Ziel skaliert.
@@ -3336,7 +3337,7 @@ class Component extends DCLogic {
             pickStyle: 'flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 4px 7px 12px;font-size:14px;'
               + (inOther ? 'color:#6e6662;cursor:not-allowed' : 'color:#2e2927;cursor:pointer'),
             onPick: inOther ? (() => {}) : (() => { const np = pair.slice(); np[k] = o.id; setPair(np); }),
-            infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1px solid #cbc8c4;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#6e6662;cursor:pointer;font-style:italic;flex:none' : 'display:none',
+            infoBtnStyle: o.isRef ? 'width:16px;height:16px;border:1.5px solid #8f8782;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3f3936;cursor:pointer;font-style:italic;font-weight:600;flex:none' : 'display:none',
             onInfo: o.isRef ? (() => this.setState({ hubRefInfo: this.state.hubRefInfo === o.id ? null : o.id })) : (() => {}),
             info: infoOpen ? o.info : '',
             infoStyle: infoOpen ? 'font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;margin:2px 12px 6px;line-height:1.45' : 'display:none'
@@ -3947,12 +3948,12 @@ class Component extends DCLogic {
     R.consHex = this.CONS;
     R.isErweitert = isExt;
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
-    R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.targetInfo ? '#1d6b4c' : '#d0cdc9') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1d6b4c' : '#6e6662') + ';font-style:italic;cursor:pointer';
+    R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1.5px solid ' + (S.targetInfo ? '#1d6b4c' : '#8f8782') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1d6b4c' : '#3f3936') + ';font-style:italic;font-weight:600;cursor:pointer';
     R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;margin:0 0 8px;line-height:1.45' : 'display:none';
     R.princSublineStyle = 'height:12px';
     R.toggleTargetInfo = () => this.setState({ targetInfo: !this.state.targetInfo });
     // Einstiegs-Info an der Prinzipien-Überschrift (R.12) und Info an der Erklärzeile des Hubs (R.8) — zu, bis angeklickt
-    const infoBtn = on => 'flex:none;width:16px;height:16px;border:1px solid ' + (on ? '#1d6b4c' : '#d0cdc9') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (on ? '#1d6b4c' : '#6e6662') + ';font-style:italic;cursor:pointer';
+    const infoBtn = on => 'flex:none;width:16px;height:16px;border:1.5px solid ' + (on ? '#1d6b4c' : '#8f8782') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (on ? '#1d6b4c' : '#3f3936') + ';font-style:italic;font-weight:600;cursor:pointer';
     const infoBox = 'font-size:14px;color:#5c5451;line-height:1.5;padding:2px 0 2px 12px;border-left:2px solid #dad7d3';
     R.introInfoBtnStyle = infoBtn(S.introInfo);
     R.introInfoStyle = S.introInfo ? infoBox + ';margin:8px 0 0' : 'display:none';
@@ -3960,8 +3961,11 @@ class Component extends DCLogic {
     R.hubInfoBtnStyle = infoBtn(S.hubInfo) + ';margin-top:1px';
     R.hubInfoStyle = S.hubInfo ? infoBox + ';margin:0 2px' : 'display:none';
     R.toggleHubInfo = () => this.setState({ hubInfo: !this.state.hubInfo });
+    R.hubTablesInfoBtnStyle = infoBtn(S.hubTablesInfo);
+    R.hubTablesInfoStyle = S.hubTablesInfo ? infoBox + ';margin:-6px 2px 0' : 'display:none';
+    R.toggleHubTablesInfo = () => this.setState({ hubTablesInfo: !this.state.hubTablesInfo });
     // Definition „Ausbaukonsens" hinter dem „i" neben dem Label im Zelldetail der rechten Spalte
-    R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1px solid ' + (S.consInfo ? '#1d6b4c' : '#d0cdc9') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#1d6b4c' : '#6e6662') + ';font-style:italic;cursor:pointer';
+    R.consInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1.5px solid ' + (S.consInfo ? '#1d6b4c' : '#8f8782') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.consInfo ? '#1d6b4c' : '#3f3936') + ';font-style:italic;font-weight:600;cursor:pointer';
     R.consInfoStyle = S.consInfo ? 'font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;line-height:1.45' : 'display:none';
     R.cellHeroInfoBtnStyle = 'display:none';
     R.toggleConsInfo = () => this.setState({ consInfo: !this.state.consInfo });
@@ -4017,7 +4021,7 @@ class Component extends DCLogic {
         tag: canClick ? '' : '(Metrik in Vorbereitung)',
         tagStyle: canClick ? 'display:none' : 'font-size:14px;color:#6e6662;font-style:italic;margin-top:2px',
         info: p.info || '',
-        infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1px solid #d0cdc9;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#6e6662;font-style:italic;cursor:pointer' : 'display:none',
+        infoBtnStyle: canClick ? 'flex:none;width:16px;height:16px;border:1.5px solid #8f8782;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3f3936;font-style:italic;font-weight:600;cursor:pointer' : 'display:none',
         infoStyle: (S.infoPrinc === p.id ? 'display:block;' : 'display:none;') + 'font-size:14px;color:#5c5451;line-height:1.5;padding:6px 10px 4px 32px',
         onToggle: canClick ? () => this.toggleP(p.id) : () => {},
         onInfo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ infoPrinc: S.infoPrinc === p.id ? null : p.id }); }
@@ -4534,7 +4538,7 @@ class Component extends DCLogic {
       if (!isRegion && target > capSum + 1e-9 && R.ovLeadValue) R.ovLeadWhy = 'Das Ziel übersteigt das Potenzial dieses Gebiets (' + this.fmt(capSum) + ' GW).';
       R.ovLeadBoxStyle = hideLead || isRegion ? 'display:none' : 'margin-top:16px;padding:14px 0 0;border-top:1px solid #e5e2de';
       // Balken-Erklärung hinter dem „i" neben dem Label (wie die Prinzip-Infos links): zu, bis angeklickt
-      R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1px solid ' + (S.ovBarInfo ? '#1d6b4c' : '#d0cdc9') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1d6b4c' : '#6e6662') + ';font-style:italic;cursor:pointer' : 'display:none';
+      R.ovBarInfoBtnStyle = R.ovBarShow ? 'flex:none;width:16px;height:16px;border:1.5px solid ' + (S.ovBarInfo ? '#1d6b4c' : '#8f8782') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.ovBarInfo ? '#1d6b4c' : '#3f3936') + ';font-style:italic;font-weight:600;cursor:pointer' : 'display:none';
       R.ovBarCaptionStyle = S.ovBarInfo ? 'font-size:14px;color:#5c5451;margin-top:8px;line-height:1.45' : 'display:none';
       R.toggleOvBarInfo = () => this.setState({ ovBarInfo: !this.state.ovBarInfo });
       // Galerie: die kleinen Karten sind nicht zellweise klickbar → kein „Klicken Sie auf eine Zelle"
@@ -4904,7 +4908,7 @@ class Component extends DCLogic {
     // Nicht zweimal dasselbe sagen: solange der Kartenhinweis steht, entfällt der Klick-Hinweis rechts (UX-Review)
     if (R.showKrsClickHint) R.ovClickHint = false;
     R.dismissKrsClickHint = () => this.setState({ seenKrsHint: true });
-    const infoCircle = (on, dark) => 'flex:none;width:16px;height:16px;border:1px solid ' + (dark ? (on ? '#fff' : 'rgba(255,255,255,.6)') : (on ? '#1d6b4c' : '#d0cdc9')) + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (dark ? '#fff' : (on ? '#1d6b4c' : '#6e6662')) + ';font-style:italic;cursor:pointer;line-height:1';
+    const infoCircle = (on, dark) => 'flex:none;width:16px;height:16px;border:1.5px solid ' + (dark ? (on ? '#fff' : 'rgba(255,255,255,.6)') : (on ? '#1d6b4c' : '#8f8782')) + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (dark ? '#fff' : (on ? '#1d6b4c' : '#3f3936')) + ';font-style:italic;font-weight:600;cursor:pointer;line-height:1';
     R.popoverInfoBtnStyle = infoCircle(S.popoverInfo, false) + ';position:absolute;top:9px;right:8px;background:#fff';
     R.togglePopoverInfo = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ popoverInfo: !this.state.popoverInfo }); };
     R.popoverInfoStyle = R.popoverInfoStyle || 'display:none';
