@@ -3831,7 +3831,7 @@ class Component extends DCLogic {
     // auch die Tastatur.
     const leftLocked = !!R.isSzenarien;
     R.lockTitle = leftLocked ? 'Diese Einstellungen gelten für die anderen Reiter. Der Vergleich zeigt gespeicherte Szenarien.' : '';
-    R.lockStyle = leftLocked ? 'opacity:.45;cursor:not-allowed' : '';
+    R.lockStyle = leftLocked ? 'opacity:.25;cursor:not-allowed' : '';
     R.lockInner = leftLocked ? 'pointer-events:none;user-select:none' : '';
     const lockRef = el => { if (el) el.inert = leftLocked; };
     R.lockRefA = lockRef; R.lockRefB = el => lockRef(el); R.lockRefC = el => lockRef(el);
