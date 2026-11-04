@@ -3784,7 +3784,7 @@ class Component extends DCLogic {
       // Die Minimum-Regel gilt in der Region je Rasterzelle, nicht je Gemeinde (Gemeinde-Wert = Summe der Zellminima)
       konsens: (isRegion ? 'Auf jeder 5 × 5-km-Fläche' : 'In jedem Landkreis') + ' zählt der niedrigste Vorschlag der gewählten Prinzipien: Diesen Ausbau tragen alle mit. Das heißt nicht, dass eine Fläche genehmigungsfähig ist.',
       konflikt: S.konfliktMode === 'anders'
-        ? 'Eingefärbt ist das Prinzip, das dort um mehr als 20 % über dem Konsens liegt. Ohne es wäre dort mehr Konsens möglich.'
+        ? 'Eingefärbt sind die Prinzipien, die dort mehr als 20 % mehr Ausbau vorsehen als der Konsens. Diesen Mehrausbau trägt das niedrigste Prinzip nicht mit.'
         : 'Gemessen am größten Abstand eines gewählten Prinzips zum Konsens.',
       minimum: 'Begrenzend ist das Prinzip, das dort am wenigsten Ausbau vorsieht. Ohne es wäre dort mehr Konsens möglich.',
       verteilungen: '', // Headline + Kartentexte sagen es bereits

@@ -2452,9 +2452,13 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   - Was begrenzt?: „Begrenzend ist das Prinzip, das dort am wenigsten Zubau
     vorsieht. Ohne es wäre dort mehr Konsens möglich."
   - Dissens · Wie stark?: „Gemessen am größten Abstand eines gewählten
-    Prinzips zum Konsens." · Welche Prinzipien?: „Eingefärbt ist das Prinzip,
-    das dort um mehr als 20 % über dem Konsens liegt. Ohne es wäre dort mehr
-    Konsens möglich."
+    Prinzips zum Konsens." · Welche Prinzipien?: „Eingefärbt sind die Prinzipien,
+    die dort mehr als 20 % mehr Ausbau vorsehen als der Konsens. Diesen
+    Mehrausbau trägt das niedrigste Prinzip nicht mit." (Mehrere = gestreift,
+    das sagt die Legende.) (Session 2026-11-04:
+    vorher „… Ohne es wäre dort mehr Konsens möglich." — falsch, denn der
+    Konsens ist das Minimum; ein Prinzip über dem Konsens begrenzt ihn nicht,
+    das begrenzende ist das niedrigste.)
   - Einzelverteilung: Erklärsatz des Prinzips; der kursive Zusatz
     „Einzelverteilung eines Prinzips — nicht der Konsens" entfällt (die
     Headline nennt das Prinzip).
