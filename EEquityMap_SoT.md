@@ -2516,6 +2516,31 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   Bestand beginnen →" (→ Bestand heute). Esc schließt. Der volle Teamtext steht
   im Fenster „Was ist EEquityMap?" („Mehr dazu"), darunter die bisherigen
   Abschnitte ohne Doppelungen. Ändert S (Startoverlay).
+  **Nachtrag (Session 2026-11-04):** Seite 2 an Seite 1 angeglichen: statt der
+  Liste drei Karten im selben Raster (Rahmen, Radius, Abstand, Kartenhöhe
+  104 px). Je Karte oben eine kleine Karte aus den App-Daten (fest Wind,
+  Ausbauziel 2035, unabhängig von den Einstellungen), darunter links die
+  Schrittnummer im Kreis (neutral wie die Bereichs-Tabs, keine Prinzipfarbe),
+  rechts Titel (fett), Frage und ein Satz:
+  ① Bestand & Potenziale · Wo können wir ausbauen? · „Wo heute Anlagen stehen
+  und wo weitere möglich wären." — Karte: Bestand heute je Landkreis, Skala wie
+  im Reiter „Bestand heute".
+  ② Verteilung – Deutschland · Was wäre bundesweit gerecht? · „Wo sich die
+  Verteilungen überschneiden, entsteht Konsens." — Karte: Ausbaukonsens von
+  Verbrauchsnah, Bevölkerungsnah und Ökonomisch optimiert (die drei Prinzipien
+  von Seite 1), Konsens-Skala.
+  ③ Verteilung – Regional · Was wäre vor Ort gerecht? · „Die Ausbaumenge eines
+  Landkreises nach den Vorstellungen vor Ort neu verteilen." — Karte: Kleve mit
+  Gemeinden, Ausbaukonsens wie in der Detailauswertung (Startwert, Konsens-
+  Skala); ohne Gemeindedaten der Umriss des Landkreises.
+  Keine Pfeile zwischen den Karten. Einleitungssatz, „← Zurück", „Mit dem
+  Bestand beginnen →" und die Punkte bleiben. Beide Seiten liegen übereinander
+  in derselben Rasterzelle (die inaktive unsichtbar), damit der Dialog beim
+  Wechsel gleich hoch bleibt. Dialogbreite 760 px statt 640 px (beide Seiten),
+  damit der Text der Karten auf Seite 2 Platz hat. Die Knopfzeile ist auf
+  beiden Seiten unten angeheftet und steht an derselben Stelle (Seite 2 hält
+  unter den Knöpfen den Platz von „Mehr dazu" frei). **[Offen]** Die Karten auf
+  Seite 2 sind wegen der drei Textzeilen trotzdem etwas höher als auf Seite 1.
 - **Methodik:** neuer Abschnitt 2 „Potenzialflächen und Kennzahlen" (2.1 Wind,
   2.2 Kennzahlen Wind, 2.3 Freiflächen-PV mit Tabelle Flächenbedarf, 2.4
   Planungsflächen als Platzhalter) und 3.1 „Verteilmethodik Freiflächen-PV";
@@ -2523,7 +2548,7 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   sind beschrieben, wie sie im Projekt verwendet werden. Die Werte in diesem
   Prototyp sind Platzhalter."
 - **„Szenarien vergleichen":** linke Spalte bis auf die Technologie ausgegraut
-  (Deckkraft 45 %, „not-allowed", nicht bedienbar, auch nicht per Tastatur):
+  (Deckkraft 25 %, seit Session 2026-11-04; vorher 45 %; „not-allowed", nicht bedienbar, auch nicht per Tastatur):
   Prinzipien, Ausbauziel/Ausbaumenge, „Bestandsanlagen berücksichtigen", „Zum
   Vergleich speichern". Tooltip: „Diese Einstellungen gelten für die anderen
   Reiter. Der Vergleich zeigt gespeicherte Szenarien." Erst-Hinweise dort aus.

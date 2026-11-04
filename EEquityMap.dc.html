@@ -1457,8 +1457,11 @@
        Esc schließt. -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div class="scroll" role="dialog" aria-modal="true" aria-label="Willkommen bei EEquityMap" style="width:min(640px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 22px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
-        <sc-if value="{{ introPage1 }}" hint-placeholder-val="{{ true }}">
+      <div class="scroll" role="dialog" aria-modal="true" aria-label="Willkommen bei EEquityMap" style="width:min(760px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 22px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
+        <!-- Beide Seiten liegen übereinander in derselben Rasterzelle; die inaktive ist nur unsichtbar (visibility):
+             So nimmt der Dialog immer die Höhe der höheren Seite an und springt beim Wechsel nicht. -->
+        <div style="display:grid">
+        <div aria-hidden="{{ introPage1Hidden }}" style="{{ introPage1Style }}">
           <div style="font-family:var(--display);font-size:24px;font-weight:700;color:#2e2927;letter-spacing:-.3px;text-wrap:balance">Wo wäre der Ausbau Erneuerbarer Energien fair?</div>
           <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:14px 0 18px;text-wrap:pretty">Wind- und Solaranlagen sollen fair über Deutschland verteilt werden. Doch was gerecht ist, sehen Menschen unterschiedlich. EEquityMap zeigt, wie sich verschiedene Gerechtigkeitsvorstellungen auf die Verteilung auswirken.</p>
           <!-- Wirkung: unterschiedliche Prioritäten → unterschiedliche Verteilung des Ausbaus -->
@@ -1482,32 +1485,45 @@
           </div>
           <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:0 0 14px;text-wrap:pretty">Aber müssen wir uns überhaupt einigen, was gerecht ist? EEquityMap zeigt auch, wo sich die Verteilungen überschneiden – und wie viel Ausbau möglich wäre, ohne eine der Vorstellungen zurückzustellen. Im Konsens also. Damit könnten wir anfangen.</p>
           <div style="font-family:var(--display);font-size:16px;font-weight:600;color:#1d6b4c;margin:0 0 22px">Unterschiedliche Vorstellungen. Gemeinsame Lösungen.</div>
-          <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+          <!-- Knopfzeile unten angeheftet (margin-top:auto), auf beiden Seiten an derselben Stelle -->
+          <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto">
             <button onClick="{{ introNext }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">So funktioniert's →</button>
             <button onClick="{{ introToPotenzial }}" style="background:#fff;color:#1d6b4c;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#f5f2ee">Direkt zu den Potenzialflächen</button>
           </div>
           <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
-        </sc-if>
-        <sc-if value="{{ introPage2 }}" hint-placeholder-val="{{ false }}">
+        </div>
+        <div aria-hidden="{{ introPage2Hidden }}" style="{{ introPage2Style }}">
           <div style="font-family:var(--display);font-size:24px;font-weight:700;color:#2e2927;letter-spacing:-.3px">So funktioniert EEquityMap</div>
           <p style="font-size:14px;line-height:1.65;color:#5c5451;margin:14px 0 20px;text-wrap:pretty">In drei Schritten von den Grundlagen zu gerechten Ausbauverteilungen – bundesweit und für einzelne Landkreise.</p>
-          <!-- Die drei Schritte = die drei Bereichs-Tabs (R.3), nummeriert wie dort -->
-          <ol style="list-style:none;margin:0 0 24px;padding:0;text-align:left;display:flex;flex-direction:column;gap:16px">
+          <!-- Die drei Schritte = die drei Bereichs-Tabs (R.3) als Karten im Raster von Seite 1: oben eine kleine Karte aus
+               den App-Daten (Wind, Ausbauziel 2035), darunter links die Schrittnummer (neutral wie die Bereichs-Tabs), rechts der Text -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
             <sc-for list="{{ introSteps }}" as="st" hint-placeholder-count="3">
-              <li style="display:flex;gap:12px;align-items:flex-start;padding-top:14px;border-top:1px solid #e8e5e1">
-                <span class="num" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1px solid #c3c0bc;font-size:13px;font-weight:600;color:#5c5451;margin-top:1px">{{ st.num }}</span>
-                <div style="min-width:0">
-                  <div style="font-size:16px;font-weight:600;color:#2e2927;line-height:1.35">{{ st.area }} <span style="font-weight:400;color:#5c5451">– {{ st.q }}</span></div>
-                  <div style="font-size:14px;color:#5c5451;line-height:1.55;margin-top:3px">{{ st.text }}</div>
+              <div style="background:#fff;border:1px solid #eae7e3;border-radius:8px;padding:8px">
+                <svg viewBox="{{ st.vb }}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:104px">
+                  <sc-for list="{{ st.cells }}" as="c" hint-placeholder-count="20">
+                    <path d="{{ c.d }}" fill="{{ c.fill }}" stroke="#fff" stroke-width="{{ st.sw }}" vector-effect="non-scaling-stroke"></path>
+                  </sc-for>
+                </svg>
+                <div style="display:flex;align-items:flex-start;gap:9px;margin-top:10px;text-align:left">
+                  <div class="num" style="flex:none;width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:1px solid #c3c0bc;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#5c5451">{{ st.num }}</div>
+                  <div style="font-size:14px;color:#5c5451;line-height:1.35;padding-top:5px;min-width:0">
+                    <div style="font-weight:600;color:#2e2927">{{ st.area }}</div>
+                    <div style="margin-top:2px">{{ st.q }}</div>
+                    <div style="margin-top:6px">{{ st.text }}</div>
+                  </div>
                 </div>
-              </li>
+              </div>
             </sc-for>
-          </ol>
-          <div style="display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap">
+          </div>
+          <div style="display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin-top:auto">
             <span onClick="{{ introPrev }}" role="button" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">← Zurück</span>
             <button onClick="{{ introToBestand }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">Mit dem Bestand beginnen →</button>
           </div>
-        </sc-if>
+          <!-- Platzhalter in der Höhe von „Mehr dazu" auf Seite 1, damit die Knöpfe auf beiden Seiten gleich hoch stehen -->
+          <div aria-hidden="true" style="margin-top:14px;visibility:hidden"><span style="font-size:14px;font-weight:500">Mehr dazu</span></div>
+        </div>
+        </div>
         <!-- Seitenpunkte ●○ (anklickbar) -->
         <div style="display:flex;justify-content:center;gap:8px;margin-top:20px">
           <sc-for list="{{ introDots }}" as="dt" hint-placeholder-count="2">
@@ -2398,6 +2414,48 @@ class Component extends DCLogic {
       if (ok) best.push({ cx: x, cy: y, mw });
     }
     return (this._bpRaw[key] = { pot, plan, best });
+  }
+
+  // Startdialog Seite 2: drei kleine Karten aus den App-Daten — fest Wind und Ausbauziel 2035, unabhängig von den
+  // aktuellen Einstellungen. 1 Bestand heute je Landkreis (Skala wie „Bestand heute"), 2 bundesweiter Ausbaukonsens
+  // der drei Prinzipien von Seite 1, 3 Kleve mit Gemeinden: Ausbaukonsens wie in der Detailauswertung (Startwert =
+  // DE-Konsens, Zielwertsuche, Minimum je Zelle, Gemeinde = gewichtete Summe). Ohne Gemeindedaten: Umriss des Kreises.
+  introStepMaps() {
+    const tech = 'wind', T = this.targets.z2035, sel = ['verbrauchsnah', 'bevoelkerungsnah', 'oekonomisch'];
+    const norm = vals => { const mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn; return v => r > 1e-9 ? (v - mn) / r : 1; };
+    const bestCol = t => this.mix('#f4f1ed', '#14697a', 0.08 + 0.92 * Math.max(0, Math.min(1, t)));
+    const best = this.krs.map(k => { const f = PotentialData.forKrs(k.id, tech); return f ? f.bestandMW || 0 : 0; });
+    const nb = norm(best);
+    const xs = sel.map(p => this.natAusbauFor(p, tech, T));
+    const cons = this.krs.map((k, i) => Math.min(...xs.map(x => x[i])));
+    const nc = norm(cons);
+    const krsId = '05154', kIdx = this.krs.findIndex(k => k.id === krsId), kk = this.krs[kIdx];
+    this.ensureGemeinden(krsId);
+    const gemList = this._gemCache[krsId], weights = gemList ? this.gemWeightsFor(krsId) : null;
+    let regCells, regVb;
+    if (gemList && weights) {
+      const budget = this.natBudgetFor(krsId, { selected: sel, tech, targetGW: T });
+      const A = this.regionSolve(krsId, sel, budget, tech).Astar;
+      const rx = sel.map(p => this.regionAusbauFor(krsId, p, tech, A));
+      const cellCons = rx[0].map((v, i) => Math.min(...rx.map(x => x[i])));
+      const gv = weights.map(ws => ws.reduce((a, w) => a + w.w * cellCons[w.i], 0));
+      const ng = norm(gv);
+      regCells = gemList.map((g, i) => ({ d: g.d, fill: this.seq(ng(gv[i]), this.CONS) }));
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      gemList.forEach(g => this.parseD(g.d).forEach(ring => ring.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); })));
+      regVb = [x0, y0, x1 - x0, y1 - y0].map(v => v.toFixed(1)).join(' ');
+    } else {
+      regCells = kk ? [{ d: kk.d, fill: this.seq(0.5, this.CONS) }] : [];
+      regVb = kk ? [kk.bx0, kk.by0, kk.bx1 - kk.bx0, kk.by1 - kk.by0].map(v => v.toFixed(1)).join(' ') : this.krsVb;
+    }
+    return [
+      { num: 1, area: 'Bestand & Potenziale', q: 'Wo können wir ausbauen?', text: 'Wo heute Anlagen stehen und wo weitere möglich wären.',
+        vb: this.krsVb, sw: 0.5, cells: this.krs.map((k, i) => ({ d: k.d, fill: bestCol(nb(best[i])) })) },
+      { num: 2, area: 'Verteilung – Deutschland', q: 'Was wäre bundesweit gerecht?', text: 'Wo sich die Verteilungen überschneiden, entsteht Konsens.',
+        vb: this.krsVb, sw: 0.5, cells: this.krs.map((k, i) => ({ d: k.d, fill: this.seq(nc(cons[i]), this.CONS) })) },
+      { num: 3, area: 'Verteilung – Regional', q: 'Was wäre vor Ort gerecht?', text: 'Die Ausbaumenge eines Landkreises nach den Vorstellungen vor Ort neu verteilen.',
+        vb: regVb, sw: 0.8, cells: regCells }
+    ];
   }
 
   ensureGemeinden(krsId) {
@@ -4780,6 +4838,9 @@ class Component extends DCLogic {
     const introPage = S.introPage === 2 ? 2 : 1;
     R.introPage1 = introPage === 1;
     R.introPage2 = introPage === 2;
+    const introPageStyle = on => 'grid-area:1/1;display:flex;flex-direction:column' + (on ? '' : ';visibility:hidden');
+    R.introPage1Style = introPageStyle(R.introPage1); R.introPage1Hidden = R.introPage1 ? 'false' : 'true';
+    R.introPage2Style = introPageStyle(R.introPage2); R.introPage2Hidden = R.introPage2 ? 'false' : 'true';
     R.introNext = () => this.setState({ introPage: 2 });
     R.introPrev = () => this.setState({ introPage: 1 });
     // Beide Ziel-Knöpfe schließen den Dialog und öffnen „Bestand & Potenziale" mit dem genannten Unter-Reiter
@@ -4791,11 +4852,7 @@ class Component extends DCLogic {
       onClick: () => this.setState({ introPage: n }),
       style: 'width:9px;height:9px;padding:0;border-radius:50%;cursor:pointer;border:1px solid #1d6b4c;background:' + (n === introPage ? '#1d6b4c' : '#fff')
     }));
-    R.introSteps = [
-      { num: 1, area: 'Bestand & Potenziale', q: 'Wo können wir ausbauen?', text: 'Wo stehen heute Anlagen, wo wären weitere möglich? Die Potenzialflächen sind die Grundlage aller Berechnungen.' },
-      { num: 2, area: 'Verteilung – Deutschland', q: 'Was wäre bundesweit gerecht?', text: 'Das Ausbauziel wird nach verschiedenen Gerechtigkeitsvorstellungen verteilt. Wo die Verteilungen übereinstimmen, entsteht Konsens.' },
-      { num: 3, area: 'Verteilung – Regional', q: 'Was wäre vor Ort gerecht?', text: 'Daraus ergibt sich eine Ausbaumenge für den Landkreis. Sie lässt sich nach den vor Ort relevanten Vorstellungen neu verteilen.' }
-    ];
+    R.introSteps = S.intro ? this.introStepMaps() : [];
     R.infoPanel = S.infoPanel;
     R.toggleInfoPanel = () => this.setState({ infoPanel: !S.infoPanel, intro: false });
     R.methodOpen = !!S.methodOpen;
