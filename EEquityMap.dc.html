@@ -3785,7 +3785,10 @@ class Component extends DCLogic {
       // Eine Zeile je Ansicht (UX-Review): sagt, was die Headline nicht sagt. Der Konsens-Hinweis („nicht
       // genehmigungsfähig") steht jetzt hier statt als zweite Zeile unter der Legende.
       // Die Minimum-Regel gilt in der Region je Rasterzelle, nicht je Gemeinde (Gemeinde-Wert = Summe der Zellminima)
-      konsens: (isRegion ? 'Auf jeder 5 × 5-km-Fläche' : 'In jedem Landkreis') + ' zählt der niedrigste Vorschlag der gewählten Prinzipien: Diesen Ausbau tragen alle mit. Das heißt nicht, dass eine Fläche genehmigungsfähig ist.',
+      // Gemeinde-Ansicht (Standard): die Karte zeigt Gemeinden, gerechnet wird aber je 5 × 5-km-Fläche — der Text spricht nur von Gemeinden ("Ort für Ort" hält die Minimum-Regel je Fläche fest, ohne Raster)
+      konsens: gemActive
+        ? 'Jede Gemeinde zeigt den Ausbau, den alle gewählten Prinzipien mittragen: Ort für Ort zählt der niedrigste Vorschlag. Das heißt nicht, dass eine Fläche genehmigungsfähig ist.'
+        : (isRegion ? 'Auf jeder 5 × 5-km-Fläche' : 'In jedem Landkreis') + ' zählt der niedrigste Vorschlag der gewählten Prinzipien: Diesen Ausbau tragen alle mit. Das heißt nicht, dass eine Fläche genehmigungsfähig ist.',
       konflikt: S.konfliktMode === 'anders'
         ? 'Eingefärbt sind die Prinzipien, die dort mehr als 20 % mehr Ausbau vorsehen als der Konsens. Diesen Mehrausbau trägt das niedrigste Prinzip nicht mit.'
         : 'Gemessen am größten Abstand eines gewählten Prinzips zum Konsens.',

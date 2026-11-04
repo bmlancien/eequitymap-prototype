@@ -2456,7 +2456,12 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   - Konsens: „In jedem Landkreis zählt der niedrigste Vorschlag der gewählten
     Prinzipien: Diesen Zubau tragen alle mit. Das heißt nicht, dass eine Fläche
     genehmigungsfähig ist." Regional: „Auf jeder 5 × 5-km-Fläche zählt …", denn
-    dort gilt die Minimum-Regel je Rasterzelle (Session 2026-11-02, Persona-Test;
+    dort gilt die Minimum-Regel je Rasterzelle — nur in der Raster-Ansicht. In der
+    Gemeinde-Ansicht (Standard): „Jede Gemeinde zeigt den Ausbau, den alle
+    gewählten Prinzipien mittragen: Ort für Ort zählt der niedrigste Vorschlag.
+    Das heißt nicht, dass eine Fläche genehmigungsfähig ist." (Session
+    2026-11-04: Nutzer sehen Gemeinden, kein Raster; „5 × 5-km-Fläche" passte
+    nicht zur Karte) (Session 2026-11-02, Persona-Test;
     vorher „Diesen Zubau tragen alle gewählten Prinzipien mit — das heißt nicht,
     …"). Das „i" am Zubaukonsens ergänzt: „… mittragen: der jeweils niedrigste
     Vorschlag." (der frühere zweite Hinweis unter der Legende entfällt)
