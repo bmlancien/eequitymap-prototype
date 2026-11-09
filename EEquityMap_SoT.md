@@ -2934,3 +2934,15 @@ Die Antworten haben Vorrang vor älteren Annahmen in diesem Dokument.
   unter Berücksichtigung des Bestands eingehalten. Der Bestand selbst wird
   nicht zurückgebaut." Definitionen aus Y.3.
 - **Offen:** Toleranz der Zielwertsuche (I.14); I.16–I.21.
+
+### Z.4 Zwei UI-Korrekturen (Session 2026-11-09, Prompt F)
+
+- **Legende der Differenzkarte** („Szenarien vergleichen"): steht jetzt direkt
+  unter dem Kartentitel „Differenzkarte: A − B", über der Karte (vorher darunter,
+  bei 1440 × 900 erst nach Scrollen sichtbar). Annahme: Position unter dem
+  Titel statt einer Leiste in der Kartenfläche. Geprüft bei 1440 × 900 und
+  1360 × 900, Deutschland und Region (Kleve): Legende endet bei 488 bzw. 507 px.
+- **Etikett „begrenzend"** (Zelldetail, „Empfohlener Ausbau je Prinzip"):
+  neutral statt grün (Grün wirkte wie „gut"). Annahme: dunkelgraue Schrift
+  #3F3936, weißer Grund, 1 px Rahmen #C3C0BC (wie die Schrittnummern),
+  Schriftstärke 500. Vorher: grüne Schrift #1D6B4C auf #EFECE8.
