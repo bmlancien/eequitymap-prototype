@@ -26,6 +26,154 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 > nicht J2. **Session 2026-11-09:** „davon Bestand" entfällt; mit Bestand gelten
 > Bestand · Zubaubedarf · Ausbau einschließlich Bestand (Y.3). Startdialog mit
 > drei Seiten (Y.1). Antworten des Datenteams, PV-Kulisse 12 Mio. ha: Z.
+>
+> **Einstieg (Session 2026-11-09):** Abschnitt **0** beschreibt den heutigen
+> Stand ohne Historie und verweist je Punkt auf den maßgeblichen Abschnitt.
+> Alles danach ist Entscheidungshistorie; bei Widerspruch gilt der jüngere
+> Abschnitt bzw. Abschnitt 0.
+
+---
+
+## 0. Aktueller Stand auf einen Blick (Stand 2026-11-09, Code `main`) [Vorschlag]
+
+*Nur der heutige Stand, keine Historie. Werte sind Platzhalter des Prototyps;
+prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
+09.11.2026 (`version.js`).*
+
+**1. Aufbau** (R.3, X, S, W)
+- Kopf: Logo · „Was ist das?" (öffnet den Startdialog) · „Methodik" · „Über
+  das Projekt" · Knopf „Daten herunterladen" (zeigt nur den Hinweis „Der
+  Download ist im Prototyp noch nicht verfügbar.", P) · Umschalter
+  Basic/Erweitert.
+- Drei Bereichs-Tabs: ① Bestand & Potenziale · ② Verteilung – Deutschland ·
+  ③ Verteilung – [Landkreis] (ohne ausgewerteten Landkreis gesperrt:
+  „Verteilung – Regional"). Rechts daneben die Suche nach Landkreisen mit
+  Vorschlägen (X).
+- In ② und ③ fünf Unter-Reiter: Konsens (bei einem Prinzip
+  „Einzelverteilung") · Was begrenzt? · Dissens · Einzelverteilungen ·
+  Szenarien vergleichen. Unter zwei Prinzipien sind die mittleren drei
+  ausgegraut. Grüner Schritt-Hinweis unter der Headline, wegklickbar (W).
+- Erweitert zusätzlich: Paar-Matrix (Reiter Konsens bzw. Einzelverteilung),
+  UpSet ab drei Prinzipien, in der Region
+  Ansicht Gemeinden / Gemeinden + Raster / Raster, in ① Umschalter
+  Administrativ/Rohdaten. Basic zeigt alle sechs Prinzipien.
+- Fußzeile: links „Version 0.1 · Stand 09.11.2026", rechts Kontakt ·
+  Impressum · Datenschutz.
+
+**2. Startdialog** (Y.1) — bei jedem Laden, drei Seiten, gleiche Höhe, ●○○,
+× oben rechts, Esc schließt.
+1. Verteilungen: drei Karten (Verbrauchsnah, Bevölkerungsnah, Ökonomisch
+   optimiert); Knöpfe „Direkt zu den Potenzialflächen" · „Weiter →"; „Mehr
+   dazu". Inhalt vertikal mittig.
+2. Konsens: Karten Ausbaukonsens und „Was begrenzt?" der drei Prinzipien.
+3. So funktioniert EEquityMap: drei Schritte; Karte ② = Ausbaukonsens (wie
+   Seite 2); „Mit dem Bestand beginnen →" öffnet „Bestand heute".
+
+Alle Karten im Dialog: Wind, 160 GW, unabhängig von den Einstellungen.
+
+**3. Bestand & Potenziale** (R.13, W2, Y.2, Z.1)
+- Unter-Reiter: Bestand heute · Potenzialflächen · Planungsflächen (nur Wind).
+  Einzige zoombare Karte (Landkreise → Gemeinden). Frage-Link „Was zeigt diese
+  Karte?".
+- Schalter „Bestandsanlagen berücksichtigen" (nicht bei „Bestand heute";
+  derselbe Zustand wie unter „Rahmen"): zeigt das noch nutzbare Potenzial =
+  max(Potenzial − Bestand, 0). Einmaliger Hinweis beim ersten Öffnen von
+  Potenzial- oder Planungsflächen.
+- Daten (Platzhalter): Wind 3.077.310 ha · 775,6 GW · Bestand 62,0 GW.
+  PV 12.000.000 ha · 10.791,8 GW (11,12 m²/kW, je Landkreis höchstens 60 %
+  der Fläche) · Bestand 25,0 GW. Kleve PV 39.659 ha · 35,67 GW.
+
+**4. Verteilung – Deutschland** (C, E, W2, W3, Y.3)
+- Links: sechs Prinzipien (Verbrauchsnah, Bevölkerungsnah, Bevölkerungsfern,
+  Ökonomisch optimiert, Gleicher Anteil an Gesamtfläche, Gleicher Anteil an
+  Potenzialfläche) · Rahmen: Technologie Wind/PV, Ausbauziel (Ziel 2030 /
+  2035 / 2045 = 115 / 160 / 215 GW, Regler 60–260 GW, Zahlenfeld), Frage-Link
+  „Warum verändert sich der Konsens …", Schalter Bestand · „Zum Vergleich
+  speichern".
+- Rechts ohne Auswahl: Übersicht „Ausbaukonsens gesamt" mit Balken (Ausbauziel,
+  gefüllt = Konsens). Nach Klick auf einen Landkreis: Ausbaukonsens · % der
+  Fläche · Anteil an Zielerreichung · Einordnung · empfohlener Ausbau je
+  Prinzip mit Etikett „begrenzend" · ggf. Hinweiskasten bei Konfliktflächen
+  (E-Nachtrag) · Popover „Im Detail auswerten".
+- Mit Bestand: Zeilen Bestand · Zubaubedarf · Ausbau einschließlich Bestand,
+  Kartenebenen Bestand · Zubau · Ausbau.
+- Prüfwerte (Wind, 160 GW, Bestand aus): Verbrauchsnah + Bevölkerungsnah
+  **145,7 GW (91,1 %)**; + Ökonomisch optimiert 125,1 GW (78,2 %). PV,
+  2 Prinzipien: 157,3 GW (98,3 %). Kleve 0,40 GW, Schleswig-Flensburg 0,30 GW,
+  Vorpommern-Greifswald 0,15 GW (begrenzend: Verbrauchsnah).
+
+**5. Verteilung – [Landkreis]** (R.5–R.7, W3, Z.3)
+- Einstieg über „Im Detail auswerten" oder die Suche. Regionale Prinzipien
+  starten als Kopie der bundesweiten. Änderungen → „Ergebnis veraltet" mit
+  „Neu berechnen" (R.7).
+- Ausbaumenge T: Startwert = DE-Konsens (ein Prinzip: dessen Wert). Regler
+  0 … min(10 × größte Marke, Potenzial); Beschriftung „[Y] GW Potenzial" bzw.
+  „bis [X] GW · Potenzial [Y] GW". Das Zahlenfeld nimmt Werte bis zum
+  Potenzial an.
+- Zielwertsuche: Nach dem Rechnen ist der Ausbaukonsens K = T; insgesamt
+  verteilt wird A* ≥ T.
+- Rechte Spalte: Herleitung (Prinzipien bundesweit → Ausbaumenge → Prinzipien
+  regional) → Landkreis-Block (K, % Fläche, Anteil an Zielerreichung,
+  Einordnung, Satz „… verteilt die Rechnung insgesamt [A*] GW
+  (Konsensanteil [K/A*] %)") → Gemeinde- bzw. Zellblock.
+- Karte: Basic Gemeinden (Farbe = Gemeindewert, flächengewichtete Summe der
+  Zellen, M); Erweitert zusätzlich Raster 5 × 5 km.
+- Prüfwerte (Heidekreis, Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah):
+  T 0,31 · K 0,31 · A* 0,43 GW (72,6 %); T 1,00 → A* 1,36 GW (73,8 %).
+
+**6. Szenarien vergleichen** (O, R.8, N, P, Z.4)
+- Linke Spalte bis auf die Technologie ausgegraut. Slots A und B: gespeicherte
+  Szenarien oder die Referenzen „Historischer Ausbau" / „Planungsflächen".
+- Differenzkarte A − B mit Legende unter dem Titel. Szenario-Karten (Ebene,
+  Prinzipien, Ausbauziel/-menge, Ausbaukonsens, % im Konsens, Begrenzend) und
+  Tabelle „Gespeicherte Szenarien". „Vergleich teilen".
+- „% im Konsens": Deutschland K ÷ Ausbauziel; Region K ÷ A*. „Begrenzend" hier
+  = größter Konsensverlust insgesamt (O-Nachtrag, I.22). Bestand gehört nicht
+  zum Szenario (N).
+
+**7. Rechenregeln** (W3, Y.3, Z.2, L)
+- Verteilung: jedes Prinzip verteilt die ganze Menge proportional zu seinen
+  Gewichten, je Einheit höchstens bis zum Leistungspotenzial; der Rest geht an
+  Einheiten mit freiem Potenzial (`x_i = min(c_i, λ · w_i)`).
+- Ausbaukonsens = Minimum über die gewählten Prinzipien je Landkreis
+  (Deutschland) bzw. je 5 × 5-km-Rasterzelle (Region); Summen = Summen der
+  Einheiten. Unabhängig vom Bestand. Absolut nicht fallend mit dem Ziel; der
+  Anteil kann steigen, gleich bleiben oder sinken.
+- Bestand (je Einheit): Zubaubedarf = max(Ausbaukonsens − Bestand, 0); Ausbau
+  einschließlich Bestand = max(Ausbaukonsens, Bestand). Das Ziel kann
+  übererfüllt werden. Bestand wird nie zurückgebaut.
+- Zielwertsuche (Region): A* per Bisektion, bis |K − T| ≤ 0,0005 GW; T über
+  dem Potenzial → Hinweis „Höchstens [Σc] GW".
+- Einheiten: überall GW. Nachkommastellen: 2 je Landkreis und mehr (ab 10 GW
+  eine), 3 je Gemeinde/Zelle; ab 1.000 mit Tausenderpunkt.
+
+**8. Begriffe:** verbindlich in B (Tabelle mit Ausbaukonsens, Bestand,
+Zubaubedarf, Ausbau einschließlich Bestand, Zubau) und R.1/R.2.
+
+**9. Offene Fragen** (I; Stand 2026-11-09)
+- I.2 Schwelle „empfiehlt" (Median) bestätigen.
+- I.3 Vergleich über die gewichtete Kombination anbieten?
+- I.6 Bestandsschalter Basic oder Erweitert? Heute in Basic sichtbar, D sagt
+  Erweitert.
+- I.8 Primärset der Prinzipien festschreiben (heute alle sechs in Basic).
+- I.9 Differenzkarte Szenario vs. Referenz mischt Menge und Verteilung.
+- I.10 Bestand standardmäßig an oder aus (heute aus)?
+- I.11 Zoomschwelle Landkreis → Gemeinde in ①.
+- I.12 [Annahme]-Punkte aus R bestätigen.
+- I.14 Toleranz der Zielwertsuche (0,0005 GW) — vom Datenteam nicht
+  kommentiert.
+- I.16 Volllaststunden regional statt einheitlich.
+- I.17 echte Potenziale je Rasterzelle.
+- I.18 Potenzialgrenze für die Referenzen bestätigen.
+- I.19 PV-Technologiemix (Reihenfolge der Verteilung) nachbilden?
+- I.20 Teamtexte: Methodik 2.4 „Planungsflächen"; Freigabe Zusatzsatz am
+  Bestand-Schalter.
+- I.21 Folie „Titelleiste umbenennen" nachfragen.
+- I.22 „Begrenzend" mit zwei Bedeutungen.
+- I.23 PV-Kulisse: 34 % vs. „etwa 37 %" der Landesfläche.
+- [Vorschlag] I.4 („Sechs Tabs in Erweitert") und I.7 („Konsens vs. Planung")
+  als überholt schließen: Es gibt in beiden Modi dieselben fünf Reiter, die
+  Ansicht „Konsens vs. Planung" ist durch O abgelöst.
 
 ---
 
@@ -353,6 +501,26 @@ ausgegrauten Elemente in Basic.
 ---
 
 ## E. Rechte Spalte — Hybrid-Verhalten (neu)
+
+> **Nachtrag (Session 2026-11-09, Prompt G):** Bestand-Zeilen im
+> Landkreis-Detail jetzt Bestand · Zubaubedarf · Ausbau einschließlich Bestand
+> (Y.3); „davon Bestand" und die Schraffur im Balken entfallen.
+> **Hinweiskasten „Hier sind sich die Prinzipien uneinig: [Prinzip mit dem
+> höchsten Wert] empfiehlt viel Ausbau, [begrenzendes Prinzip] wenig — deshalb
+> bleibt kaum Konsens."** (terrakottafarben, mit ×) erscheint im Detail eines
+> Landkreises (Deutschland) bzw. einer Rasterzelle (Region, nur Erweitert, wo
+> Rasterzellen anklickbar sind; nicht im Gemeinde-Detail), wenn **alle** gilt:
+> - mindestens zwei Prinzipien gewählt;
+> - die Einheit ist eine Konfliktfläche: Ausbaukonsens < 40 % des höchsten
+>   Prinzipwerts dort (`CONFLICT_RATIO = 0.4`);
+> - der Kasten wurde in der Sitzung noch nicht mit × geschlossen. Bis dahin
+>   erscheint er bei jeder Konfliktfläche, nicht nur beim ersten Klick.
+>
+> Es kommt also nicht auf die Zahl der Prinzipien an, sondern auf den Abstand.
+> Beispiel Vorpommern-Greifswald (Wind, 160 GW): mit Verbrauchsnah +
+> Bevölkerungsnah 0,15 / 0,29 GW = 52 % → kein Kasten; mit Ökonomisch optimiert
+> (0,63 GW) 24 % → Kasten. Ursprung: G („live beim ersten Klick auf eine
+> Konfliktzelle").
 
 > **Geändert (Session 2026-11-04, W2):** Übersicht „Ausbaukonsens gesamt": Balken
 > = Ausbauziel, gefüllt = Ausbaukonsens, „davon Bestand" darin schraffiert; die
@@ -875,6 +1043,14 @@ nicht über die volle Breite laufen lassen.
     Zusatzsatzes am Bestands-Schalter in „Bestand & Potenziale" (W2).
 21. **Folie „Titelleiste umbenennen":** Die Alternative nach „Oder" war
     abgeschnitten; nachfragen.
+22. **„Begrenzend" mit zwei Bedeutungen** (Session 2026-11-09, s. O-Nachtrag):
+    In „Szenarien vergleichen" das Prinzip mit dem größten Konsensverlust
+    insgesamt, im Landkreis-Detail das Prinzip mit dem niedrigsten Wert dort.
+    Spalte im Vergleich umbenennen (z. B. „Begrenzt am stärksten") oder die
+    Definitionen angleichen?
+23. **PV-Kulisse in Prozent** (Datenteam, Session 2026-11-09): 12 Mio. ha sind
+    etwa 34 % der Landesfläche (35,8 Mio. ha), die Methodik 2.3 nennt „etwa
+    37 %". Welche Bezugsfläche gilt?
 
     *(Stand 2026-11-09: I.16–I.21 vom Datenteam nicht beantwortet, bleiben offen.)*
 
@@ -1328,6 +1504,19 @@ ist derselbe Trick wie bei „Konsens vs. …" — nur der Unterschied variiert.
 ---
 
 ## O. Vergleichs-Hub „Szenarien vergleichen" (Reversal, Session 2026-10-09)
+
+> **Nachtrag (Session 2026-11-09, Prompt G) — „Begrenzend" hat zwei
+> Bedeutungen:**
+> - In „Szenarien vergleichen" (Szenario-Karten und Tabelle, Zeile bzw. Spalte
+>   „Begrenzend") ist es das Prinzip mit dem **größten Konsensverlust
+>   insgesamt**: das Prinzip, ohne das der Ausbaukonsens gesamt am stärksten
+>   wüchse (dieselbe Rechnung wie „So viel käme hinzu" im Reiter „Was
+>   begrenzt?").
+> - Im Detail eines Landkreises (Etikett „begrenzend" unter „Empfohlener Ausbau
+>   je Prinzip") ist es das Prinzip mit dem **niedrigsten Wert dort**.
+> - Beide können verschieden sein. Beispiel (Wind, 160 GW, Verbrauchsnah +
+>   Bevölkerungsnah): Szenario „Bevölkerungsnah", Vorpommern-Greifswald
+>   „Verbrauchsnah". Offene Frage I.22.
 
 > **Geändert durch R (Session 2026-10-19):** Getrennt je Ebene, in beiden Bereichs-Tabs. A/B bleiben ohne gespeicherte Szenarien leer, statt mit den zwei Referenzen vorbelegt zu werden. Der Referenz-Hinweis wird durch einen Mengen-Hinweis ersetzt. Planungsflächen gibt es nur bei Wind (R.8).
 
@@ -2835,6 +3024,16 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   0,26 · 0,00 · 0,26. Region Uckermark: K 0,17 · 0,26 · 0,03 · 0,29 GW
   (Ausbaumenge übererfüllt; Zubaubedarf > 0, weil je Rasterzelle gerechnet).
   Ausbaukonsens mit und ohne Bestand jeweils gleich.
+- **Zubaubedarf je Ebene (Nachtrag, Prompt G):** Derselbe Landkreis kann in
+  „Verteilung – Deutschland" Zubaubedarf 0 und in der Detailauswertung einen
+  Zubaubedarf > 0 zeigen. Beispiel Uckermark (Wind, 160 GW, Verbrauchsnah +
+  Bevölkerungsnah): Deutschland 0,00 GW, Region 0,03 GW. Grund: Die Regel
+  max(Ausbaukonsens − Bestand, 0) gilt je Einheit — bundesweit je Landkreis,
+  in der Region je 5 × 5-km-Rasterzelle. Im Landkreis insgesamt liegt der
+  Bestand (0,26 GW) über dem Konsens (0,17 GW); in der Region liegt er aber
+  nicht in denselben Zellen wie der Konsens, deshalb bleibt in einzelnen Zellen
+  ein Zubaubedarf. Entsprechend steigt dort der Ausbau einschließlich Bestand
+  (0,29 statt 0,26 GW).
 - **[Offen]** Kleve liegt im Prototyp mit dem Bestand (0,12 GW) unter dem
   Ausbaukonsens (0,40 GW), auch in jeder seiner 16 Gemeinden (Zubaubedarf
   überall > 0). Den Fall „Bestand über dem Konsens" zeigt die Uckermark.
@@ -2870,18 +3069,59 @@ Die Antworten haben Vorrang vor älteren Annahmen in diesem Dokument.
 - Folgt automatisch: „Bestand & Potenziale" (Werte, Legenden, „noch nutzbar"),
   Potenzialgrenzen (W3), Regionsregler, Rasterzell-Potenziale. Wind
   unverändert (Wind 145,7 GW Konsens, Kleve 0,40 GW wie vorher).
+- **Offen (Datenteam, I.23):** 12 Mio. ha sind etwa 34 % der Landesfläche
+  (Summe der Kreisflächen im Prototyp 35,8 Mio. ha → 33,5 %); Methodik 2.3
+  nennt „etwa 37 %".
 - **[Offen]** Das Prinzip „Gleicher Anteil an Potenzialfläche" folgt **nicht**:
   Es gewichtet nach dem Platzhaltermuster `potential` (für Wind und PV gleich),
   nicht nach den Potenzialdaten. Umstellen hieße auch Wind ändern; außerdem
   hängt die Potenzial-Untergrenze der Platzhalter von den Prinzip-Anteilen ab
-  (Zirkelbezug). Unverändert gelassen. GW-Werte ab 1.000
-  mit Tausenderpunkt („10.791,8 GW").
+  (Zirkelbezug). Unverändert gelassen.
+- GW-Werte ab 1.000 mit Tausenderpunkt („10.791,8 GW"; `fmtGW`).
 - Ausbaukonsens PV (160 GW, Verbrauchsnah + Bevölkerungsnah) unverändert
   157,3 GW (98,3 %): Die Potenzialgrenzen greifen bei 160 GW weder vorher noch
   nachher.
 - ~~**[Offen]** Regionsregler bei PV: Die Ausbaumenge (Kleve ≈ 0,4 GW) liegt
   jetzt bei rund 1 % des Reglerbereichs; der Griff steht ganz links.~~ Gelöst
   durch Z.3.
+
+### Z.2 Methodik nach den Antworten des Datenteams
+
+- **Wie ein Prinzip verteilt (Methodik 3):** möglichst gleiche Belastung der
+  räumlichen Einheiten gemäß der Gerechtigkeitsmetrik (iterativer
+  Gleichverteilungsalgorithmus); bei linearen Metriken = proportionale
+  Verteilung nach metrikspezifischen Gewichten; jede Einheit höchstens bis zu
+  ihrem Leistungspotenzial, Rest an Einheiten mit freiem Potenzial; Rangfolge
+  nach Standorteignung nur bei „Ökonomisch optimiert" (kostenminimal), im
+  Prototyp proportional nachgebildet (Platzhalter). „Der Prototyp rechnet
+  bundesweit je Landkreis, die Anwendung auf einem 10 × 10-km-Raster." →
+  „Der Prototyp verteilt vereinfacht direkt je Landkreis."
+- **Ausbaukonsens (Methodik 4):** absoluter Konsens sinkt mit steigender
+  Ausbaumenge nicht, solange die Ausbauwerte je Einheit nicht zurückgehen; der
+  Konsensanteil kann steigen, gleich bleiben oder sinken; 100 % bei
+  vollständiger Ausschöpfung derselben Potenzialkulisse. Ersetzt „Mit
+  steigender Menge wächst der Konsens …".
+  **Nachtrag (Session 2026-11-09, Prompt G) — Werte im Prototyp** (Wind,
+  Verbrauchsnah + Bevölkerungsnah, Bestand aus): 115 GW → 104,5 GW (90,9 %) ·
+  160 GW → 145,7 GW (91,1 %) · 215 GW → 197,0 GW (91,6 %). Mit Ökonomisch
+  optimiert: 89,4 (77,7 %) · 125,1 (78,2 %) · 169,7 GW (78,9 %). Der Anteil
+  steigt im Prototyp kaum, weil die Potenzialgrenzen bei diesen Zielen selten
+  greifen (Wind-Potenzial 775,6 GW, Regler bis 260 GW). Frage-Link „Warum verändert sich
+  der Konsens mit der Ausbauleistung?" (Teamtext) unverändert; weitere
+  Infotexte mit „Anteil steigt" gab es nicht.
+- **Zwei Ebenen (Methodik 6):** Die Anwendung verteilt bundesweit zunächst auf
+  dem 10 × 10-km-Raster, überträgt proportional zur Potenzialfläche auf die
+  Gemeinden und fasst auf Landkreisebene zusammen; das Minimum über die
+  Prinzipien wird je Landkreis gebildet (Konsens dadurch tendenziell etwas
+  höher als bei Rasterkonsens).
+- **Zielwertsuche (Methodik 6):** Grundsätzlich A* ≥ T; A* = T bei einem
+  regionalen Prinzip oder vollständig übereinstimmenden Verteilungen, sonst
+  in der Regel A* > T — auch mit den bundesweiten Prinzipien („in der Regel",
+  nicht immer).
+- **Bestand (Methodik 7):** „Beim zusätzlichen Ausbau wird die Potenzialgrenze
+  unter Berücksichtigung des Bestands eingehalten. Der Bestand selbst wird
+  nicht zurückgebaut." Definitionen aus Y.3.
+- **Offen:** Toleranz der Zielwertsuche (I.14); I.16–I.21.
 
 ### Z.3 Regler „Ausbaumenge" in der Region: Bereichsende (ändert W3 „Regler der Region")
 
@@ -2902,38 +3142,6 @@ Die Antworten haben Vorrang vor älteren Annahmen in diesem Dokument.
   Mecklenburgische Seenplatte Wind „bis 2,96 GW · Potenzial 13,5 GW", PV
   „bis 3,80 GW · Potenzial 192,0 GW". Eingabe 20 GW in Kleve PV → Griff rechts;
   99 GW → 35,67 GW.
-
-### Z.2 Methodik nach den Antworten des Datenteams
-
-- **Wie ein Prinzip verteilt (Methodik 3):** möglichst gleiche Belastung der
-  räumlichen Einheiten gemäß der Gerechtigkeitsmetrik (iterativer
-  Gleichverteilungsalgorithmus); bei linearen Metriken = proportionale
-  Verteilung nach metrikspezifischen Gewichten; jede Einheit höchstens bis zu
-  ihrem Leistungspotenzial, Rest an Einheiten mit freiem Potenzial; Rangfolge
-  nach Standorteignung nur bei „Ökonomisch optimiert" (kostenminimal), im
-  Prototyp proportional nachgebildet (Platzhalter). „Der Prototyp rechnet
-  bundesweit je Landkreis, die Anwendung auf einem 10 × 10-km-Raster." →
-  „Der Prototyp verteilt vereinfacht direkt je Landkreis."
-- **Ausbaukonsens (Methodik 4):** absoluter Konsens sinkt mit steigender
-  Ausbaumenge nicht, solange die Ausbauwerte je Einheit nicht zurückgehen; der
-  Konsensanteil kann steigen, gleich bleiben oder sinken; 100 % bei
-  vollständiger Ausschöpfung derselben Potenzialkulisse. Ersetzt „Mit
-  steigender Menge wächst der Konsens …". Frage-Link „Warum verändert sich
-  der Konsens mit der Ausbauleistung?" (Teamtext) unverändert; weitere
-  Infotexte mit „Anteil steigt" gab es nicht.
-- **Zwei Ebenen (Methodik 6):** Die Anwendung verteilt bundesweit zunächst auf
-  dem 10 × 10-km-Raster, überträgt proportional zur Potenzialfläche auf die
-  Gemeinden und fasst auf Landkreisebene zusammen; das Minimum über die
-  Prinzipien wird je Landkreis gebildet (Konsens dadurch tendenziell etwas
-  höher als bei Rasterkonsens).
-- **Zielwertsuche (Methodik 6):** Grundsätzlich A* ≥ T; A* = T bei einem
-  regionalen Prinzip oder vollständig übereinstimmenden Verteilungen, sonst
-  in der Regel A* > T — auch mit den bundesweiten Prinzipien („in der Regel",
-  nicht immer).
-- **Bestand (Methodik 7):** „Beim zusätzlichen Ausbau wird die Potenzialgrenze
-  unter Berücksichtigung des Bestands eingehalten. Der Bestand selbst wird
-  nicht zurückgebaut." Definitionen aus Y.3.
-- **Offen:** Toleranz der Zielwertsuche (I.14); I.16–I.21.
 
 ### Z.4 Zwei UI-Korrekturen (Session 2026-11-09, Prompt F)
 
