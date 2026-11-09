@@ -1,4 +1,4 @@
-# EEquityMap — Source of Truth · Stand 2026-11-04
+# EEquityMap — Source of Truth · Stand 2026-11-09
 
 **Status:** Patch zum Einpflegen in das bestehende Source-of-Truth-Dokument.
 Vorschlag Versionssprung **v2.2 → v2.3** (bei Bedarf v3.0 — der Wegfall des
@@ -23,7 +23,9 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 > nur noch dort, wo der Bestand berücksichtigt ist. Die Bereichs-Tabs heißen
 > „Verteilung – Deutschland" und „Verteilung – [Landkreis]" (X); ältere Stellen
 > mit „Deutschland" / „Regional" meinen diese Tabs. Farben: maßgeblich ist U,
-> nicht J2.
+> nicht J2. **Session 2026-11-09:** „davon Bestand" entfällt; mit Bestand gelten
+> Bestand · Zubaubedarf · Ausbau einschließlich Bestand (Y.3). Startdialog mit
+> drei Seiten (Y.1).
 
 ---
 
@@ -1714,6 +1716,10 @@ Abschnitte tragen oben einen Verweis hierher; Reject-Log (H) und offene Fragen
   Bestand (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah: Deutschland
   Ausbaukonsens 145,0 = 60,8 davon Bestand + 84,2 Zubaubedarf; Kleve 0,39 =
   0,12 + 0,27).
+- **Abgelöst (Session 2026-11-09, Prompt D):** „davon Bestand" entfällt. Mit Bestand je
+  Einheit: Bestand, `Zubaubedarf = max(Ausbaukonsens − Bestand, 0)`,
+  `Ausbau einschließlich Bestand = max(Ausbaukonsens, Bestand)`. Der Ausbaukonsens
+  bleibt unabhängig vom Bestand. → Y.3.
 - **Zubau einer Einzelverteilung:** Die Ebene „Zubau" eines einzelnen Prinzips
   summiert sich mit Bestand auf mehr als „Ausbauziel − Bestand", weil Bestand
   über dem Ausbau eines Landkreises stehen bleibt. **Offen:** ob das einen
@@ -2515,7 +2521,8 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   die drei Schritte (① ② ③ wie die Bereichs-Tabs), „← Zurück" und „Mit dem
   Bestand beginnen →" (→ Bestand heute). Esc schließt. Der volle Teamtext steht
   im Fenster „Was ist EEquityMap?" („Mehr dazu"), darunter die bisherigen
-  Abschnitte ohne Doppelungen. Ändert S (Startoverlay).
+  Abschnitte ohne Doppelungen. Ändert S (Startoverlay). **→ Abgelöst durch Y.1
+  (drei Seiten: Verteilungen · Konsens · So funktioniert's).**
   **Nachtrag (Session 2026-11-04):** Seite 2 an Seite 1 angeglichen: statt der
   Liste drei Karten im selben Raster (Rahmen, Radius, Abstand, Kartenhöhe
   104 px). Je Karte oben eine kleine Karte aus den App-Daten (fest Wind,
@@ -2532,7 +2539,8 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   ③ Verteilung – Regional · Was wäre vor Ort gerecht? · „Die Ausbaumenge eines
   Landkreises nach den Vorstellungen vor Ort neu verteilen." — Karte: Kleve mit
   Gemeinden, Ausbaukonsens wie in der Detailauswertung (Startwert, Konsens-
-  Skala); ohne Gemeindedaten der Umriss des Landkreises.
+  Skala); ohne Gemeindedaten der Umriss des Landkreises. **→ Karte ② und die
+  Seitenfolge geändert in Y.1** (② bleibt der Ausbaukonsens).
   Keine Pfeile zwischen den Karten. Einleitungssatz, „← Zurück", „Mit dem
   Bestand beginnen →" und die Punkte bleiben. Beide Seiten liegen übereinander
   in derselben Rasterzelle (die inaktive unsichtbar), damit der Dialog beim
@@ -2571,6 +2579,8 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
 
 - **Rechenregel:** s. R.1 (Abgelöst-Nachtrag). Teilmengen-Regel jetzt:
   Ausbaukonsens ≤ Ausbau; davon Bestand + Zubaubedarf = Ausbaukonsens.
+  **→ Abgelöst durch Y.3:** Bestand + Zubaubedarf = Ausbau einschließlich
+  Bestand = max(Ausbaukonsens, Bestand); „davon Bestand" entfällt.
 - **Begriffe:** Zubaukonsens → Ausbaukonsens (überall), empfohlener Zubau →
   empfohlener Ausbau, Paar-Matrix „Ausbaukonsens je Prinzipienpaar",
   Kartenebenen „Bestand · Zubau · Ausbau" (vorher „… · Gesamt"), Caption
@@ -2582,6 +2592,7 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   Zubaubedarf, Bestand = Bestand; Einzelverteilung(en): Ausbau_p, Zubau_p,
   Bestand. „Was begrenzt?" und Dissens ohne Umschalter. Legende „Ausbaukonsens
   / Zubaubedarf / Bestand je Landkreis (Gemeinde, 5 × 5-km-Zelle), in GW".
+  **→ Ebene „Ausbau" mit Bestand geändert in Y.3** (Ausbau einschließlich Bestand).
 - **Rechte Spalte Deutschland:** Landkreis: Ausbaukonsens, % der Fläche,
   Anteil an Zielerreichung, Einordnung „Ausbau über-/unterdurchschnittlich"
   (Grundlage wie bisher, bezogen auf den Ausbaukonsens); mit Bestand „davon
@@ -2592,12 +2603,14 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   Zeilen. Die Zeilen werden mit den Stellen des Hauptwerts gerundet und gehen
   sichtbar auf. In der Region dieselben Zeilen im Zell-/Gemeindedetail (Folge
   der gemeinsamen Darstellung); Umbau der Regionsspalte folgt (Prompt C).
+  **→ Zeilen, Rundung, Schraffur und Caption geändert in Y.3.**
 - **„Bestand & Potenziale":** Schalter „Bestandsanlagen berücksichtigen" in
   Potenzial- und Planungsflächen (nicht bei „Bestand heute"), derselbe Zustand
   wie unter „Rahmen". An: je Landkreis bzw. Gemeinde noch nutzbares
   Leistungspotenzial = max(Potenzial − Bestand, 0), Fläche und Energie im
   selben Verhältnis; Beschriftung „Noch nutzbare(s) …". Rohdaten unverändert.
   Der Regler „Ausbaumenge" behält das volle Potenzial als Bereich.
+  **→ Erst-Hinweis am Schalter: Y.2.**
 
 ## W3. Rechenmodell mit Potenzialgrenzen, Zielwertsuche in der Region (Session 2026-11-04, Prompt C)
 
@@ -2679,7 +2692,7 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
     allen drei Seiten und in „Über das Projekt › Stand". Ändert Q (dort stand
     links nichts).
   - `APP_STAND` bei jeder Weitergabe nachziehen. *(Erledigt Session
-    2026-11-04: auf 04.11.2026 gesetzt.)*
+    2026-11-04: auf 04.11.2026 gesetzt; Session 2026-11-09: auf 09.11.2026.)*
 - **Zahlenfeld am Regler** (Ausbauziel in Deutschland, Ausbaumenge in der
   Region):
   - steht rechts in der Labelzeile, Einheit GW;
@@ -2688,3 +2701,108 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
   - Werte außerhalb des Bereichs → Rand; ungültige Eingabe → alter Wert.
   - Nachkommastellen wie S: ab 10 GW eine, darunter zwei (entschieden
     2026-11-04, s. L).
+
+## Y. Startdialog in drei Seiten, Hinweis zum Bestand-Schalter, Bestand-Zeilen nach Datenteam (Session 2026-11-09, Prompt D)
+
+### Y.1 Startdialog: drei Seiten (ändert W)
+
+- Rückmeldung des Teams: eine Seite Verteilungen, eine Seite Konsens, dazu
+  „So funktioniert". Punkte ●○○ (anklickbar). Alle Seiten liegen weiter
+  übereinander in derselben Rasterzelle (gleiche Breite 760 px, gleiche Höhe);
+  die Knopfzeile steht auf allen Seiten an derselben Stelle. Esc schließt.
+- **Seite 1 — Verteilungen:** Titel „Wo wäre der Ausbau Erneuerbarer Energien
+  fair?", erster Absatz und die drei Karten wie bisher. Knöpfe „Weiter →"
+  (gefüllt, vorher „So funktioniert's →") und „Direkt zu den Potenzialflächen"
+  (umrandet); „Mehr dazu" bleibt. Text und Karten stehen vertikal mittig
+  zwischen Titel und Knopfzeile (die Seite ist kürzer als Seite 3; die
+  Knopfzeile bleibt unten angeheftet). Zweiter Absatz und die Zeile
+  „Unterschiedliche Vorstellungen. Gemeinsame Lösungen." stehen jetzt auf
+  Seite 2.
+- **Seite 2 — Konsens (neu):** Titel „Wo sind sich die Vorstellungen einig?"
+  (Annahme). Text: der bisherige zweite Absatz („Aber müssen wir uns
+  überhaupt einigen … Damit könnten wir anfangen."). Zwei Karten im Kartenstil
+  von Seite 1 (Rahmen, Radius, Kartenhöhe 104 px, gleiche Kartenbreite), mittig
+  im Raster (sechs Spalten, je Karte zwei):
+  1. **Ausbaukonsens** — „Wo alle drei denselben Ausbau mittragen";
+     Konsens-Skala; links ein Konsens-Farbfeld (Verlauf der Konsens-Skala).
+  2. **Was begrenzt?** — „Welche Vorstellung dort am wenigsten vorsieht";
+     je Landkreis die Farbe des Prinzips mit dem kleinsten Ausbau (bei
+     Gleichstand das erste, wie im Reiter); links die drei Prinzipfarben als
+     Punkte.
+  Beide aus den App-Daten, Verbrauchsnah + Bevölkerungsnah + Ökonomisch
+  optimiert, fest Wind und Ausbauziel 2035, unabhängig von den Einstellungen.
+  Darunter die hervorgehobene Zeile „Unterschiedliche Vorstellungen.
+  Gemeinsame Lösungen.". Knöpfe „← Zurück" (Textlink) und „So funktioniert's →"
+  (gefüllt).
+- **Seite 3 — So funktioniert EEquityMap:** unverändert. Karte ② bleibt der
+  Ausbaukonsens (dasselbe Bild wie Seite 2, Karte 1): Seite 3 ist eine
+  Zusammenfassung, die Wiederholung ist gewollt, und der Kartentext spricht vom
+  Konsens. (Kurz erwogen und verworfen: Einzelverteilung „Verbrauchsnah".)
+
+### Y.2 „Bestand & Potenziale": einmaliger Hinweis auf den Schalter
+
+- Rückmeldung: Der Schalter „Bestandsanlagen berücksichtigen" wurde gesucht.
+- Beim ersten Öffnen von „Potenzialflächen" oder „Planungsflächen" in der
+  Sitzung (auch über „Direkt zu den Potenzialflächen") ein Erst-Hinweis-Popup
+  im Stil von V (Nachtrag) und R.9: Terrakotta #B4552F, 260 px, rechts neben
+  der Schalterzeile, Zeiger nach links. Text: „Hier blenden Sie den Bestand
+  ein: Die Karte zeigt dann das noch nutzbare Potenzial ohne bereits bebaute
+  Flächen."
+- Schließt per Klick darauf oder beim ersten Klick irgendwo; kommt in der
+  Sitzung nicht wieder (K: einmalige Lehre). Nicht, wenn der Schalter schon an
+  ist, und nicht, solange der Startdialog offen ist. Wer den Schalter (hier
+  oder unter „Rahmen") bedient, hat ihn gefunden: der Hinweis kommt dann
+  ebenfalls nicht mehr.
+
+### Y.3 Bestand-Zeilen nach Definition des Datenteams (ändert W2, R.1)
+
+- **Definition (Datenteam):** Bestand = vorhandene Leistung, die unverändert
+  bestehen bleibt; **Zubaubedarf** = max(Ausbaukonsens − Bestand, 0);
+  **Ausbau einschließlich Bestand** = max(Ausbaukonsens, Bestand). Liegt der
+  Bestand über dem Ausbaukonsens, ist der Zubaubedarf 0 und der Bestand wird
+  als Ausbau angesetzt; das Ausbauziel kann dadurch übererfüllt werden. Der
+  Ausbaukonsens bleibt unabhängig vom Bestand. Je Einheit (Landkreis,
+  Rasterzelle) gerechnet; Summen (Deutschland, Landkreis in der Region,
+  Gemeinde) = Summen der Einheitswerte.
+- **Entfällt:** „davon Bestand = min(Ausbaukonsens, Bestand)" und die
+  Sonderregel „bei Bestand über dem Ausbaukonsens nur ‚Bestand'".
+- **Rechte Spalte** (Deutschland: Landkreis; Region: Landkreis-Block,
+  Gemeinde- und Zellblock): Ausbaukonsens wie bisher (% Fläche, Anteil an
+  Zielerreichung, Einordnung). Mit Bestand darunter drei Zeilen: **Bestand**
+  (voller Bestand der Einheit) · **Zubaubedarf** · **Ausbau einschließlich
+  Bestand**. Bei einem Prinzip heißt die mittlere Zeile weiter „Zubau" (W2).
+- **Rundung:** Bestand und Ausbau einschließlich Bestand normal gerundet
+  (Stellen nach dem Ausbau einschließlich Bestand: 2 je Landkreis, ab 10 GW 1;
+  3 je Gemeinde/Zelle), Zubaubedarf = gerundeter Ausbau einschließlich Bestand
+  − gerundeter Bestand. So gehen die Zeilen sichtbar auf.
+- **Übersicht „Ausbaukonsens gesamt"** (Deutschland; in der Region der
+  Landkreis-Block, der dort die Übersicht ersetzt): Schraffur „davon Bestand"
+  im Balken entfällt (gefüllt = Ausbaukonsens). Darunter dieselben drei Zeilen.
+  Liegt der Ausbau einschließlich Bestand (gerundet sichtbar) über dem
+  Ausbauziel: „Das Ausbauziel wird übererfüllt, weil bestehende Anlagen stehen
+  bleiben."; in der Region über der Ausbaumenge: „Die Ausbaumenge wird
+  übererfüllt, weil bestehende Anlagen stehen bleiben." (Annahme). Caption
+  hinter dem „i" (Deutschland, mit Bestand): „Vom Ausbauziel liegen X GW im
+  Konsens aller gewählten Prinzipien. Mit dem Bestand ergibt das Y GW Ausbau,
+  davon Z GW Zubaubedarf."
+- **Kartenebenen** „Bestand · Zubau · Ausbau" (nur mit Bestand): Konsens:
+  Ausbau = Ausbau einschließlich Bestand (Annahme: Bestand und Zubau ergeben
+  so den Ausbau), Zubau = Zubaubedarf, Bestand = Bestand. Einzelverteilung(en)
+  (auch Galerie und vergrößerte Karte): Ausbau = max(Ausbau_p, Bestand), Zubau =
+  Zubau_p. Legende „Ausbau einschließlich Bestand je Landkreis (Gemeinde,
+  5 × 5-km-Zelle), in GW". Ohne Bestand zeigt die Karte wie bisher den
+  Ausbaukonsens bzw. Ausbau_p.
+- **Methodik:** Abschnitt 4 (Ausbaukonsens) mit den drei Definitionen und dem
+  Satz zur Übererfüllung, „davon Bestand" gestrichen; Abschnitt 7 (Rahmen):
+  Bestand = „vorhandene Leistung, die unverändert bestehen bleibt", beim
+  Schalter die beiden Formeln und der Satz zur Übererfüllung.
+- **Zahlen (Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah, Bestand an):**
+  Deutschland Ausbaukonsens 145,7 GW · Bestand 62,0 · Zubaubedarf 84,8 ·
+  Ausbau einschließlich Bestand 146,8 GW (nicht übererfüllt). Kleve
+  (Deutschland) 0,40 · 0,12 · 0,28 · 0,40; Uckermark (Deutschland) 0,17 ·
+  0,26 · 0,00 · 0,26. Region Uckermark: K 0,17 · 0,26 · 0,03 · 0,29 GW
+  (Ausbaumenge übererfüllt; Zubaubedarf > 0, weil je Rasterzelle gerechnet).
+  Ausbaukonsens mit und ohne Bestand jeweils gleich.
+- **[Offen]** Kleve liegt im Prototyp mit dem Bestand (0,12 GW) unter dem
+  Ausbaukonsens (0,40 GW), auch in jeder seiner 16 Gemeinden (Zubaubedarf
+  überall > 0). Den Fall „Bestand über dem Konsens" zeigt die Uckermark.
