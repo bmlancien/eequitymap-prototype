@@ -1484,7 +1484,9 @@
        Esc schließt. -->
   <sc-if value="{{ intro }}" hint-placeholder-val="{{ true }}">
     <div style="position:fixed;inset:0;background:rgba(20,25,30,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px">
-      <div class="scroll" role="dialog" aria-modal="true" aria-label="Willkommen bei EEquityMap" style="width:min(760px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 22px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center">
+      <div class="scroll" role="dialog" aria-modal="true" aria-label="Willkommen bei EEquityMap" style="width:min(760px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:8px;padding:32px 36px 22px;box-shadow:0 16px 48px rgba(15,30,45,.22);text-align:center;position:relative">
+        <!-- Schließen-Knopf oben rechts, auf allen drei Seiten: der Dialog lässt sich jederzeit schließen (wie Esc) -->
+        <button type="button" onClick="{{ closeIntro }}" aria-label="Dialog schließen" title="Schließen" style="position:absolute;top:12px;right:12px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:4px;color:#5c5451;cursor:pointer;padding:0" style-hover="background:#f5f2ee;color:#2e2927"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
         <!-- Alle Seiten liegen übereinander in derselben Rasterzelle; die inaktiven sind nur unsichtbar (visibility):
              So nimmt der Dialog immer die Höhe der höchsten Seite an und springt beim Wechsel nicht. -->
         <div style="display:grid">
@@ -1515,8 +1517,8 @@
           </div>
           <!-- Knopfzeile unten angeheftet (margin-top:auto), auf allen Seiten an derselben Stelle -->
           <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:4px">
-            <button onClick="{{ introNext }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">Weiter →</button>
             <button onClick="{{ introToPotenzial }}" style="background:#fff;color:#1d6b4c;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#f5f2ee">Direkt zu den Potenzialflächen</button>
+            <button onClick="{{ introNext }}" style="background:#1d6b4c;color:#fff;border:1px solid #1d6b4c;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#175a3f">Weiter →</button>
           </div>
           <div style="margin-top:14px"><span onClick="{{ introMore }}" style="font-size:14px;color:#1d6b4c;cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px">Mehr dazu</span></div>
         </div>

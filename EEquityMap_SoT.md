@@ -2709,11 +2709,12 @@ Vorgabe-Palette: #5CC7DB (Himmelblau) · #5CDB9B (Grün) · #DC825D (Terrakotta)
 - Rückmeldung des Teams: eine Seite Verteilungen, eine Seite Konsens, dazu
   „So funktioniert". Punkte ●○○ (anklickbar). Alle Seiten liegen weiter
   übereinander in derselben Rasterzelle (gleiche Breite 760 px, gleiche Höhe);
-  die Knopfzeile steht auf allen Seiten an derselben Stelle. Esc schließt.
+  die Knopfzeile steht auf allen Seiten an derselben Stelle. Esc schließt;
+  zusätzlich auf allen Seiten ein Schließen-Knopf × oben rechts.
 - **Seite 1 — Verteilungen:** Titel „Wo wäre der Ausbau Erneuerbarer Energien
-  fair?", erster Absatz und die drei Karten wie bisher. Knöpfe „Weiter →"
-  (gefüllt, vorher „So funktioniert's →") und „Direkt zu den Potenzialflächen"
-  (umrandet); „Mehr dazu" bleibt. Text und Karten stehen vertikal mittig
+  fair?", erster Absatz und die drei Karten wie bisher. Knöpfe „Direkt zu den
+  Potenzialflächen" (umrandet, links) und „Weiter →" (gefüllt, rechts; vorher
+  „So funktioniert's →"); „Mehr dazu" bleibt. Text und Karten stehen vertikal mittig
   zwischen Titel und Knopfzeile (die Seite ist kürzer als Seite 3; die
   Knopfzeile bleibt unten angeheftet). Zweiter Absatz und die Zeile
   „Unterschiedliche Vorstellungen. Gemeinsame Lösungen." stehen jetzt auf
