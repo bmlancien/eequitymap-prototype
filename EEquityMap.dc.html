@@ -3792,7 +3792,8 @@ class Component extends DCLogic {
           subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
           // Region: Spalte „Ausbauziel" zeigt die Ausbaumenge des Landkreises in GW (wie überall, wo sie genannt wird)
           target: this.fmt(sc.target) + ' GW', cons: this.fmt(sc.consensusTotal) + ' GW',
-          pct: sc.target ? this.pct(sc.consensusTotal / sc.target) : '—', lim: sc.limitingName || '—', numStyle: numCell,
+          // Region: K / A* wie die Szenario-Karten (W3; gegen T wäre er immer 100 %)
+          pct: (sc.isRegion && sc.regionAstar ? sc.regionAstar : sc.target) ? this.pct(sc.consensusTotal / (sc.isRegion && sc.regionAstar ? sc.regionAstar : sc.target)) : '—', lim: sc.limitingName || '—', numStyle: numCell,
           onRemove: () => this.deleteScenario(sc.id), onRestore: () => this.restoreScenario(sc)
         };
       });

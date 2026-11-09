@@ -34,7 +34,7 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 
 ---
 
-## 0. Aktueller Stand auf einen Blick (Stand 2026-11-09, Code `main`) [Vorschlag]
+## 0. Aktueller Stand auf einen Blick (Stand 2026-11-09, Code `main`)
 
 *Nur der heutige Stand, keine Historie. Werte sind Platzhalter des Prototyps;
 prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
@@ -56,7 +56,8 @@ prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
 - Erweitert zusätzlich: Paar-Matrix (Reiter Konsens bzw. Einzelverteilung),
   UpSet ab drei Prinzipien, in der Region
   Ansicht Gemeinden / Gemeinden + Raster / Raster, in ① Umschalter
-  Administrativ/Rohdaten. Basic zeigt alle sechs Prinzipien.
+  Administrativ/Rohdaten. Basic zeigt alle sechs Prinzipien und den
+  Bestand-Schalter (D).
 - Fußzeile: links „Version 0.1 · Stand 09.11.2026", rechts Kontakt ·
   Impressum · Datenschutz.
 
@@ -127,7 +128,8 @@ Alle Karten im Dialog: Wind, 160 GW, unabhängig von den Einstellungen.
 - Differenzkarte A − B mit Legende unter dem Titel. Szenario-Karten (Ebene,
   Prinzipien, Ausbauziel/-menge, Ausbaukonsens, % im Konsens, Begrenzend) und
   Tabelle „Gespeicherte Szenarien". „Vergleich teilen".
-- „% im Konsens": Deutschland K ÷ Ausbauziel; Region K ÷ A*. „Begrenzend" hier
+- „% im Konsens" (Karten und Tabelle): Deutschland K ÷ Ausbauziel; Region
+  K ÷ A*. „Begrenzend" hier
   = größter Konsensverlust insgesamt (O-Nachtrag, I.22). Bestand gehört nicht
   zum Szenario (N).
 
@@ -153,9 +155,6 @@ Zubaubedarf, Ausbau einschließlich Bestand, Zubau) und R.1/R.2.
 **9. Offene Fragen** (I; Stand 2026-11-09)
 - I.2 Schwelle „empfiehlt" (Median) bestätigen.
 - I.3 Vergleich über die gewichtete Kombination anbieten?
-- I.6 Bestandsschalter Basic oder Erweitert? Heute in Basic sichtbar, D sagt
-  Erweitert.
-- I.8 Primärset der Prinzipien festschreiben (heute alle sechs in Basic).
 - I.9 Differenzkarte Szenario vs. Referenz mischt Menge und Verteilung.
 - I.10 Bestand standardmäßig an oder aus (heute aus)?
 - I.11 Zoomschwelle Landkreis → Gemeinde in ①.
@@ -171,9 +170,8 @@ Zubaubedarf, Ausbau einschließlich Bestand, Zubau) und R.1/R.2.
 - I.21 Folie „Titelleiste umbenennen" nachfragen.
 - I.22 „Begrenzend" mit zwei Bedeutungen.
 - I.23 PV-Kulisse: 34 % vs. „etwa 37 %" der Landesfläche.
-- [Vorschlag] I.4 („Sechs Tabs in Erweitert") und I.7 („Konsens vs. Planung")
-  als überholt schließen: Es gibt in beiden Modi dieselben fünf Reiter, die
-  Ansicht „Konsens vs. Planung" ist durch O abgelöst.
+- Geschlossen am 2026-11-09: I.4 und I.7 (überholt), I.6 und I.8 (entschieden,
+  D); I.13 und I.15 beantwortet (Z).
 
 ---
 
@@ -464,6 +462,19 @@ Paar erkennbar.
 ---
 
 ## D. Basic / Erweitert — finaler Split
+
+> **Geändert (Entscheidung 2026-11-09, Code angeglichen):**
+> - **„Bestandsanlagen berücksichtigen" ist in Basic sichtbar** (unter
+>   „Rahmen" in ② und ③ sowie in „Bestand & Potenziale" bei Potenzial- und
+>   Planungsflächen). Die Segmentierung Bestand · Zubau · Ausbau erscheint wie
+>   bisher nur bei aktivem Schalter. Beantwortet I.6.
+> - **Prinzipien-Set in Basic** = alle sechs verfügbaren Prinzipien, in dieser
+>   Reihenfolge: Verbrauchsnah · Bevölkerungsnah · Bevölkerungsfern ·
+>   Ökonomisch optimiert · Gleicher Anteil an Gesamtfläche · Gleicher Anteil an
+>   Potenzialfläche. Erweitert zeigt dasselbe Set; experimentelle bzw. „Metrik
+>   in Vorbereitung"-Prinzipien gibt es im Prototyp derzeit nicht. Beantwortet
+>   I.8. Die Angaben „4 Primärprinzipien" und „Bestandsanlagen … Erweitert"
+>   unten gelten nicht mehr.
 
 Leitregel unverändert: **Basic beantwortet genau eine Frage — „Wo ist der Ausbau
 über die Prinzipien robust?"**
@@ -963,18 +974,22 @@ nicht über die volle Breite laufen lassen.
 3. **Vergleich gegen ein gewähltes Prinzip über die gewichtete
    Kombination** statt über das Minimum — möglich, aber „meine Auswahl" bedeutet
    dann Zubauplan statt Konsens-Floor. Anbieten oder nicht?
-4. **Sechs Tabs in Erweitert.** „Was begrenzt?" / Vergleich / Übereinstimmungen
+4. *(Überholt, geschlossen 2026-11-09: In Basic und Erweitert gibt es dieselben
+   fünf Reiter — Konsens · Was begrenzt? · Dissens · Einzelverteilungen ·
+   Szenarien vergleichen —, s. Abschnitt 0.)* **Sechs Tabs in Erweitert.** „Was begrenzt?" / Vergleich / Übereinstimmungen
    beantworten alle „wie unterscheiden sich die Prinzipien?". Ggf. unter einer
    Ansicht „Unterschiede" bündeln, falls Verständlichkeit weiter schwierig. (Das
    wäre auch der Moment, die grammatisch gemischten Tab-Namen zu vereinheitlichen.)
 5. **Verteilungen-Sidebar-Label:** „Summe je Prinzip" in beiden Modi (Referenzen
    erscheinen dort nicht mehr als Karten). *Entschieden — siehe D/F.*
-6. **Bestandsanlagen: Basic oder Erweitert?** Aktuell Erweitert. Falls die
+6. *(Entschieden 2026-11-09: Basic, s. D.)* **Bestandsanlagen: Basic oder Erweitert?** Aktuell Erweitert. Falls die
    Bestands-Logik politisch zentral ist, nach Basic — mit Zusatz-Control als
    Preis.
-7. **„Konsens vs. Planung": Basic oder Erweitert?** Aktuell Erweitert. Die
+7. *(Überholt, geschlossen 2026-11-09: Die Ansicht „Konsens vs. Planung" ist
+   durch den Hub „Szenarien vergleichen" abgelöst, O; die Referenz
+   „Planungsflächen" ist dort in Basic und Erweitert wählbar.)* **„Konsens vs. Planung": Basic oder Erweitert?** Aktuell Erweitert. Die
    71-%-Kennzahl ist der konkreteste Politik-Payoff — ggf. nach Basic hochziehen.
-8. **Primärset der Prinzipien driftet zwischen Builds.** Basic zeigte mal
+8. *(Entschieden 2026-11-09: alle sechs verfügbaren Prinzipien in Basic, s. D.)* **Primärset der Prinzipien driftet zwischen Builds.** Basic zeigte mal
    {Verbrauchsnah, Bevölkerungsnah, Bevölkerungsfern, Ökonomisch optimiert}, mal
    {… Gleicher Anteil an Gesamtfläche, Gleicher Anteil an Potenzialfläche} ohne
    Ökonomisch optimiert. Das Basic-Primärset verbindlich festschreiben (das
@@ -3154,3 +3169,11 @@ Die Antworten haben Vorrang vor älteren Annahmen in diesem Dokument.
   neutral statt grün (Grün wirkte wie „gut"). Annahme: dunkelgraue Schrift
   #3F3936, weißer Grund, 1 px Rahmen #C3C0BC (wie die Schrittnummern),
   Schriftstärke 500. Vorher: grüne Schrift #1D6B4C auf #EFECE8.
+
+### Z.5 Fehlerbehebung „% Konsens" in der Szenario-Tabelle (Session 2026-11-09)
+
+- Die Tabelle „Gespeicherte Szenarien" rechnete „% Konsens" für
+  Regionsszenarien K ÷ T (wegen der Zielwertsuche immer rund 100 %), die
+  Szenario-Karten darüber K ÷ A* (W3). Jetzt rechnen beide K ÷ A*.
+- Geprüft: Heidekreis, Wind, 160 GW, bundesweit und regional Verbrauchsnah +
+  Bevölkerungsnah → Tabelle und Karte 72,6 % (vorher Tabelle 100,0 %).
