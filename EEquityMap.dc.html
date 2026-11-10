@@ -740,10 +740,11 @@
                         <span title="{{ hr.name }}" style="font-weight:600;color:#2e2927;line-height:1.3">{{ hr.name }}</span>
                       </div>
                       <div style="{{ hr.subStyle }}">
-                        <span>{{ hr.level }}</span><span>{{ hr.natLabel }}</span>
+                        <span style="{{ hr.levelStyle }}">{{ hr.level }}</span><span style="{{ hr.levelStyle }}">{{ hr.natLabel }}</span>
                         <sc-for list="{{ hr.natDots }}" as="nd" hint-placeholder-count="0">
                           <span style="flex:none;width:8px;height:8px;border-radius:2px;background:{{ nd.color }}"></span>
                         </sc-for>
+                        <span style="{{ hr.accStyle }}">{{ hr.accLabel }}</span>
                       </div>
                       <!-- A/B: sagt, dass diese Zeile gerade auf der Karte verglichen wird -->
                       <div style="{{ hr.pairNoteStyle }}">{{ hr.pairNote }}</div>
@@ -3570,6 +3571,7 @@ class Component extends DCLogic {
           if (!same(me.regionalSel, other.regionalSel)) parts.push('Regional: ' + setTxt(me.regionalSel, other.regionalSel));
         } else if (!same(me.regionalSel, other.regionalSel)) parts.push('Prinzipien: ' + setTxt(me.regionalSel, other.regionalSel));
         if (this.fmt(me.targetGW) !== this.fmt(other.targetGW)) parts.push('Ausbauziel: ' + this.fmt(me.targetGW) + ' GW');
+        if (!!me.account !== !!other.account) parts.push(me.account ? 'mit Bestand' : 'ohne Bestand');
         if (me.isRegion && other.isRegion && (this.fmt(me.target) !== this.fmt(other.target) || !!me.regionOwn !== !!other.regionOwn))
           parts.push('Ausbaumenge: ' + this.fmt(me.target) + ' GW (' + (me.regionOwn ? 'eigener Wert' : this.startNameOf(me.nationalSel)) + ')');
         return parts.length ? parts.join(' · ') : 'Gleiche Einstellungen wie ' + (k === 0 ? 'B' : 'A');
@@ -3622,7 +3624,8 @@ class Component extends DCLogic {
         R.scenDiffHint = 'Kartenvergleich nur für zwei Szenarien derselben Ebene möglich.';
       } else {
         const lvl = lvlRegion ? this.regionCellsFor(lvlKrs) : { cells: this.krs, vb: this.krsVb, outlineD: '' };
-        const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget, hubTech, lvlKrs) : o.cellCons;
+        // Szenario mit Bestand: Ausbau einschließlich Bestand (wie in der Anwendung angezeigt), sonst Ausbaukonsens
+        const valsOf = o => o.isRef ? this.refValsFor(o.id, lvl.cells, lvlTarget, hubTech, lvlKrs) : (o.account && o.cellTot ? o.cellTot : o.cellCons);
         const va = valsOf(A), vb = valsOf(B);
         const d = va.map((v, i) => v - vb[i]);
         R.showScenDiffMap = true;
@@ -3672,7 +3675,7 @@ class Component extends DCLogic {
           R.hubCellName = byGem ? (hubGem[selI].bez || 'Gemeinde') + ' ' + hubGem[selI].name
             : lvlRegion ? 'Rasterzelle ' + lvl.cells[selI].label : lvl.cells[selI].kind + ' ' + lvl.cells[selI].label;
           R.hubCellCards = [A, B].map((o, k) => ({ badge: k === 0 ? 'A' : 'B', badgeStyle: badgeCss(k), kind: o.isRef ? 'Referenz' : 'Szenario', name: o.name,
-            k: o.isRef ? 'Verteilt' : 'Ausbaukonsens', v: this.fmtUnit(k === 0 ? av : bv, lvlRegion) + ' GW' }));
+            k: o.isRef ? 'Verteilt' : (o.account && o.cellTot ? 'Ausbau einschließlich Bestand' : 'Ausbaukonsens'), v: this.fmtUnit(k === 0 ? av : bv, lvlRegion) + ' GW' }));
           R.hubCellDiff = this.fmtUnit(Math.abs(dv), lvlRegion) + ' GW';
           R.hubCellDiffWord = dv > 0 ? 'mehr in A' : 'mehr in B';
           if (R.hubCellDiff === this.fmtUnit(0, lvlRegion) + ' GW') R.hubCellDiffWord = 'gleich viel in A und B';
@@ -3691,7 +3694,7 @@ class Component extends DCLogic {
         if (aTxt !== bTxt) {
           // Text nach Vorlage des Teams (R.8), dahinter die konkreten Summen
           R.hubRefGapNote = 'A und B enthalten unterschiedliche Gesamtmengen (A ' + aTxt + ', B ' + bTxt + '). Die Karte zeigt daher sowohl Unterschiede in der räumlichen Verteilung als auch Unterschiede in der Gesamtleistung.'
-            + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt ' + (lvlRegion ? 'die ganze Ausbaumenge' : 'das ganze Ausbauziel') + ', das Szenario nur seinen Ausbaukonsens.' : '');
+            + (refSide && scenSide.length === 1 ? ' ' + refSide.name + ' verteilt ' + (lvlRegion ? 'die ganze Ausbaumenge' : 'das ganze Ausbauziel') + ', das Szenario nur seinen Ausbaukonsens' + (scenSide[0].account && scenSide[0].cellTot ? ' einschließlich Bestand' : '') + '.' : '');
         }
         // Szenario gegen eine Referenz → Deckungs-Kennzahlen, aus dem gespeicherten Ausbaukonsens +
         // Konfliktflächen des Szenarios. „Im Konsens" = konfliktfreie Zelle über 35 % des Zellmaximums.
@@ -3747,7 +3750,10 @@ class Component extends DCLogic {
         rows.push(o.isRegion
           ? { k: 'Ausbaumenge', v: this.fmt(o.target) + ' GW (' + (o.regionOwn ? 'eigener Wert' : this.startNameOf(o.nationalSel)) + ')', vStyle: numCss }
           : { k: 'Ausbauziel', v: this.fmt(o.target) + ' GW', vStyle: numCss });
+        rows.push({ k: 'Bestand', v: o.account ? 'berücksichtigt' : 'nicht berücksichtigt', vStyle: txtCss });
         rows.push({ k: 'Ausbaukonsens', v: this.fmt(o.consensusTotal) + ' GW', vStyle: numCss });
+        if (o.account && o.totTotal != null) rows.push({ k: 'Ausbau einschließlich Bestand', v: this.fmt(o.totTotal) + ' GW', vStyle: numCss });
+        // „% im Konsens" bleibt K ÷ Ziel (bzw. K ÷ A*), auch mit Bestand — offene Frage I.24
         // Region: Konsensanteil = K / A* (gegen T wäre er immer 100 %)
         const pctBase = o.isRegion && o.regionAstar ? o.regionAstar : o.target;
         rows.push({ k: '% im Konsens', v: pctBase ? this.pct(o.consensusTotal / pctBase) : '—', vStyle: numCss });
@@ -3780,16 +3786,24 @@ class Component extends DCLogic {
       const numCell = "font-variant-numeric:tabular-nums;color:#2e2927;text-align:right;white-space:nowrap";
       const mkRows = list => list.map((sc, ix) => {
         const pi = pair.indexOf(sc.id);
+        // Bestand als Pille unter dem Namen; das Namensende „ · mit Bestand" (Auto-Name) entfällt dafür in der Tabelle
+        const accSub = !!sc.account;
+        const rowName = accSub ? sc.name.replace(/ · mit Bestand(?=( \(\d+\))?$)/, '') : sc.name;
         return {
           rowStyle: 'display:grid;grid-template-columns:' + HUB_COLS + ';gap:10px;align-items:center;padding:9px 12px;font-size:14px;' + (ix === list.length - 1 ? '' : 'border-bottom:1px solid #f3f0ec;') + 'background:' + (pi >= 0 ? '#f3f0ec;box-shadow:inset 4px 0 0 ' + (pi === 0 ? '#515a5c' : '#979490') : '#fff'),
           pairTag: pi === 0 ? 'A' : pi === 1 ? 'B' : '', pairTagStyle: pi >= 0 ? badgeCss(pi) : 'display:none',
           pairNote: pi === 0 ? 'Auf der Karte als A' : pi === 1 ? 'Auf der Karte als B' : '',
           pairNoteStyle: pi >= 0 ? 'margin-top:3px;font-size:14px;font-weight:600;color:' + (pi === 0 ? '#515a5c' : '#6e6662') : 'display:none',
-          name: sc.name, dots: dotsOf(sc.regionalSel),
+          name: rowName, dots: dotsOf(sc.regionalSel),
           // zweite Zeile: Ebene; bei Regionsszenarien zusätzlich die bundesweiten Prinzipien als Punkte
+          // dazu die Pille „mit Bestand" am Ende, wenn der Bestand berücksichtigt war
           level: sc.isRegion ? sc.regionLabel : '',
           natLabel: sc.isRegion ? '· bundesweit' : '', natDots: sc.isRegion ? dotsOf(sc.nationalSel) : [],
-          subStyle: sc.isRegion ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
+          // dezente Pille statt Text
+          accLabel: accSub ? 'mit Bestand' : '',
+          levelStyle: sc.isRegion ? '' : 'display:none',   // leere Spannen erzeugen sonst Abstand vor der Pille
+          accStyle: accSub ? 'flex:none;font-size:12px;line-height:1.4;padding:0 7px;border-radius:999px;background:#efece8;border:1px solid #e3e0dc;color:#5c5451;white-space:nowrap' + (sc.isRegion ? ';margin-left:3px' : '') : 'display:none',
+          subStyle: (sc.isRegion || accSub) ? 'display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#6e6662;margin-top:2px;line-height:1.3' : 'display:none',
           // Region: Spalte „Ausbauziel" zeigt die Ausbaumenge des Landkreises in GW (wie überall, wo sie genannt wird)
           target: this.fmt(sc.target) + ' GW', cons: this.fmt(sc.consensusTotal) + ' GW',
           // Region: K / A* wie die Szenario-Karten (W3; gegen T wäre er immer 100 %)
@@ -4009,17 +4023,18 @@ class Component extends DCLogic {
     // Nur zeigen, wenn die aktuelle Konfiguration noch nicht als Szenario gespeichert ist — Vergleich über
     // dieselbe Signatur (Ebene, Prinzipien DE + regional, Technologie, Ausbauziel, Bestandsberücksichtigung).
     // Region: die Ausbaumenge (Wert + eigener Wert / Startwert) gehört zur Signatur (R.5)
-    // Bestand gehört nicht zur Signatur: er ändert die Verteilung nicht (Greenfield), sondern teilt den Ausbau nur in
-    // Bestand und Zubaubedarf — mit und ohne Bestand wäre dasselbe Szenario (Vergleich ergäbe überall 0).
+    // Bestand gehört zur Signatur (Session 2026-11-10, löst N vom 2026-11-04 teilweise ab): Die Verteilung bleibt
+    // Greenfield, aber mit Bestand zeigt die Anwendung „Ausbau einschließlich Bestand" = max(Ausbaukonsens, Bestand)
+    // (Y.3) — dasselbe Szenario mit und ohne Bestand lässt sich so speichern und vergleichen.
     const scenarioSig = sc => [sc.isRegion ? 'r:' + sc.regionKrsId : 'de', (sc.nationalSel || []).slice().sort().join(','),
       sc.isRegion ? (sc.regionalSel || []).slice().sort().join(',') : '', sc.tech, this.fmt(sc.targetGW),
-      sc.isRegion ? this.fmt(sc.target) + (sc.regionOwn ? 'e' : 'd') : ''].join('|');
+      sc.isRegion ? this.fmt(sc.target) + (sc.regionOwn ? 'e' : 'd') : '', sc.account ? 'b' : ''].join('|');
     // Region: Einstellungen und Ergebnis aus derselben Berechnung — alles vom Stand der letzten Berechnung, nicht live
     // (sel/target sind dort ohnehin eingefroren). So passen gespeicherte Einstellungen immer zu den Zellwerten.
     const snap = isRegion
       ? { nationalSel: (S.regionComputedNatSel || []).slice(), tech: S.regionComputedTech, targetGW: S.regionComputedTargetGW,
-          account: !!S.account, regionOwn: !!S.regionComputedOwn }
-      : { nationalSel: S.selected.filter(avail), tech: S.tech, targetGW: S.targetGW, account: S.account, regionOwn: false };
+          account: accEff, regionOwn: !!S.regionComputedOwn }
+      : { nationalSel: S.selected.filter(avail), tech: S.tech, targetGW: S.targetGW, account: accEff, regionOwn: false };
     const currentSig = scenarioSig({ isRegion, regionKrsId: isRegion && S.region ? S.region.krsId : null,
       nationalSel: snap.nationalSel, regionalSel: sel, tech: snap.tech, targetGW: snap.targetGW, account: snap.account,
       target, regionOwn: snap.regionOwn });
@@ -4082,7 +4097,7 @@ class Component extends DCLogic {
         : (S.targetKey && !S.freeTarget && this.targetLabels[S.targetKey])
           ? S.targetKey.replace('z', '')
           : this.fmt(S.targetGW) + ' GW';
-      const base = names + ' · ' + scopeName + ' · ' + period;
+      const base = names + ' · ' + scopeName + ' · ' + period + (accEff ? ' · mit Bestand' : '');
       const taken = new Set((this.state.scenarios || []).map(sc => sc.name));
       if (!taken.has(base)) return base;
       let n = 2; while (taken.has(base + ' (' + n + ')')) n++;
@@ -4123,6 +4138,10 @@ class Component extends DCLogic {
         // Startwert (DE-Konsens) zum Zeitpunkt der Berechnung — für den Skalierungshinweis der Referenzen im Hub (R.8)
         regionDeRec: isRegion ? S.regionComputedDeRec : null,
         cellCons: (stufe >= 2 ? consCells : gwSel[singlePid]).slice(),
+        // Mit Bestand: Ausbau einschließlich Bestand je Einheit = max(Ausbaukonsens, Bestand) (Y.3) — das vergleicht
+        // die Differenzkarte; ohne Bestand null (dann gilt cellCons)
+        cellTot: snap.account ? (stufe >= 2 ? consCells : gwSel[singlePid]).map((v, i) => Math.max(v, bestGW[i])) : null,
+        totTotal: snap.account ? (stufe >= 2 ? consCells : gwSel[singlePid]).reduce((a, v, i) => a + Math.max(v, bestGW[i]), 0) : null,
         cellConflict: isConflict.slice()
       };
       // Einmalige Zweck-Bestätigung: nur beim allerersten Speichern der Sitzung, als Toast (§N/§K —
@@ -5562,7 +5581,7 @@ class Component extends DCLogic {
   // erneutes Rechnen nötig) — kein In-place-Editieren: restore → ändern → als neues Szenario speichern (§N).
   restoreScenario(sc) {
     if (sc.isRegion && sc.regionKrsId) {
-      // Bestand ist eine Anzeige-Einstellung: Laden behält den aktuellen Schalter
+      // Bestand gehört zum Szenario (2026-11-10): Laden setzt auch den Bestand-Schalter
       const over = { selected: sc.nationalSel, targetGW: sc.targetGW, tech: sc.tech };
       const sig = this.regionSigFrom(sc.regionKrsId, sc.regionalSel, sc.target, over);
       this.setState({
@@ -5574,7 +5593,7 @@ class Component extends DCLogic {
         regionComputedTech: sc.tech, regionComputedNatSel: sc.nationalSel.slice(),
         regionComputedDeRec: this.natBudgetFor(sc.regionKrsId, over), regionComputedOwn: !!sc.regionOwn,
         regionComputedTargetGW: sc.targetGW, regionComputedSelRaw: sc.regionalSel.slice(),
-        regionComputing: false, regionProgress: 1,
+        regionComputing: false, regionProgress: 1, account: !!sc.account,
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget,
         cell: null, tab: 'konsens', committed: true,
         scenarioSaveOpen: false
@@ -5583,7 +5602,7 @@ class Component extends DCLogic {
       // Deutschland-Szenario: in den Bereich „Deutschland"; ein offener Landkreis bleibt im Bereich „Regional"
       // stehen und kommt dort ggf. als „nicht aktuell" zurück.
       this.setState({
-        area: 'de', level: 'de',
+        area: 'de', level: 'de', account: !!sc.account,
         selected: sc.nationalSel.slice(),
         tech: sc.tech, targetKey: sc.targetKey, targetGW: sc.targetGW, freeTarget: sc.freeTarget,
         cell: null, tab: 'konsens', committed: true,

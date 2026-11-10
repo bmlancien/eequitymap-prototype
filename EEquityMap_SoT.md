@@ -130,8 +130,15 @@ Alle Karten im Dialog: Wind, 160 GW, unabhängig von den Einstellungen.
   Tabelle „Gespeicherte Szenarien". „Vergleich teilen".
 - „% im Konsens" (Karten und Tabelle): Deutschland K ÷ Ausbauziel; Region
   K ÷ A*. „Begrenzend" hier
-  = größter Konsensverlust insgesamt (O-Nachtrag, I.22). Bestand gehört nicht
-  zum Szenario (N).
+  = größter Konsensverlust insgesamt (O-Nachtrag, I.22).
+- Bestand gehört zum Szenario (N, Nachtrag 2026-11-10): mit und ohne Bestand
+  lassen sich getrennt speichern. Mit Bestand vergleicht die Differenzkarte
+  „Ausbau einschließlich Bestand" (max(Ausbaukonsens, Bestand)), sonst den
+  Ausbaukonsens. Szenario-Karten: Zeilen „Bestand" (berücksichtigt / nicht
+  berücksichtigt) und ggf. „Ausbau einschließlich Bestand"; Tabelle: „mit
+  Bestand" unter dem Namen; Auto-Name endet auf „· mit Bestand". „% im
+  Konsens" bleibt K ÷ Ziel bzw. K ÷ A* (I.24). „Wiederherstellen" setzt den
+  Bestand-Schalter.
 
 **7. Rechenregeln** (W3, Y.3, Z.2, L)
 - Verteilung: jedes Prinzip verteilt die ganze Menge proportional zu seinen
@@ -170,6 +177,7 @@ Zubaubedarf, Ausbau einschließlich Bestand, Zubau) und R.1/R.2.
 - I.21 Folie „Titelleiste umbenennen" nachfragen.
 - I.22 „Begrenzend" mit zwei Bedeutungen.
 - I.23 PV-Kulisse: 34 % vs. „etwa 37 %" der Landesfläche.
+- I.24 „% im Konsens" bei Szenarien mit Bestand: K ÷ Ziel lassen?
 - Geschlossen am 2026-11-09: I.4 und I.7 (überholt), I.6 und I.8 (entschieden,
   D); I.13 und I.15 beantwortet (Z).
 
@@ -1066,6 +1074,9 @@ nicht über die volle Breite laufen lassen.
 23. **PV-Kulisse in Prozent** (Datenteam, Session 2026-11-09): 12 Mio. ha sind
     etwa 34 % der Landesfläche (35,8 Mio. ha), die Methodik 2.3 nennt „etwa
     37 %". Welche Bezugsfläche gilt?
+24. **„% im Konsens" bei Szenarien mit Bestand** (Session 2026-11-10, N):
+    heute K ÷ Ausbauziel (Region K ÷ A*), unabhängig vom Bestand. Alternative:
+    Anteil am Ausbau einschließlich Bestand. Offen; bis dahin unverändert.
 
     *(Stand 2026-11-09: I.16–I.21 vom Datenteam nicht beantwortet, bleiben offen.)*
 
@@ -1464,6 +1475,23 @@ die falsche Einheit.
 ---
 
 ## N. Szenarien speichern & vergleichen (neu)
+
+> **Teilweise abgelöst (Session 2026-11-10, Feedback):** „Ich kann eine
+> Verteilung entweder mit Bestand speichern oder ohne Bestand … Ob Bestand
+> gesetzt ist oder nicht, muss also mit in die Vergleichs-ID." Seit Y.3 zeigt
+> die Anwendung mit Bestand „Ausbau einschließlich Bestand" =
+> max(Ausbaukonsens, Bestand); das unterscheidet sich vom Ausbaukonsens. Der
+> 0,0-GW-Befund vom 2026-11-04 galt nur, weil der Vergleich den Ausbaukonsens
+> nahm. Neu: Der Bestand zählt zur Szenario-Signatur. Ein Szenario mit Bestand
+> speichert zusätzlich Ausbau einschließlich Bestand je Einheit; die
+> Differenzkarte, die Werte je Einheit und die Gesamtsummen nehmen bei ihm
+> diesen Wert. Mit gegen ohne Bestand zeigt die Karte damit
+> max(Bestand − Ausbaukonsens, 0): wo der Bestand über dem Konsens liegt. Die
+> A/B-Unterschiedszeile nennt „mit Bestand" / „ohne Bestand"; „Wiederherstellen"
+> setzt den Bestand-Schalter. Unverändert: Ausbaukonsens, „% im Konsens"
+> (offen, I.24), „Begrenzend", die Deckungs-Kennzahlen gegen Referenzen
+> (Ausbaukonsens) und die Detailauswertung (Bestand wirkt live, kein
+> Neuberechnen). Der Entscheid unten gilt nur noch für diese Punkte.
 
 > **Erweitert durch O:** „Szenarien vergleichen" ist jetzt der einzige
 > Vergleichs-Hub und immer sichtbar (nicht erst ab ≥ 2 Szenarien).
