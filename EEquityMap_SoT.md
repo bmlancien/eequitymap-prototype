@@ -124,7 +124,8 @@ Alle Karten im Dialog: Wind, 160 GW, unabhängig von den Einstellungen.
 
 **6. Szenarien vergleichen** (O, R.8, N, P, Z.4)
 - Linke Spalte bis auf die Technologie ausgegraut. Slots A und B: gespeicherte
-  Szenarien oder die Referenzen „Historischer Ausbau" / „Planungsflächen".
+  Szenarien oder die Referenzen „Historischer Ausbau" / „Potenzialflächen" /
+  „Planungsflächen" (nur Wind).
 - Differenzkarte A − B mit Legende unter dem Titel. Szenario-Karten (Ebene,
   Prinzipien, Ausbauziel/-menge, Ausbaukonsens, % im Konsens, Begrenzend) und
   Tabelle „Gespeicherte Szenarien". „Vergleich teilen".
@@ -1058,8 +1059,8 @@ nicht über die volle Breite laufen lassen.
     Methodik regional.
 17. **Potenziale je Rasterzelle:** im Prototyp aus dem Muster des Prinzips
     „Gleicher Anteil an Potenzialfläche" abgeleitet (W3). Echte Daten nötig.
-18. **Potenzialgrenze für die Referenzen** „Historischer Ausbau" und
-    „Planungsflächen" (W3, Annahme) bestätigen.
+18. **Potenzialgrenze für die Referenzen** „Historischer Ausbau",
+    „Potenzialflächen" und „Planungsflächen" (W3, Annahme) bestätigen.
 19. **PV-Technologiemix** (92/4/4 %, schrittweise, Methodik 3.1) bildet der
     Prototyp nicht nach. Reicht der Platzhalter-Hinweis?
 20. **Texte vom Team:** Methodik 2.4 „Planungsflächen" fehlt; Freigabe des
@@ -1580,8 +1581,10 @@ wählbar. „Zum Vergleich speichern" ist auch im Hub sichtbar (Session
   (Wind) bzw. gelb (PV). Nur Szenarien der gewählten Technologie.
 - **Vergleichsobjekte** (im Dropdown der Slots, s. u.), gruppiert: Referenzen ·
   Deutschland · je Landkreis.
-- **Referenzen (immer vorhanden):** „Historischer Ausbau" und „Planungsflächen"
-  (Zubau nach ausgewiesenem Flächenanteil je Zelle), je auf dasselbe Ausbauziel
+- **Referenzen (immer vorhanden):** „Historischer Ausbau", „Potenzialflächen"
+  (Verteilung nach Leistungspotenzial der Potenzialflächen, Wind und PV; Rückmeldung
+  Tooltest 2026-11-13) und „Planungsflächen" (Zubau nach ausgewiesenem
+  Flächenanteil je Zelle, nur Wind), je auf dasselbe Ausbauziel
   skaliert. Visuell abgesetzt (gestrichelter Rahmen, eigener Grundton), je ein
   (i) mit Kurzinfo.
 - **A = Ausgangspunkt, B = Vergleichsobjekt** — je ein Szenario oder eine
