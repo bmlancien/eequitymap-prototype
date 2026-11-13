@@ -78,15 +78,11 @@
       <button onClick="{{ openAbout }}" style="background:none;border:none;color:#2e2927;font-size:14px;font-weight:500;padding:6px 9px;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#f5f2ee">Über das Projekt</button>
     </nav>
     <div style="flex:1"></div>
-    <!-- Daten herunterladen: Aktion, rechts vor dem Modus-Umschalter. Prototyp: ohne Download, ein Klick zeigt den Hinweis. -->
+    <!-- Daten herunterladen: Aktion, rechts im Kopf. Prototyp: ohne Download, ein Klick zeigt den Hinweis. -->
     <button onClick="{{ onDownload }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #d4d1cd;color:#2e2927;font-size:14px;padding:5px 11px;border-radius:4px;cursor:pointer;white-space:nowrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v12"></path><path d="M7 11l5 5 5-5"></path><path d="M5 21h14"></path></svg>
       Daten herunterladen
     </button>
-    <div style="display:flex;background:#f4f1ed;border-radius:4px;padding:3px;gap:2px">
-      <button onClick="{{ setBasic }}" style="{{ modeBasicStyle }}">Basic</button>
-      <button onClick="{{ setErweitert }}" style="{{ modeExtStyle }}">Erweitert</button>
-    </div>
   </header>
 
   <!-- Bereichs-Tabs (R.3): über allen drei Spalten, Ordner-Optik — der aktive Tab ist mit dem umrandeten
@@ -401,7 +397,7 @@
           </svg>
           <!-- Hover: Name + Wert (Text und Position setzt der Zeiger-Listener direkt) -->
           <div ref="{{ bzTipRef }}" style="display:none;position:absolute;z-index:5;pointer-events:none;background:#1d6b4c;color:#fff;font-size:14px;padding:5px 9px;border-radius:4px;white-space:nowrap;box-shadow:0 4px 16px rgba(15,30,45,.16)"></div>
-          <!-- Administrativ / Rohdaten (nur Erweitert), Ecke oben rechts wie der Ansichts-Umschalter der Region -->
+          <!-- Administrativ / Rohdaten, Ecke oben rechts wie der Ansichts-Umschalter der Region -->
           <sc-if value="{{ bpShowModeToggle }}" hint-placeholder-val="{{ false }}">
             <div style="position:absolute;top:10px;right:10px;background:#fff;border:1px solid #e5e2de;border-radius:8px;padding:3px;box-shadow:0 4px 16px rgba(15,30,45,.16)">
               <div style="display:flex;background:#f4f1ed;border-radius:4px;padding:2px;gap:2px">
@@ -649,7 +645,7 @@
               </sc-if>
 
                 <div style="padding:4px 0 0">
-                  <!-- Titel links; rechts (Regionsvergleich, nur Erweitert) derselbe Ansichts-Umschalter wie in der
+                  <!-- Titel links; rechts (Regionsvergleich) derselbe Ansichts-Umschalter wie in der
                        Regionsansicht — beide teilen sich die Einstellung regionViewMode. -->
                   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                     <div style="font-size:16px;font-weight:600;color:#2e2927;flex:1;min-width:200px">Differenzkarte: A − B<span style="font-weight:500;color:#5c5451">{{ scenDiffLevel }}</span></div>
@@ -769,7 +765,7 @@
         <!-- Single / consensus / minimum / konflikt / differenz / positiv map -->
         <sc-if value="{{ isSingleMap }}" hint-placeholder-val="{{ true }}">
           <div style="flex:1;min-height:340px;position:relative;background:#fff;border:1px solid #eae7e3;border-radius:8px;padding:8px;padding-top:{{ mapBoxPadTop }};transition:background .4s;{{ mapStaleOutline }}">
-            <!-- Ansichts-Umschalter (Regionsansicht, nur Erweitert — Testfeature s. SoT §M): in der Karte, Ecke
+            <!-- Ansichts-Umschalter (Regionsansicht — Testfeature s. SoT §M): in der Karte, Ecke
                  oben rechts. Feste, gleich breite Spalten, damit die fette Auswahl nichts verschiebt. Die Karte
                  bekommt dafür oben Platz (mapBoxPadTop), damit der Umschalter sie nicht verdeckt; die Hinweise
                  dazu stehen direkt unter der Karte (s. „UNDER CARD"), nicht in ihr. -->
@@ -815,7 +811,7 @@
               <sc-for list="{{ overlayCells }}" as="o" hint-placeholder-count="0">
                 <path d="{{ o.d }}" fill="#7b1fa2" fill-opacity="{{ o.op }}" stroke="none" pointer-events="none"></path>
               </sc-for>
-              <!-- Gemeinde-Ebene: Modus 'gemeinden' (Basic-Standard) macht Gemeinden klickbar (Raster oben
+              <!-- Gemeinde-Ebene: Modus 'gemeinden' (Standard) macht Gemeinden klickbar (Raster oben
                    bereits geleert); Modus 'gemeinden-raster' legt klickbare, transparent gefüllte Gemeinden
                    über das gedämpfte, nicht klickbare Hintergrund-Raster (s. SoT §M). -->
               <sc-for list="{{ gemCells }}" as="gc" hint-placeholder-count="0">
@@ -869,7 +865,7 @@
 
       <!-- UNDER CARD -->
       <div style="flex:none;margin-top:10px">
-        <!-- Hinweise zum Ansichts-Umschalter in der Kartenecke (Regionsansicht, Erweitert) -->
+        <!-- Hinweise zum Ansichts-Umschalter in der Kartenecke (Regionsansicht) -->
         <sc-if value="{{ showToolRow }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:14px;color:#6e6662;line-height:1.4;margin:0 0 6px">
             <sc-if value="{{ gemClickHint }}" hint-placeholder-val="{{ false }}">
@@ -933,15 +929,12 @@
 
         <div style="font-size:12px;color:#8f8782;margin:6px 2px 0">{{ sourceNote }}</div>
 
-        <!-- Kombinations-Aufschlüsselung (Dissens · „Wer denkt anders?", nur Erweitert, ab 3 Prinzipien):
+        <!-- Kombinations-Aufschlüsselung (Dissens · „Wer denkt anders?", ab 3 Prinzipien, zugeklappt hinter „Details“):
              eigener Abschnitt NACH Karte + Legende. Zeilen sind mit den Prinzipnamen beschriftet, deshalb
              keine zweite Farblegende. -->
         <sc-if value="{{ showUpset }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e8e5e1">
-            <div style="display:flex;align-items:baseline;gap:12px">
-              <div style="font-size:16px;font-weight:600;color:#2e2927;flex:1">Welche Prinzipien weichen gemeinsam ab?</div>
-              <button onClick="{{ toggleUpset }}" style="background:none;border:none;color:#1d6b4c;font-size:14px;font-weight:600;cursor:pointer;padding:2px 0;flex:none">{{ upsetCaret }}</button>
-            </div>
+            <button onClick="{{ toggleUpset }}" aria-expanded="{{ upsetExpanded }}" style="background:none;border:none;color:#1d6b4c;font-size:15px;font-weight:600;cursor:pointer;padding:2px 0;display:flex;align-items:baseline;gap:6px;text-align:left"><span style="width:12px;flex:none">{{ upsetCaret }}</span>Details: Welche Kombinationen weichen ab?</button>
             <div style="{{ upsetBodyStyle }}">
               <div style="font-size:14px;color:#5c5451;margin:3px 0 10px;line-height:1.45">Jede Spalte ist eine Kombination von Prinzipien, die an derselben Stelle mehr als 20 % vom Konsens abweichen. Balken = Anzahl der {{ upsetUnit }}, farbige Punkte = beteiligte Prinzipien. {{ upsetRestNote }}</div>
               <div style="{{ upsetGridStyle }}">
@@ -958,17 +951,19 @@
           </div>
         </sc-if>
 
-        <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab einem Prinzip, feste Größe mit allen wählbaren Prinzipien): Ausbaukonsens je
+        <!-- Paarweise Prinzipien-Matrix (Reiter Konsens, zugeklappt hinter „Details“, ab einem Prinzip, feste Größe mit allen wählbaren Prinzipien): Ausbaukonsens je
              Prinzipienpaar (Minimum-Regel über genau diese zwei), Dreieck ohne Diagonale, Konsens-Blauskala. -->
         <sc-if value="{{ showPairMatrix }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:14px;padding:12px 0 10px;border-top:1px solid #e8e5e1">
-            <div style="font-size:16px;font-weight:600;color:#2e2927">Ausbaukonsens je Prinzipienpaar</div>
-            <div style="font-size:14px;color:#5c5451;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Ausbaukonsens.</div>
-            <div style="{{ pairWrapStyle }}"><div style="{{ pairGridStyle }}">
-              <sc-for list="{{ pairCells }}" as="pc" hint-placeholder-count="9">
-                <div title="{{ pc.title }}" style="{{ pc.style }}"><div style="{{ pc.innerStyle }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div></div>
-              </sc-for>
-            </div></div>
+            <button onClick="{{ togglePair }}" aria-expanded="{{ pairExpanded }}" style="background:none;border:none;color:#1d6b4c;font-size:15px;font-weight:600;cursor:pointer;padding:2px 0;display:flex;align-items:baseline;gap:6px;text-align:left"><span style="width:12px;flex:none">{{ pairCaret }}</span>Details: Konsens je Prinzipienpaar</button>
+            <div style="{{ pairBodyStyle }}">
+              <div style="font-size:14px;color:#5c5451;margin:3px 0 10px;line-height:1.45">Wie viel Leistung im Konsens läge, wenn genau diese zwei Prinzipien gälten. Dunkler = mehr Ausbaukonsens.</div>
+              <div style="{{ pairWrapStyle }}"><div style="{{ pairGridStyle }}">
+                <sc-for list="{{ pairCells }}" as="pc" hint-placeholder-count="9">
+                  <div title="{{ pc.title }}" style="{{ pc.style }}"><div style="{{ pc.innerStyle }}"><span style="{{ pc.swatchStyle }}"></span>{{ pc.text }}</div></div>
+                </sc-for>
+              </div></div>
+            </div>
           </div>
         </sc-if>
 
@@ -1945,7 +1940,6 @@ const BP_GEM_ZOOM = 8;
 const BP_MAX_ZOOM = 60;
 class Component extends DCLogic {
   state = {
-    mode: 'basic',
     selected: [],
     committed: false,
     tech: 'wind',
@@ -1976,8 +1970,8 @@ class Component extends DCLogic {
     regionComputedDeRec: null, regionComputedOwn: false,
     regionComputedTargetGW: null, regionComputedSelRaw: null,  // für „Änderungen verwerfen“ (R.7)
     region: null,                 // { krsId, label } — die aktuell geöffnete Region (Landkreis)
-    // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
-    regionViewMode: 'gemeinden',   // Standard wie in Basic: Gemeinden allein sind am besten lesbar
+    // Gemeinde-Ebene (Testfeature s. SoT §M): 'raster' | 'gemeinden' | 'gemeinden-raster'
+    regionViewMode: 'gemeinden',   // Standard: Gemeinden allein sind am besten lesbar
     gemeinde: null,                // AGS der ausgewählten Gemeinde (nur im Modus 'gemeinden')
     selectedRegional: null,       // null = spiegelt `selected` (Default); eigenes Array sobald bewusst geändert
     regionComputedSel: null,      // regionale Prinzipien, mit denen zuletzt GERECHNET wurde (eingefroren)
@@ -2310,7 +2304,7 @@ class Component extends DCLogic {
     return result;
   }
 
-  // Gemeinde-Ebene (nur Erweitert, Testfeature s. SoT §M): lädt die echten Gemeinde-Umrisse eines
+  // Gemeinde-Ebene (Testfeature s. SoT §M): lädt die echten Gemeinde-Umrisse eines
   // Landkreises nach (gemeinden/<krsId>.json), statt alle ~11.000 Gemeinden bundesweit einzubetten —
   // die Ebene existiert nur in der Regionsansicht, je Landkreis eine Handvoll bis wenige Dutzend. Die
   // Geometrien liegen bereits im selben lokalen Rasterkoordinatenraum wie regionCellsFor()'s Zellen/
@@ -2986,7 +2980,6 @@ class Component extends DCLogic {
     const S = this.state;
     const avail = id => this.byId[id] && this.byId[id].available;
     const isRegion = S.level === 'region' && !!S.region;
-    const isExt = S.mode === 'erweitert';
 
     // ---------- Zwei-Ebenen-Setup (§M) ----------
     // DE-Ansicht: cells = Landkreise, sel = nationale Prinzipien, target = Ausbauziel — immer reaktiv.
@@ -3111,6 +3104,12 @@ class Component extends DCLogic {
     const galleryAll = view === 'verteilungen' && stufe <= 1;
 
     const R = {};
+    // Detail-Panel: standardmäßig zugeklappt, erst per Klick auf „Details: …“ sichtbar
+    R.pairOpen = !!S.pairOpen;
+    R.togglePair = () => this.setState({ pairOpen: !this.state.pairOpen });
+    R.pairCaret = R.pairOpen ? '▾' : '▸';
+    R.pairExpanded = R.pairOpen ? 'true' : 'false';
+    R.pairBodyStyle = R.pairOpen ? 'display:block;margin-top:6px' : 'display:none';
     R.showPairMatrix = false; R.pairCells = []; R.pairGridStyle = ''; R.pairWrapStyle = '';
     R.vb = isRegion ? this.regionCellsFor(S.region.krsId).vb : this.krsVb;
     R.vbFull = this.krsVb;
@@ -3244,10 +3243,10 @@ class Component extends DCLogic {
     };
 
     // Einheit der Legende = das, was die Karte einfärbt: Landkreise (Deutschland), Gemeinden (Region, Ansicht
-    // „Gemeinden" bzw. Basic) oder das 5 × 5-km-Raster (Region, Ansichten mit Raster — nur Erweitert).
+    // „Gemeinden") oder das 5 × 5-km-Raster (Region, Ansichten mit Raster).
     const legendUnit = !isRegion ? 'je Landkreis'
-      : ((isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
-    // Paarweise Prinzipien-Matrix (Reiter Konsens, nur Erweitert, ab einem gewählten Prinzip): Ausbaukonsens je
+      : ((S.regionViewMode || 'gemeinden') === 'gemeinden' ? 'je Gemeinde' : 'je 5 × 5-km-Zelle');
+    // Paarweise Prinzipien-Matrix (Reiter Konsens, ab einem gewählten Prinzip): Ausbaukonsens je
     // Paar = Minimum-Regel über genau diese zwei Prinzipien, Summe über alle Zellen. Feste Größe (R.11): immer
     // alle wählbaren Prinzipien in der Reihenfolge der Prinzipienliste; Paare mit einem nicht gewählten Prinzip
     // sind leere graue Zellen, deren Namen ausgegraut. Dreieck ohne Diagonale; Konsens-Skala nur über die Werte
@@ -3339,7 +3338,7 @@ class Component extends DCLogic {
       gemScale = { vals, paint: t => this.seq(t, this.byId[singlePid].color) };
       R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = planWord('Empfohlener Ausbau') + ' ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = true;
-      if (isExt) buildPairMatrix();
+      buildPairMatrix();
     } else if (view === 'konsens') {
       // Min–Max nur über die sichtbaren Zellen (Konfliktflächen bei aktivem Ausblenden nicht mitrechnen —
       // sonst zieht deren ≈0-Wert die Skala künstlich auf, genau dann, wenn Kontrast am meisten gefragt ist).
@@ -3354,7 +3353,7 @@ class Component extends DCLogic {
       gemScale = { vals: consPlanCells, paint: t => this.seq(t, this.CONS) };
       R.legendMin = this.fmtUnit(mn, isRegion); R.legendMax = this.fmtUnit(mx, isRegion); R.legendTitle = planWord('Ausbaukonsens') + ' ' + legendUnit; R.legendTicks = this.legendTicks(mn, mx, v => this.fmtUnit(v, isRegion));
       R.showPlan = true;
-      if (isExt) buildPairMatrix();
+      buildPairMatrix();
     } else if (view === 'minimum') {
       R.mainCells = cells.map((c,i) => mkCell(i, this.byId[limiting[i]].color, { hidden: S.hideConflict && isConflict[i] }));
       R.legendCat = true;
@@ -3404,9 +3403,9 @@ class Component extends DCLogic {
       R.legendSchnitt = true;
       R.schnittItems = sel.map(p => ({ label: this.byId[p].name, css: 'background:' + this.byId[p].color })).concat([{ label: 'keine Abweichung > 20 %', css: 'background:#eae7e3' }]);
       R.schnittColorCaption = 'Farbe = das Prinzip, das hier mehr als 20 % vom Konsens abweicht. Gestreift = mehrere Prinzipien weichen hier ab.';
-      // UpSet-Aufschlüsselung (nur Erweitert)
+      // UpSet-Aufschlüsselung (zugeklappt hinter „Details“)
       // UpSet erst ab 3 Prinzipien (bei 2 genügen Karte + Zusammenfassung)
-      if (isExt && stufe >= 3) {
+      if (stufe >= 3) {
         const upUnit = isRegion ? 'Rasterzellen' : 'Landkreise';
         R.upsetUnit = upUnit;
         const combo = {};
@@ -3448,10 +3447,12 @@ class Component extends DCLogic {
         // volle Containerbreite, Punktmatrix direkt unter den Balken und mit ihnen ausgerichtet
         R.upsetGridStyle = 'display:grid;grid-auto-flow:column;grid-template-columns:max-content;grid-auto-columns:minmax(0,1fr);grid-template-rows:96px repeat(' + sel.length + ',21px);gap:6px 10px;width:100%;padding-bottom:4px';
         R.showUpset = true;
-        R.upsetOpen = S.upsetOpen !== false;
-        R.toggleUpset = () => this.setState({ upsetOpen: !(S.upsetOpen !== false) });
-        R.upsetCaret = R.upsetOpen ? 'Ausblenden' : 'Anzeigen';
-        R.upsetBodyStyle = R.upsetOpen ? 'display:block' : 'display:none';
+        // Detail-Panel: standardmäßig zugeklappt, erst per Klick auf „Details: …“ sichtbar
+        R.upsetOpen = !!S.upsetOpen;
+        R.toggleUpset = () => this.setState({ upsetOpen: !this.state.upsetOpen });
+        R.upsetCaret = R.upsetOpen ? '▾' : '▸';
+        R.upsetExpanded = R.upsetOpen ? 'true' : 'false';
+        R.upsetBodyStyle = R.upsetOpen ? 'display:block;margin-top:6px' : 'display:none';
       }
       R.showPlan = false;
     }
@@ -3635,9 +3636,9 @@ class Component extends DCLogic {
         R.scenDiffVb = lvl.vb;
         R.scenDiffOutline = lvl.outlineD || '';
         // Einheit der Karte. Deutschland: Landkreise. Region: wie in der Regionsansicht und mit DERSELBEN
-        // Einstellung (regionViewMode; Basic immer Gemeinden) — Gemeinden, Gemeinden + Raster oder Raster.
+        // Einstellung (regionViewMode) — Gemeinden, Gemeinden + Raster oder Raster.
         // Gemeinde-Werte = flächengewichtete Summe der gespeicherten Zellwerte (gemWeightsFor), wie dort.
-        const hubMode = lvlRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+        const hubMode = lvlRegion ? (S.regionViewMode || 'gemeinden') : null;
         let hubGem = null, hubGemW = null;
         if (lvlRegion && hubMode !== 'raster') {
           this.ensureGemeinden(lvlKrs);
@@ -3647,7 +3648,7 @@ class Component extends DCLogic {
         const byGem = !!(hubGem && hubGemW);   // Gemeinden sind die klickbare Einheit (beide Gemeinde-Ansichten)
         // Mit Gemeinden ergibt sich die Form des Landkreises aus ihnen — der grobe Umriss nur über dem reinen Raster
         if (byGem) R.scenDiffOutline = '';
-        R.showHubGemToggle = lvlRegion && isExt;
+        R.showHubGemToggle = lvlRegion;
         R.scenDiffGemNote = lvlRegion && hubMode !== 'raster' && !byGem
           ? (this._gemError[lvlKrs] ? 'Gemeindegrenzen konnten nicht geladen werden — die Karte zeigt das Raster.' : 'Gemeindegrenzen werden geladen …') : '';
         const gAgg = (arr, gi) => (hubGemW[gi] || []).reduce((a, w) => a + arr[w.i] * w.w, 0);
@@ -3834,12 +3835,12 @@ class Component extends DCLogic {
 
     // Verteilungen / Galerie small multiples
     if (R.isVerteilungen) {
-      const galleryIds = galleryAll ? this.principles.filter(p => (isExt || p.basic) && p.available).map(p => p.id) : sel;
+      const galleryIds = galleryAll ? this.principles.filter(p => p.available).map(p => p.id) : sel;
       const shortExplain = { verbrauchsnah: 'dorthin, wo viel Strom verbraucht wird', bevoelkerungsnah: 'dorthin, wo mehr Menschen wohnen', bevoelkerungsfern: 'in dünn besiedelte Regionen', oekonomisch: 'dorthin, wo er am günstigsten ist', flaeche_gesamt: 'proportional zur Gesamtfläche', flaeche_potenzial: 'nach verfügbarer Potenzialfläche' };
-      // Regionsansicht: wie die große Karte Gemeinden statt Raster — gleiche Einstellung (regionViewMode; Basic
-      // immer Gemeinden). Nur in der Ansicht „Raster" bleibt das 5 × 5-km-Raster; „Gemeinden + Raster" zeigt in
+      // Regionsansicht: wie die große Karte Gemeinden statt Raster — gleiche Einstellung (regionViewMode).
+      // Nur in der Ansicht „Raster" bleibt das 5 × 5-km-Raster; „Gemeinden + Raster" zeigt in
       // den kleinen Karten ebenfalls Gemeinden (Raster + Grenzen wären in der Größe nicht lesbar).
-      const galMode = isRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+      const galMode = isRegion ? (S.regionViewMode || 'gemeinden') : null;
       let galGem = null, galGemW = null;
       if (isRegion && galMode !== 'raster') {
         this.ensureGemeinden(S.region.krsId);
@@ -3879,15 +3880,14 @@ class Component extends DCLogic {
     R.galleryAll = R.galleryAll || false;
     R.sourceNote = this.sourceNote;
 
-    // ---------- Gemeinde-Ebene (nur Erweitert, Regionsansicht — Testfeature s. SoT §M) ----------
+    // ---------- Gemeinde-Ebene (Regionsansicht — Testfeature s. SoT §M) ----------
     // Ansichts-Umschalter unter der Karte: 'raster' (Bestand, Zellen klickbar) / 'gemeinden' (echte
     // Gemeinde-Formen, Gemeinden klickbar, Raster ausgeblendet) / 'gemeinden-raster' (Gemeindegrenzen
     // als gedämpfte Kontextlinien ÜBER dem vollen, weiterhin klickbaren Raster). Das klickbare Element
     // wechselt mit der Ansicht — deshalb pointer-events:none auf den Kontextlinien und ein Cursor-/
     // Hinweistext, welche Einheit gerade klickbar ist.
-    // Basic hat keinen Umschalter und zeigt immer die Gemeinden; der Raster-Umschalter bleibt Erweitert.
-    R.showGemToggle = isExt && isRegion;
-    R.regionViewMode = isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden';
+    R.showGemToggle = isRegion;
+    R.regionViewMode = (S.regionViewMode || 'gemeinden');
     R.setRasterView = () => this.setState({ regionViewMode: 'raster', gemeinde: null });
     R.setGemView = () => this.setState({ regionViewMode: 'gemeinden', cell: null });
     R.setGemRasterView = () => this.setState({ regionViewMode: 'gemeinden-raster', cell: null });
@@ -4171,11 +4171,8 @@ class Component extends DCLogic {
       + (S.scenarioToastShow ? 'animation:fadeUp .3s ease' : 'animation:fadeOutHint .4s ease forwards');
 
     // ---------- STRINGS / STATE ----------
-    R.modeBasicStyle = this.segBtn(!isExt, '#fff', '#8b98a5');
-    R.modeExtStyle = this.segBtn(isExt, '#fff', '#8b98a5');
     // Konsens-Farbe für die großen Zahlen/Balken der rechten Spalte (CSS-Variable --cons)
     R.consHex = this.CONS;
-    R.isErweitert = isExt;
     // Greenfield-Hinweis hinter dem „i" neben „Ausbauziel" (zu, bis angeklickt)
     R.targetInfoBtnStyle = 'flex:none;width:16px;height:16px;border:1.5px solid ' + (S.targetInfo ? '#1d6b4c' : '#8f8782') + ';border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;color:' + (S.targetInfo ? '#1d6b4c' : '#3f3936') + ';font-style:italic;font-weight:600;cursor:pointer';
     R.targetInfoStyle = S.targetInfo ? 'font-size:14px;color:#5c5451;padding:2px 0 2px 12px;border-left:2px solid #dad7d3;margin:0 0 8px;line-height:1.45' : 'display:none';
@@ -4240,7 +4237,7 @@ class Component extends DCLogic {
     // damit sichtbar bleibt, dass noch gerechnet wird statt eingefroren zu sein.
     R.regionComputingReassure = (S.regionComputing && S.regionProgress > 3000 / 5000) ? 'Das kann einen Moment dauern …' : '';
 
-    R.princList = this.principles.filter(p => (isExt || p.basic) && p.available).map(p => {
+    R.princList = this.principles.filter(p => p.available).map(p => {
       const on = uiSel.includes(p.id);
       const canClick = p.available;
       return {
@@ -4449,7 +4446,7 @@ class Component extends DCLogic {
     R.legendSeq = R.legendSeq || false; R.legendCat = R.legendCat || false; R.legendSchnitt = R.legendSchnitt || false; R.legendPos = R.legendPos || false;
     // Bestand/Zubau/Ausbau nur bei aktivem Bestands-Toggle
     R.showPlan = (R.showPlan || false) && accEff;
-    // Bottom-Toolbar: Vergleich/Download/Methodik nur Erweitert; Konflikt-Toggle nur ab 2 Prinzipien
+    // Bottom-Toolbar: Konflikt-Toggle nur ab 2 Prinzipien
     // Vergleichsauswahl nur im Vergleich-Reiter (Differenzansicht)
     // Vergleichsauswahl und „Konfliktflächen ausblenden" entfallen — Vergleiche nur noch im Hub,
     // weitere Prinzipien nur links. Übrig bleibt der Ansichts-Umschalter der Regionsansicht.
@@ -4465,7 +4462,7 @@ class Component extends DCLogic {
 
     // ============ RIGHT COLUMN ============
     // Im Regionsraum ist je Ansicht genau eine Einheit klickbar — eine noch gesetzte Auswahl der anderen
-    // Einheit (z. B. nach Basic/Erweitert-Wechsel) wird ignoriert statt angezeigt.
+    // Einheit (z. B. nach einem Ansichtswechsel) wird ignoriert statt angezeigt.
     const gemSelectable = isRegion && R.regionViewMode !== 'raster';
     // Ohne gewähltes Prinzip gibt es keine Werte je Einheit — dann kein Zelldetail (eine z. B. über die Suche
     // gesetzte Auswahl bleibt stehen, bis ein Prinzip gewählt wird; sonst lief die Detailberechnung ins Leere)
@@ -5029,7 +5026,7 @@ class Component extends DCLogic {
       const p = S.zoom;
       const pvCells = effPlan === 'bestand' ? bestGW : effPlan === 'zubau' ? zubauArr(p) : ausbauInclArr(p);
       // wie die Galerie: in der Region Gemeinden statt Raster, außer in der Ansicht „Raster"
-      const zMode = isRegion ? (isExt ? (S.regionViewMode || 'gemeinden') : 'gemeinden') : null;
+      const zMode = isRegion ? (S.regionViewMode || 'gemeinden') : null;
       const zGem = isRegion && zMode !== 'raster' ? (this._gemCache[S.region.krsId] || null) : null;
       const zGemW = zGem ? this.gemWeightsFor(S.region.krsId) : null;
       const zByGem = !!(zGem && zGemW);
@@ -5050,8 +5047,6 @@ class Component extends DCLogic {
     R.closeZoom = () => this.setState({ zoom: null });
 
     // handlers
-    R.setBasic = () => this.setState({ mode: 'basic' });
-    R.setErweitert = () => this.setState({ mode: 'erweitert' });
     R.setWind = () => this.setState({ tech: 'wind' });
     R.setPV = () => this.setState(S.bpTab === 'planung' ? { tech: 'pv', bpTab: 'potenzial', bpSel: null } : { tech: 'pv' });
     // Wer den Schalter benutzt, hat ihn gefunden: der Erst-Hinweis in „Bestand & Potenziale“ kommt nicht mehr (Prompt D, 2)
@@ -5097,7 +5092,7 @@ class Component extends DCLogic {
     const area = S.area || 'de';
     R.bpGroups = []; R.bpKrs = []; R.bpKrsBorders = []; R.bpTabs = []; R.bpRows = [];
     this._bpAccHintVisible = false; R.bpAccHintPopup = false;
-    if (area === 'bestand') this.buildBestand(R, S, isExt);
+    if (area === 'bestand') this.buildBestand(R, S);
     R.areaBestand = area === 'bestand';
     // Bestand & Potenziale: links steht nur der Technologie-Schalter — schmale Spalte, mehr Platz für die Karte
     R.leftColWidth = R.areaBestand ? 'width:280px' : 'width:312px';
@@ -5167,10 +5162,10 @@ class Component extends DCLogic {
   // ================= BESTAND & POTENZIALE: Render-Daten (R.13) =================
   // Nur berechnet, wenn der Bereich aktiv ist. Ebene nach Zoomstufe (BP_GEM_ZOOM): Landkreise bzw. Gemeinden der
   // sichtbaren Landkreise (werden nachgeladen; bis dahin bleibt der Landkreis grau sichtbar).
-  buildBestand(R, S, isExt) {
+  buildBestand(R, S) {
     const tech = S.tech === 'pv' ? 'pv' : 'wind';
     const tab = (S.bpTab === 'planung' && tech === 'pv') ? 'potenzial' : (S.bpTab || 'bestand');
-    const raw = isExt && S.bpMode === 'raw';
+    const raw = S.bpMode === 'raw';
     const z = this._bz, gemLevel = z.k >= BP_GEM_ZOOM;
     const techName = tech === 'pv' ? 'Freiflächen-Photovoltaik' : 'Windenergie';
     const field = tab === 'bestand' ? 'bestandMW' : tab === 'planung' ? 'planLeistungMW' : 'potLeistungMW';
@@ -5232,8 +5227,8 @@ class Component extends DCLogic {
     R.qBpExpanded = R.qBpOpen ? 'true' : 'false';
     R.toggleBpQ = () => this.setState({ qPop: this.state.qPop === 'bp' ? null : 'bp' });
 
-    // Umschalter Administrativ / Rohdaten (nur Erweitert)
-    R.bpShowModeToggle = isExt;
+    // Umschalter Administrativ / Rohdaten (immer sichtbar)
+    R.bpShowModeToggle = true;
     R.bpAdminStyle = this.segLight(!raw) + ';white-space:nowrap;padding:4px 10px;font-size:13px';
     R.bpRawStyle = this.segLight(raw) + ';white-space:nowrap;padding:4px 10px;font-size:13px';
     R.setBpAdmin = () => this.setState({ bpMode: 'admin', bpSel: sel && sel.kind === 'raw' ? null : sel });

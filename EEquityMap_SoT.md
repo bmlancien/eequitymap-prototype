@@ -34,7 +34,7 @@ autoritativ**; maßgeblich ist der Fix-Prompt `EEquityMap_Fixes.md`.
 
 ---
 
-## 0. Aktueller Stand auf einen Blick (Stand 2026-11-09, Code `main`)
+## 0. Aktueller Stand auf einen Blick (Stand 2026-11-13, Code `main`)
 
 *Nur der heutige Stand, keine Historie. Werte sind Platzhalter des Prototyps;
 prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
@@ -43,8 +43,8 @@ prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
 **1. Aufbau** (R.3, X, S, W)
 - Kopf: Logo · „Was ist das?" (öffnet den Startdialog) · „Methodik" · „Über
   das Projekt" · Knopf „Daten herunterladen" (zeigt nur den Hinweis „Der
-  Download ist im Prototyp noch nicht verfügbar.", P) · Umschalter
-  Basic/Erweitert.
+  Download ist im Prototyp noch nicht verfügbar.", P). Kein Umschalter
+  Basic/Erweitert mehr (Z.6).
 - Drei Bereichs-Tabs: ① Bestand & Potenziale · ② Verteilung – Deutschland ·
   ③ Verteilung – [Landkreis] (ohne ausgewerteten Landkreis gesperrt:
   „Verteilung – Regional"). Rechts daneben die Suche nach Landkreisen mit
@@ -53,11 +53,13 @@ prüfbare Werte stehen mit ihrer Einstellung. Version 0.1, `APP_STAND`
   „Einzelverteilung") · Was begrenzt? · Dissens · Einzelverteilungen ·
   Szenarien vergleichen. Unter zwei Prinzipien sind die mittleren drei
   ausgegraut. Grüner Schritt-Hinweis unter der Headline, wegklickbar (W).
-- Erweitert zusätzlich: Paar-Matrix (Reiter Konsens bzw. Einzelverteilung),
-  UpSet ab drei Prinzipien, in der Region
+- Immer sichtbar: alle sechs Prinzipien, Bestand-Schalter, in der Region
   Ansicht Gemeinden / Gemeinden + Raster / Raster, in ① Umschalter
-  Administrativ/Rohdaten. Basic zeigt alle sechs Prinzipien und den
-  Bestand-Schalter (D).
+  Administrativ/Rohdaten.
+- Detail-Panels, standardmäßig zugeklappt (Klick blendet ein): unter der
+  Konsens- bzw. Einzelverteilungs-Karte „Details: Konsens je Prinzipienpaar"
+  (Paar-Matrix), unter der Dissens-Karte ab drei Prinzipien „Details: Welche
+  Kombinationen weichen ab?" (UpSet).
 - Fußzeile: links „Version 0.1 · Stand 09.11.2026", rechts Kontakt ·
   Impressum · Datenschutz.
 
@@ -117,8 +119,8 @@ Alle Karten im Dialog: Wind, 160 GW, unabhängig von den Einstellungen.
   regional) → Landkreis-Block (K, % Fläche, Anteil an Zielerreichung,
   Einordnung, Satz „… verteilt die Rechnung insgesamt [A*] GW
   (Konsensanteil [K/A*] %)") → Gemeinde- bzw. Zellblock.
-- Karte: Basic Gemeinden (Farbe = Gemeindewert, flächengewichtete Summe der
-  Zellen, M); Erweitert zusätzlich Raster 5 × 5 km.
+- Karte: Ansicht Gemeinden (Standard; Farbe = Gemeindewert, flächengewichtete
+  Summe der Zellen, M) / Gemeinden + Raster / Raster 5 × 5 km.
 - Prüfwerte (Heidekreis, Wind, 160 GW, Verbrauchsnah + Bevölkerungsnah):
   T 0,31 · K 0,31 · A* 0,43 GW (72,6 %); T 1,00 → A* 1,36 GW (73,8 %).
 
@@ -347,7 +349,9 @@ Tab-Reihe (Zubaukonsens als Default). Namen final:
    „Empfiehlt" = Zelle über dem eigenen Median des Prinzips (fester,
    nicht bedienbarer Schwellenwert). **Legende: nur Einzelfarben je Prinzip,
    keine Kombinations-Kästchen** (bei vielen Prinzipien sonst zu lang; die
-   Karteneinfärbung bleibt kombinatorisch). Darunter im **Erweitert**-Modus ein
+   Karteneinfärbung bleibt kombinatorisch). *(Geändert 2026-11-13, Z.6: UpSet
+   immer verfügbar, zugeklappt hinter „Details: Welche Kombinationen weichen
+   ab?".)* Darunter im **Erweitert**-Modus ein
    einklappbares **UpSet-Diagramm** als detaillierte Aufschlüsselung (Karte bleibt
    Übersicht, s. H — Reversal). **Dichte/Layout:** nach Zellzahl absteigend, nur
    Top ~8 Kombinationen, 0-Zellen-Kombinationen weglassen, Rest als Sammelspalte
@@ -471,6 +475,12 @@ Paar erkennbar.
 ---
 
 ## D. Basic / Erweitert — finaler Split
+
+> **Abgelöst (Entscheidung 2026-11-13, Code angeglichen):** Der Modus-Umschalter
+> Basic/Erweitert entfällt — es gab zu wenige Erweitert-Elemente. Alles ist
+> immer sichtbar; die zwei Experten-Elemente (Paar-Matrix, UpSet) liegen
+> zugeklappt hinter „Details: …" unter ihrer Karte (s. Abschnitt 0, 1, und Z.6). Der
+> folgende Text bleibt als Herkunft stehen.
 
 > **Geändert (Entscheidung 2026-11-09, Code angeglichen):**
 > - **„Bestandsanlagen berücksichtigen" ist in Basic sichtbar** (unter
@@ -637,6 +647,10 @@ sekundär.
 ---
 
 ## F. Referenzen & „Konsens vs. Referenz" (neu / korrigiert) — nur Erweitert
+
+> **Geändert (2026-11-13, Z.6):** Es gibt keinen Erweitert-Modus mehr; „nur Erweitert"
+> in diesem Abschnitt ist gegenstandslos. Vergleiche laufen über den Reiter
+> „Szenarien vergleichen" (O, R.8) und sind immer sichtbar.
 
 > **Abgelöst durch O:** Referenzen sind jetzt „Historischer Ausbau" und
 > „Planungsflächen" als Vergleichsobjekte im Hub. Begriffe (Positivflächen ≠
@@ -1387,6 +1401,9 @@ Granularitäts-Schalter („5 × 5 km / Gemeinde / Landkreis") ist durch die
 DE-/Region-Aufteilung weitgehend abgelöst und sollte darin aufgehen, nicht als
 separater Regler bestehen bleiben.
 
+> **Geändert (2026-11-13, Z.6):** Der Ansichts-Umschalter ist immer sichtbar (kein
+> Erweitert-Modus mehr); Standard bleibt „Gemeinden".
+
 **Gemeinde-Ebene (nur Erweitert, zum Testen — erweitert das Modell):** In der
 Regionsansicht ein Ansichts-Umschalter UNTER der Karte, nur im Erweitert-Modus,
 mit drei Optionen: (1) **Raster (5 × 5 km)** — Zellen klickbar (Bestand);
@@ -1752,6 +1769,10 @@ Gerechtigkeitsprinzipien nur geringfügig." unter dem Technologie-Schalter.
   werden nicht gerendert.
 
 ## P. Paarweise Prinzipien-Matrix & „Vergleich teilen" (Session 2026-10-09)
+
+> **Geändert (2026-11-13, Z.6):** Kein Erweitert-Modus mehr. Die Matrix steht immer zur
+> Verfügung, aber zugeklappt hinter „Details: Konsens je Prinzipienpaar"; ein
+> Klick blendet sie ein.
 
 > **Geändert durch R (Session 2026-10-19):** Die Matrix zeigt immer alle wählbaren Prinzipien und ist ab einem gewählten Prinzip sichtbar; nicht gewählte Paare erscheinen als leere graue Zellen (R.11).
 
@@ -2568,6 +2589,8 @@ Infobox „Bestandsanlagen berücksichtigen" Greenfield schon erklärt.)
   Planungsflächen als Flächen, Bestand als Anlagen-Punkte). Rohdaten im
   Prototyp als **Platzhalter** (erzeugte Formen bzw. Punkte), solange sie
   glaubwürdig aussehen und bedienbar sind. Basic zeigt immer „Administrativ".
+  *(Geändert 2026-11-13, Z.6: Umschalter immer sichtbar, Standard
+  „Administrativ".)*
 - **Klick → rechte Spalte:**
   - Bestand heute: installierte Leistung in GW (Landkreis zwei, Gemeinde drei
     Nachkommastellen); eine einzelne Anlage in MW (L). Geändert Session 2026-10-29,
@@ -3208,3 +3231,22 @@ Die Antworten haben Vorrang vor älteren Annahmen in diesem Dokument.
   Szenario-Karten darüber K ÷ A* (W3). Jetzt rechnen beide K ÷ A*.
 - Geprüft: Heidekreis, Wind, 160 GW, bundesweit und regional Verbrauchsnah +
   Bevölkerungsnah → Tabelle und Karte 72,6 % (vorher Tabelle 100,0 %).
+
+### Z.6 Kein Modus Basic/Erweitert mehr (Session 2026-11-13)
+
+Ändert D (ersetzt den Split), dazu C (UpSet), F, M (Gemeinde-Ebene), P und R.13.
+
+- **Umschalter Basic/Erweitert im Kopf entfernt.** Begründung: Es gab nur noch
+  wenige Erweitert-Elemente; zwei Modi lohnten sich dafür nicht.
+- **Immer sichtbar** (vorher nur Erweitert): in der Region der Ansichts-Umschalter
+  Gemeinden / Gemeinden + Raster / Raster (auch in „Szenarien vergleichen");
+  in „Bestand & Potenziale" der Umschalter Administrativ / Rohdaten. Standard
+  unverändert: „Gemeinden" bzw. „Administrativ".
+- **Experten-Elemente zugeklappt hinter „Details: …"** (Standard zu, Klick
+  blendet ein, ▸/▾):
+  - unter der Karte „Konsens" bzw. „Einzelverteilung": **„Details: Konsens je
+    Prinzipienpaar"** (Paar-Matrix, P/R.11);
+  - unter der Karte „Dissens", ab drei Prinzipien: **„Details: Welche
+    Kombinationen weichen ab?"** (UpSet). Vorher war das UpSet offen, mit
+    Knopf „Ausblenden".
+- Prinzipien: unverändert alle sechs (waren schon in beiden Modi gleich, D).
